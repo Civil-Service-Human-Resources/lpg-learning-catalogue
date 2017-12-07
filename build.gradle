@@ -1,0 +1,56 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+        dependencies {
+            classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+group = 'uk.gov.civilservice'
+version = '0.1.0-' + (System.getenv('CIRCLE_SHA1') ?: 'local')
+
+test {
+    useTestNG()
+}
+
+jar {
+    archiveName = 'learning-catalogue.jar'
+}
+
+bootRepackage {
+    mainClass = 'uk.gov.civilservice.learningcatalogue.Application'
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web') {
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    compile 'org.springframework.boot:spring-boot-starter-jetty'
+    compile('org.springframework.boot:spring-boot-starter-jersey')
+
+    compile 'com.github.fakemongo:fongo:2.1.0'
+    compile 'com.google.guava:guava:23.5-jre'
+    compile 'org.apache.commons:commons-lang3:3.7'
+    compile 'org.codehaus.janino:janino:3.0.8'
+
+    testCompile 'org.hamcrest:hamcrest-core'
+    testCompile 'org.testng:testng:6.13.1'
+    testCompile 'org.mockito:mockito-core:2.13.0'
+    testCompile 'org.springframework:spring-test:5.0.2.RELEASE'
+    testCompile 'com.jayway.jsonpath:json-path:2.4.0'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.3'
+}
