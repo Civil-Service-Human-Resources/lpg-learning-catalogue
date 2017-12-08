@@ -53,8 +53,23 @@ jobs:
             docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_PASSWORD}"
             docker tag app "cshr/learning-catalogue:${BRANCH_TAG}"
             docker push "cshr/learning-catalogue:${BRANCH_TAG}"
-            docker tag app "cshr/learning-catalogue:${CIRCLE_SHA1}"
+            docker tag app "cshr/learning-catalogue:c"
             docker push "cshr/learning-catalogue:${CIRCLE_SHA1}"
+
+      - run:
+          name: Install Cloud Foundry cli
+          command: |
+            wget -O cf-cli.deb 'https://packages.cloudfoundry.org/stable?release=debian64&version=6.33.0&source=github-rel'
+            sudo dpkg -i cf-cli.deb
+
+      - run:
+          name: Deploy application to api.cloud.service.gov.uk
+          command: |
+              cf api https://api.cloud.service.gov.uk
+              cf auth $LPG_USERNAME $LPG_PASSWORD
+              cf target -o cshr-trial -s sandbox
+              cf push --docker-image cshr/learning-catalogue:${CIRCLE_SHA1}
+
 
 workflows:
   version: 2
