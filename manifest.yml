@@ -2,4 +2,4 @@
 applications:
 - name: learning-catalogue
   memory: 1024M
-  instances: 3
+  instances: 1
