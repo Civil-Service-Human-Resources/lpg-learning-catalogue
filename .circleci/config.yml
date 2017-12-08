@@ -8,14 +8,13 @@ jobs:
 
     steps:
       - checkout
-      - setup_remote_docker
 
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
-      - run: gradle dependencies
+      - run: ./gradlew dependencies
 
       - save_cache:
           key: v1-dependencies-{{ checksum "build.gradle" }}
@@ -24,7 +23,7 @@ jobs:
 
       - run: ./gradlew build
 
-  pakage:
+  package:
     docker:
       - image: docker:17.05.0-ce-git
 
@@ -67,6 +66,3 @@ workflows:
       - package:
           requires:
             - build
-          filters:
-            branches:
-              only: master
