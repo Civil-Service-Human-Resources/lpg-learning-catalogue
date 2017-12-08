@@ -1,5 +1,5 @@
 ---
 applications:
-- name: cshr/learning-catalogue
-  memory: 512M
+- name: learning-catalogue
+  memory: 1024M
   instances: 1
