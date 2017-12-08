@@ -66,7 +66,7 @@ jobs:
           name: Deploy application to api.cloud.service.gov.uk
           command: |
               cf api https://api.cloud.service.gov.uk
-              cf auth $LPG_USERNAME $LPG_PASSWORD
+              cf auth $CF_USERNAME $CF_PASSWORD
               cf target -o cshr-trial -s sandbox
               cf push --docker-image cshr/learning-catalogue:${CIRCLE_SHA1}
 
