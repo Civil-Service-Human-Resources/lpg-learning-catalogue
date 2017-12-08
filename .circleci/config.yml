@@ -46,6 +46,16 @@ jobs:
             - ~/app.tar
             - ~/.gradle
 
+      - run:
+          name: Push Docker image
+          command: |
+            BRANCH_TAG=`echo ${CIRCLE_BRANCH} | sed 's/\//-/g'` |
+            docker login -e ${DOCKER_HUB_EMAIL} -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD} |
+            docker tag app "cshr/learning-catalogue:${BRANCH_TAG}" |
+            docker push "cshr/learning-catalogue:${BRANCH_TAG}" |
+            docker tag app "cshr/learning-catalogue:${CIRCLE_SHA1}" |
+            docker push "cshr/learning-catalogue:${CIRCLE_SHA1}"
+
 workflows:
   version: 2
   build_and_package:
