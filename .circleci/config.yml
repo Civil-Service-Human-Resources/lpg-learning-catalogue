@@ -70,9 +70,12 @@ jobs:
               cf target -o cshr-trial -s sandbox
               cf push --docker-image cshr/learning-catalogue:${CIRCLE_SHA1}
 
-
 workflows:
   version: 2
   build_and_package:
     jobs:
       - build
+
+
+
+
