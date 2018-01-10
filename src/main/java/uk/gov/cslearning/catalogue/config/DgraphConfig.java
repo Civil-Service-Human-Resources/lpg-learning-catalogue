@@ -2,7 +2,6 @@ package uk.gov.cslearning.catalogue.config;
 
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphGrpc;
-import io.dgraph.DgraphProto;
 import io.dgraph.DgraphProto.Operation;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -24,8 +23,8 @@ public class DgraphConfig {
         DgraphClient client = new DgraphClient(Collections.singletonList(blockingStub));
 
         String schema =
-                "name: string @index(exact) ." +
-                "";
+                "title: string @index(fulltext) .\n" +
+                "location: string .";
 
         Operation op = Operation.newBuilder().setSchema(schema).build();
         client.alter(op);
