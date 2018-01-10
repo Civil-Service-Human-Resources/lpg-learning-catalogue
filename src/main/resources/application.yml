@@ -6,6 +6,6 @@ spring:
 server:
   port: 9000
 
-mongodb:
-  hosts: 127.0.0.1:27017
-  database: learning-catalogue
+dgraph:
+  host: 127.0.0.1
+  port: 9080

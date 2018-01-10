@@ -29,7 +29,7 @@ jar {
 }
 
 bootRepackage {
-    mainClass = 'uk.gov.civilservice.learningcatalogue.Application'
+    mainClass = 'uk.gov.cslerning.catalogue.Application'
 }
 
 dependencies {
@@ -37,10 +37,13 @@ dependencies {
         exclude module: 'spring-boot-starter-tomcat'
     }
     compile 'org.springframework.boot:spring-boot-starter-jetty'
-    compile('org.springframework.boot:spring-boot-starter-jersey')
+    compile 'org.springframework.boot:spring-boot-starter-jersey'
+    compile 'org.springframework.boot:spring-boot-configuration-processor'
 
-    compile 'com.github.fakemongo:fongo:2.1.0'
     compile 'com.google.guava:guava:23.5-jre'
+    compile('io.dgraph:dgraph4j:1.0.0') {
+        exclude module: 'slf4j-simple'
+    }
     compile 'org.apache.commons:commons-lang3:3.7'
     compile 'org.codehaus.janino:janino:3.0.8'
 
@@ -50,6 +53,8 @@ dependencies {
     testCompile 'org.springframework:spring-test:5.0.2.RELEASE'
     testCompile 'com.jayway.jsonpath:json-path:2.4.0'
 }
+
+compileJava.dependsOn(processResources)
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.3'

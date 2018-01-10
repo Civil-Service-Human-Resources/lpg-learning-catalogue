@@ -1,12 +1,13 @@
-package uk.gov.civilservice.learningcatalogue;
+package uk.gov.cslearning.catalogue.api;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HelloController {
+@RequestMapping("/search")
+public class CatalogueSearch {
 
-    @RequestMapping("/")
+    @RequestMapping
     public String heyThere() {
         return "Hey there";
     }
