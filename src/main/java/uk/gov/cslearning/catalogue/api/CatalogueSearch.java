@@ -30,20 +30,41 @@ public class CatalogueSearch {
     }
 
     @RequestMapping(method = GET)
-    public SearchResults search(@RequestParam(name = "q") String searchTerms) {
+    public SearchResults search(@RequestParam(name = "tag") String[] tags) {
+
+        /*
+        genres as var(func: has(~genre)) {
+    ~genre {
+      numGenres as count(genre)
+    }
+  }
+
+  genres(func: uid(genres), orderasc: name@en) {
+    name@en
+    ~genre (orderdesc: val(numGenres), first: 5) {
+      name@en
+    	genres : val(numGenres)
+    }
+  }
+         */
+
 
         String query =
                 "query entries($a: string) {\n" +
-                    "results(func: alloftext(title, $a)) {\n" +
+                    "tags as var(func: anyofterms(tag, $a)) {\n" +
+                    "   numTags as count(tag)\n" +
+                    "}\n" +
+                    "results(func: uid(tags), orderdesc: val(numTags)) {\n" +
                     "    title\n" +
                     "    location\n" +
                     "}\n" +
                 "}";
 
-        Map<String, String> vars = Collections.singletonMap("$a", searchTerms);
+        Map<String, String> vars = Collections.singletonMap("$a", String.join(" ", tags));
         DgraphProto.Response response = client.newTransaction().queryWithVars(query, vars);
 
         Gson gson = new Gson();
+
 
         return gson.fromJson(response.getJson().toStringUtf8(), SearchResults.class);
     }

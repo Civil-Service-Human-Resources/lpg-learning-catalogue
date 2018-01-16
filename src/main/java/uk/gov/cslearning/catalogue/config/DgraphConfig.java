@@ -24,7 +24,8 @@ public class DgraphConfig {
 
         String schema =
                 "title: string @index(fulltext) .\n" +
-                "location: string .";
+                "location: string .\n" +
+                "tag: [string] @index(term) .";
 
         Operation op = Operation.newBuilder().setSchema(schema).build();
         client.alter(op);
