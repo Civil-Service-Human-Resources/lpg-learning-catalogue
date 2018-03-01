@@ -6,6 +6,7 @@ spring:
 server:
   port: 9000
 
-mongodb:
-  hosts: 127.0.0.1:27017
-  database: learning-catalogue
+elasticsearch:
+  clusterName:
+  host: 127.0.0.1
+  port: 9999

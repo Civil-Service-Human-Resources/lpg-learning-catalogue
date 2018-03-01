@@ -11,4 +11,8 @@
     <root level="debug">
         <appender-ref ref="console" />
     </root>
+
+    <logger name="org.apache.http" level="warn" />
+    <logger name="org.eclipse.jetty" level="warn" />
+    <logger name="org.springframework" level="info" />
 </configuration>

@@ -4,8 +4,9 @@ spring:
     add-mappings: false
 
 server:
-  port: 9000
+  port: 9001
 
-dgraph:
+elasticsearch:
+  clusterName: local
   host: 127.0.0.1
   port: 9080

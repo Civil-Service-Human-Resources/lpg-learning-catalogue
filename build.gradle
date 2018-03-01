@@ -1,18 +1,15 @@
 
-buildscript {
-    repositories {
-        mavenCentral()
-        dependencies {
-            classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE'
-        }
-    }
+plugins {
+    id 'org.springframework.boot' version '2.0.0.RELEASE'
+    id "ajk.gradle.elastic" version "0.0.20"
 }
 
 repositories {
     mavenCentral()
 }
 
-apply plugin: 'org.springframework.boot'
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -20,16 +17,12 @@ targetCompatibility = '1.8'
 group = 'uk.gov.civilservice'
 version = '0.1.0-' + (System.getenv('CIRCLE_SHA1') ?: 'local')
 
-test {
-    useTestNG()
-}
-
 jar {
     archiveName = 'learning-catalogue.jar'
 }
 
-bootRepackage {
-    mainClass = 'uk.gov.cslerning.catalogue.Application'
+bootJar {
+    mainClassName = 'uk.gov.cslerning.catalogue.Application'
 }
 
 dependencies {
@@ -39,22 +32,55 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-jetty'
     compile 'org.springframework.boot:spring-boot-starter-jersey'
     compile 'org.springframework.boot:spring-boot-configuration-processor'
+    compile('org.springframework.data:spring-data-elasticsearch') {
+        exclude module: 'log4j-api'
+    }
 
     compile 'com.google.guava:guava:23.5-jre'
-    compile('io.dgraph:dgraph4j:1.0.0') {
-        exclude module: 'slf4j-simple'
-    }
     compile 'org.apache.commons:commons-lang3:3.7'
     compile 'org.codehaus.janino:janino:3.0.8'
 
-    testCompile 'org.hamcrest:hamcrest-core'
-    testCompile 'org.testng:testng:6.13.1'
-    testCompile 'org.mockito:mockito-core:2.13.0'
-    testCompile 'org.springframework:spring-test:5.0.2.RELEASE'
-    testCompile 'com.jayway.jsonpath:json-path:2.4.0'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
 compileJava.dependsOn(processResources)
+
+task integrationTests(type: Test) {
+    reports {
+        html.destination "$buildDir/reports/integration-tests"
+    }
+
+    include "**/*IT.*"
+
+    doFirst {
+        startElastic {
+            elasticVersion = "5.1.2"
+            httpPort = 9998
+            transportPort = 9999
+            dataDir = file("$buildDir/elastic")
+            logsDir = file("$buildDir/elastic/logs")
+        }
+    }
+
+    doLast {
+        stopElastic {
+            httpPort = 9998
+        }
+    }
+}
+
+gradle.taskGraph.afterTask { Task task, TaskState taskState ->
+    if (task.name == "integrationTests") {
+        stopElastic {
+            httpPort = 9998
+        }
+    }
+}
+
+test {
+    include '**/*Test.*'
+    exclude '**/*IT.*'
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.3'

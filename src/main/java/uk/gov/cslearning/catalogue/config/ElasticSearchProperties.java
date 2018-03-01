@@ -4,12 +4,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "dgraph")
-public class DgraphProperties {
+@ConfigurationProperties(prefix = "elasticsearch")
+public class ElasticSearchProperties {
+
+    private String clusterName;
 
     private String host;
 
     private int port;
+
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
 
     public void setHost(String host) {
         this.host = host;
