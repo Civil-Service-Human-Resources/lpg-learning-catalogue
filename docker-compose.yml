@@ -9,5 +9,6 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch@sha256:5b2bb3e91379f04a9da7c477314a24b2428fb1a4c20696991dff54b70d1b4ef3
     ports:
-      - "9200:9200"
+      - 9200:9200
+      - 9300:9300
     command: "elasticsearch -E cluster.name=local -E discovery.type=single-node"
