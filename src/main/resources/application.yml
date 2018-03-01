@@ -2,6 +2,10 @@
 spring:
   resources:
     add-mappings: false
+  security:
+    user:
+      name: user
+      password: password
 
 server:
   port: 9001
@@ -9,4 +13,4 @@ server:
 elasticsearch:
   clusterName: local
   host: 127.0.0.1
-  port: 9080
+  port: 9200
