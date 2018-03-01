@@ -1,0 +1,24 @@
+[
+  {
+    "_class": "uk.gov.cslearning.catalogue.domain.Course",
+    "id": "JHDOns71TH-sLH5fDQmHeQ",
+    "title": "title",
+    "shortDescription": "sortDescription",
+    "description": "description",
+    "learningOutcomes": "learningOutcomes",
+    "duration": 5400000,
+    "requiredBy": "2017-03-31T00:00:00.000Z",
+    "frequency": "YEARLY",
+    "tags": [
+      "area-of-work:commercial",
+      "mandatory:all",
+      "department:all"
+    ],
+    "modules": [
+      {
+        "type": "elearning",
+        "id": "S9T-TCTuTFKEVBfJMXz_BQ"
+      }
+    ]
+  }
+]

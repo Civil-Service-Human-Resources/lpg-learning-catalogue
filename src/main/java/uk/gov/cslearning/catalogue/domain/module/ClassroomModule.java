@@ -1,5 +1,7 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
@@ -7,9 +9,8 @@ import java.util.HashSet;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.unmodifiableCollection;
 
+@JsonTypeName("classroom")
 public class ClassroomModule extends Module {
-
-    private static final String TYPE = "classroom";
 
     private String productCode;
 
@@ -21,11 +22,6 @@ public class ClassroomModule extends Module {
         this.productCode = productCode;
         this.price = price;
         this.availability = new HashSet<>();
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
     }
 
     public Collection<Availability> getAvailability() {

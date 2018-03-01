@@ -1,20 +1,16 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import java.net.URL;
 
+@JsonTypeName("video")
 public class VideoModule extends Module {
-
-    private static final String TYPE = "video";
 
     private URL location;
 
     public VideoModule(URL location) {
         this.location = location;
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
     }
 
     public URL getLocation() {

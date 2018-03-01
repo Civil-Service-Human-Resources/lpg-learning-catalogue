@@ -1,15 +1,12 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
+import org.elasticsearch.common.UUIDs;
 
 import java.time.LocalDateTime;
 
-@Document(indexName = "lpg", type="availability")
 public class Availability {
 
-    @Id
-    private String id;
+    private String id = UUIDs.randomBase64UUID();
 
     private LocalDateTime date;
 

@@ -3,13 +3,15 @@ package uk.gov.cslearning.catalogue.config;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.index.mapper.Mapper;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -36,5 +38,15 @@ public class ElasticSearchConfig {
     @Bean
     public ElasticsearchOperations elasticsearchTemplate(Client client) throws Exception {
         return new ElasticsearchTemplate(client);
+    }
+
+    @Bean
+    public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
+
+        Resource sourceData = new ClassPathResource("data.json");
+
+        Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
+        factory.setResources(new Resource[] { sourceData });
+        return factory;
     }
 }

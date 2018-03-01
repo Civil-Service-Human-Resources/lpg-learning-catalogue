@@ -1,23 +1,30 @@
 package uk.gov.cslearning.catalogue.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.unmodifiableList;
 
 @Document(indexName = "lpg", type = "course")
 public class Course {
 
     @Id
-    private String id;
+    private String id = UUIDs.randomBase64UUID();
 
     private String title;
 
@@ -27,44 +34,48 @@ public class Course {
 
     private String learningOutcomes;
 
-    private Integer duration;
+    private Long duration;
 
-    private Set<String> tags;
+    private Set<String> tags = new HashSet<>();
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime requiredBy;
 
     private Frequency frequency;
 
-    private List<Module> modules;
+    @Field(type = FieldType.Nested)
+    private List<Module> modules = new ArrayList<>();
 
     public Course() {
     }
 
-    public Course(String title, String shortDescription, String description, String learningOutcomes, Integer duration, Set<String> tags) {
+    public Course(String title, String shortDescription, String description, String learningOutcomes, Long duration, Set<String> tags) {
         this.title = title;
         this.shortDescription = shortDescription;
         this.description = description;
         this.learningOutcomes = learningOutcomes;
         this.duration = duration;
-        this.tags = tags;
-        this.modules = new ArrayList<>();
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        setTags(tags);
     }
 
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }
 
-    public void addModule(Module module) {
-        checkArgument(module != null);
-        this.modules.add(module);
+    public void setModules(List<Module> modules) {
+        this.modules.clear();
+        if (modules != null) {
+            this.modules.addAll(modules);
+        }
     }
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -99,11 +110,11 @@ public class Course {
         this.learningOutcomes = learningOutcomes;
     }
 
-    public Integer getDuration() {
+    public Long getDuration() {
         return duration;
     }
 
-    public void setDuration(Integer duration) {
+    public void setDuration(Long duration) {
         this.duration = duration;
     }
 
@@ -112,7 +123,10 @@ public class Course {
     }
 
     public void setTags(Set<String> tags) {
-        this.tags = tags;
+        this.tags.clear();
+        if (tags != null) {
+            this.tags.addAll(tags);
+        }
     }
 
     public LocalDateTime getRequiredBy() {

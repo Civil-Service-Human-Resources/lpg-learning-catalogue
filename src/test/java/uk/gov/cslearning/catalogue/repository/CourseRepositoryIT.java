@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.OnlineModule;
 
 import java.util.Collections;
 

@@ -1,20 +1,16 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import java.net.URL;
 
+@JsonTypeName("link")
 public class LinkModule extends Module {
-
-    private static final String TYPE = "link";
 
     private URL location;
 
     public LinkModule(URL location) {
         this.location = location;
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
     }
 
     public URL getLocation() {
