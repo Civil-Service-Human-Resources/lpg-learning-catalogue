@@ -45,9 +45,9 @@ dependencies {
 
 compileJava.dependsOn(processResources)
 
-task integrationTests(type: Test) {
+task integrationTest(type: Test) {
     reports {
-        html.destination "$buildDir/reports/integration-tests"
+        html.destination "$buildDir/reports/integration-test"
     }
 
     include "**/*IT.*"
@@ -70,7 +70,7 @@ task integrationTests(type: Test) {
 }
 
 gradle.taskGraph.afterTask { Task task, TaskState taskState ->
-    if (task.name == "integrationTests") {
+    if (task.name == "integrationTest") {
         stopElastic {
             httpPort = 9998
         }

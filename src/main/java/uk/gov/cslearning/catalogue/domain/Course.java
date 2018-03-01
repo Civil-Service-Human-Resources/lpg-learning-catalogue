@@ -3,23 +3,18 @@ package uk.gov.cslearning.catalogue.domain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
-/*
-type: string .
-uri: string @index(exact) .
-availability: [dateTime] .
-location: string .
-price: string .
-requiredBy: dateTime .
-frequency: string .
-productCode: string .
- */
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Collections.unmodifiableList;
 
 @Document(indexName = "lpg", type = "course")
-public abstract class Course {
+public class Course {
 
     @Id
     private String id;
@@ -40,6 +35,11 @@ public abstract class Course {
 
     private Frequency frequency;
 
+    private List<Module> modules;
+
+    public Course() {
+    }
+
     public Course(String title, String shortDescription, String description, String learningOutcomes, Integer duration, Set<String> tags) {
         this.title = title;
         this.shortDescription = shortDescription;
@@ -47,6 +47,16 @@ public abstract class Course {
         this.learningOutcomes = learningOutcomes;
         this.duration = duration;
         this.tags = tags;
+        this.modules = new ArrayList<>();
+    }
+
+    public List<Module> getModules() {
+        return unmodifiableList(modules);
+    }
+
+    public void addModule(Module module) {
+        checkArgument(module != null);
+        this.modules.add(module);
     }
 
     public String getId() {
@@ -116,8 +126,6 @@ public abstract class Course {
     public void setFrequency(Frequency frequency) {
         this.frequency = frequency;
     }
-
-    public abstract String getType();
 
     @Override
     public String toString() {
