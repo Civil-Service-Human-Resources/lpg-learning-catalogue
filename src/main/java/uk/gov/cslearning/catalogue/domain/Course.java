@@ -50,6 +50,10 @@ public class Course {
         this.modules = new ArrayList<>();
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }
