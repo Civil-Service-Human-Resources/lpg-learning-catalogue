@@ -146,6 +146,21 @@ public class Course {
     }
 
     @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object == null) {
+            return false;
+        }
+        if (!(object instanceof Course)) {
+            return false;
+        }
+        Course rhs = (Course) object;
+        return this.id.equals(rhs.id);
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)

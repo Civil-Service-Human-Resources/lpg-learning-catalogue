@@ -65,11 +65,6 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.title", equalTo("title")));
     }
 
-    private Course createCourse() {
-        return new Course("title", "shortDescription", "description",
-                "learningOutcomes", 1000, emptySet());
-    }
-
     @Test
     public void shouldCreateCourseAndRedirectToNewResource() throws Exception {
 
@@ -93,5 +88,10 @@ public class CourseControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().string("location", "http://localhost/courses/" + newId));
+    }
+
+    private Course createCourse() {
+        return new Course("title", "shortDescription", "description",
+                "learningOutcomes", 1000L, emptySet());
     }
 }
