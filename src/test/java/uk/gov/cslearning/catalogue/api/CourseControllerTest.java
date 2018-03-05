@@ -90,6 +90,41 @@ public class CourseControllerTest {
                 .andExpect(header().string("location", "http://localhost/courses/" + newId));
     }
 
+    @Test
+    public void shouldUpdateExistingCourse() throws Exception {
+
+        Gson gson = new Gson();
+
+        Course course = createCourse();
+        when(courseRepository.existsById(course.getId())).thenReturn(true);
+        when(courseRepository.save(any())).thenReturn(course);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/courses/" + course.getId())
+                        .content(gson.toJson(course))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldReturnBadRequestIfUpdatedCourseDoesntExist() throws Exception {
+
+        Gson gson = new Gson();
+
+        Course course = createCourse();
+        when(courseRepository.existsById(course.getId())).thenReturn(false);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/courses/" + course.getId())
+                        .content(gson.toJson(course))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
                 "learningOutcomes", 1000L, emptySet());

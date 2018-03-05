@@ -9,13 +9,13 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping("/courses")
@@ -29,19 +29,45 @@ public class CourseController {
         this.courseRepository = courseRepository;
     }
 
-    @RequestMapping(method = POST)
+    @PostMapping
     public ResponseEntity<Void> create(@RequestBody Course course, UriComponentsBuilder builder) {
         Course newCourse = courseRepository.save(course);
         return ResponseEntity.created(builder.path("/courses/{courseId}").build(newCourse.getId())).build();
     }
 
-    @RequestMapping(method = GET)
+    @GetMapping(params = { "mandatory", "department" })
     public ResponseEntity<SearchResults> listMandatory(@RequestParam("department") String department) {
-        List<Course> mandatoryCourses = courseRepository.findMandatoryForDepartment(department);
-        return ResponseEntity.ok(new SearchResults(mandatoryCourses.stream().map(CourseSummary::new).collect(toList())));
+        List<Course> courses = courseRepository.findMandatory(department);
+        return ResponseEntity.ok(new SearchResults(courses.stream().map(CourseSummary::new).collect(toList())));
     }
 
-    @RequestMapping("/{courseId}")
+    @GetMapping(params = { "department", "areaOfWork" })
+    public ResponseEntity<SearchResults> listSuggested(@RequestParam("department") String department,
+                                                       @RequestParam("areaOfWork") String areaOfWork) {
+        List<Course> courses = courseRepository.findSuggested(department, areaOfWork);
+        return ResponseEntity.ok(new SearchResults(courses.stream().map(CourseSummary::new).collect(toList())));
+    }
+
+    @GetMapping
+    public ResponseEntity<SearchResults> listAll() {
+        Iterable<Course> courses = courseRepository.findAll();
+        return ResponseEntity.ok(new SearchResults(stream(courses.spliterator(), false)
+                .map(CourseSummary::new).collect(toList())));
+    }
+
+    @PutMapping(path = "/{courseId}")
+    public ResponseEntity<Void> update(@PathVariable("courseId") String courseId, @RequestBody Course course) {
+        if (!courseId.equals(course.getId())) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (!courseRepository.existsById(courseId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        courseRepository.save(course);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{courseId}")
     public ResponseEntity<Course> get(@PathVariable("courseId") String courseId) {
         Optional<Course> result = courseRepository.findById(courseId);
         return result

@@ -1,5 +1,7 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.math.BigDecimal;
@@ -18,7 +20,9 @@ public class FaceToFaceModule extends Module {
 
     private Collection<Availability> availability;
 
-    public FaceToFaceModule(String productCode, BigDecimal price) {
+    @JsonCreator
+    public FaceToFaceModule(@JsonProperty("productCode") String productCode,
+                            @JsonProperty("price") BigDecimal price) {
         this.productCode = productCode;
         this.price = price;
         this.availability = new HashSet<>();

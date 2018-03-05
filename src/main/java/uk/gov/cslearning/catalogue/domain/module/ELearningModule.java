@@ -1,5 +1,7 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -9,7 +11,8 @@ public class ELearningModule extends Module {
 
     private String startPage;
 
-    public ELearningModule(String startPage) {
+    @JsonCreator
+    public ELearningModule(@JsonProperty("startPage") String startPage) {
         setStartPage(startPage);
     }
 

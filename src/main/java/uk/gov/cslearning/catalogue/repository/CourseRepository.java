@@ -5,13 +5,15 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.Course;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public interface CourseRepository extends ElasticsearchRepository<Course, String> {
 
     @Query("{ \"terms\": { \"tags\": [ \"mandatory:all\", \"mandatory:?0\" ] } }")
-    List<Course> findMandatoryForDepartment(String department);
+    List<Course> findMandatory(String department);
+
+    // FIXME: query should ignore mandatory
+    @Query("{ \"terms\": { \"tags\": [ \"department:?0\", \"area-of-work:?1\" ] } }")
+    List<Course> findSuggested(String department, String areaOfWork);
 }
