@@ -9,8 +9,8 @@ import java.util.HashSet;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.unmodifiableCollection;
 
-@JsonTypeName("classroom")
-public class ClassroomModule extends Module {
+@JsonTypeName("face-to-face")
+public class FaceToFaceModule extends Module {
 
     private String productCode;
 
@@ -18,7 +18,7 @@ public class ClassroomModule extends Module {
 
     private Collection<Availability> availability;
 
-    public ClassroomModule(String productCode, BigDecimal price) {
+    public FaceToFaceModule(String productCode, BigDecimal price) {
         this.productCode = productCode;
         this.price = price;
         this.availability = new HashSet<>();

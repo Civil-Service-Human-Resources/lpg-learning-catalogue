@@ -10,10 +10,13 @@ public class CourseSummary {
 
     private String title;
 
+    private String shortDescription;
+
     public CourseSummary(Course course) {
         checkArgument(course != null);
         this.id = course.getId();
         this.title = course.getTitle();
+        this.shortDescription = course.getShortDescription();
     }
 
     public String getId() {
@@ -22,5 +25,9 @@ public class CourseSummary {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
     }
 }

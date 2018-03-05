@@ -4,13 +4,13 @@ spring:
     add-mappings: false
   security:
     user:
-      name: user
-      password: password
+      name: ${AUTH_USER:user}
+      password: ${AUTH_PASSWORD:password}
 
 server:
   port: 9001
 
 elasticsearch:
-  clusterName: local
-  host: 127.0.0.1
-  port: 9300
+  clusterName: ${ELASTICSEARCH_CLUSTER:local}
+  host: ${ELASTICSEARCH_HOST:127.0.0.1}
+  port: ${ELASTICSEARCH_PORT:9300}

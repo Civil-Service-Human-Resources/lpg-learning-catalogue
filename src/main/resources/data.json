@@ -16,7 +16,8 @@
     "modules": [
       {
         "type": "elearning",
-        "id": "S9T-TCTuTFKEVBfJMXz_BQ"
+        "id": "S9T-TCTuTFKEVBfJMXz_BQ",
+        "startPage": "index.htm"
       }
     ]
   },
@@ -37,7 +38,8 @@
     "modules": [
       {
         "type": "elearning",
-        "id": "njhc42EBkoePmbRmt5j1"
+        "id": "njhc42EBkoePmbRmt5j1",
+        "startPage": "launcher.html"
       }
     ]
   }
