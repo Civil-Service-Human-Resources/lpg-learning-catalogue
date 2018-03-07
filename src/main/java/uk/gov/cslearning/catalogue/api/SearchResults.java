@@ -1,16 +1,18 @@
 package uk.gov.cslearning.catalogue.api;
 
+import uk.gov.cslearning.catalogue.domain.Course;
+
 import java.util.List;
 
 public class SearchResults {
 
-    private List<CourseSummary> results;
+    private List<Course> results;
 
-    public SearchResults(List<CourseSummary> results) {
+    public SearchResults(List<Course> results) {
         this.results = results;
     }
 
-    public List<CourseSummary> getResults() {
+    public List<Course> getResults() {
         return results;
     }
 }

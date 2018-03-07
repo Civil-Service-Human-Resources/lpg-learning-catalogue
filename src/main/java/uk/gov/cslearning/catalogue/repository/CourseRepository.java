@@ -8,12 +8,11 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import java.util.List;
 
 @Repository
-public interface CourseRepository extends ElasticsearchRepository<Course, String> {
+public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository {
 
     @Query("{ \"terms\": { \"tags\": [ \"mandatory:all\", \"mandatory:?0\" ] } }")
     List<Course> findMandatory(String department);
 
-    // FIXME: query should ignore mandatory
-    @Query("{ \"terms\": { \"tags\": [ \"department:?0\", \"area-of-work:?1\" ] } }")
+    @Query("{ \"bool\": { \"must\": [{ \"terms\": { \"tags.keyword\": [ \"area-of-work:all\", \"area-of-work:?1\", \"department:all\", \"department:?0\" ]}}], \"must_not\": [ { \"terms\": { \"tags.keyword\": [ \"mandatory:all\", \"mandatory:?0\" ]}}]}}")
     List<Course> findSuggested(String department, String areaOfWork);
 }
