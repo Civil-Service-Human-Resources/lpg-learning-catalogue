@@ -3,6 +3,7 @@ package uk.gov.cslearning.catalogue.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -51,7 +52,7 @@ public class CourseController {
     public ResponseEntity<SearchResults> listSuggested(@RequestParam("department") String department,
                                                        @RequestParam("areaOfWork") String areaOfWork) {
         LOGGER.debug("Listing suggested courses for department {} and area of work {}", department, areaOfWork);
-        List<Course> courses = courseRepository.findSuggested(department, areaOfWork);
+        List<Course> courses = courseRepository.findSuggested(department, areaOfWork, PageRequest.of(0, 100));
         return ResponseEntity.ok(new SearchResults(courses));
     }
 

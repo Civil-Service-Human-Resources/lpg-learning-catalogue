@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
@@ -13,12 +14,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
@@ -28,6 +25,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CourseRepositoryIT {
+
+    private PageRequest all = PageRequest.of(0, 1000);
 
     @Autowired
     private CourseRepository repository;
@@ -98,6 +97,78 @@ public class CourseRepositoryIT {
         Collection<Course> mandatoryCourses = repository.findMandatory("co");
 
         assertThat(mandatoryCourses.size(), is(currentCount));
+    }
+
+    @Test
+    public void shouldFindSuggestedLearningByAreaOfWork() {
+
+        final String department = "co";
+        final String areaOfWork = "commercial";
+
+        final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
+
+        repository.save(createCourse("one", ImmutableSet.of("area-of-work:" + areaOfWork)));
+        repository.save(createCourse("two", ImmutableSet.of("area-of-work:" + areaOfWork)));
+        repository.save(createCourse("three", ImmutableSet.of("area-of-work:" + areaOfWork)));
+
+        Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
+
+        assertThat(courses.size(), is(currentCount + 3));
+    }
+
+    @Test
+    public void shouldFindSuggestedLearningByDepartment() {
+
+        final String department = "co";
+        final String areaOfWork = "commercial";
+
+        final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
+
+        repository.save(createCourse("one", ImmutableSet.of("department:" + department)));
+        repository.save(createCourse("two", ImmutableSet.of("department:" + department)));
+        repository.save(createCourse("three", ImmutableSet.of("department:" + department)));
+
+        Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
+
+        assertThat(courses.size(), is(currentCount + 3));
+    }
+
+    @Test
+    public void shouldFindSuggestedLearningByAreaOfWorkOrDepartment() {
+
+        final String department = "co";
+        final String areaOfWork = "commercial";
+
+        final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
+
+        repository.save(createCourse("one", ImmutableSet.of("department:" + department)));
+        repository.save(createCourse("two", ImmutableSet.of("department:" + department)));
+        repository.save(createCourse("three", ImmutableSet.of("department:" + department)));
+        repository.save(createCourse("four", ImmutableSet.of("area-of-work:" + areaOfWork)));
+        repository.save(createCourse("five", ImmutableSet.of("area-of-work:" + areaOfWork)));
+
+        Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
+
+        assertThat(courses.size(), is(currentCount + 5));
+    }
+
+    @Test
+    public void shouldFindAllSuggestedLearningExcludingMandatory() {
+
+        final String department = "co";
+        final String areaOfWork = "commercial";
+
+        final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
+
+        repository.save(createCourse("one", ImmutableSet.of("department:" + department)));
+        repository.save(createCourse("two", ImmutableSet.of("department:" + department)));
+        repository.save(createCourse("three", ImmutableSet.of("mandatory:" + department, "department:" + department)));
+        repository.save(createCourse("four", ImmutableSet.of("mandatory:" + department, "area-of-work:" + areaOfWork)));
+        repository.save(createCourse("five", ImmutableSet.of("area-of-work:" + areaOfWork)));
+
+        Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
+
+        assertThat(courses.size(), is(currentCount + 3));
     }
 
     private Course createCourse() {
