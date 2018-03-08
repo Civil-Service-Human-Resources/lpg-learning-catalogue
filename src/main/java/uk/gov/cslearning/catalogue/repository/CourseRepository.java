@@ -13,6 +13,8 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
     @Query("{ \"terms\": { \"tags\": [ \"mandatory:all\", \"mandatory:?0\" ] } }")
     List<Course> findMandatory(String department);
 
-    @Query("{ \"bool\": { \"must\": [{ \"terms\": { \"tags.keyword\": [ \"area-of-work:all\", \"area-of-work:?1\", \"department:all\", \"department:?0\" ]}}], \"must_not\": [ { \"terms\": { \"tags.keyword\": [ \"mandatory:all\", \"mandatory:?0\" ]}}]}}")
+    @Query("{ \"bool\": { " +
+                "\"must\": [{ \"terms\": { \"tags.keyword\": [ \"area-of-work:all\", \"area-of-work:?1\", \"department:all\", \"department:?0\" ]}}], " +
+                "\"must_not\": [ { \"terms\": { \"tags.keyword\": [ \"mandatory:all\", \"mandatory:?0\" ]}}]}}")
     List<Course> findSuggested(String department, String areaOfWork);
 }
