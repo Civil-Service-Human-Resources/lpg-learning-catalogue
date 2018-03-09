@@ -168,7 +168,7 @@ public class CourseRepositoryIT {
         repository.save(createCourse("one", department, false, null));
         repository.save(createCourse("two", department, false, null));
         repository.save(createCourse("three", department, true, null));
-        repository.save(createCourse("four", department, false, areaOfWork));
+        repository.save(createCourse("four", department, true, areaOfWork));
         repository.save(createCourse("five", null, false, areaOfWork));
 
         Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);

@@ -11,11 +11,11 @@ import java.util.List;
 @Repository
 public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository {
 
-    @Query("{ \"terms\": { \"tags\": [ \"mandatory:all\", \"mandatory:?0\" ] } }")
+    @Query("{ \"bool\": { \"must\": [{ \"match\": { \"modules.audiences.mandatory\": \"true\" } }, { \"term\": { \"modules.audiences.departments\": \"?0\" }}] }}")
     List<Course> findMandatory(String department);
 
     @Query("{ \"bool\": { " +
-                "\"should\": [{ \"terms\": { \"tags.keyword\": [ \"area-of-work:all\", \"area-of-work:?1\", \"department:all\", \"department:?0\" ]}}], " +
-                "\"must_not\": [ { \"terms\": { \"tags.keyword\": [ \"mandatory:all\", \"mandatory:?0\" ]}}]}}")
+                "\"should\": [{ \"match\": { \"modules.audiences.departments\": \"?0\" }}, { \"match\": { \"modules.audiences.areasOfWork\": \"?1\" }}], " +
+                "\"must_not\": [ { \"match\": { \"modules.audiences.mandatory\": \"true\" } }]}}")
     List<Course> findSuggested(String department, String areaOfWork, Pageable pageable);
 }
