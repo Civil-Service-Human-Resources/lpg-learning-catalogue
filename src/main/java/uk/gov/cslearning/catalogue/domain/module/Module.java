@@ -4,6 +4,12 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.elasticsearch.common.UUIDs;
 
+import java.util.Collection;
+import java.util.HashSet;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Collections.unmodifiableCollection;
+
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(FaceToFaceModule.class),
@@ -17,9 +23,23 @@ public abstract class Module {
 
     private String title;
 
-    private String description;
+    private Collection<Audience> audiences;
 
     public Module() {
+        audiences = new HashSet<>();
+    }
+
+    public Collection<Audience> getAudiences() {
+        return unmodifiableCollection(audiences);
+    }
+
+    public void setAudiences(Collection<Audience> audiences) {
+        this.audiences = audiences;
+    }
+
+    public void addAudience(Audience audience) {
+        checkArgument(audience != null);
+        this.audiences.add(audience);
     }
 
     public String getId() {
@@ -32,13 +52,5 @@ public abstract class Module {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

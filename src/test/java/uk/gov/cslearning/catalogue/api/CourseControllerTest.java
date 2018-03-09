@@ -127,6 +127,6 @@ public class CourseControllerTest {
 
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
-                "learningOutcomes", 1000L, emptySet());
+                "learningOutcomes", 1000L);
     }
 }

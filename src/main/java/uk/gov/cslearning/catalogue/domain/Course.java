@@ -1,22 +1,14 @@
 package uk.gov.cslearning.catalogue.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.Collections.unmodifiableList;
 
@@ -36,27 +28,19 @@ public class Course {
 
     private Long duration;
 
-    private Set<String> tags = new HashSet<>();
+    private BigDecimal price;
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime requiredBy;
-
-    private Frequency frequency;
-
-    @Field(type = FieldType.Nested)
     private List<Module> modules = new ArrayList<>();
 
     public Course() {
     }
 
-    public Course(String title, String shortDescription, String description, String learningOutcomes, Long duration, Set<String> tags) {
+    public Course(String title, String shortDescription, String description, String learningOutcomes, Long duration) {
         this.title = title;
         this.shortDescription = shortDescription;
         this.description = description;
         this.learningOutcomes = learningOutcomes;
         this.duration = duration;
-        setTags(tags);
     }
 
     public List<Module> getModules() {
@@ -118,31 +102,12 @@ public class Course {
         this.duration = duration;
     }
 
-    public Set<String> getTags() {
-        return tags;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setTags(Set<String> tags) {
-        this.tags.clear();
-        if (tags != null) {
-            this.tags.addAll(tags);
-        }
-    }
-
-    public LocalDateTime getRequiredBy() {
-        return requiredBy;
-    }
-
-    public void setRequiredBy(LocalDateTime requiredBy) {
-        this.requiredBy = requiredBy;
-    }
-
-    public Frequency getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(Frequency frequency) {
-        this.frequency = frequency;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     @Override

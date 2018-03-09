@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.repository;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +10,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.module.Audience;
+import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
+import uk.gov.cslearning.catalogue.domain.module.LinkModule;
+import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import java.util.Collection;
 import java.util.Set;
@@ -57,8 +62,8 @@ public class CourseRepositoryIT {
 
         final int currentCount = repository.findMandatory("co").size();
 
-        Course one = createCourse("one", ImmutableSet.of("mandatory:co"));
-        Course two = createCourse("two", ImmutableSet.of("mandatory:co"));
+        Course one = createCourse("one", "co", true, null);
+        Course two = createCourse("two", "co", true, null);
 
         repository.save(one);
         repository.save(two);
@@ -75,7 +80,7 @@ public class CourseRepositoryIT {
 
         final int currentCount = repository.findMandatory("co").size();
 
-        Course one = createCourse("one", ImmutableSet.of("mandatory:all"));
+        Course one = createCourse("one", "co", true, null);
 
         repository.save(one);
 
@@ -90,7 +95,7 @@ public class CourseRepositoryIT {
 
         final int currentCount = repository.findMandatory("co").size();
 
-        Course one = createCourse("one", ImmutableSet.of("mandatory:hmrc"));
+        Course one = createCourse("one", "hmrc", true, null);
 
         repository.save(one);
 
@@ -107,9 +112,9 @@ public class CourseRepositoryIT {
 
         final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
 
-        repository.save(createCourse("one", ImmutableSet.of("area-of-work:" + areaOfWork)));
-        repository.save(createCourse("two", ImmutableSet.of("area-of-work:" + areaOfWork)));
-        repository.save(createCourse("three", ImmutableSet.of("area-of-work:" + areaOfWork)));
+        repository.save(createCourse("one", null, false, areaOfWork));
+        repository.save(createCourse("two", null, false, areaOfWork));
+        repository.save(createCourse("three",null, false, areaOfWork));
 
         Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
 
@@ -124,9 +129,9 @@ public class CourseRepositoryIT {
 
         final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
 
-        repository.save(createCourse("one", ImmutableSet.of("department:" + department)));
-        repository.save(createCourse("two", ImmutableSet.of("department:" + department)));
-        repository.save(createCourse("three", ImmutableSet.of("department:" + department)));
+        repository.save(createCourse("one", department, false, null));
+        repository.save(createCourse("two", department, false, null));
+        repository.save(createCourse("three", department, false, null));
 
         Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
 
@@ -141,11 +146,11 @@ public class CourseRepositoryIT {
 
         final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
 
-        repository.save(createCourse("one", ImmutableSet.of("department:" + department)));
-        repository.save(createCourse("two", ImmutableSet.of("department:" + department)));
-        repository.save(createCourse("three", ImmutableSet.of("department:" + department)));
-        repository.save(createCourse("four", ImmutableSet.of("area-of-work:" + areaOfWork)));
-        repository.save(createCourse("five", ImmutableSet.of("area-of-work:" + areaOfWork)));
+        repository.save(createCourse("one", department, false, null));
+        repository.save(createCourse("two", department, false, null));
+        repository.save(createCourse("three", department, false, null));
+        repository.save(createCourse("four", null, false, areaOfWork));
+        repository.save(createCourse("five", null, false, areaOfWork));
 
         Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
 
@@ -160,11 +165,11 @@ public class CourseRepositoryIT {
 
         final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
 
-        repository.save(createCourse("one", ImmutableSet.of("department:" + department)));
-        repository.save(createCourse("two", ImmutableSet.of("department:" + department)));
-        repository.save(createCourse("three", ImmutableSet.of("mandatory:" + department, "department:" + department)));
-        repository.save(createCourse("four", ImmutableSet.of("mandatory:" + department, "area-of-work:" + areaOfWork)));
-        repository.save(createCourse("five", ImmutableSet.of("area-of-work:" + areaOfWork)));
+        repository.save(createCourse("one", department, false, null));
+        repository.save(createCourse("two", department, false, null));
+        repository.save(createCourse("three", department, true, null));
+        repository.save(createCourse("four", department, false, areaOfWork));
+        repository.save(createCourse("five", null, false, areaOfWork));
 
         Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
 
@@ -172,11 +177,27 @@ public class CourseRepositoryIT {
     }
 
     private Course createCourse() {
-        return createCourse("title", emptySet());
+        return createCourse("title", null, false, null);
     }
 
-    private Course createCourse(String title, Set<String> tags) {
-        return new Course(title, "shortDescription", "description",
-                "learningOutcomes", 1000L, tags);
+    private Course createCourse(String title, String department, Boolean mandatory, String areaOfWork) {
+        Course course = new Course(title, "shortDescription", "description",
+                "learningOutcomes", 1000L);
+
+        Audience audience = new Audience();
+        if (department != null) {
+            audience.setDepartments(ImmutableSet.of(department));
+        }
+        if (areaOfWork != null) {
+            audience.setAreasOfWork(ImmutableSet.of(areaOfWork));
+        }
+        audience.setMandatory(mandatory);
+
+        Module module = new FaceToFaceModule("productCode");
+        module.addAudience(audience);
+
+        course.setModules(ImmutableList.of(module));
+
+        return course;
     }
 }

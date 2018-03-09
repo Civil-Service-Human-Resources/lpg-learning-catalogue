@@ -16,15 +16,11 @@ public class FaceToFaceModule extends Module {
 
     private String productCode;
 
-    private BigDecimal price;
-
     private Collection<Availability> availability;
 
     @JsonCreator
-    public FaceToFaceModule(@JsonProperty("productCode") String productCode,
-                            @JsonProperty("price") BigDecimal price) {
+    public FaceToFaceModule(@JsonProperty("productCode") String productCode) {
         this.productCode = productCode;
-        this.price = price;
         this.availability = new HashSet<>();
     }
 
@@ -43,13 +39,5 @@ public class FaceToFaceModule extends Module {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 }
