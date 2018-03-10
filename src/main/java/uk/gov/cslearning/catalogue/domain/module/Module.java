@@ -34,7 +34,10 @@ public abstract class Module {
     }
 
     public void setAudiences(Collection<Audience> audiences) {
-        this.audiences = audiences;
+        this.audiences.clear();
+        if (audiences != null) {
+            this.audiences.addAll(audiences);
+        }
     }
 
     public void addAudience(Audience audience) {

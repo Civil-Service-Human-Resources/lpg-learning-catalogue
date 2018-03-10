@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -16,21 +15,23 @@ public class FaceToFaceModule extends Module {
 
     private String productCode;
 
-    private Collection<Availability> availability;
+    private Collection<Event> events;
 
     @JsonCreator
     public FaceToFaceModule(@JsonProperty("productCode") String productCode) {
         this.productCode = productCode;
-        this.availability = new HashSet<>();
+        this.events = new HashSet<>();
     }
 
-    public Collection<Availability> getAvailability() {
-        return unmodifiableCollection(availability);
+    public Collection<Event> getEvents() {
+        return unmodifiableCollection(events);
     }
 
-    public void addAvailability(Availability availability) {
-        checkArgument(availability != null);
-        this.availability.add(availability);
+    public void setEvents(Collection<Event> events) {
+        this.events.clear();
+        if (events != null) {
+            this.events.addAll(events);
+        }
     }
 
     public String getProductCode() {

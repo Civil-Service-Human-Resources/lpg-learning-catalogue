@@ -3,7 +3,10 @@ package uk.gov.cslearning.catalogue.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -42,26 +45,30 @@ public class CourseController {
     }
 
     @GetMapping(params = { "mandatory", "department" })
-    public ResponseEntity<SearchResults> listMandatory(@RequestParam("department") String department) {
+    public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
+                                                     PageParameters pageParameters) {
         LOGGER.debug("Listing mandatory courses for department {}", department);
-        List<Course> courses = courseRepository.findMandatory(department);
-        return ResponseEntity.ok(new SearchResults(courses));
+        Pageable pageable = pageParameters.getPageRequest();
+        Page<Course> page = courseRepository.findMandatory(department, pageParameters.getPageRequest());
+        return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
     @GetMapping(params = { "department", "areaOfWork" })
-    public ResponseEntity<SearchResults> listSuggested(@RequestParam("department") String department,
-                                                       @RequestParam("areaOfWork") String areaOfWork) {
+    public ResponseEntity<PageResults<Course>> listSuggested(@RequestParam("department") String department,
+                                                       @RequestParam("areaOfWork") String areaOfWork,
+                                                       PageParameters pageParameters) {
         LOGGER.debug("Listing suggested courses for department {} and area of work {}", department, areaOfWork);
-        List<Course> courses = courseRepository.findSuggested(department, areaOfWork, PageRequest.of(0, 100));
-        return ResponseEntity.ok(new SearchResults(courses));
+        Pageable pageable = pageParameters.getPageRequest();
+        Page<Course> page = courseRepository.findSuggested(department, areaOfWork, pageable);
+        return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
     @GetMapping
-    public ResponseEntity<SearchResults> listAll() {
+    public ResponseEntity<PageResults<Course>> listAll(PageParameters pageParameters) {
         LOGGER.debug("Listing all courses");
-        Iterable<Course> courses = courseRepository.findAll();
-        return ResponseEntity.ok(new SearchResults(stream(courses.spliterator(), false)
-                .collect(toList())));
+        Pageable pageable = pageParameters.getPageRequest();
+        Page<Course> page = courseRepository.findAll(pageable);
+        return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
     @PutMapping(path = "/{courseId}")

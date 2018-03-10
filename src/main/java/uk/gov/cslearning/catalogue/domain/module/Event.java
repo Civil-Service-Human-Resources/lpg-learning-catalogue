@@ -10,7 +10,7 @@ import org.elasticsearch.common.UUIDs;
 
 import java.time.LocalDateTime;
 
-public class Availability {
+public class Event {
 
     private String id = UUIDs.randomBase64UUID();
 
@@ -21,8 +21,8 @@ public class Availability {
     private String location;
 
     @JsonCreator
-    public Availability(@JsonProperty("date") LocalDateTime date,
-                        @JsonProperty("location") String location) {
+    public Event(@JsonProperty("date") LocalDateTime date,
+                 @JsonProperty("location") String location) {
         this.date = date;
         this.location = location;
     }
