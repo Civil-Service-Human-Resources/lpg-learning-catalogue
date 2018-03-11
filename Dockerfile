@@ -13,4 +13,5 @@ EXPOSE 9000
 
 CMD java -jar /data/app.jar
 
+ADD environ/wait-for-it.sh .
 ADD build/libs/learning-catalogue.jar /data/app.jar
