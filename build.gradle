@@ -14,12 +14,12 @@ apply plugin: 'io.spring.dependency-management'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-group = 'uk.gov.civilservice'
+group = 'uk.gov.cslearning'
 version = '0.1.0-' + (System.getenv('TRAVIS_COMMIT') ?: 'local')
 
 bootJar {
     archiveName = 'learning-catalogue.jar'
-    mainClassName = 'uk.gov.cslerning.catalogue.Application'
+    mainClassName = 'uk.gov.cslearning.catalogue.Application'
 }
 
 dependencies {
