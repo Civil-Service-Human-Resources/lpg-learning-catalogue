@@ -1,10 +1,10 @@
 [
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "ZQr0dDcLTGO6Vkwxd-KOfw",
+    "id": "PQiuGofdRZWN2YJ4JOrKEg",
     "modules": [
       {
-        "id": "US4Box9OTPWe6COfdRz_cQ",
+        "id": "BGQXgXPCSxiyzJL4NTcwLw",
         "audiences": [
           {
             "areasOfWork": [
@@ -17,7 +17,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ]
           },
           {
@@ -33,7 +40,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "L9faZo8YRBWd3uxvEjKR-g",
+        "id": "bNoX3YjKSg2R9bKNKC7qUw",
         "audiences": [
           {
             "areasOfWork": [
@@ -46,7 +53,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ]
           },
           {
@@ -62,7 +76,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "TB1E8YdtTsKvEArJFeISRg",
+        "id": "FV97IDB9QQGEkuk4yIDTFA",
         "audiences": [
           {
             "areasOfWork": [
@@ -75,7 +89,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ]
           },
           {
@@ -91,7 +112,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "Wkhlw1rJTKm5a_L6gjJXHw",
+        "id": "A7eyP5IMS5CqogF2BrPydg",
         "audiences": [
           {
             "areasOfWork": [
@@ -104,7 +125,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ]
           },
           {
@@ -120,7 +148,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "B_Pyq3IcSGmvYrRWp-5zdg",
+        "id": "AZV6h5fETsWVOUTP6IfsNw",
         "audiences": [
           {
             "areasOfWork": [
@@ -141,7 +169,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -151,7 +186,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "AiaRDEUbTyKSmw04vt-7rA",
+        "id": "AzU6PX7GTRif3tkDWWU1wA",
         "audiences": [
           {
             "areasOfWork": [
@@ -172,7 +207,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -182,7 +224,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "eHnmMPyRQ0q44D0eAYGXcw",
+        "id": "JS7u3AnzSWSkedQBTiewmQ",
         "audiences": [
           {
             "areasOfWork": [
@@ -203,7 +245,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -213,7 +262,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "W_UecHhKS_-oelz1pwD4Qw",
+        "id": "IvnQdGubTbGntyapcFmLaQ",
         "audiences": [
           {
             "areasOfWork": [
@@ -234,7 +283,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -253,10 +309,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "VnmrS7zaQP638B1mm6dypw",
+    "id": "cGS-g2uWTA2ey1SMTzHMsg",
     "modules": [
       {
-        "id": "ObA2tyn7TL6Fy1Tc7rdTvw",
+        "id": "L-Grw8LxRpK6HJ9a5pO01A",
         "audiences": [
           {
             "areasOfWork": [
@@ -269,7 +325,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -280,7 +343,14 @@
               "dh"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -291,7 +361,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -301,7 +378,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "FCVR2_TdRHOGY7H91wechA",
+        "id": "UI3GWM21TLquv_mAXZGFgA",
         "audiences": [
           {
             "areasOfWork": [
@@ -314,7 +391,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -325,7 +409,14 @@
               "dh"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -336,7 +427,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -346,7 +444,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "K4w4S-o5SFSnY6c7gTrkDw",
+        "id": "OL00c8h0TaOmNxFzLXIMvA",
         "audiences": [
           {
             "areasOfWork": [
@@ -359,7 +457,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -370,7 +475,14 @@
               "dh"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -381,7 +493,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -391,7 +510,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "MtvP5gloRCGvuuBl4jz65w",
+        "id": "BdDJORGURdKgTip0R14vVg",
         "audiences": [
           {
             "areasOfWork": [
@@ -404,7 +523,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -415,7 +541,14 @@
               "dh"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -426,7 +559,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -436,7 +576,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "LUlUplFOQwCh9YQRFum4sA",
+        "id": "VtMuVJ5qT_K81Wm2KwjAgA",
         "audiences": [
           {
             "areasOfWork": [
@@ -449,7 +589,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -460,7 +607,14 @@
               "dh"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -471,7 +625,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -481,7 +642,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "QpPnmTysTy6nBLHsGLgXKQ",
+        "id": "SFHvSd-xSmWZYkOMP7hbuQ",
         "audiences": [
           {
             "areasOfWork": [
@@ -494,7 +655,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -505,7 +673,14 @@
               "dh"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "frequency": "YEARLY",
             "requiredBy": "2001-03-31T00:00:00.000Z"
@@ -516,7 +691,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -526,7 +708,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "Z2jbQSb_TNaxbSsHLZ7izA",
+        "id": "AQgjKCglRvOl_vEfrDHOXQ",
         "audiences": [
           {
             "areasOfWork": [
@@ -557,10 +739,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "WiRcpTHxSZmEyb-k2lddAg",
+    "id": "Puw68aogTXuUc4Ai7cjoaA",
     "modules": [
       {
-        "id": "CJPeUlimRriwHpmy5VrTYA",
+        "id": "Q4tYzGKPSdqsuLTFwz3Ftw",
         "audiences": [
           {
             "areasOfWork": [
@@ -573,7 +755,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ]
           },
           {
@@ -590,7 +779,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "GaIAgUEHTJGXv-8e4IbQnQ",
+        "id": "RY1S42RMQSGYNV10FSZXLg",
         "audiences": [
           {
             "areasOfWork": [
@@ -603,7 +792,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ]
           },
           {
@@ -620,7 +816,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "W52ivv4xSHaOLMyxHkjsGA",
+        "id": "KUGMyd5fTsi0W9ut9BBq7w",
         "audiences": [
           {
             "areasOfWork": [
@@ -633,7 +829,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ]
           },
           {
@@ -650,7 +853,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "QBV_tTuqTT6CbvjUp7caMg",
+        "id": "JcmjrsqlRm6dTRDqGDw1Gg",
         "audiences": [
           {
             "areasOfWork": [
@@ -678,7 +881,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "GqYf7WJsQ0eSPABSazYPWw",
+        "id": "DGDDUySBR4OD0ZLk3VnGPQ",
         "audiences": [
           {
             "areasOfWork": [
@@ -691,7 +894,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ]
           },
           {
@@ -700,7 +910,14 @@
               "hmrc"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ],
             "requiredBy": "2001-03-31T00:00:00.000Z"
           }
@@ -710,7 +927,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "WZiWaGw3SmWAAJDl76PUrg",
+        "id": "KKhsWz9aRzG1HNiaR4ABoA",
         "audiences": [
           {
             "areasOfWork": [
@@ -723,7 +940,14 @@
               "co"
             ],
             "grades": [
-              "all"
+              "AA",
+              "AO",
+              "EO",
+              "HEO",
+              "SEO",
+              "G6",
+              "G7",
+              "SCS"
             ]
           }
         ],
@@ -732,7 +956,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "c6Bi0FVmS-iA4FsNMQvoSw",
+        "id": "AUkVYYD9QBaMJh8GpiWMyA",
         "audiences": [
           {
             "areasOfWork": [
@@ -745,7 +969,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "Zyg_Ae2MSD-xMY8YP30zCA",
+        "id": "WxsLT3-jQOio46lnuVGnpw",
         "audiences": [
           {
             "areasOfWork": [
@@ -767,10 +991,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "DBQEXuazTdSjhfFCq5gehA",
+    "id": "YGa4lvbLSPCa5ojSzeQw4g",
     "modules": [
       {
-        "id": "KS2HKQVoTCKTnxSeLceNFA",
+        "id": "BhfAyw4KTd6NPU4mHsNDhg",
         "audiences": [
           {
             "areasOfWork": [
@@ -783,7 +1007,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "G-hlIUnJQXiJNp_SU2uErA",
+        "id": "Zo8jPQ83RKGVt7Bc6fc91Q",
         "audiences": [
           {
             "areasOfWork": [
@@ -796,7 +1020,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "TI3vmqZBT7eMa37TMLuUUA",
+        "id": "MVwux5vJTsCvEdvXp0qmPA",
         "audiences": [
           {
             "areasOfWork": [
@@ -809,7 +1033,7 @@
         "startPage": "fixme.html"
       },
       {
-        "id": "E7yT9Gg0SVW9-YOqF6GEmQ",
+        "id": "CZvitDyMSaC0zk7knhJj9w",
         "audiences": [
           {
             "areasOfWork": [
@@ -831,10 +1055,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "GT0_Qq0zTUK8jxyjPKlrCA",
+    "id": "AX9l1KArRqOSzSWGfW-gxw",
     "modules": [
       {
-        "id": "MyXkG8j_RmKJZ0R5EVmD3Q",
+        "id": "JljXom00Q--lT-Nf8y_HeA",
         "productCode": "CM2",
         "audiences": [
           {
@@ -865,10 +1089,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "BCJ813nORuGT3mycxmsnSg",
+    "id": "IUPPKQ3sQsC58JV6Tkpt9g",
     "modules": [
       {
-        "id": "O0LHyiBER9CVvwnloyISBA",
+        "id": "Xku-KeD2Tku_yrqH8mKhmA",
         "productCode": "CM5",
         "audiences": [
           {
@@ -888,9 +1112,9 @@
           }
         ],
         "type": "face-to-face",
-        "availability": [
+        "events": [
           {
-            "id": "FbBTOFtdTLaUAznz0ygdEw",
+            "id": "eNoXwqQOSgy6T51F92_mVw",
             "location": "London",
             "date": "2018-05-15T00:00:00.000Z"
           }
@@ -906,10 +1130,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "CVytUZQuRyG6W9D3OA6Ctw",
+    "id": "MMuoblnHR1ecUr0-PA9Z7g",
     "modules": [
       {
-        "id": "EoNCMwcKQH24EJRcEdWKTg",
+        "id": "YY-pwjV7TKeoyLdYBf4D1A",
         "productCode": "SCS-QAF",
         "audiences": [
           {
@@ -934,10 +1158,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "SAvoCg7XTemB8_6Ds3uf2Q",
+    "id": "f6yQG1VYQ5ehX5WlBrHTKQ",
     "modules": [
       {
-        "id": "MWj_zTyIT1C7SY0b9qjUSg",
+        "id": "IVYUmrQWRMefkmpOZdnlyg",
         "productCode": "FI2",
         "audiences": [
           {
@@ -957,9 +1181,9 @@
           }
         ],
         "type": "face-to-face",
-        "availability": [
+        "events": [
           {
-            "id": "UwXJTHtDQqG9IUq7XQ7dHQ",
+            "id": "JZbwFmhARFyPoQyd4irIzg",
             "location": "London",
             "date": "2018-05-03T00:00:00.000Z"
           }
@@ -975,10 +1199,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "eeNya-XiQkWj67x_03l2Vw",
+    "id": "clKzFyqKTyy8UUkJutboJA",
     "modules": [
       {
-        "id": "f9tw-p45QGGxQN_zQhM-Ww",
+        "id": "cY5e5pXtS0S6ISOqPRjj2A",
         "productCode": " FI4",
         "audiences": [
           {
@@ -996,29 +1220,29 @@
           }
         ],
         "type": "face-to-face",
-        "availability": [
+        "events": [
           {
-            "id": "ZlOGmdgTQT6Hnd-vNiIeyg",
+            "id": "Ep3O1TjzQ1eLNGnngwNkfQ",
             "location": "Bristol",
             "date": "2018-04-17T00:00:00.000Z"
           },
           {
-            "id": "RObiYTyJRniTJmvGLxoJMw",
+            "id": "cgK2M7agRsC4Zatr3z9RxA",
             "location": "London",
             "date": "2018-05-15T00:00:00.000Z"
           },
           {
-            "id": "BvuzqQLZSBeNOcwQWkNnIw",
+            "id": "Zx-eFzQbS6G3CqK6vP_cOQ",
             "location": "Manchester",
             "date": "2018-05-24T00:00:00.000Z"
           },
           {
-            "id": "Psh0RpjPRG-0SHqAFJrIbA",
+            "id": "c25GXDCcQDCfYe6tt0yxsw",
             "location": "Manchester",
             "date": "2018-06-13T00:00:00.000Z"
           },
           {
-            "id": "RO2zyfRZTDmqJJCkmHAjqQ",
+            "id": "T-NlUOxqTmeSciZCZAVNvw",
             "location": "London",
             "date": "2018-06-27T00:00:00.000Z"
           }
@@ -1034,10 +1258,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "AsZKe1S_R4iDNHhdm1GQFw",
+    "id": "BUfZwRaWQrKAhSSjlJ7lCg",
     "modules": [
       {
-        "id": "dtM_N3jnSBKFw2L1_teBZg",
+        "id": "GUBj8o6EQvKntlBJoJQFhg",
         "productCode": "FI3",
         "audiences": [
           {
@@ -1055,24 +1279,24 @@
           }
         ],
         "type": "face-to-face",
-        "availability": [
+        "events": [
           {
-            "id": "Pjn7FcS0QL25HUHyyKQ8Ow",
+            "id": "TLV2n6yZQZavmYZVBaGHhQ",
             "location": "London",
             "date": "2018-03-27T00:00:00.000Z"
           },
           {
-            "id": "aPHvE1hARZWMlUyrBbk-5Q",
+            "id": "K19ai6cwRRKwJg98gFIt5Q",
             "location": "London",
             "date": "2018-04-24T00:00:00.000Z"
           },
           {
-            "id": "FLBQlX_qQ-61xaqzi65euA",
+            "id": "KgRRYOfEQIa6IsDoYcBYUg",
             "location": "London",
             "date": "2018-05-25T00:00:00.000Z"
           },
           {
-            "id": "ct4nwdz5RruICRMZTT-1sw",
+            "id": "d_ZPGGq5QkCUoTQTkGpdog",
             "location": "London",
             "date": "2018-06-15T00:00:00.000Z"
           }
@@ -1088,10 +1312,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "XqrTDj43S1qE157qeEhU1g",
+    "id": "V2IaU64NRqantlNniViEgQ",
     "modules": [
       {
-        "id": "bkJJ5MyCT1qobSFaYYaKKA",
+        "id": "OdjEpK08RqO49Wh02z1hSw",
         "productCode": "FI1",
         "audiences": [
           {
@@ -1109,14 +1333,14 @@
           }
         ],
         "type": "face-to-face",
-        "availability": [
+        "events": [
           {
-            "id": "HGEyXo3NTZeoTV5ybqwgzg",
+            "id": "CWUIkUKSSa-ypbtmxyWg8Q",
             "location": "London",
             "date": "2018-05-03T00:00:00.000Z"
           },
           {
-            "id": "QPQFlH9MT9WK3xn4EP50WA",
+            "id": "IKfLZ8ExRt6MlRUvStyKDQ",
             "location": "London",
             "date": "2018-06-15T00:00:00.000Z"
           }
@@ -1132,10 +1356,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "XvpRXd3QShyApGITNGrPEA",
+    "id": "BfRO_1F3RFONpMNHEaemIQ",
     "modules": [
       {
-        "id": "YBk8DnfOQJi2gE5s51PSAA",
+        "id": "X9V526wkRGunNiNkvU7SGA",
         "productCode": "DG18",
         "audiences": [
           {
@@ -1150,14 +1374,14 @@
           }
         ],
         "type": "face-to-face",
-        "availability": [
+        "events": [
           {
-            "id": "adA-9bNgTBSabcY_BMcmkQ",
+            "id": "MBP2-UfWQbWzxfq7JxmHVQ",
             "location": "London",
             "date": "2018-03-27T00:00:00.000Z"
           },
           {
-            "id": "P1i-5k-6SMKAMycyIeSD2Q",
+            "id": "SfLmNlfiTYy_hRYSZlG0yw",
             "location": "London",
             "date": "2018-05-29T00:00:00.000Z"
           }
@@ -1173,10 +1397,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "QRy2hwkTQ4mDyDqTyy1p0Q",
+    "id": "Z1FoDoVLR7WcI3_vu0B-sA",
     "modules": [
       {
-        "id": "NKejLBiKQsCJH_tui7Rrrg",
+        "id": "TKWPcDZKTtG0agFL8Qluag",
         "productCode": "DG16",
         "audiences": [
           {
@@ -1193,9 +1417,9 @@
           }
         ],
         "type": "face-to-face",
-        "availability": [
+        "events": [
           {
-            "id": "PwZX2aOKRYS-0Svh2VtZiA",
+            "id": "HKoAgLydRI-kxzHsbpmD9w",
             "location": "London",
             "date": "2018-05-09T00:00:00.000Z"
           }
@@ -1211,10 +1435,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "ZxdZyzLYQnq4HNFFriNjNw",
+    "id": "f3yVjzeDQWOyYBLnGHVYMw",
     "modules": [
       {
-        "id": "XNynmqmlQKOYmYd_NOhqrA",
+        "id": "OdnzCHiDQpuSMD9JukHgTQ",
         "productCode": "DG1",
         "audiences": [
           {
@@ -1234,9 +1458,9 @@
           }
         ],
         "type": "face-to-face",
-        "availability": [
+        "events": [
           {
-            "id": "dIGer8rySVim5VJGDfNA9A",
+            "id": "STPgHIPUTJePj79K3I9Okw",
             "location": "London",
             "date": "2018-05-24T00:00:00.000Z"
           }
@@ -1252,10 +1476,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "FwHWxxFsRQ6fxnyFVXXNfw",
+    "id": "LoDWyNzVROWJ3eNoPfX4OA",
     "modules": [
       {
-        "id": "BoHlvh1sSBycVTGdF_rX3g",
+        "id": "A0lquW1uROuEgwB5mJQSDA",
         "productCode": "PD14",
         "audiences": [
           {
@@ -1282,10 +1506,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "a6u9BZFURMOWY34C5LKI0A",
+    "id": "LIxjbVi5TBmYqhhcX3T9JQ",
     "modules": [
       {
-        "id": "N4CpABdXRL6_7pmWLWI_aQ",
+        "id": "IfRS1MmgRzKBVUWgspSzIg",
         "productCode": "PD11",
         "audiences": [
           {
@@ -1312,10 +1536,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "E1gEAg5zQBSzCT_TmfWnpQ",
+    "id": "IdxhdtuUQHGthRyYxT1dHw",
     "modules": [
       {
-        "id": "YGkOqKziTZCLCEVG7Sm0Gg",
+        "id": "dxZ9zhJ3TGu3Kz_j3Q0B2g",
         "productCode": "PD48",
         "audiences": [
           {
@@ -1344,10 +1568,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "U0YG995BQz2nDusVvJNWCw",
+    "id": "aC5iJR65QOCpOCV53s8XCA",
     "modules": [
       {
-        "id": "WgywPJf0SA2RhAgvRA0BpA",
+        "id": "abCjPE-rSGyOMroz3CD9hg",
         "productCode": "PD47",
         "audiences": [
           {
@@ -1374,10 +1598,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "ZiIae8RjSiiBnwHxpJLlsg",
+    "id": "duQK0fT-TdiqjQWZgeT4oA",
     "modules": [
       {
-        "id": "NzLDmAFLTteBdLa8ydv8TQ",
+        "id": "KWeGhGejT7OA2xGLm5D_kQ",
         "productCode": "PD30",
         "audiences": [
           {
@@ -1404,10 +1628,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "N8HMTd7zT5e20LG8kj5zFQ",
+    "id": "S2mpIYLzREaU1Hvwcbp4aQ",
     "modules": [
       {
-        "id": "RR1Q37ZaRQatjxKv7iMrUQ",
+        "id": "MEH0quCZTaOppJwVYaP9zA",
         "productCode": "PD38",
         "audiences": [
           {
@@ -1435,10 +1659,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "ERzi6ClwSR23uRUOzwGcRw",
+    "id": "fO8C050aQHCp8bIoB4YFxQ",
     "modules": [
       {
-        "id": "WF4hDqk9RoCzB-6KKUyr_Q",
+        "id": "NErg-yqdTSqaCGYMs5V6zQ",
         "productCode": "PD32",
         "audiences": [
           {
@@ -1465,10 +1689,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "BMh7BkB0TSi0azrlFiF3wQ",
+    "id": "Cr5we4uvT6SEPmzoYq5oOA",
     "modules": [
       {
-        "id": "RDEnA5clSIGO5J7NnzCeIg",
+        "id": "Ds1HJnEuR7K1hvSZATXGGw",
         "productCode": "PD33",
         "audiences": [
           {
@@ -1484,24 +1708,24 @@
           }
         ],
         "type": "face-to-face",
-        "availability": [
+        "events": [
           {
-            "id": "XyuGuV-JTguJAz171D73Ng",
+            "id": "d5exsI9yTnGbcXcujZqyIw",
             "location": "Birmingham",
             "date": "2018-04-23T00:00:00.000Z"
           },
           {
-            "id": "USQkWrMbQM-Zi2qMUn0Pmw",
+            "id": "VoPevItRSMK9JFyvsf18rg",
             "location": "Birmingham",
             "date": "2018-04-24T00:00:00.000Z"
           },
           {
-            "id": "TVkBw0YjQZ-3eoMEMQ1lMQ",
+            "id": "PwgSMOQBSO690bB0S1EfgA",
             "location": "London",
             "date": "2018-05-03T00:00:00.000Z"
           },
           {
-            "id": "BV8PMfqKQhu5pq1nyILPnw",
+            "id": "GvzVbmfGTReSeReSOrGiGg",
             "location": "London",
             "date": "2018-05-04T00:00:00.000Z"
           }
@@ -1517,10 +1741,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "Da1hMEOPRiS1reyX3vCQMQ",
+    "id": "Db12DiNMQc62vZ1OrK01tA",
     "modules": [
       {
-        "id": "JuG13hIxRZ2MA38F355nAA",
+        "id": "eFTHAlIfQQ-m3r6RDHafxQ",
         "productCode": "GDLU",
         "audiences": [
           {
@@ -1552,10 +1776,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "ZYY4dP9RQnqTbK0pRLTCBQ",
+    "id": "a9RL6MADToScNGS1jZ1AGA",
     "modules": [
       {
-        "id": "GN_3MDr6SMurqZfp7fQMWA",
+        "id": "SIACOgC5This6UxXvHQxsA",
         "productCode": "GDUSMPS",
         "audiences": [
           {
@@ -1587,10 +1811,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "RO9J1KWnRX250I_SLKhfpg",
+    "id": "P68yEWNFQsqd1KlDULHzdA",
     "modules": [
       {
-        "id": "LfTvu7vdRlKsNFU-KMWO4Q",
+        "id": "cO_C0R-7ToC0kkDl4sO3OA",
         "productCode": "GDSUN",
         "audiences": [
           {
@@ -1622,10 +1846,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "fCbcSMlNTRmfLxXABjeunw",
+    "id": "V5zCtQlGQ4uFkKi86AOTnA",
     "modules": [
       {
-        "id": "VAD7L-NcQLO7CGyy28ZBXA",
+        "id": "djTvFGaARaqeNDpcphmHTg",
         "productCode": "",
         "audiences": [
           {
@@ -1657,10 +1881,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "FB3oW7B4T5qydh_0h7eYSQ",
+    "id": "fuMWgYo2Qqi4opu0SY3Keg",
     "modules": [
       {
-        "id": "VKzXXNZoTqCWVQ6oTmPVVA",
+        "id": "EBrMWiP6Qm6o1cN7EnIwqQ",
         "productCode": "",
         "audiences": [
           {
@@ -1693,10 +1917,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "Rr2UXn-gRDqVLaHVIMG9iQ",
+    "id": "bZZxANl_SROCiHiePybNYQ",
     "modules": [
       {
-        "id": "EzNgDP2HRl-gneuccIurtg",
+        "id": "BeIbqS2jShiKQwYiN7yAgg",
         "productCode": "",
         "audiences": [
           {
@@ -1728,10 +1952,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "FMhL-QJJS-KMg_ghYGej-A",
+    "id": "fj78scU1SoihSVV7KzQTjA",
     "modules": [
       {
-        "id": "V24DAZW_QyO05kmR_QoFQQ",
+        "id": "BEOOejHqTzWfSCy_FSyRYw",
         "productCode": "",
         "audiences": [
           {
@@ -1763,10 +1987,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "OsUWGEDKTxye4J4BxTQPOg",
+    "id": "COW5q47GQB2C-HIzWdmTrg",
     "modules": [
       {
-        "id": "U2HEPgqyT6W9cX6Cadu1oA",
+        "id": "UdxRxp5wTW6AOFYFEf91cQ",
         "productCode": "",
         "audiences": [
           {
