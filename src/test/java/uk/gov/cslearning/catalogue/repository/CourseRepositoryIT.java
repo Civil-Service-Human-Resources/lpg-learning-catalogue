@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -60,7 +61,7 @@ public class CourseRepositoryIT {
     @Test
     public void shouldFindMandatoryCoursesForDepartment() {
 
-        final int currentCount = repository.findMandatory("co").size();
+        final long currentCount = repository.findMandatory("co", all).getTotalElements();
 
         Course one = createCourse("one", "co", true, null);
         Course two = createCourse("two", "co", true, null);
@@ -68,40 +69,40 @@ public class CourseRepositoryIT {
         repository.save(one);
         repository.save(two);
 
-        Collection<Course> mandatoryCourses = repository.findMandatory("co");
+        Page<Course> page = repository.findMandatory("co", all);
 
-        assertThat(mandatoryCourses.size(), is(currentCount + 2));
-        assertThat(mandatoryCourses, hasItem(one));
-        assertThat(mandatoryCourses, hasItem(two));
+        assertThat(page.getTotalElements(), is(currentCount + 2));
+        assertThat(page.getContent(), hasItem(one));
+        assertThat(page.getContent(), hasItem(two));
     }
 
     @Test
     public void shouldFindMandatoryCoursesForAll() {
 
-        final int currentCount = repository.findMandatory("co").size();
+        final long currentCount = repository.findMandatory("co", all).getTotalElements();
 
         Course one = createCourse("one", "co", true, null);
 
         repository.save(one);
 
-        Collection<Course> mandatoryCourses = repository.findMandatory("co");
+        Page<Course> page = repository.findMandatory("co", all);
 
-        assertThat(mandatoryCourses.size(), is(currentCount + 1));
-        assertThat(mandatoryCourses, hasItem(one));
+        assertThat(page.getTotalElements(), is(currentCount + 1));
+        assertThat(page.getContent(), hasItem(one));
     }
 
     @Test
     public void shouldNotFindMandatoryCoursesForOtherDepartment() {
 
-        final int currentCount = repository.findMandatory("co").size();
+        final long currentCount = repository.findMandatory("co", all).getTotalElements();
 
         Course one = createCourse("one", "hmrc", true, null);
 
         repository.save(one);
 
-        Collection<Course> mandatoryCourses = repository.findMandatory("co");
+        Page<Course> page = repository.findMandatory("co", all);
 
-        assertThat(mandatoryCourses.size(), is(currentCount));
+        assertThat(page.getTotalElements(), is(currentCount));
     }
 
     @Test
@@ -110,15 +111,15 @@ public class CourseRepositoryIT {
         final String department = "co";
         final String areaOfWork = "commercial";
 
-        final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
+        final long currentCount = repository.findSuggested(department, areaOfWork, all).getTotalElements();
 
         repository.save(createCourse("one", null, false, areaOfWork));
         repository.save(createCourse("two", null, false, areaOfWork));
         repository.save(createCourse("three",null, false, areaOfWork));
 
-        Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
+        Page<Course> page = repository.findSuggested(department, areaOfWork, all);
 
-        assertThat(courses.size(), is(currentCount + 3));
+        assertThat(page.getTotalElements(), is(currentCount + 3));
     }
 
     @Test
@@ -127,15 +128,15 @@ public class CourseRepositoryIT {
         final String department = "co";
         final String areaOfWork = "commercial";
 
-        final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
+        final long currentCount = repository.findSuggested(department, areaOfWork, all).getTotalElements();
 
         repository.save(createCourse("one", department, false, null));
         repository.save(createCourse("two", department, false, null));
         repository.save(createCourse("three", department, false, null));
 
-        Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
+        Page<Course> page = repository.findSuggested(department, areaOfWork, all);
 
-        assertThat(courses.size(), is(currentCount + 3));
+        assertThat(page.getTotalElements(), is(currentCount + 3));
     }
 
     @Test
@@ -144,7 +145,7 @@ public class CourseRepositoryIT {
         final String department = "co";
         final String areaOfWork = "commercial";
 
-        final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
+        final long currentCount = repository.findSuggested(department, areaOfWork, all).getTotalElements();
 
         repository.save(createCourse("one", department, false, null));
         repository.save(createCourse("two", department, false, null));
@@ -152,9 +153,9 @@ public class CourseRepositoryIT {
         repository.save(createCourse("four", null, false, areaOfWork));
         repository.save(createCourse("five", null, false, areaOfWork));
 
-        Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
+        Page<Course> page = repository.findSuggested(department, areaOfWork, all);
 
-        assertThat(courses.size(), is(currentCount + 5));
+        assertThat(page.getTotalElements(), is(currentCount + 5));
     }
 
     @Test
@@ -163,7 +164,7 @@ public class CourseRepositoryIT {
         final String department = "co";
         final String areaOfWork = "commercial";
 
-        final int currentCount = repository.findSuggested(department, areaOfWork, all).size();
+        final long currentCount = repository.findSuggested(department, areaOfWork, all).getTotalElements();
 
         repository.save(createCourse("one", department, false, null));
         repository.save(createCourse("two", department, false, null));
@@ -171,9 +172,9 @@ public class CourseRepositoryIT {
         repository.save(createCourse("four", department, true, areaOfWork));
         repository.save(createCourse("five", null, false, areaOfWork));
 
-        Collection<Course> courses = repository.findSuggested(department, areaOfWork, all);
+        Page<Course> page = repository.findSuggested(department, areaOfWork, all);
 
-        assertThat(courses.size(), is(currentCount + 3));
+        assertThat(page.getTotalElements(), is(currentCount + 3));
     }
 
     private Course createCourse() {
