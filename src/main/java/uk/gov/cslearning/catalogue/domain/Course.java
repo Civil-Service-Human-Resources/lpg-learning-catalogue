@@ -20,6 +20,7 @@ public class Course {
     @Id
     private String id = UUIDs.randomBase64UUID();
 
+    @Field(analyzer = "autocomplete", searchAnalyzer = "standard")
     private String title;
 
     private String shortDescription;

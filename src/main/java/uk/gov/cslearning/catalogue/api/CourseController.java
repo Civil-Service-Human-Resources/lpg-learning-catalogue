@@ -4,18 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.emptyList;
@@ -98,5 +96,22 @@ public class CourseController {
         return result
                 .map(course -> new ResponseEntity<>(course, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @GetMapping(path = "/search", params = { "query" })
+    public ResponseEntity<List<Course>> search(String query) {
+        LOGGER.info("Searching for courses using query " + query);
+        List<Course> courses = courseRepository.search(query);
+
+        return ResponseEntity.ok(courses);
+    }
+
+    @GetMapping(path = "/suggestions", params = { "query" })
+    public ResponseEntity<PageResults<Course>> suggestions(String query, PageParameters pageParameters) {
+        LOGGER.info("Searching for courses using query 2 " + query);
+        SearchPage courses = courseRepository.suggestions(query);
+        Pageable pageable = pageParameters.getPageRequest();
+
+        return ResponseEntity.ok(new PageResults<>(courses.getCourses(), pageable));
     }
 }

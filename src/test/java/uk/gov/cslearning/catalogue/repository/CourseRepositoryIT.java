@@ -13,13 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
-import java.util.Collection;
-import java.util.Set;
-
-import static java.util.Collections.emptySet;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -177,7 +172,7 @@ public class CourseRepositoryIT {
         assertThat(page.getTotalElements(), is(currentCount + 3));
     }
 
-    private Course createCourse() {
+    public Course createCourse() {
         return createCourse("title", null, false, null);
     }
 
