@@ -18,8 +18,10 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -53,21 +55,26 @@ public class CourseController {
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
-    @GetMapping(params = { "department", "areaOfWork" })
-    public ResponseEntity<PageResults<Course>> listSuggested(@RequestParam("department") String department,
-                                                       @RequestParam("areaOfWork") String areaOfWork,
-                                                       PageParameters pageParameters) {
-        LOGGER.debug("Listing suggested courses for department {} and area of work {}", department, areaOfWork);
-        Pageable pageable = pageParameters.getPageRequest();
-        Page<Course> page = courseRepository.findSuggested(department, areaOfWork, pageable);
-        return ResponseEntity.ok(new PageResults<>(page, pageable));
-    }
-
     @GetMapping
-    public ResponseEntity<PageResults<Course>> listAll(PageParameters pageParameters) {
-        LOGGER.debug("Listing all courses");
+    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", required = false) List<String> areasOfWork,
+                                                    @RequestParam(name = "department", required = false) List<String> departments,
+                                                    PageParameters pageParameters) {
+        LOGGER.debug("Listing courses");
+
+        areasOfWork = defaultIfNull(areasOfWork, emptyList());
+        departments = defaultIfNull(departments, emptyList());
+
         Pageable pageable = pageParameters.getPageRequest();
-        Page<Course> page = courseRepository.findAll(pageable);
+        Page<Course> page;
+
+        if (departments.isEmpty() && areasOfWork.isEmpty()) {
+            page = courseRepository.findAll(pageable);
+        } else {
+            page = courseRepository.findSuggested(
+                    String.join(",", departments),
+                    String.join(",", areasOfWork),
+                    pageable);
+        }
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 

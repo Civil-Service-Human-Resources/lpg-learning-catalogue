@@ -21,7 +21,7 @@ public class ELearningModule extends Module {
     }
 
     public void setStartPage(String startPage) {
-        checkArgument(startPage != null);
+//        checkArgument(startPage != null);
         this.startPage = startPage;
     }
 }

@@ -25,6 +25,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     @Override
     public List<Course> search(String query) {
         LOGGER.debug("Executing search query for {}", query);
+
         return null;
     }
 }

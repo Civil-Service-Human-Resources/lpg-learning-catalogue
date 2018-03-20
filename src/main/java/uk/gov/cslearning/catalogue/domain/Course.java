@@ -3,7 +3,9 @@ package uk.gov.cslearning.catalogue.domain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.CompletionField;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import java.math.BigDecimal;
