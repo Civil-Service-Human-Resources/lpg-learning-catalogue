@@ -1,14 +1,15 @@
 package uk.gov.cslearning.catalogue.api;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.SearchPage;
 
-public class SearchResults<T> extends PageResults<T> {
+public class SearchResults<T> extends PageResults<Course> {
 
     private String suggestion;
 
-    SearchResults(Page<T> results, Pageable pageable) {
-        super(results, pageable);
+    public SearchResults(SearchPage searchPage) {
+        super(searchPage.getCourses().getContent());
+        suggestion = searchPage.getTopScoringSuggestion().getText().toString();
     }
 
     public String getSuggestion() {

@@ -12,7 +12,6 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -99,19 +98,12 @@ public class CourseController {
     }
 
     @GetMapping(path = "/search", params = { "query" })
-    public ResponseEntity<List<Course>> search(String query) {
-        LOGGER.info("Searching for courses using query " + query);
-        List<Course> courses = courseRepository.search(query);
+    public ResponseEntity<SearchResults<Course>> search(String query) {
+        LOGGER.info("Searching courses with query {}", query);
+        SearchPage searchPage = courseRepository.search(query);
 
-        return ResponseEntity.ok(courses);
-    }
+        SearchResults<Course> searchResults = new SearchResults(searchPage);
 
-    @GetMapping(path = "/suggestions", params = { "query" })
-    public ResponseEntity<PageResults<Course>> suggestions(String query, PageParameters pageParameters) {
-        LOGGER.info("Searching for courses using query 2 " + query);
-        SearchPage courses = courseRepository.suggestions(query);
-        Pageable pageable = pageParameters.getPageRequest();
-
-        return ResponseEntity.ok(new PageResults<>(courses.getCourses(), pageable));
+        return ResponseEntity.ok(searchResults);
     }
 }

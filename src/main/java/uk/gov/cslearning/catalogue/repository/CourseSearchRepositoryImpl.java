@@ -26,7 +26,6 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-;
 
 @Repository
 public class CourseSearchRepositoryImpl implements CourseSearchRepository {
@@ -41,37 +40,19 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     @Override
-    public List<Course> search(String query) {
-        LOGGER.info("Executing search query for " + query);
-//        SearchQuery searchQuery = new NativeSearchQueryBuilder()
-//                .withQuery(termQuery("description", query))
-//                .withQuery(termQuery("learningOutcomes", query))
-//                .build();
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery(query)
-                        .field("title")
-                        .field("shortDescription")
-                        .field("learningOutcomes")
-                        .type(MultiMatchQueryBuilder.Type.BEST_FIELDS))
-                .build();
-        List<Course> courses = template.queryForList(searchQuery, Course.class);
-        return courses;
-    }
-
-    @Override
-    public SearchPage suggestions (String suggestText) {
-        LOGGER.info("Executing suggestions query for " + suggestText);
+    public SearchPage search(String query) {
+        LOGGER.info("Executing suggestions query for {}", query);
         SearchPage searchPage = new SearchPage();
 
         SuggestionBuilder titleSuggestionBuilder =
-                SuggestBuilders.phraseSuggestion("title").text(suggestText);
+                SuggestBuilders.phraseSuggestion("title").text(query);
         SuggestionBuilder shortDescriptionSuggestionBuilder =
-                SuggestBuilders.phraseSuggestion("shortDescription").text(suggestText);
+                SuggestBuilders.phraseSuggestion("shortDescription").text(query);
         SuggestionBuilder learningOutcomesSuggestionBuilder =
-                SuggestBuilders.phraseSuggestion("learningOutcomes").text(suggestText);
+                SuggestBuilders.phraseSuggestion("learningOutcome s").text(query);
 
         SuggestBuilder suggestBuilder = new SuggestBuilder();
-        suggestBuilder.setGlobalText(suggestText);
+        suggestBuilder.setGlobalText(query);
         suggestBuilder.addSuggestion("suggestTitle", titleSuggestionBuilder);
         suggestBuilder.addSuggestion("suggestShortDesc", shortDescriptionSuggestionBuilder);
         suggestBuilder.addSuggestion("suggestLearningOutcomes", learningOutcomesSuggestionBuilder);
@@ -79,32 +60,46 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         SearchResponse searchResponse = template.suggest(suggestBuilder, Course.class);
 
         Suggest suggest = searchResponse.getSuggest();
-        Suggestion titleSuggestion =  suggest.getSuggestion("suggestTitle");
-        Suggestion shortDescSuggestion=  suggest.getSuggestion("suggestShortDesc");
-        Suggestion suggestionLearningOutcomes =  suggest.getSuggestion("suggestLearningOutcomes");
+        Suggestion titleSuggestion = suggest.getSuggestion("suggestTitle");
+        Suggestion shortDescSuggestion = suggest.getSuggestion("suggestShortDesc");
+        Suggestion suggestionLearningOutcomes = suggest.getSuggestion("suggestLearningOutcomes");
 
         List<Entry> list = new LinkedList<>();
         list.addAll(titleSuggestion.getEntries());
         list.addAll(shortDescSuggestion.getEntries());
         list.addAll(suggestionLearningOutcomes.getEntries());
 
-        for (int i = 0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             List<Option> optionList = list.get(i).getOptions();
-            for (int j = 0; j < optionList.size(); j++){
-                if(searchPage.getTopScoringSuggestion() == null || optionList.get(j).getScore() > searchPage.getTopScoringSuggestion().getScore()){
+            for (int j = 0; j < optionList.size(); j++) {
+                if (searchPage.getTopScoringSuggestion() == null || optionList.get(j).getScore() > searchPage.getTopScoringSuggestion().getScore()) {
                     searchPage.setTopScoringSuggestion(optionList.get(j));
                 }
             }
         }
 
-        List<Course> courseList = search(suggestText);
+        List<Course> courseList = executeSearchQuery(query);
         Page<Course> coursePage = new PageImpl<>(courseList);
         searchPage.setCourses(coursePage);
 
-        if(searchPage.getTopScoringSuggestion() != null){
-            LOGGER.info("Top scoring suggestion is: " + searchPage.getTopScoringSuggestion().getText().toString());
+        if (searchPage.getTopScoringSuggestion() != null) {
+            String message = searchPage.getTopScoringSuggestion().getText().toString();
+            LOGGER.info("Top scoring suggestion is: {}", message);
         }
 
         return searchPage;
+    }
+
+    public List<Course> executeSearchQuery (String query) {
+        LOGGER.info("Executing search query for {}", query);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.multiMatchQuery(query)
+                        .field("title")
+                        .field("shortDescription")
+                        .field("learningOutcomes")
+                        .type(MultiMatchQueryBuilder.Type.BEST_FIELDS))
+                .build();
+
+        return template.queryForList(searchQuery, Course.class);
     }
 }
