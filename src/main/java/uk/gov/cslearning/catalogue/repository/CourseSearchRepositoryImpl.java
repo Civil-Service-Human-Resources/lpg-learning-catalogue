@@ -1,7 +1,6 @@
 package uk.gov.cslearning.catalogue.repository;
 
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -51,7 +50,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         List<Entry> suggestionList = getSuggestionListFromSearchResponse(suggestBuilder, searchResponse);
 
         SearchPage searchPage = new SearchPage();
-        getTopSuggestedOptionFromOptionList(suggestionList, searchPage);
+        setTopSuggestedOption(suggestionList, searchPage);
 
         List<Course> courseList = executeSearchQuery(query);
         Page<Course> coursePage = new PageImpl<>(courseList);
@@ -60,8 +59,6 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         if (searchPage.getTopScoringSuggestion() != null) {
             String message = searchPage.getTopScoringSuggestion().getText().toString();
             LOGGER.info("Top scoring suggestion is: {}", message);
-        } else {
-            searchPage.setTopScoringSuggestion(new Option(new Text(query), 1.0f));
         }
 
         return searchPage;
@@ -79,7 +76,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return suggestionList;
     }
 
-    private void getTopSuggestedOptionFromOptionList(List<Entry> suggestionList, SearchPage searchPage) {
+    private void setTopSuggestedOption(List<Entry> suggestionList, SearchPage searchPage) {
         for (int i = 0; i < suggestionList.size(); i++) {
             List<Option> optionList = suggestionList.get(i).getOptions();
             for (int j = 0; j < optionList.size(); j++) {
