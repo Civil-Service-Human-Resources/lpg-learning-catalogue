@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.repository;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.text.Text;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.suggest.Suggest;
@@ -47,27 +48,10 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         SearchResponse searchResponse = template.suggest(suggestBuilder, Course.class);
 
-        Suggest suggest = searchResponse.getSuggest();
-
-        List<Entry> suggestionList = new LinkedList<>();
-        Map<String, SuggestionBuilder<?>> suggestions = suggestBuilder.getSuggestions();
-        for (Map.Entry<String, SuggestionBuilder<?>> entry : suggestions.entrySet()) {
-            Suggestion suggestion = suggest.getSuggestion(entry.getKey());
-            suggestionList.addAll(suggestion.getEntries());
-        }
+        List<Entry> suggestionList = getSuggestionListFromSearchResponse(suggestBuilder, searchResponse);
 
         SearchPage searchPage = new SearchPage();
-
-        for (int i = 0; i < suggestionList.size(); i++) {
-            List<Option> optionList = suggestionList.get(i).getOptions();
-            for (int j = 0; j < optionList.size(); j++) {
-                String suggestionResult = optionList.get(j).getText().toString();
-                LOGGER.info("Suggestion: {}", suggestionResult);
-                if (searchPage.getTopScoringSuggestion() == null || optionList.get(j).getScore() > searchPage.getTopScoringSuggestion().getScore()) {
-                    searchPage.setTopScoringSuggestion(optionList.get(j));
-                }
-            }
-        }
+        getTopSuggestedOptionFromOptionList(suggestionList, searchPage);
 
         List<Course> courseList = executeSearchQuery(query);
         Page<Course> coursePage = new PageImpl<>(courseList);
@@ -81,6 +65,31 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         }
 
         return searchPage;
+    }
+
+    private List<Entry> getSuggestionListFromSearchResponse(SuggestBuilder suggestBuilder, SearchResponse searchResponse) {
+        Suggest suggest = searchResponse.getSuggest();
+
+        List<Entry> suggestionList = new LinkedList<>();
+        Map<String, SuggestionBuilder<?>> suggestions = suggestBuilder.getSuggestions();
+        for (Map.Entry<String, SuggestionBuilder<?>> entry : suggestions.entrySet()) {
+            Suggestion suggestion = suggest.getSuggestion(entry.getKey());
+            suggestionList.addAll(suggestion.getEntries());
+        }
+        return suggestionList;
+    }
+
+    private void getTopSuggestedOptionFromOptionList(List<Entry> suggestionList, SearchPage searchPage) {
+        for (int i = 0; i < suggestionList.size(); i++) {
+            List<Option> optionList = suggestionList.get(i).getOptions();
+            for (int j = 0; j < optionList.size(); j++) {
+                String suggestionResult = optionList.get(j).getText().toString();
+                LOGGER.info("Suggestion: {}", suggestionResult);
+                if (searchPage.getTopScoringSuggestion() == null || optionList.get(j).getScore() > searchPage.getTopScoringSuggestion().getScore()) {
+                    searchPage.setTopScoringSuggestion(optionList.get(j));
+                }
+            }
+        }
     }
 
     private SuggestBuilder getSuggestBuilder(String query) {
@@ -101,6 +110,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     public List<Course> executeSearchQuery(String query) {
+
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.multiMatchQuery(query)
                         .field("title", 8)
@@ -108,6 +118,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
                         .field("description", 2)
                         .field("learningOutcomes", 2)
                         .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
+                        .fuzziness(Fuzziness.ONE)
                 )
                 .build();
 

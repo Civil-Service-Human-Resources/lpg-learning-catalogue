@@ -12,7 +12,8 @@ import uk.gov.cslearning.catalogue.domain.SearchPage;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * UserRepository integration test.
@@ -28,7 +29,7 @@ public class CourseSearchRepositoryIT {
     private CourseRepository repository;
 
     @Test
-    public void testMisspelledSearchQueryReturnsAccurateSuggestionAndCourse() {
+    public void shouldReturnAccurateSuggestionAndCourseWithMisspelledSearchQuery() {
         SearchPage actualSearchPage = repository.search("Wirking with Budgets");
 
         String actualSuggestionText = actualSearchPage.getTopScoringSuggestion().getText().toString();
@@ -36,18 +37,36 @@ public class CourseSearchRepositoryIT {
         List<Course> courseList = coursePage.getContent();
         String actualTitle = courseList.get(0).getTitle();
 
-        assertEquals("working with budgets", actualSuggestionText);
-        assertEquals("Working with budgets", actualTitle);
+        assertThat(actualSuggestionText, is("working with budgets"));
+        assertThat(actualTitle, is("Working with budgets"));
     }
 
     @Test
-    public void testSearchQueryReturnsCorrectCoursePage() {
+    public void shouldReturnCorrectPageForSearchQuery() {
         SearchPage actualSearchPage = repository.search("Budgets");
         List<Course> actualCourses = actualSearchPage.getCourses().getContent();
 
-        assertEquals(2, actualCourses.size());
-        assertEquals("Working with budgets", actualCourses.get(0).getTitle());
-        assertEquals("BUfZwRaWQrKAhSSjlJ7lCg", actualCourses.get(0).getId());
-        assertEquals("This topic introduces you to the fundamental principles of budget management and governance processes. ", actualCourses.get(0).getShortDescription());
+        assertThat(actualCourses.size(), is(4));
+        assertThat(actualCourses.get(0).getTitle(), is("Working with budgets"));
+        assertThat(actualCourses.get(0).getId(), is("BUfZwRaWQrKAhSSjlJ7lCg"));
+        assertThat(actualCourses.get(0).getShortDescription(), is("This topic introduces you to the fundamental principles of budget management and governance processes. "));
+    }
+
+    @Test
+    public void shouldReturnCorrectPageForSearchQueryWithMissingField() {
+        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1");
+        List<Course> actualCourses = actualSearchPage.getCourses().getContent();
+
+        assertThat(actualCourses.get(0).getTitle(), is("Spotify engineering culture: part 1"));
+        assertThat(actualCourses.get(0).getLearningOutcomes(), is(""));
+    }
+
+    @Test
+    public void tester() {
+        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1");
+        List<Course> actualCourses = actualSearchPage.getCourses().getContent();
+
+        assertThat(actualCourses.get(0).getTitle(), is("Spotify engineering culture: part 1"));
+        assertThat(actualCourses.get(0).getLearningOutcomes(), is(""));
     }
 }
