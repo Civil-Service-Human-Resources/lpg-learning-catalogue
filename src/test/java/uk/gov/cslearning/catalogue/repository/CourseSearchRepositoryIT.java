@@ -61,12 +61,4 @@ public class CourseSearchRepositoryIT {
         assertThat(actualCourses.get(0).getLearningOutcomes(), is(""));
     }
 
-    @Test
-    public void tester() {
-        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1");
-        List<Course> actualCourses = actualSearchPage.getCourses().getContent();
-
-        assertThat(actualCourses.get(0).getTitle(), is("Spotify engineering culture: part 1"));
-        assertThat(actualCourses.get(0).getLearningOutcomes(), is(""));
-    }
 }
