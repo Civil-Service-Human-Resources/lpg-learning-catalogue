@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.util.List;
@@ -94,15 +93,5 @@ public class CourseController {
         return result
                 .map(course -> new ResponseEntity<>(course, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
-    }
-
-    @GetMapping(path = "/search", params = {"query"})
-    public ResponseEntity<SearchResults<Course>> search(String query) {
-        LOGGER.debug("Searching courses with query {}", query);
-        SearchPage searchPage = courseRepository.search(query);
-
-        SearchResults<Course> searchResults = new SearchResults(searchPage);
-
-        return ResponseEntity.ok(searchResults);
     }
 }
