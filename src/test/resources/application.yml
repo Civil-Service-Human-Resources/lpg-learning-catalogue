@@ -7,6 +7,6 @@ server:
   port: 9000
 
 elasticsearch:
-  clusterName: ${ELASTICSEARCH_CLUSTER:local}
-  host: ${ELASTICSEARCH_HOST:127.0.0.1}
-  port: ${ELASTICSEARCH_PORT:9300}
+  clusterName:
+  host: 127.0.0.1
+  port: 9999

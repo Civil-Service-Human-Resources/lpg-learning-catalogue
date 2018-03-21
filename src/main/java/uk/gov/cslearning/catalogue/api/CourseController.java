@@ -99,7 +99,7 @@ public class CourseController {
 
     @GetMapping(path = "/search", params = { "query" })
     public ResponseEntity<SearchResults<Course>> search(String query) {
-        LOGGER.info("Searching courses with query {}", query);
+        LOGGER.debug("Searching courses with query {}", query);
         SearchPage searchPage = courseRepository.search(query);
 
         SearchResults<Course> searchResults = new SearchResults(searchPage);
