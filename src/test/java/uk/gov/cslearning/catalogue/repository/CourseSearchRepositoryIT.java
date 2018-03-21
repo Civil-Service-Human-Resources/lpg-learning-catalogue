@@ -60,5 +60,4 @@ public class CourseSearchRepositoryIT {
         assertThat(actualCourses.get(0).getTitle(), is("Spotify engineering culture: part 1"));
         assertThat(actualCourses.get(0).getLearningOutcomes(), is(""));
     }
-
 }
