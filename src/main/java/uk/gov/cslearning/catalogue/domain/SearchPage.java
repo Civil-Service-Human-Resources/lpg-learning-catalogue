@@ -32,4 +32,12 @@ public class SearchPage {
             return topScoringSuggestion.getText().toString();
         }
     }
+
+    public long getTotalResults() {
+        if (getCourses() == null) {
+            return 0;
+        } else {
+            return getCourses().getTotalElements();
+        }
+    }
 }
