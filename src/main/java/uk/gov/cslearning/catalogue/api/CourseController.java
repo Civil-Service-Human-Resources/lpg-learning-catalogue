@@ -43,9 +43,9 @@ public class CourseController {
         return ResponseEntity.created(builder.path("/courses/{courseId}").build(newCourse.getId())).build();
     }
 
-    @GetMapping(params = { "mandatory", "department" })
+    @GetMapping(params = {"mandatory", "department"})
     public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
-                                                     PageParameters pageParameters) {
+                                                             PageParameters pageParameters) {
         LOGGER.debug("Listing mandatory courses for department {}", department);
         Pageable pageable = pageParameters.getPageRequest();
         Page<Course> page = courseRepository.findMandatory(department, pageParameters.getPageRequest());
@@ -97,7 +97,7 @@ public class CourseController {
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
-    @GetMapping(path = "/search", params = { "query" })
+    @GetMapping(path = "/search", params = {"query"})
     public ResponseEntity<SearchResults<Course>> search(String query) {
         LOGGER.debug("Searching courses with query {}", query);
         SearchPage searchPage = courseRepository.search(query);

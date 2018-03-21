@@ -9,7 +9,7 @@ public class SearchResults<T> extends PageResults<Course> {
 
     public SearchResults(SearchPage searchPage) {
         super(searchPage.getCourses().getContent());
-        suggestion = searchPage.getTopScoringSuggestion().getText().toString();
+        suggestion = searchPage.getSuggestedText();
     }
 
     public String getSuggestion() {

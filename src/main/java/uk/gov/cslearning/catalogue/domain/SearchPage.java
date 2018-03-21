@@ -24,4 +24,12 @@ public class SearchPage {
     public void setCourses(Page<Course> courses) {
         this.courses = courses;
     }
+
+    public String getSuggestedText() {
+        if (topScoringSuggestion == null || topScoringSuggestion.getText() == null) {
+            return null;
+        } else {
+            return topScoringSuggestion.getText().toString();
+        }
+    }
 }
