@@ -1,6 +1,8 @@
 package uk.gov.cslearning.catalogue.repository;
 
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.Suggest.Suggestion;
 import org.elasticsearch.search.suggest.Suggest.Suggestion.Entry.Option;
@@ -23,8 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+
+;
 
 @Repository
 public class CourseSearchRepositoryImpl implements CourseSearchRepository {
@@ -41,10 +43,16 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     @Override
     public List<Course> search(String query) {
         LOGGER.info("Executing search query for " + query);
+//        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+//                .withQuery(termQuery("description", query))
+//                .withQuery(termQuery("learningOutcomes", query))
+//                .build();
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(termQuery("title", query))
-                .withQuery(matchQuery("description", query))
-                .withQuery(matchQuery("learningOutcomes", query))
+                .withQuery(QueryBuilders.multiMatchQuery(query)
+                        .field("title")
+                        .field("shortDescription")
+                        .field("learningOutcomes")
+                        .type(MultiMatchQueryBuilder.Type.BEST_FIELDS))
                 .build();
         List<Course> courses = template.queryForList(searchQuery, Course.class);
         return courses;
@@ -57,16 +65,29 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         SuggestionBuilder titleSuggestionBuilder =
                 SuggestBuilders.phraseSuggestion("title").text(suggestText);
+        SuggestionBuilder shortDescriptionSuggestionBuilder =
+                SuggestBuilders.phraseSuggestion("shortDescription").text(suggestText);
+        SuggestionBuilder learningOutcomesSuggestionBuilder =
+                SuggestBuilders.phraseSuggestion("learningOutcomes").text(suggestText);
 
         SuggestBuilder suggestBuilder = new SuggestBuilder();
         suggestBuilder.setGlobalText(suggestText);
-        suggestBuilder.addSuggestion("suggest_title", titleSuggestionBuilder);
+        suggestBuilder.addSuggestion("suggestTitle", titleSuggestionBuilder);
+        suggestBuilder.addSuggestion("suggestShortDesc", shortDescriptionSuggestionBuilder);
+        suggestBuilder.addSuggestion("suggestLearningOutcomes", learningOutcomesSuggestionBuilder);
 
         SearchResponse searchResponse = template.suggest(suggestBuilder, Course.class);
-        Suggest suggest = searchResponse.getSuggest();
 
-        Suggestion suggestion =  suggest.getSuggestion("suggest_title");
-        List<Entry> list = suggestion.getEntries();
+        Suggest suggest = searchResponse.getSuggest();
+        Suggestion titleSuggestion =  suggest.getSuggestion("suggestTitle");
+        Suggestion shortDescSuggestion=  suggest.getSuggestion("suggestShortDesc");
+        Suggestion suggestionLearningOutcomes =  suggest.getSuggestion("suggestLearningOutcomes");
+
+        List<Entry> list = new LinkedList<>();
+        list.addAll(titleSuggestion.getEntries());
+        list.addAll(shortDescSuggestion.getEntries());
+        list.addAll(suggestionLearningOutcomes.getEntries());
+
         for (int i = 0; i < list.size(); i++){
             List<Option> optionList = list.get(i).getOptions();
             for (int j = 0; j < optionList.size(); j++){
@@ -76,19 +97,13 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             }
         }
 
-
-        // String suggested = loop and return highest
-//        List<Course> courses = template.queryForList(suggestText, Course.class);
-
-        // return list of courses and suggested text as paginated
-        // create new object expends page (search page)
-        // return searchPage(suggested, pageOfResults)
-        List<Course> courseList= new LinkedList<>();
-        Course course = new Course();
-        course.setTitle("Test");
-        courseList.add(course);
+        List<Course> courseList = search(suggestText);
         Page<Course> coursePage = new PageImpl<>(courseList);
         searchPage.setCourses(coursePage);
+
+        if(searchPage.getTopScoringSuggestion() != null){
+            LOGGER.info("Top scoring suggestion is: " + searchPage.getTopScoringSuggestion().getText().toString());
+        }
 
         return searchPage;
     }
