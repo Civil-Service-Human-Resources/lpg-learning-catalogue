@@ -34,10 +34,6 @@ public class SearchPage {
     }
 
     public long getTotalResults() {
-        if (getCourses() == null) {
-            return 0;
-        } else {
-            return getCourses().getTotalElements();
-        }
+        return getCourses().getTotalElements();
     }
 }
