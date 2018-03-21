@@ -172,7 +172,7 @@ public class CourseRepositoryIT {
         assertThat(page.getTotalElements(), is(currentCount + 3));
     }
 
-    public Course createCourse() {
+    private Course createCourse() {
         return createCourse("title", null, false, null);
     }
 
