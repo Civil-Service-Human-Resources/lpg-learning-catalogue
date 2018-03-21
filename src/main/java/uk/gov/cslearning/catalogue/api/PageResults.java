@@ -12,7 +12,7 @@ public class PageResults<T> {
 
     private Integer page;
 
-    private Integer totalPages;
+    private Long totalResults;
 
     private Integer size;
 
@@ -24,7 +24,7 @@ public class PageResults<T> {
         this.results = page.getContent();
         this.page = pageable.getPageNumber();
         this.size = pageable.getPageSize();
-        this.totalPages = (int) Math.ceil(page.getTotalElements() / (double) pageable.getPageSize());
+        this.totalResults = page.getTotalElements();
     }
 
     public List<T> getResults() {
@@ -35,8 +35,8 @@ public class PageResults<T> {
         return page;
     }
 
-    public Integer getTotalPages() {
-        return totalPages;
+    public Long getTotalResults() {
+        return totalResults;
     }
 
     public Integer getSize() {
