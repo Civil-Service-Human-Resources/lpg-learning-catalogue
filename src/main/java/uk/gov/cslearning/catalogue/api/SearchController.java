@@ -3,6 +3,7 @@ package uk.gov.cslearning.catalogue.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +29,13 @@ public class SearchController {
     }
 
     @GetMapping
-    public ResponseEntity<SearchResults<Course>> search(String query) {
+    public ResponseEntity<SearchResults<Course>> search(String query, PageParameters pageParameters) {
         LOGGER.debug("Searching courses with query {}", query);
+        Pageable pageable = pageParameters.getPageRequest();
+
         SearchPage searchPage = courseRepository.search(query);
 
-        SearchResults<Course> searchResults = new SearchResults(searchPage);
+        SearchResults<Course> searchResults = new SearchResults(searchPage, pageable);
 
         return ResponseEntity.ok(searchResults);
     }

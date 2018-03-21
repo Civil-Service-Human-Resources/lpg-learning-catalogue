@@ -51,7 +51,7 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", required = false) List<String> areasOfWork,
+        public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", required = false) List<String> areasOfWork,
                                                     @RequestParam(name = "department", required = false) List<String> departments,
                                                     PageParameters pageParameters) {
         LOGGER.debug("Listing courses");
