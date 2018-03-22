@@ -13,6 +13,10 @@ public class ElasticSearchProperties {
 
     private int port;
 
+    private String username;
+
+    private String password;
+
     public String getClusterName() {
         return clusterName;
     }
@@ -21,19 +25,35 @@ public class ElasticSearchProperties {
         this.clusterName = clusterName;
     }
 
+    public String getHost() {
+        return host;
+    }
+
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     public void setPort(int port) {
         this.port = port;
     }
 
-    public String getHost() {
-        return host;
+    public String getUsername() {
+        return username;
     }
 
-    public int getPort() {
-        return port;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

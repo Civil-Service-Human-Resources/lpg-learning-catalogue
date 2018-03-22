@@ -18,10 +18,13 @@ public class ElasticSearchConfig {
 
 
     @Bean
-    public JestClient jestClient() {
+    public JestClient jestClient(ElasticSearchProperties properties) {
         JestClientFactory factory = new JestClientFactory();
+
+        String serverUri = "http://" + properties.getHost() + ":" + String.valueOf(properties.getPort());
+
         factory.setHttpClientConfig(new HttpClientConfig
-                .Builder("host")
+                .Builder(serverUri).defaultCredentials(properties.getUsername(), properties.getPassword())
                 .multiThreaded(true)
                 .build());
         return factory.getObject();
@@ -31,7 +34,6 @@ public class ElasticSearchConfig {
     public ElasticsearchOperations elasticsearchTemplate(JestClient client) throws Exception {
         return new JestElasticsearchTemplate(client);
     }
-
 
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
