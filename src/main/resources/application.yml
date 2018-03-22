@@ -14,7 +14,12 @@ spring:
 server:
   port: 9001
 
+#elasticsearch:
+#  clusterName: ${ELASTICSEARCH_CLUSTER:local}
+#  host: ${ELASTICSEARCH_HOST:127.0.0.1}
+#  port: ${ELASTICSEARCH_PORT:9300}
+
 elasticsearch:
-  clusterName: ${ELASTICSEARCH_CLUSTER:local}
-  host: ${ELASTICSEARCH_HOST:127.0.0.1}
+  clusterName: ${ELASTICSEARCH_CLUSTER:lpgmvpelastic}
+  host: ${ELASTICSEARCH_HOST:51.143.138.77}
   port: ${ELASTICSEARCH_PORT:9300}
