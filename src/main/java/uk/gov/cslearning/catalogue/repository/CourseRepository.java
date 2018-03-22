@@ -6,6 +6,7 @@ import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.SearchPage;
 
 @Repository
 public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository {
@@ -17,4 +18,6 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
             "\"should\": [{ \"match\": { \"modules.audiences.departments\": \"?0\" }}, { \"match\": { \"modules.audiences.areasOfWork\": \"?1\" }}], " +
             "\"must_not\": [ { \"match\": { \"modules.audiences.mandatory\": \"true\" } }]}}")
     Page<Course> findSuggested(String department, String areaOfWork, Pageable pageable);
+
+    SearchPage search(String query, Pageable pageable);
 }
