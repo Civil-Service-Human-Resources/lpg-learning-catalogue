@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
@@ -34,23 +36,18 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
     private static Logger LOGGER = LoggerFactory.getLogger(CourseSearchRepositoryImpl.class);
 
-    private ElasticsearchTemplate template;
+    private ElasticsearchOperations operations;
 
-    public CourseSearchRepositoryImpl(ElasticsearchTemplate template) {
-        checkArgument(template != null);
-        this.template = template;
+    public CourseSearchRepositoryImpl(ElasticsearchOperations operations) {
+        checkArgument(operations != null);
+        this.operations = operations;
     }
 
     @Override
     public SearchPage search(String query, Pageable pageable) {
         SuggestBuilder suggestBuilder = getSuggestBuilder(query);
 
-        SearchResponse searchResponse = template.suggest(suggestBuilder, Course.class);
-
-        List<Entry> suggestionList = getSuggestionListFromSearchResponse(suggestBuilder, searchResponse);
-
         SearchPage searchPage = new SearchPage();
-        setTopSuggestedOption(suggestionList, searchPage);
 
         Page<Course> coursePage = executeSearchQuery(query, pageable);
 
@@ -108,7 +105,6 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
     public Page<Course> executeSearchQuery(String query, Pageable pageable) {
 
-        // pass a pageable
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.multiMatchQuery(query)
                         .field("title", 8)
@@ -120,6 +116,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
                 )
                 .withPageable(pageable)
                 .build();
+
         return template.queryForPage(searchQuery, Course.class);
     }
 }

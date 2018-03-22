@@ -15,7 +15,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
         entryPoint.setRealmName("LPG");
-
         http.csrf().disable().authorizeRequests()
                 .anyRequest().authenticated()
                 .and().httpBasic()

@@ -1,44 +1,37 @@
 package uk.gov.cslearning.catalogue.config;
 
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import com.github.vanroy.springdata.jest.JestElasticsearchTemplate;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.config.HttpClientConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "uk.gov.cslearning.catalogue.repository")
 public class ElasticSearchConfig {
 
+
     @Bean
-    public Client client(ElasticSearchProperties properties) throws UnknownHostException {
-
-        Settings.Builder builder = Settings.builder();
-
-        if (properties.getClusterName() != null) {
-            builder.put("cluster.name", properties.getClusterName());
-        }
-        Settings settings = builder.build();
-
-        return new PreBuiltTransportClient(settings)
-                .addTransportAddress(
-                        new InetSocketTransportAddress(InetAddress.getByName(properties.getHost()), properties.getPort()));
+    public JestClient jestClient() {
+        JestClientFactory factory = new JestClientFactory();
+        factory.setHttpClientConfig(new HttpClientConfig
+                .Builder("host")
+                .multiThreaded(true)
+                .build());
+        return factory.getObject();
     }
 
     @Bean
-    public ElasticsearchOperations elasticsearchTemplate(Client client) throws Exception {
-        return new ElasticsearchTemplate(client);
+    public ElasticsearchOperations elasticsearchTemplate(JestClient client) throws Exception {
+        return new JestElasticsearchTemplate(client);
     }
+
 
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
@@ -46,7 +39,7 @@ public class ElasticSearchConfig {
         Resource sourceData = new ClassPathResource("data.json");
 
         Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-        factory.setResources(new Resource[] { sourceData });
+        factory.setResources(new Resource[]{sourceData});
         return factory;
     }
 }
