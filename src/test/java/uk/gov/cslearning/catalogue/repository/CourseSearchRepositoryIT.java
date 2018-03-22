@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.gov.cslearning.catalogue.api.PageParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 
@@ -30,7 +32,10 @@ public class CourseSearchRepositoryIT {
 
     @Test
     public void shouldReturnAccurateSuggestionAndCourseWithMisspelledSearchQuery() {
-        SearchPage actualSearchPage = repository.search("Wirking with Budgets");
+        PageParameters pageParameters = new PageParameters();
+        Pageable pageable = pageParameters.getPageRequest();
+
+        SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable);
 
         String actualSuggestionText = actualSearchPage.getTopScoringSuggestion().getText().toString();
         Page<Course> coursePage = actualSearchPage.getCourses();
@@ -43,7 +48,10 @@ public class CourseSearchRepositoryIT {
 
     @Test
     public void shouldReturnCorrectPageForSearchQuery() {
-        SearchPage actualSearchPage = repository.search("Budgets");
+        PageParameters pageParameters = new PageParameters();
+        Pageable pageable = pageParameters.getPageRequest();
+
+        SearchPage actualSearchPage = repository.search("Budgets", pageable);
         List<Course> actualCourses = actualSearchPage.getCourses().getContent();
 
         assertThat(actualCourses.size(), is(4));
@@ -54,7 +62,10 @@ public class CourseSearchRepositoryIT {
 
     @Test
     public void shouldReturnCorrectPageForSearchQueryWithMissingField() {
-        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1");
+        PageParameters pageParameters = new PageParameters();
+        Pageable pageable = pageParameters.getPageRequest();
+
+        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable);
         List<Course> actualCourses = actualSearchPage.getCourses().getContent();
 
         assertThat(actualCourses.get(0).getTitle(), is("Spotify engineering culture: part 1"));
