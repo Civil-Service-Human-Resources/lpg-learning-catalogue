@@ -14,7 +14,7 @@ import org.elasticsearch.search.suggest.phrase.PhraseSuggestion.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
@@ -42,7 +42,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     @Override
-    public SearchPage search(String query) {
+    public SearchPage search(String query, Pageable pageable) {
         SuggestBuilder suggestBuilder = getSuggestBuilder(query);
 
         SearchResponse searchResponse = template.suggest(suggestBuilder, Course.class);
@@ -52,8 +52,8 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         SearchPage searchPage = new SearchPage();
         setTopSuggestedOption(suggestionList, searchPage);
 
-        List<Course> courseList = executeSearchQuery(query);
-        Page<Course> coursePage = new PageImpl<>(courseList);
+        Page<Course> coursePage = executeSearchQuery(query, pageable);
+
         searchPage.setCourses(coursePage);
 
         if (searchPage.getTopScoringSuggestion() != null) {
@@ -106,8 +106,9 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return suggestBuilder;
     }
 
-    public List<Course> executeSearchQuery(String query) {
+    public Page<Course> executeSearchQuery(String query, Pageable pageable) {
 
+        // pass a pageable
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.multiMatchQuery(query)
                         .field("title", 8)
@@ -117,8 +118,8 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
                         .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
                         .fuzziness(Fuzziness.ONE)
                 )
+                .withPageable(pageable)
                 .build();
-
-        return template.queryForList(searchQuery, Course.class);
+        return template.queryForPage(searchQuery, Course.class);
     }
 }
