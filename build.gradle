@@ -40,6 +40,8 @@ dependencies {
     compile 'org.codehaus.janino:janino:3.0.8'
     compile 'com.github.vanroy:spring-boot-starter-data-jest:3.1.1.RELEASE'
 
+    compile group: 'com.github.vanroy', name: 'spring-boot-starter-data-jest', version: '3.1.1.RELEASE'
+
     testCompile 'com.google.code.gson:gson:2.8.2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }

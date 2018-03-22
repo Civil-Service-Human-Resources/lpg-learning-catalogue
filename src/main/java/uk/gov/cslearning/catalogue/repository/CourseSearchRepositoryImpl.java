@@ -58,6 +58,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
                 .withPageable(pageable)
                 .build();
 
-        return template.queryForPage(searchQuery, Course.class);
+        return operations.queryForPage(searchQuery, Course.class);
+
     }
 }
