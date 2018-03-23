@@ -15,7 +15,6 @@ server:
   port: 9001
 
 elasticsearch:
-  host: ${ELASTICSEARCH_HOST:127.0.0.1}
-  port: ${ELASTICSEARCH_PORT:9200}
+  uri: ${ELASTICSEARCH_URI:http://127.0.0.1:9200}
   username: ${ELASTICSEARCH_USERNAME:elastic}
   password: ${ELASTICSEARCH_PASSWORD:changeme}

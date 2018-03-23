@@ -20,10 +20,8 @@ public class ElasticSearchConfig {
     public JestClient jestClient(ElasticSearchProperties properties) {
         JestClientFactory factory = new JestClientFactory();
 
-        String serverUri = "http://" + properties.getHost() + ":" + properties.getPort();
-
         factory.setHttpClientConfig(new HttpClientConfig
-                .Builder(serverUri).defaultCredentials(properties.getUsername(), properties.getPassword())
+                .Builder(properties.getUri().toString()).defaultCredentials(properties.getUsername(), properties.getPassword())
                 .multiThreaded(true)
                 .build());
         return factory.getObject();
