@@ -16,12 +16,11 @@ import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFacto
 @EnableElasticsearchRepositories(basePackages = "uk.gov.cslearning.catalogue.repository")
 public class ElasticSearchConfig {
 
-
     @Bean
     public JestClient jestClient(ElasticSearchProperties properties) {
         JestClientFactory factory = new JestClientFactory();
 
-        String serverUri = "http://" + properties.getHost() + ":" + String.valueOf(properties.getPort());
+        String serverUri = "http://" + properties.getHost() + ":" + properties.getPort();
 
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder(serverUri).defaultCredentials(properties.getUsername(), properties.getPassword())
@@ -31,7 +30,7 @@ public class ElasticSearchConfig {
     }
 
     @Bean
-    public ElasticsearchOperations elasticsearchTemplate(JestClient client) throws Exception {
+    public ElasticsearchOperations elasticsearchTemplate(JestClient client) {
         return new JestElasticsearchTemplate(client);
     }
 
