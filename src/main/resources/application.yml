@@ -17,5 +17,5 @@ server:
 elasticsearch:
   host: ${ELASTICSEARCH_HOST:127.0.0.1}
   port: ${ELASTICSEARCH_PORT:9200}
-  username: ${ELASTICSEARCH_USERNAME:user}
-  password: ${ELASTICSEARCH_PASSWORD:password}
+  username: ${ELASTICSEARCH_USERNAME:elastic}
+  password: ${ELASTICSEARCH_PASSWORD:changeme}
