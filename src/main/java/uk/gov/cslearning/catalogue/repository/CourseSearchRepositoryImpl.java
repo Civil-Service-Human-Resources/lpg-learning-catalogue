@@ -6,9 +6,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -16,8 +13,6 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
-
-import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
