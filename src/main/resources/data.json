@@ -2589,10 +2589,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "d_Mc26bZQdi1nHgnYPtOmw",
+    "id": "BsNv6FmFSRKRQbUGgYQNVw",
     "modules": [
       {
-        "id": "f4qw4z-SRfiZFX9PBHLtCg",
+        "id": "drWKfj8eQ0-3XJO3Dq7Rng",
         "productCode": "CM2",
         "audiences": [
           {
@@ -2613,7 +2613,14 @@
         ],
         "duration": 17100,
         "price": 299,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "Nl24frhpR8Cui3H1SGzFiw",
+            "location": "London",
+            "date": "2018-05-30T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "Commercial cycle 1: setting the direction",
@@ -2623,10 +2630,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "ddLhYrd9TSuTtL3XBX9mIA",
+    "id": "QEsijBscTBSjrjUrSmhZ5w",
     "modules": [
       {
-        "id": "HMTmplhdSnugNR5uv6cM5A",
+        "id": "VYHgm_4PTgmraCosnEZzvg",
         "productCode": "CM5",
         "audiences": [
           {
@@ -2647,7 +2654,14 @@
         ],
         "duration": 17100,
         "price": 249,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "Ik75jBoRQbewaT7jrG5BWg",
+            "location": "London",
+            "date": "2018-05-15T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "Commercial cycle 4: contract management",
@@ -2657,10 +2671,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "LEZyhOWhTcCmDnXsq8DWVQ",
+    "id": "Qjp-6jS8ShyFuPkTT0E7lg",
     "modules": [
       {
-        "id": "OKlWQrckTd22zGxzyLmi3g",
+        "id": "CYQD6LZQQvStM8ff4TjpCw",
         "productCode": "SCS-QAF",
         "audiences": [
           {
@@ -2685,10 +2699,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "BAg5fecAQ2WRsVIx9rYF3Q",
+    "id": "aMvaePP7QF2yUUemqYlrKw",
     "modules": [
       {
-        "id": "EOL1e3DtQZWKXIEXbtaoag",
+        "id": "GPsiOT3XTBG_EDtc-FDzrw",
         "productCode": "FI2",
         "audiences": [
           {
@@ -2709,7 +2723,14 @@
         ],
         "duration": 17100,
         "price": 249,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "M0Y2MO3rSt2wnE15ipi6JA",
+            "location": "London",
+            "date": "2018-05-03T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "Working with finance in government",
@@ -2719,10 +2740,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "dTPc0eqlRqSOkeW7WYKd9w",
+    "id": "W4NWKfKKTs-_VcvrBf5-gg",
     "modules": [
       {
-        "id": "TiL6byplTLm8SGiNkujv_A",
+        "id": "E6X6TImuSAWomKBYTlxWxQ",
         "productCode": " FI4",
         "audiences": [
           {
@@ -2741,7 +2762,34 @@
         ],
         "duration": 18000,
         "price": 249,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "byFmUib2Sgu_b9KeXTrZAA",
+            "location": "Bristol",
+            "date": "2018-04-17T00:00:00.000Z"
+          },
+          {
+            "id": "ObQhuAc7S3K5e9WZsA3NDw",
+            "location": "London",
+            "date": "2018-05-15T00:00:00.000Z"
+          },
+          {
+            "id": "ffMqEhJDTzmeW5Cg30dBkQ",
+            "location": "Manchester",
+            "date": "2018-05-24T00:00:00.000Z"
+          },
+          {
+            "id": "LsKfIXs2SFWhIokSaIpd-w",
+            "location": "Manchester",
+            "date": "2018-06-13T00:00:00.000Z"
+          },
+          {
+            "id": "dvZQ5lPyTYOcRy6sL0G8Tw",
+            "location": "London",
+            "date": "2018-06-27T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "Understanding and using business cases",
@@ -2751,10 +2799,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "Y283RB8JSqCBHtKXGzYjbw",
+    "id": "f_ezQdqDSwqAW7HKrI3nDQ",
     "modules": [
       {
-        "id": "UZzxJj9VScuUXVoRSJ43Xg",
+        "id": "HlHHX4o1RTCCnQOlWYmmMA",
         "productCode": "FI3",
         "audiences": [
           {
@@ -2773,7 +2821,29 @@
         ],
         "duration": 17100,
         "price": 249,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "GZViNyioSaqBIqI-_gtTsA",
+            "location": "London",
+            "date": "2018-03-27T00:00:00.000Z"
+          },
+          {
+            "id": "Ub-Ip_VPSxqmL30WK7lhGQ",
+            "location": "London",
+            "date": "2018-04-24T00:00:00.000Z"
+          },
+          {
+            "id": "SaX7BmeCSOeJ4lIaxhVMSw",
+            "location": "London",
+            "date": "2018-05-25T00:00:00.000Z"
+          },
+          {
+            "id": "SiQEskPvQe-mFIfobzKptA",
+            "location": "London",
+            "date": "2018-06-15T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "Working with budgets",
@@ -2783,10 +2853,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "JhLQyOmuQlWgL3jz8XBhLQ",
+    "id": "Hvuq9RyUQkC2zuqmZGaWWQ",
     "modules": [
       {
-        "id": "Ko9m_XPqTymDh_AtSMqDBw",
+        "id": "Ion0P9T-SlClc_GJ14RE7A",
         "productCode": "FI1",
         "audiences": [
           {
@@ -2805,7 +2875,19 @@
         ],
         "duration": 17100,
         "price": 229,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "TaWzMmLPR5Ck7zClL_0H9w",
+            "location": "London",
+            "date": "2018-05-03T00:00:00.000Z"
+          },
+          {
+            "id": "ERCeQPMET0qlMnco6MZTUQ",
+            "location": "London",
+            "date": "2018-06-15T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "Awareness of finance in government",
@@ -2815,10 +2897,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "d7ep87-XSAy95MvL1EPOIg",
+    "id": "EJTKaydUTrO8eariovcMkg",
     "modules": [
       {
-        "id": "ErC4-3WCTI-J3g4R5PhA1A",
+        "id": "fzSf3lCYR2yFe5xlafBJeA",
         "productCode": "DG18",
         "audiences": [
           {
@@ -2834,7 +2916,19 @@
         ],
         "duration": 36000,
         "price": 249,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "XnP4-BH5TNC07W32Cu2Tig",
+            "location": "London",
+            "date": "2018-03-27T00:00:00.000Z"
+          },
+          {
+            "id": "eitqawRLT_-nhfweZgRHoA",
+            "location": "London",
+            "date": "2018-05-29T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "Embracing digital to lead and innovate",
@@ -2844,10 +2938,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "GPKueKW9TUe7BtjimMLP6A",
+    "id": "YjqfPWWYSISTXaqNsKtnrA",
     "modules": [
       {
-        "id": "S4H38229Ty-zadsisk6wfA",
+        "id": "H9v0lCeHSCSl_AgRI1dl3A",
         "productCode": "DG16",
         "audiences": [
           {
@@ -2865,7 +2959,14 @@
         ],
         "duration": 28800,
         "price": 299,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "eK_uSxWkRKaQHrSTXDmhRg",
+            "location": "London",
+            "date": "2018-05-09T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "Managing in a digital environment",
@@ -2875,10 +2976,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "AooNQ6GNTi6DD9GZb041ag",
+    "id": "dflJGc6oSlmm0VBCm-716w",
     "modules": [
       {
-        "id": "Sq7XAxJiSDGENnksaP849Q",
+        "id": "AmetuO0uSfOCI5DzrM0OEg",
         "productCode": "DG1",
         "audiences": [
           {
@@ -2899,7 +3000,14 @@
         ],
         "duration": 14400,
         "price": 199,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "F68Uo4a3QNqVIznQM6TGig",
+            "location": "London",
+            "date": "2018-05-24T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "Working more digitally",
@@ -2909,10 +3017,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "dqMpBBDtRaueIybTtj3mlw",
+    "id": "eoXIba3TQBKFKyZzg4cy6w",
     "modules": [
       {
-        "id": "filY-xpTSpe0jvq8ePiOCw",
+        "id": "G2QpoK5wQZC_72F36IQnWw",
         "productCode": "PD14",
         "audiences": [
           {
@@ -2939,10 +3047,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "WJx2UQWESCeihf1HG70JxQ",
+    "id": "DWo-f-PzRHe1Cn2XC2nu7g",
     "modules": [
       {
-        "id": "Nvt3uobiQXODEf-ZhVUasQ",
+        "id": "RjdnjkU9Qw6GUam0wOkV2w",
         "productCode": "PD11",
         "audiences": [
           {
@@ -2969,10 +3077,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "NByFtSuCR0qntDRMcBNc7g",
+    "id": "N1o3KI6lTJ239xQ6_AQmnA",
     "modules": [
       {
-        "id": "TaM_VWceTH-T2osGgZfo0g",
+        "id": "NzyRwhkGSn6WTopl6oGsvQ",
         "productCode": "PD48",
         "audiences": [
           {
@@ -3001,10 +3109,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "EFyUpGvySFKg971bSCZ2Aw",
+    "id": "JogxVUvARiSVPkhlVpRCTg",
     "modules": [
       {
-        "id": "CL8pH9aTRyGxnyzn9ufcsA",
+        "id": "bzQhwfWnSDCOSS-uj-GoqA",
         "productCode": "PD47",
         "audiences": [
           {
@@ -3031,10 +3139,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "HcDt46kAQauDnuAG-zkf0Q",
+    "id": "bwxIw0s5QV29iwIjRZJ9Rg",
     "modules": [
       {
-        "id": "IPzUBr4EQ_e9B9BJaO-Xng",
+        "id": "e8M9Wen9R-WJDTWC-FWfOg",
         "productCode": "PD30",
         "audiences": [
           {
@@ -3061,10 +3169,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "LlMFAPOZQZuE06_vCWthJQ",
+    "id": "EQEBdkzmTySmaoup6SQ_JA",
     "modules": [
       {
-        "id": "b9VXRRjpRayS9MIP896q6g",
+        "id": "B116wTRMS0WImQgJKwiqHQ",
         "productCode": "PD38",
         "audiences": [
           {
@@ -3092,10 +3200,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "MfWf43sWRqSSKfSGraM68A",
+    "id": "CwgY-TuXQeW9Y7IAMfowrA",
     "modules": [
       {
-        "id": "Lt31ZWihROCLsX6bzzJ1lg",
+        "id": "K74cuQPETHu25P369kPGNA",
         "productCode": "PD32",
         "audiences": [
           {
@@ -3122,10 +3230,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "O7KAMHJgRgayCITpEmmpAw",
+    "id": "OgtQdU94T42PqmbRC-oFNA",
     "modules": [
       {
-        "id": "cHFIuU1dQGGIAYfZdk5brA",
+        "id": "XFfD_XZ6RmyhBIZLGDcHpQ",
         "productCode": "PD33",
         "audiences": [
           {
@@ -3142,7 +3250,29 @@
         ],
         "duration": 57600,
         "price": 945,
-        "type": "face-to-face"
+        "type": "face-to-face",
+        "events": [
+          {
+            "id": "WHvC4dsgSu6Egndg1nTQWQ",
+            "location": "Birmingham",
+            "date": "2018-04-23T00:00:00.000Z"
+          },
+          {
+            "id": "fh_7iqHITuOSqDmBPxfaXw",
+            "location": "Birmingham",
+            "date": "2018-04-24T00:00:00.000Z"
+          },
+          {
+            "id": "BDuO9_cFR2Ce2FlbqfS0hw",
+            "location": "London",
+            "date": "2018-05-03T00:00:00.000Z"
+          },
+          {
+            "id": "YX0Lq7UvRq-mdX4I3yf1FQ",
+            "location": "London",
+            "date": "2018-05-04T00:00:00.000Z"
+          }
+        ]
       }
     ],
     "title": "APM project management qualification (PMQ) preparation workshop",
@@ -3152,10 +3282,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "d__vPh36R2CCNR0je6Jxyg",
+    "id": "NwpSdMmTRDeDO0SlHkIM3g",
     "modules": [
       {
-        "id": "A23hZSvSR46JTXgGOKttWQ",
+        "id": "IcMs6F_EQ7uPHJ6hSV4xEw",
         "productCode": "",
         "audiences": [
           {
@@ -3187,10 +3317,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "Av2UDMPGR8-YnKeeZY5C1Q",
+    "id": "f_teieSGSm-Uk2vhX-GwAw",
     "modules": [
       {
-        "id": "dqZEySW2QIuzLL-9hoQG1Q",
+        "id": "AjAbvcc1TFeGgxNHnoiHWQ",
         "productCode": "",
         "audiences": [
           {
@@ -3223,10 +3353,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "YPEY2hVwTc2TQZiusdLgKQ",
+    "id": "OfXOxgaJTnO85nfXAAQF9Q",
     "modules": [
       {
-        "id": "LvpG_CF1TxGa_thVEMFpmw",
+        "id": "LbyohQQfTk2OsSUGGCXuCA",
         "productCode": "",
         "audiences": [
           {
@@ -3258,10 +3388,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "RpAUoT4_TES9N6M2N5Np8A",
+    "id": "UQsWCjwKT1-UjG6gOVxK6w",
     "modules": [
       {
-        "id": "RthYHSHRTsuBxsuO9GkzQg",
+        "id": "dhYaFLcZSvCQD8ThVQ3Owg",
         "productCode": "",
         "audiences": [
           {
@@ -3293,10 +3423,10 @@
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "CAVuGxbeRISlv2DTJJUu2Q",
+    "id": "I0hVzSwHQmiA_OTvBgasWQ",
     "modules": [
       {
-        "id": "WFuggSK8T0WlMlT7Z4YMoA",
+        "id": "bmowc3_mQa6OFitL4ucidg",
         "productCode": "",
         "audiences": [
           {
