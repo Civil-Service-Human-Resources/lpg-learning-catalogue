@@ -178,7 +178,7 @@ public class CourseRepositoryIT {
 
     private Course createCourse(String title, String department, Boolean mandatory, String areaOfWork) {
         Course course = new Course(title, "shortDescription", "description",
-                "learningOutcomes", 1000L);
+                "learningOutcomes");
 
         Audience audience = new Audience();
         if (department != null) {
