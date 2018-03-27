@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.elasticsearch.common.UUIDs;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -22,6 +23,10 @@ public abstract class Module {
     private String id = UUIDs.randomBase64UUID();
 
     private String title;
+
+    private Long duration;
+
+    private BigDecimal price;
 
     private Collection<Audience> audiences;
 
@@ -55,5 +60,21 @@ public abstract class Module {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,21 +25,16 @@ public class Course {
 
     private String learningOutcomes;
 
-    private Long duration;
-
-    private BigDecimal price;
-
     private List<Module> modules = new ArrayList<>();
 
     public Course() {
     }
 
-    public Course(String title, String shortDescription, String description, String learningOutcomes, Long duration) {
+    public Course(String title, String shortDescription, String description, String learningOutcomes) {
         this.title = title;
         this.shortDescription = shortDescription;
         this.description = description;
         this.learningOutcomes = learningOutcomes;
-        this.duration = duration;
     }
 
     public List<Module> getModules() {
@@ -92,22 +86,6 @@ public class Course {
 
     public void setLearningOutcomes(String learningOutcomes) {
         this.learningOutcomes = learningOutcomes;
-    }
-
-    public Long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Long duration) {
-        this.duration = duration;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 
     @Override

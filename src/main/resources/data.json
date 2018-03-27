@@ -1,10 +1,10 @@
 [
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "POH1adxHR9iEXQe6YuuCdg",
+    "id": "RrGmBqIoRxKoYwGHUN7kfA",
     "modules": [
       {
-        "id": "NQa_UsUqQ-2pua6zpnvXFQ",
+        "id": "Arl-mLTsQhi595UfvLTNrg",
         "audiences": [
           {
             "mandatory": true,
@@ -32,10 +32,12 @@
         ],
         "title": "Introducing unconscious bias",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "ZtZ35LC8TTS6U_Xi1eEGOQ",
+        "id": "LTODzR__SWSpaTD14Xldqw",
         "audiences": [
           {
             "mandatory": true,
@@ -63,10 +65,12 @@
         ],
         "title": "Challenging unconscious bias in recruitment decisions",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "Ni5g5f40THWMu8w9RqAgOQ",
+        "id": "AXK5twcvRyqCMAlDKDu50w",
         "audiences": [
           {
             "mandatory": true,
@@ -94,10 +98,12 @@
         ],
         "title": "Unconscious bias in the workplace",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "Dbs_XPApRRa8eGvv8FScDA",
+        "id": "ah9aeVIiSzm1_wASR7e75Q",
         "audiences": [
           {
             "mandatory": true,
@@ -125,10 +131,12 @@
         ],
         "title": "Tackling unconscious bias",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "OJcn8lyIS8exfM7cSASntg",
+        "id": "YoQfEkNyR3GBh6ORFpL1mg",
         "audiences": [
           {
             "mandatory": true,
@@ -167,10 +175,12 @@
         ],
         "title": "Equality, diversity and inclusion in the Civil Service",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "KFcOoAYvRu-PApFh2HT3wQ",
+        "id": "KZLUYcz6QXCzrCfyr0OChg",
         "audiences": [
           {
             "mandatory": true,
@@ -209,10 +219,12 @@
         ],
         "title": "The legal framework",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "SorAddAdSHa12WayxbwiUA",
+        "id": "MclXceRDRSKL1WG_KwlBoA",
         "audiences": [
           {
             "mandatory": true,
@@ -251,10 +263,12 @@
         ],
         "title": "Our inclusive workplace",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "aZMYFjTQRWCj8JqLyYcMKQ",
+        "id": "X14tGPS7RIOrEao2A66oPQ",
         "audiences": [
           {
             "mandatory": true,
@@ -293,22 +307,22 @@
         ],
         "title": "Our customers",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       }
     ],
     "title": "Diversity and inclusion",
-    "duration": 5400,
     "shortDescription": "This topic covers the role unconscious bias can play in the workplace, as well as the importance of equality, diversity and inclusion. ",
     "description": "You also learn about the equality laws that are in place, and the duty to treat our customers fairly. This diversity and inclusion topic contains 8 activities. You can do them all in one go or in stages. \nYou must complete all 8 to finish this topic.\n",
-    "learningOutcomes": "On completing all the topics, you’ll:\n•        have an understanding of what unconscious bias is and how it can affect your work\n•        be able to recognise different types of unconscious bias and their impact\n•        know how to challenge your own thinking, and how to help create the right environment.\n•        be aware of some of the strategies you can use to minimise the impact of unconscious bias on decision making\n•        understand why we need legislation\n•        be more aware of how stereotyping, bullying and harassment can affect work relationships and decisions\n•        have insight into the barriers disabled customers may face and duties towards all of our customers\n",
-    "price": 0
+    "learningOutcomes": "On completing all the topics, you’ll:\n•        have an understanding of what unconscious bias is and how it can affect your work\n•        be able to recognise different types of unconscious bias and their impact\n•        know how to challenge your own thinking, and how to help create the right environment.\n•        be aware of some of the strategies you can use to minimise the impact of unconscious bias on decision making\n•        understand why we need legislation\n•        be more aware of how stereotyping, bullying and harassment can affect work relationships and decisions\n•        have insight into the barriers disabled customers may face and duties towards all of our customers\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "Gd54v1GFQkGhqfxSc-FLcw",
+    "id": "AAlTi6qXRzW0_tTtevbK4Q",
     "modules": [
       {
-        "id": "C_X9XNB_TzyEPIZu6NCmeQ",
+        "id": "dJf0q1ruQAWrMOTmRIgkYg",
         "audiences": [
           {
             "mandatory": true,
@@ -366,10 +380,12 @@
         ],
         "title": "Government security classifications",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "AHuRPgk_RgKM2vweooruoA",
+        "id": "eMgOrH1WSleVJY3FsQeNtQ",
         "audiences": [
           {
             "mandatory": true,
@@ -427,10 +443,12 @@
         ],
         "title": "Protecting and sharing information",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "S3Q4hoA3Tka5NjD9ZDOphg",
+        "id": "Onx1DpfLS7eDx881sO93-g",
         "audiences": [
           {
             "mandatory": true,
@@ -488,10 +506,12 @@
         ],
         "title": "Working flexibly",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "PtdJlm4kS2-shjH7ocLKhQ",
+        "id": "Fe348HOPQOKf-IXghHnc6Q",
         "audiences": [
           {
             "mandatory": true,
@@ -549,10 +569,12 @@
         ],
         "title": "In the workplace",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "eRpkoFDeSFK5vGsMtNMayw",
+        "id": "GJ1c30TyQAWp8evvD-derg",
         "audiences": [
           {
             "mandatory": true,
@@ -610,10 +632,12 @@
         ],
         "title": "Staying safe online",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "VuoHmDBaRjqWjGsBQOg-cA",
+        "id": "FZdSxlpZSXOl4Fu5gMfAJA",
         "audiences": [
           {
             "mandatory": true,
@@ -671,10 +695,12 @@
         ],
         "title": "Fraud",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "BkpeXn-wQ2yUvUj8vN-MDA",
+        "id": "UWL_qenOS2S2nG1vvnpH1Q",
         "audiences": [
           {
             "mandatory": true,
@@ -688,22 +714,22 @@
         ],
         "title": "Managing information as an asset",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       }
     ],
     "title": "Responsibility for information",
-    "duration": 5400,
     "shortDescription": "This topic is for everyone who handles information and needs to share and protect it. ",
     "description": "It covers government security classifications, the role of an information asset owner, how to keep information safe away from the office and how to recognise online threats and fraud.\nThis e-learning topic has 7 activities. You can do them all in one go or in stages. You must complete all 7 to finish this topic.\n",
-    "learningOutcomes": "On completing all 7 activities in this topic, you’ll:\n•        understand how security classifications help protect information\n•        know your responsibilities when protecting and sharing information both inside and outside of government\n•        be more confident when managing the risks of handling and disposing of information\n•        be aware of the risks when working with information away from the office\n•        be able to guard against email and other online threats\n•        be better informed about your responsibilities in recognising and preventing fraud and bribery\n•        understand how to manage any risks to a specific information asset you may own\n",
-    "price": 0
+    "learningOutcomes": "On completing all 7 activities in this topic, you’ll:\n•        understand how security classifications help protect information\n•        know your responsibilities when protecting and sharing information both inside and outside of government\n•        be more confident when managing the risks of handling and disposing of information\n•        be aware of the risks when working with information away from the office\n•        be able to guard against email and other online threats\n•        be better informed about your responsibilities in recognising and preventing fraud and bribery\n•        understand how to manage any risks to a specific information asset you may own\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "UipJLn1uQAuupEvd8pnLwQ",
+    "id": "DvlrPusiRxqSoTlYfeWQmg",
     "modules": [
       {
-        "id": "UYIZHYQVRGiQOwDD3DEBJQ",
+        "id": "ShmSCqCkTDyiiN5Cuy2hbg",
         "audiences": [
           {
             "mandatory": true,
@@ -731,10 +757,12 @@
         ],
         "title": "Stress in the workplace",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "ayxtu1tRTbGiF1USKbk_pg",
+        "id": "D3kqf9S9RZKsVe0Y43aCfg",
         "audiences": [
           {
             "mandatory": true,
@@ -763,10 +791,12 @@
         ],
         "title": "\nSlips, trips and falls",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "SZYrEnVER3aMJzkYjgQcIg",
+        "id": "KGuG425KQK6fEsqIEUtqBg",
         "audiences": [
           {
             "mandatory": true,
@@ -795,10 +825,12 @@
         ],
         "title": "Using display screen equipment",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "YBewRx-zQnu5cITKf_dBiw",
+        "id": "c5ST213NRDmGgJpX5HmZaA",
         "audiences": [
           {
             "mandatory": true,
@@ -818,10 +850,12 @@
         ],
         "title": "Health and safety for managers",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "FsupyKgXQBWDVYihFdbBEQ",
+        "id": "FJQXVIdxRPa0wOyZvwfXRQ",
         "audiences": [
           {
             "mandatory": true,
@@ -859,10 +893,12 @@
         ],
         "title": "Basic fire safety",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "ENKo8rM7Tf6hgjTHqbxw_Q",
+        "id": "C1-Gv56UQOOGLG3naJHehg",
         "audiences": [
           {
             "mandatory": true,
@@ -883,22 +919,22 @@
         ],
         "title": "Manual handling",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       }
     ],
     "title": "Health and Safety",
-    "duration": 3600,
     "shortDescription": "Everyone needs to be able to identify, manage and control health and safety risks in the workplace.",
     "description": "This e-learning topic contains 6 activities. You can do them all in one go or in stages. You must complete all 6 to finish this topic.",
-    "learningOutcomes": "On completing all 6 activities in this topic, you’ll have learnt:\n•        about the symptoms of stress, strategies to cope with it and how to escalate concerns about stress and its effects\n•        what to do to prevent slips, trips and falls and how to raise awareness of dangers beyond your immediate control\n•        how to use computer equipment correctly to avoid discomfort\n•        that everyone must be aware of your department's health and safety policies and procedures\n•        how to prevent fire and what to do in an emergency\n•        whether you should attempt manual tasks and how to do them safely \n",
-    "price": 0
+    "learningOutcomes": "On completing all 6 activities in this topic, you’ll have learnt:\n•        about the symptoms of stress, strategies to cope with it and how to escalate concerns about stress and its effects\n•        what to do to prevent slips, trips and falls and how to raise awareness of dangers beyond your immediate control\n•        how to use computer equipment correctly to avoid discomfort\n•        that everyone must be aware of your department's health and safety policies and procedures\n•        how to prevent fire and what to do in an emergency\n•        whether you should attempt manual tasks and how to do them safely \n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "PmBDTviBTY2yEjsqI0oCzw",
+    "id": "e0HNfmkTSMiRPHVJ9ljnxA",
     "modules": [
       {
-        "id": "eWfecBqXQd--e4SSSfzO4w",
+        "id": "W60RuV3sR1OB6jHgH4ZHbA",
         "audiences": [
           {
             "mandatory": false,
@@ -918,10 +954,12 @@
         ],
         "title": "Commercial awareness: manager’s guide",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/743812/mod_resource/content/14/CM1_Commercial_awareness%20managers%20guide%20%281%29.pdf"
       },
       {
-        "id": "QFgrxF-3TXmr_iSFWJJToA",
+        "id": "ZdnoeXE-SLm6lAZxDm5LuQ",
         "audiences": [
           {
             "mandatory": false,
@@ -940,11 +978,13 @@
           }
         ],
         "title": "Commercial awareness: summary",
-        "type": "link",
+        "type": "video",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/course/view.php?id=1568"
       },
       {
-        "id": "N_TRHVPoSA-oOrOp34jt_A",
+        "id": "fZJNsEWpRQmW41AThk5e1Q",
         "audiences": [
           {
             "mandatory": false,
@@ -964,10 +1004,12 @@
         ],
         "title": "How commercially aware are you?",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/course/view.php?id=1568"
       },
       {
-        "id": "JjG1FwZ2Ru2yAd4l82llJA",
+        "id": "RL91NVJvQQi6_MN1WzoVvQ",
         "audiences": [
           {
             "mandatory": false,
@@ -986,11 +1028,13 @@
           }
         ],
         "title": "Setting the scene",
-        "type": "link",
+        "type": "video",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/course/view.php?id=1568"
       },
       {
-        "id": "SSK1D1buQoeFwk0uLanoqg",
+        "id": "FG3f1onARtaihXZOqyqPjA",
         "audiences": [
           {
             "mandatory": false,
@@ -1010,10 +1054,12 @@
         ],
         "title": "Commercial awareness: commercial specialist guidance",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/743817/mod_resource/content/9/CM1_Commercial%20awareness_commercial%20specialist%20guidance%20v3.pdf"
       },
       {
-        "id": "XkfAgZwqT9i4CYJfRAf4VQ",
+        "id": "T49kNYHsSVmDrPFp5v_rlg",
         "audiences": [
           {
             "mandatory": false,
@@ -1033,10 +1079,12 @@
         ],
         "title": "Introduction to commercial in government",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "TvE11xCQQ2iWVnMz9vUoBA",
+        "id": "RuEJBF90QZqmhHN1ot4YPw",
         "audiences": [
           {
             "mandatory": false,
@@ -1056,10 +1104,12 @@
         ],
         "title": "The commercial cycle explored",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "aF3nIzkIRYm3D6OOJBa5WQ",
+        "id": "XzwMTqneQR-PCpxLAuaW-Q",
         "audiences": [
           {
             "mandatory": false,
@@ -1079,10 +1129,12 @@
         ],
         "title": "Knowledge check",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "a2pEE4zyQdS039I0d1Bxpg",
+        "id": "WsfbnuzeSiqiVhQ6_mr4kw",
         "audiences": [
           {
             "mandatory": false,
@@ -1102,10 +1154,12 @@
         ],
         "title": "Commercial awareness: aide memoire",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/743836/mod_resource/content/6/CM1_Commercial_awareness%20aide_memoire%20%281%29.pdf"
       },
       {
-        "id": "AW0jUqPMQwWyXIL25UkOpA",
+        "id": "WUyKniCLShyWpXiqflzAlw",
         "audiences": [
           {
             "mandatory": false,
@@ -1125,10 +1179,12 @@
         ],
         "title": "Challenge case study: reflective activity",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/743840/mod_resource/content/9/CM1_Commercial%20Challenge%20case%20study%20%282%29.pdf"
       },
       {
-        "id": "Li7irLwCSJSmpFKS8E050Q",
+        "id": "GRRB3SaoTNemV-55PCRc-w",
         "audiences": [
           {
             "mandatory": false,
@@ -1148,22 +1204,22 @@
         ],
         "title": "Model answers",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/743844/mod_resource/content/13/CM1_Commercial%20awareness%20challenge%20case%20study_model%20answers%2020.09.2017.pdf"
       }
     ],
     "title": "Commercial awareness",
-    "duration": 8400,
     "shortDescription": "Develop your commercial thinking and learn how, through the effective preparation, procurement and management of services, value for money can be maximised.",
     "description": "This topic highlights the benefit of commercial understanding when developing and implementing policy and programmes, and explains the role of commercial professionals and the stages of the commercial cycle.",
-    "learningOutcomes": "On completing this topic, you'll understand the importance of:\n•        commercial awareness and capabilities in building better public services across government \n•        support and guidance from commercial specialists \n•        value-for-money considerations when providing public services\n",
-    "price": null
+    "learningOutcomes": "On completing this topic, you'll understand the importance of:\n•        commercial awareness and capabilities in building better public services across government \n•        support and guidance from commercial specialists \n•        value-for-money considerations when providing public services\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "XCIXW1-cRZa7jEYq3ktIrA",
+    "id": "eh8SK4H3S7SlhzvVee0O3w",
     "modules": [
       {
-        "id": "OQra6vKNQU-Z1H7bq158BA",
+        "id": "SrMUbofpR9iYh_b3xcSrAA",
         "audiences": [
           {
             "mandatory": false,
@@ -1185,10 +1241,12 @@
         ],
         "title": "Applying for jobs: confidence check-in",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/689106/mod_resource/content/11/LM77_Applying%20for%20jobs_confidence%20check-in.pdf"
       },
       {
-        "id": "U2AT8WHPQeaidFQkE-4OBA",
+        "id": "ED23If8NQhCveGSG8LNvYA",
         "audiences": [
           {
             "mandatory": false,
@@ -1210,10 +1268,12 @@
         ],
         "title": "The application process",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/689107/mod_resource/content/8/ApplicationProcessInfographic.pdf"
       },
       {
-        "id": "EbjbZJ_HT0Kzrc6b_a2ZzA",
+        "id": "ZmG-BgptSv2FoYrquFHF8Q",
         "audiences": [
           {
             "mandatory": false,
@@ -1235,10 +1295,12 @@
         ],
         "title": "Types of application online tutoral ",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "ce7OqZaNQWCAELtEenYaig",
+        "id": "IYFibuz6Sf-Om1LDi1iICQ",
         "audiences": [
           {
             "mandatory": false,
@@ -1260,10 +1322,12 @@
         ],
         "title": "\nWriting competency examples online tutorial ",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "aygcvRQYR4KY1-dICr8gfQ",
+        "id": "dcVXgIdKT8-ap0ADr19-Rg",
         "audiences": [
           {
             "mandatory": false,
@@ -1285,10 +1349,12 @@
         ],
         "title": "Applying for jobs: application examples",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/689113/mod_resource/content/13/LM77_Applying%20for%20jobs_application%20examples.pdf"
       },
       {
-        "id": "fCmFoNeNQZ-iiPSV1yuwUQ",
+        "id": "PO-_Y1tZR-u4KI4TOGpjNQ",
         "audiences": [
           {
             "mandatory": false,
@@ -1310,10 +1376,12 @@
         ],
         "title": "Applying for jobs: help a colleague",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/689114/mod_resource/content/13/LM77_Applying%20for%20jobs_help%20a%20colleague.pdf"
       },
       {
-        "id": "afribVzMQ6Kt2qNpo2vRPw",
+        "id": "ACm-wY6QSx-j2EOBWzb4lA",
         "audiences": [
           {
             "mandatory": false,
@@ -1335,10 +1403,12 @@
         ],
         "title": "Applying for jobs: in their shoes",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/689115/mod_resource/content/12/LM77_Applying%20for%20jobs_in%20their%20shoes.pdf"
       },
       {
-        "id": "d-uVqRMESoOjmcEDgD2hbA",
+        "id": "PfE7F2mWSkGhqMPkLXGeqQ",
         "audiences": [
           {
             "mandatory": false,
@@ -1360,10 +1430,12 @@
         ],
         "title": "Hear from the experts",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/course/view.php?id=1478#section-"
       },
       {
-        "id": "WaR-6NFvTJOqzdaCKNMPmQ",
+        "id": "bC8n3T4yQTCLDf-quSBp7g",
         "audiences": [
           {
             "mandatory": false,
@@ -1385,10 +1457,12 @@
         ],
         "title": "Applying for jobs: setting up job alerts",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/689119/mod_resource/content/13/LM77_Applying%20for%20jobs_setting%20up%20job%20alerts.pdf"
       },
       {
-        "id": "QvyQT6zFS6Gh45Kla158qQ",
+        "id": "WszF9XXXQuanDno0ghkzxw",
         "audiences": [
           {
             "mandatory": false,
@@ -1410,10 +1484,12 @@
         ],
         "title": "Applying for jobs: top tips",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/689120/mod_resource/content/11/LM77_Applying%20for%20jobs_TIPS.pdf"
       },
       {
-        "id": "e4sZyI9NQl6zyGRJHs8PMA",
+        "id": "S1LFYhWmRfWRFUEIDRixQg",
         "audiences": [
           {
             "mandatory": false,
@@ -1435,22 +1511,22 @@
         ],
         "title": "Further reading",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/mod/page/view.php?id=7823"
       }
     ],
     "title": "Applying for jobs",
-    "duration": 0,
     "shortDescription": "This topic helps you present yourself at your best when applying for another Civil Service role. ",
     "description": "Among the skills you learn is the ability to provide evidence of your strengths, competencies and transferable skills in a way that relates directly to the job specification. You are given a range of examples of applications and competency statements to review, rewrite and assess for appointment.",
-    "learningOutcomes": "After completing this topic, you’ll:\n•        be confident in putting yourself forward for new roles, even those outside of your grade and department\n•        improve your chances of securing your next role\n",
-    "price": 0
+    "learningOutcomes": "After completing this topic, you’ll:\n•        be confident in putting yourself forward for new roles, even those outside of your grade and department\n•        improve your chances of securing your next role\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "PcM5dK8VRdSJcCFx6AkV2A",
+    "id": "TqjvUs-zQYys2EiXYqj31Q",
     "modules": [
       {
-        "id": "C-V_oF5lTOC6MutfDgHilw",
+        "id": "agXFYQCZT6-p3Qnmd21qvw",
         "audiences": [
           {
             "mandatory": false,
@@ -1472,10 +1548,12 @@
         ],
         "title": "How emotionally intelligent are you?",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://www.mindtools.com/pages/article/ei-quiz.htm"
       },
       {
-        "id": "d3iC1P05SNqRWD7R3cwWLg",
+        "id": "BDHx47ldS0aAuqHsgy0fPg",
         "audiences": [
           {
             "mandatory": false,
@@ -1497,10 +1575,12 @@
         ],
         "title": "Emotional intelligence overview",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "fOuZuj6XR_-yPbB8Pr71aQ",
+        "id": "U57hRgUeShaV3LRyXrvBIg",
         "audiences": [
           {
             "mandatory": false,
@@ -1522,10 +1602,12 @@
         ],
         "title": "\nBuilding emotional intelligence",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "LfAlX-RSSyOYbAHIDbJ0KA",
+        "id": "O2gNaACaQCe_pDpYhPJkcA",
         "audiences": [
           {
             "mandatory": false,
@@ -1547,10 +1629,12 @@
         ],
         "title": "Building self-awareness",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "VDsT3jRFS5exoXuCLrAq1Q",
+        "id": "LM_XFMh3QzSBKx7thxtuSg",
         "audiences": [
           {
             "mandatory": false,
@@ -1572,10 +1656,12 @@
         ],
         "title": "\nFrom self-awareness to self-management",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "eNbeHBvyRbeTtf02dZjnzA",
+        "id": "Om4BwUxjTaaZZzCDZu5-zQ",
         "audiences": [
           {
             "mandatory": false,
@@ -1597,10 +1683,12 @@
         ],
         "title": "Reflective activity",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/mod/page/view.php?id=4782"
       },
       {
-        "id": "Q8knyORaTTSLNdyCjwIMdg",
+        "id": "WP2nanMjRoitJoVpMGhnrA",
         "audiences": [
           {
             "mandatory": false,
@@ -1622,10 +1710,12 @@
         ],
         "title": "Emotional intelligence: top tips",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/664730/mod_resource/content/9/Emotional%20intelligence_Top%20tips.pdf"
       },
       {
-        "id": "MiOBFTCXQqCme0y_kGBq_A",
+        "id": "KqwC7BKtQy6iyWg2UShIrg",
         "audiences": [
           {
             "mandatory": false,
@@ -1647,22 +1737,22 @@
         ],
         "title": "Further reading",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/mod/page/view.php?id=4785"
       }
     ],
     "title": "Emotional intelligence",
-    "duration": 3600,
     "shortDescription": "This topic demonstrates how you can harness your emotional intelligence to increase your capability for leadership and relationship building.",
     "description": "During the learning activities, you are introduced to the 3 core concepts of emotional intelligence:\n•        emotional awareness (knowing what feelings you, and others, have)\n•        emotional literacy (expressing your feelings and understanding how others express theirs)\n•        emotional honesty (being open about your emotions and creating an environment in which people feel safe to do the same)\n",
-    "learningOutcomes": "After completing this topic, you'll be able to:\n•        build productive relationships \n•        make better decisions\n•        motivate your colleagues \n",
-    "price": 0
+    "learningOutcomes": "After completing this topic, you'll be able to:\n•        build productive relationships \n•        make better decisions\n•        motivate your colleagues \n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "PTQt35sqRkeHwZ1zUk-t9w",
+    "id": "fM6lUo61QImffsteAxhpaw",
     "modules": [
       {
-        "id": "Eqa0CQwISx-WW4JKKI6N1Q",
+        "id": "D21F7vnlTF28pwyG15eFuA",
         "audiences": [
           {
             "mandatory": false,
@@ -1684,10 +1774,12 @@
         ],
         "title": "Rate your communication skills",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/650753/mod_resource/content/23/CSL-Rate%20your%20communication%20skills-V6-060516-IC.pdf"
       },
       {
-        "id": "Nc3g8C98RzSMhtgbs4xeNg",
+        "id": "Y0A0ZA9STfmewkx-zDBWNA",
         "audiences": [
           {
             "mandatory": false,
@@ -1709,10 +1801,12 @@
         ],
         "title": "Communicate more effectively face-to-face with customers",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "bKP2T2tLQ4yYSB8ciDtLCw",
+        "id": "XYDebb-TQ_2Ky_XjbtJhYg",
         "audiences": [
           {
             "mandatory": false,
@@ -1734,10 +1828,12 @@
         ],
         "title": "Communicate more effectively at a distance",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "WofXevMhQKm20yVWsymDUQ",
+        "id": "GPTKuml9SBy0K9oZQeqlFQ",
         "audiences": [
           {
             "mandatory": false,
@@ -1759,10 +1855,12 @@
         ],
         "title": "Listen more actively and improve your communication skills",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "Va02FT8hQ4-ByeEN4a_aww",
+        "id": "OMwyvNnzSNmHTCI5725hWg",
         "audiences": [
           {
             "mandatory": false,
@@ -1784,10 +1882,12 @@
         ],
         "title": "\nActive listening knowledge check",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "WJRZn3-YQ36qZK8e8CmcJw",
+        "id": "BAkkaUxfRe2XoP_wgmqx2w",
         "audiences": [
           {
             "mandatory": false,
@@ -1809,10 +1909,12 @@
         ],
         "title": "Team communication checklist",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/650765/mod_resource/content/7/CSL-Team_communication_checklist-V4-060516-AC.pdf"
       },
       {
-        "id": "OrCNiIlGT2GhuXkpAc_4mQ",
+        "id": "dRaekAflRv2vhpr1JcYdrg",
         "audiences": [
           {
             "mandatory": false,
@@ -1834,10 +1936,12 @@
         ],
         "title": "Unconscious bias reflective task",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/mod/page/view.php?id=3797"
       },
       {
-        "id": "IwZde0gVQTiVv9Oi-ua3GA",
+        "id": "Zrt0nsSLQTKnN5kdWXY1gg",
         "audiences": [
           {
             "mandatory": false,
@@ -1859,22 +1963,22 @@
         ],
         "title": "Personal action plan",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/650767/mod_resource/content/13/CSL-Personal_action_plan-V3-080416-IC.pdf"
       }
     ],
     "title": "Introduction to communicating effectively",
-    "duration": 0,
     "shortDescription": "This topic for customer-facing staff helps you identify the benefits of communicating effectively with external and internal customers.",
     "description": "It covers effective written and verbal communication, as well as techniques for the telephone and for digital platforms. You also learn about active listening.",
-    "learningOutcomes": "On completing this online learning, you'll be able to:\n•        describe effective techniques for communicating with customers face-to-face and at a distance\n•        plan and structure communications to ensure successful outcomes\n•        adapt your communication style to different types of customers and understand how to identify the different needs of your external and internal customers\n",
-    "price": 0
+    "learningOutcomes": "On completing this online learning, you'll be able to:\n•        describe effective techniques for communicating with customers face-to-face and at a distance\n•        plan and structure communications to ensure successful outcomes\n•        adapt your communication style to different types of customers and understand how to identify the different needs of your external and internal customers\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "aZiqJ1EPSriIqIph0bmxJA",
+    "id": "UB17rkiGSCWNO3XPqQXccg",
     "modules": [
       {
-        "id": "L4oV7mf-SCy58kBsp6T44g",
+        "id": "SWH8hOG7TwWMwXg81QyUTQ",
         "audiences": [
           {
             "mandatory": false,
@@ -1896,10 +2000,12 @@
         ],
         "title": "That' conversation with your boss",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://www.mind.org.uk/information-support/your-stories/that-conversation-with-your-boss/#.V-zjK4YrKM-"
       },
       {
-        "id": "ASRAilY-TwyU2ZmXGJD3jw",
+        "id": "cV_I1LDrT5GSiVqvIwiBhw",
         "audiences": [
           {
             "mandatory": false,
@@ -1921,10 +2027,12 @@
         ],
         "title": "Mental health support at work",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://www.mind.org.uk/information-support/your-stories/mental-health-support-at-work/#.WqKug5PFJTa"
       },
       {
-        "id": "KSKB0bvfSOG9rIqbxG3png",
+        "id": "BjMpszJnTZuSo-BDNnPLhA",
         "audiences": [
           {
             "mandatory": false,
@@ -1946,10 +2054,12 @@
         ],
         "title": "Four key things about returning to work when having mental health problems",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://www.mind.org.uk/information-support/your-stories/4-key-things-about-returning-to-work-when-having-mental-health-problems/#.WqKu8JPFJTa"
       },
       {
-        "id": "BW0cARpwQlKrmQw5Dmja2g",
+        "id": "XIQzJWAkRje9tK54-YfJjA",
         "audiences": [
           {
             "mandatory": false,
@@ -1971,10 +2081,12 @@
         ],
         "title": "Talking about mental health in the Civil Service",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/course/view.php?id=1428"
       },
       {
-        "id": "cwuPYxFsQT-QDlzABOxt2A",
+        "id": "fbHl0e3iT-afj_AOU3MQ4Q",
         "audiences": [
           {
             "mandatory": false,
@@ -1996,10 +2108,12 @@
         ],
         "title": "Mental health conditions and stigma",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "FrNiObgeQnyAG3DDFOrTSA",
+        "id": "dma5v0c_QBKWatnnZ6Gp-g",
         "audiences": [
           {
             "mandatory": false,
@@ -2021,10 +2135,12 @@
         ],
         "title": "Looking out for each other",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "ERVw9XLwTjie_YziqfYM5Q",
+        "id": "GYiWLxbiRcKrrFTOb6TUhw",
         "audiences": [
           {
             "mandatory": false,
@@ -2046,10 +2162,12 @@
         ],
         "title": "Mental health awareness quiz",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "Db47YbtrQcyrlDgSFgolug",
+        "id": "CAs79vfzTK6FmbtGC-uPdw",
         "audiences": [
           {
             "mandatory": false,
@@ -2071,10 +2189,12 @@
         ],
         "title": "Mental health at work scenarios",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/mod/page/view.php?id=8020"
       },
       {
-        "id": "a9WNboh2Q0OIAf4k1qYogA",
+        "id": "WiWPyhXmTjuxLQqttlWCRA",
         "audiences": [
           {
             "mandatory": false,
@@ -2096,10 +2216,12 @@
         ],
         "title": "Mental health: reflective activity",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691917/mod_resource/content/9/DI4_Mental_Health_Reflective_Activity_111016_RI.pdf"
       },
       {
-        "id": "byG6XoN0QjGKId1NREqxTg",
+        "id": "XsXEqUltStKqPfoeVGW74w",
         "audiences": [
           {
             "mandatory": false,
@@ -2121,22 +2243,22 @@
         ],
         "title": "Mental health: top tips",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691918/mod_resource/content/8/DI4%20-%20Mental_Health_Top_Tips_111016_RI.pdf"
       }
     ],
     "title": "Mental health at work",
-    "duration": 5400,
     "shortDescription": "This topic improves your understanding of mental health issues and the impact they can have if they remain unaddressed. ",
     "description": "You find out how to help colleagues who may have a mental health condition and when you should direct them to seek professional support. By becoming more knowledgeable and empathetic, you should feel more confident in starting, encouraging and promoting open conversations about the effects of mental ill health. ",
-    "learningOutcomes": "After completing this topic, you'll:\n•        feel more confident in your ability to support colleagues with mental health conditions within your team.\n•        be able to create an inclusive environment within which issues connected to mental health can be openly discussed and addressed\n",
-    "price": 0
+    "learningOutcomes": "After completing this topic, you'll:\n•        feel more confident in your ability to support colleagues with mental health conditions within your team.\n•        be able to create an inclusive environment within which issues connected to mental health can be openly discussed and addressed\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "MoWbDTpSRJGfAQK4DX_Seg",
+    "id": "XG22JMdmQXWZniLLJQ_XLQ",
     "modules": [
       {
-        "id": "DYIMKdD2TqW8HvD_IoLGTw",
+        "id": "MdTDTlUQSRGhxfOIKv4F-Q",
         "audiences": [
           {
             "mandatory": false,
@@ -2157,11 +2279,13 @@
           }
         ],
         "title": "Let’s collaborate",
-        "type": "link",
+        "type": "video",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/course/view.php?id=1323"
       },
       {
-        "id": "dF8vxZ24TFWA2GIhnh6rpw",
+        "id": "ITHn6aQwQWqVZjmDQuuSlA",
         "audiences": [
           {
             "mandatory": false,
@@ -2183,10 +2307,12 @@
         ],
         "title": "Case study 1: collaboration on an education policy",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691833/mod_label/intro/LM75_Collaboration_in_practice_Case%20Study_1_%20CL%20191016.pdf"
       },
       {
-        "id": "bjzH1V4bQVa24FPFrq13Qw",
+        "id": "BEfjDvQFQAqdOsGqgvMPhw",
         "audiences": [
           {
             "mandatory": false,
@@ -2208,10 +2334,12 @@
         ],
         "title": "Case study 2: team collaboration in an operational environment",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691833/mod_label/intro/LM75%20Collaboration%20in%20practice_Case%20Study%202_200916_SC%20%281%29.pdf"
       },
       {
-        "id": "b6fcVvfvTEKk1L07NweB_A",
+        "id": "E2DcrUqoTVilLRjFvUbFeg",
         "audiences": [
           {
             "mandatory": false,
@@ -2233,10 +2361,12 @@
         ],
         "title": "Case study 3: collaboration on a sports participation policy",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691833/mod_label/intro/LM75_Collaboration_in_practice_Case_Study_3_%20191016_CL.pdf"
       },
       {
-        "id": "Pl5Gi0TDS4yGh-RarvjzSQ",
+        "id": "FvB4jJVgRg2meB8XnvOeyA",
         "audiences": [
           {
             "mandatory": false,
@@ -2258,10 +2388,12 @@
         ],
         "title": "Case study 4: collaborating to fix a health and safety issue",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691833/mod_label/intro/LM75%20Collaboration%20in%20practice_Case%20Study%204%20-%20SJ%20201016.pdf"
       },
       {
-        "id": "Y_V1Szb3RT-1M4Tl-99m2Q",
+        "id": "MZuUvS7qS8edxgTKh7-yKw",
         "audiences": [
           {
             "mandatory": false,
@@ -2283,10 +2415,12 @@
         ],
         "title": "\nThe 6 hallmarks of collaboration",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "f32Bgg06SuuvBFFWVw1-BA",
+        "id": "QbHW-v__SOieL-vKpJ5LwA",
         "audiences": [
           {
             "mandatory": false,
@@ -2308,10 +2442,12 @@
         ],
         "title": "Skill up",
         "type": "elearning",
+        "duration": 600,
+        "price": 0,
         "startPage": "index.htm"
       },
       {
-        "id": "XMjEcxZASlGpTBWkVClKbg",
+        "id": "IaG2kVrFRbeZ26e7EIbLTw",
         "audiences": [
           {
             "mandatory": false,
@@ -2333,10 +2469,12 @@
         ],
         "title": "\nRelationship mapping",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691840/mod_resource/content/9/LM75%20Relationship%20mapping.pdf"
       },
       {
-        "id": "GnuIXZUxS5mJinl1tqWcOA",
+        "id": "E-Dzxm_BSZeMkhMkjR4Qtg",
         "audiences": [
           {
             "mandatory": false,
@@ -2358,10 +2496,12 @@
         ],
         "title": "Building relationships",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691841/mod_resource/content/11/LM75%20Building%20relationships_221016_SC%20%281%29.pdf"
       },
       {
-        "id": "YoIGyKahQ4yFwwvdETBzWw",
+        "id": "Ebd5AIsXSomjG0gB8frvag",
         "audiences": [
           {
             "mandatory": false,
@@ -2383,10 +2523,12 @@
         ],
         "title": "Collaboration toolkit",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691842/mod_resource/content/6/Collaboration%20tools.pdf"
       },
       {
-        "id": "QYT63xGaR8GwKKtXpMXA9Q",
+        "id": "VkqxBK3YSDGTYj4Lg3Rmdg",
         "audiences": [
           {
             "mandatory": false,
@@ -2408,10 +2550,12 @@
         ],
         "title": "Key principles of collaboration",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/course/view.php?id=1323"
       },
       {
-        "id": "S9FiHPt1SyuIT_Sgg_DgUg",
+        "id": "XvMAozwNRfiyNMAj6vFEpA",
         "audiences": [
           {
             "mandatory": false,
@@ -2433,22 +2577,22 @@
         ],
         "title": "Collaboration across departments, government and\nbeyond: top tips",
         "type": "link",
+        "duration": 600,
+        "price": 0,
         "location": "https://civilservicelearning.civilservice.gov.uk/learning/pluginfile.php/691845/mod_resource/content/7/LM75_Top_tips_211016_SJ%20201016.pdf"
       }
     ],
     "title": "Collaboration across departments, government and beyond",
-    "duration": 5400,
     "shortDescription": "Discover the essential skills and behaviours that underpin successful collaboration, such as building and maintaining relationships and sharing control.",
     "description": "In this introductory topic, you learn about the value of collaboration, how to articulate a shared vision for collaboration and how to maximise the benefits it brings. By being mindful of your partners’ interests and ambitions, you can help ensure that collaboration objectives are met.",
-    "learningOutcomes": "After completing this topic, you'll:\n•        know how to get the most out of professional collaborative relationships\n•        ensure that all parties are clear on their roles and responsibilities\n•        contribute to improved sharing of best practice and innovative ideas\n",
-    "price": 0
+    "learningOutcomes": "After completing this topic, you'll:\n•        know how to get the most out of professional collaborative relationships\n•        ensure that all parties are clear on their roles and responsibilities\n•        contribute to improved sharing of best practice and innovative ideas\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "BGVDy0rzQd-4TKqvAdaC6g",
+    "id": "d_Mc26bZQdi1nHgnYPtOmw",
     "modules": [
       {
-        "id": "dz19UPtfSXKiIVkY7HQhfA",
+        "id": "f4qw4z-SRfiZFX9PBHLtCg",
         "productCode": "CM2",
         "audiences": [
           {
@@ -2467,29 +2611,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "SIkcgNW5TIiz3GCKRHZj6Q",
-            "location": "London",
-            "date": "2018-05-30T00:00:00.000Z"
-          }
-        ]
+        "duration": 17100,
+        "price": 299,
+        "type": "face-to-face"
       }
     ],
     "title": "Commercial cycle 1: setting the direction",
-    "duration": 17100,
     "shortDescription": "An introduction to the commercial aspects of designing public policy and services.",
     "description": "You learn about the commercial models that can be used to deliver public services. Procurement, delivery and risk transfer are also considered, as these are important factors in deciding whether to create a product or service in-house or to buy it from an outside supplier.",
-    "learningOutcomes": "After completing this topic, you’ll:\n•        understand the value of combining business planning, commercial acumen and the Civil Service’s buying power\n•        be able to deliver new public services in the most effective way\n",
-    "price": 299
+    "learningOutcomes": "After completing this topic, you’ll:\n•        understand the value of combining business planning, commercial acumen and the Civil Service’s buying power\n•        be able to deliver new public services in the most effective way\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "RpcSdw4BQBCugNMC-YIhjA",
+    "id": "ddLhYrd9TSuTtL3XBX9mIA",
     "modules": [
       {
-        "id": "K14Wf1GsTt2K5hBfoQsoOg",
+        "id": "HMTmplhdSnugNR5uv6cM5A",
         "productCode": "CM5",
         "audiences": [
           {
@@ -2508,29 +2645,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "Vx9wJSEDRNyriSjPQ2JTFg",
-            "location": "London",
-            "date": "2018-05-15T00:00:00.000Z"
-          }
-        ]
+        "duration": 17100,
+        "price": 249,
+        "type": "face-to-face"
       }
     ],
     "title": "Commercial cycle 4: contract management",
-    "duration": 17100,
     "shortDescription": "This topic improves your understanding of how to manage contracts, performance and relationships. ",
     "description": "It helps you take a more informed and risk-aware approach to supplier management, as well as providing an insight into how commercial decisions are made.",
-    "learningOutcomes": "On completing this topic, you’ll:\n•        understand the basics of contract management and be alert to the early signs of contracts going wrong\n•        be able to collaborate effectively with the various experts involved in the supplier management process\n•        be able to secure excellent performance and value for money from your suppliers\n",
-    "price": 249
+    "learningOutcomes": "On completing this topic, you’ll:\n•        understand the basics of contract management and be alert to the early signs of contracts going wrong\n•        be able to collaborate effectively with the various experts involved in the supplier management process\n•        be able to secure excellent performance and value for money from your suppliers\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "TC5_g8tTREiMk2BuI8ZVmw",
+    "id": "LEZyhOWhTcCmDnXsq8DWVQ",
     "modules": [
       {
-        "id": "AIx79OzuTOiEYQqgFZSXZA",
+        "id": "OKlWQrckTd22zGxzyLmi3g",
         "productCode": "SCS-QAF",
         "audiences": [
           {
@@ -2543,22 +2673,22 @@
             ]
           }
         ],
+        "duration": 28800,
+        "price": 787,
         "type": "face-to-face"
       }
     ],
     "title": "10 questions about finance you’re too senior to ask",
-    "duration": 28800,
     "shortDescription": "This workshop is a practical introduction to finance topics relevant to the senior civil service",
     "description": "The session increases your understanding of finance and gives you a stronger grasp of financial concepts and principles. \nYou explore some of fundamental questions about finance, including how to manage budgets and government accounting; read financial statements; and interpret business cases.\n",
-    "learningOutcomes": "By the end of the workshop, you’ll be able to:\n•        use the language of finance more confidently\n•        work better with finance professionals\n•        analyse and interpret financial information and make finance decisions with more confidence\n",
-    "price": 787
+    "learningOutcomes": "By the end of the workshop, you’ll be able to:\n•        use the language of finance more confidently\n•        work better with finance professionals\n•        analyse and interpret financial information and make finance decisions with more confidence\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "VNZr_MypQ1iaOcz2Qlf59Q",
+    "id": "BAg5fecAQ2WRsVIx9rYF3Q",
     "modules": [
       {
-        "id": "R8TlzRB3Qku0c4r4fOGhGg",
+        "id": "EOL1e3DtQZWKXIEXbtaoag",
         "productCode": "FI2",
         "audiences": [
           {
@@ -2577,29 +2707,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "Q1YYkycUT8K3tM5ytstMMw",
-            "location": "London",
-            "date": "2018-05-03T00:00:00.000Z"
-          }
-        ]
+        "duration": 17100,
+        "price": 249,
+        "type": "face-to-face"
       }
     ],
     "title": "Working with finance in government",
-    "duration": 17100,
     "shortDescription": "This topic introduces you to the processes used to control finances across government.",
     "description": "You’ll learn about basic financial strategies, management tools and accounting processes. Ideally, you should have already completed the ‘Awareness of finance in government’ topic.",
-    "learningOutcomes": "After completing this topic, you’ll be:\n•        more aware of the financial implications of decisions\n•        able to proactively manage finances\n•        able to work more effectively with auditors and suppliers\n",
-    "price": 249
+    "learningOutcomes": "After completing this topic, you’ll be:\n•        more aware of the financial implications of decisions\n•        able to proactively manage finances\n•        able to work more effectively with auditors and suppliers\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "G-JbnG3PRAWev2u64P9WHg",
+    "id": "dTPc0eqlRqSOkeW7WYKd9w",
     "modules": [
       {
-        "id": "TAjqoH7BRvyyLbDWnA3iuQ",
+        "id": "TiL6byplTLm8SGiNkujv_A",
         "productCode": " FI4",
         "audiences": [
           {
@@ -2616,49 +2739,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "dFz0N0NVTzOWrl5uF12IPg",
-            "location": "Bristol",
-            "date": "2018-04-17T00:00:00.000Z"
-          },
-          {
-            "id": "KQJD5OTsTUyzpGPb2xz9sw",
-            "location": "London",
-            "date": "2018-05-15T00:00:00.000Z"
-          },
-          {
-            "id": "bnUL0xtxRGucmP4r4OILrw",
-            "location": "Manchester",
-            "date": "2018-05-24T00:00:00.000Z"
-          },
-          {
-            "id": "U80q4psORT-18IE57hdAEQ",
-            "location": "Manchester",
-            "date": "2018-06-13T00:00:00.000Z"
-          },
-          {
-            "id": "AlccHlgpR-6dRRcUIQpcCw",
-            "location": "London",
-            "date": "2018-06-27T00:00:00.000Z"
-          }
-        ]
+        "duration": 18000,
+        "price": 249,
+        "type": "face-to-face"
       }
     ],
     "title": "Understanding and using business cases",
-    "duration": 18000,
     "shortDescription": "This topic examines how and why business cases are so important within government. ",
     "description": "Using example of best practice, it covers what needs to be included in a business case to make it more successful.\n \nThis topic is valuable if you’re new to using or contributing to business cases. It’s also beneficial for anyone who wants to refresh, improve or enhance their skills in this area or better understand the impact of business cases on their role.\n",
-    "learningOutcomes": "After completing this topic, you’ll be able to:\n•        develop a compelling business case, as well as distinguish between different types of business and identify their key features\n•        work effectively with other business partners to ensure all objectives and key performance indicators are aligned\n•        identify how your role supports the collaborative development of business cases\n",
-    "price": 249
+    "learningOutcomes": "After completing this topic, you’ll be able to:\n•        develop a compelling business case, as well as distinguish between different types of business and identify their key features\n•        work effectively with other business partners to ensure all objectives and key performance indicators are aligned\n•        identify how your role supports the collaborative development of business cases\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "Mw0IHESaSaCH6__CueJfxQ",
+    "id": "Y283RB8JSqCBHtKXGzYjbw",
     "modules": [
       {
-        "id": "WOzCNY_iRbOUMyBBQ-SXLA",
+        "id": "UZzxJj9VScuUXVoRSJ43Xg",
         "productCode": "FI3",
         "audiences": [
           {
@@ -2675,44 +2771,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "X_SiWvf-RbeCgPnzvoBo7A",
-            "location": "London",
-            "date": "2018-03-27T00:00:00.000Z"
-          },
-          {
-            "id": "HLdUU3ISQ020XGrLxYsVAw",
-            "location": "London",
-            "date": "2018-04-24T00:00:00.000Z"
-          },
-          {
-            "id": "J3ACawt4Q-mnd20Ym7jRvQ",
-            "location": "London",
-            "date": "2018-05-25T00:00:00.000Z"
-          },
-          {
-            "id": "D6qC1RlHTCK_utmRQc3seg",
-            "location": "London",
-            "date": "2018-06-15T00:00:00.000Z"
-          }
-        ]
+        "duration": 17100,
+        "price": 249,
+        "type": "face-to-face"
       }
     ],
     "title": "Working with budgets",
-    "duration": 17100,
     "shortDescription": "This topic introduces you to the fundamental principles of budget management and governance processes. ",
     "description": "You learn about creating and managing a budget, forecasting, how budget holders are accountable and how this directly affects you and your work.\n\nIdeally, you should have already completed the ‘Awareness of finance in government’ topic.\n",
-    "learningOutcomes": "After completing this topic, you’ll:\n \n•        understand current best practice for public sector budgeting\n•        know how to manage budgets effectively through the financial cycle\n",
-    "price": 249
+    "learningOutcomes": "After completing this topic, you’ll:\n \n•        understand current best practice for public sector budgeting\n•        know how to manage budgets effectively through the financial cycle\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "AaasrB_cTr6tK6HfC9zBIA",
+    "id": "JhLQyOmuQlWgL3jz8XBhLQ",
     "modules": [
       {
-        "id": "TS7lVqciTOmiMAPqH_M5HQ",
+        "id": "Ko9m_XPqTymDh_AtSMqDBw",
         "productCode": "FI1",
         "audiences": [
           {
@@ -2729,34 +2803,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "L-vjIW0WRsemIgQ4G0mvIQ",
-            "location": "London",
-            "date": "2018-05-03T00:00:00.000Z"
-          },
-          {
-            "id": "AHEuqEzrSOCWpqYIhUSR7g",
-            "location": "London",
-            "date": "2018-06-15T00:00:00.000Z"
-          }
-        ]
+        "duration": 17100,
+        "price": 229,
+        "type": "face-to-face"
       }
     ],
     "title": "Awareness of finance in government",
-    "duration": 17100,
     "shortDescription": "This introductory topic explains how public finances operate. ",
     "description": "You gain an understanding of the role finance plays in government decision-making and the need to deliver value for money.",
-    "learningOutcomes": "After completing this topic, you’ll be more:\n•        aware of the government’s budgetary cycle and processes and how these affect your role \n•        confident when dealing with finance professionals in your day-to-day work\n•        able to make informed decisions\n",
-    "price": 229
+    "learningOutcomes": "After completing this topic, you’ll be more:\n•        aware of the government’s budgetary cycle and processes and how these affect your role \n•        confident when dealing with finance professionals in your day-to-day work\n•        able to make informed decisions\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "L8eDh8xFRNis4A2J54Hf1w",
+    "id": "d7ep87-XSAy95MvL1EPOIg",
     "modules": [
       {
-        "id": "O7AIlfFMR7agqAU1DvW4PA",
+        "id": "ErC4-3WCTI-J3g4R5PhA1A",
         "productCode": "DG18",
         "audiences": [
           {
@@ -2770,34 +2832,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "Y_zC0ZejTxGcFJHUk-ReBA",
-            "location": "London",
-            "date": "2018-03-27T00:00:00.000Z"
-          },
-          {
-            "id": "Xro9RcJwT3auToByyRPnMA",
-            "location": "London",
-            "date": "2018-05-29T00:00:00.000Z"
-          }
-        ]
+        "duration": 36000,
+        "price": 249,
+        "type": "face-to-face"
       }
     ],
     "title": "Embracing digital to lead and innovate",
-    "duration": 36000,
     "shortDescription": "This topic helps you, as a digital leader, create and sponsor digital by default practices in the workplace. ",
     "description": "Discover what the necessary qualities for a digital leader are, as well as what is required for a digital culture, how you can contribute to it and how such a culture may affect your team. \nYou also learn about how to best use data for more informed decision-making and how to work with agile teams during the development of new digital services. ",
-    "learningOutcomes": "After completing this topic, you’ll be able to:\n•        identify new technology concepts, emerging trends and how they will affect both you and the public\n•        champion the use of new digital ideas within your team \n•        address any cultural and technical challenges that may emerge",
-    "price": 249
+    "learningOutcomes": "After completing this topic, you’ll be able to:\n•        identify new technology concepts, emerging trends and how they will affect both you and the public\n•        champion the use of new digital ideas within your team \n•        address any cultural and technical challenges that may emerge"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "E3JZbbruRRKOm5s2RnycsQ",
+    "id": "GPKueKW9TUe7BtjimMLP6A",
     "modules": [
       {
-        "id": "E_SgNxDpTFS77u2FoiCwiw",
+        "id": "S4H38229Ty-zadsisk6wfA",
         "productCode": "DG16",
         "audiences": [
           {
@@ -2813,29 +2863,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "Nsv9q0CfSkCwXPJxieIVFA",
-            "location": "London",
-            "date": "2018-05-09T00:00:00.000Z"
-          }
-        ]
+        "duration": 28800,
+        "price": 299,
+        "type": "face-to-face"
       }
     ],
     "title": "Managing in a digital environment",
-    "duration": 28800,
     "shortDescription": "This topic helps you understand changing digital trends and how to inspire your team to accelerate the move to digital by default.",
     "description": "By being comfortable with new technologies, you can give your team the confidence to be more digital and so meet customers changing expectations and needs.\nThis topic helps you assess your team’s digital capability and consider how it could be improved.",
-    "learningOutcomes": "After completing this topic, you’ll:\n•        have established how technology can make a difference to your team’s working practices \n•        be able to promote the value of a digital culture where everyone needs to embrace digital\n•        inspire your team to be more confident when using digital tools",
-    "price": 299
+    "learningOutcomes": "After completing this topic, you’ll:\n•        have established how technology can make a difference to your team’s working practices \n•        be able to promote the value of a digital culture where everyone needs to embrace digital\n•        inspire your team to be more confident when using digital tools"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "SXAH9BLtTA2YTODuxRsz_Q",
+    "id": "AooNQ6GNTi6DD9GZb041ag",
     "modules": [
       {
-        "id": "XdGq8bjKQzGkqE_cqBv14g",
+        "id": "Sq7XAxJiSDGENnksaP849Q",
         "productCode": "DG1",
         "audiences": [
           {
@@ -2854,29 +2897,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "b6v7KEvMTbyI27hsHcfF4g",
-            "location": "London",
-            "date": "2018-05-24T00:00:00.000Z"
-          }
-        ]
+        "duration": 14400,
+        "price": 199,
+        "type": "face-to-face"
       }
     ],
     "title": "Working more digitally",
-    "duration": 14400,
     "shortDescription": "This introductory topic helps you understand how digital tools and services can improve the way you work. ",
     "description": "If your work involves using a computer, then there’s something here for you. It’s important to develop your digital skills and knowledge so you can work more effectively with your colleagues and customers. Plus, off-putting buzzwords are simply explained.",
-    "learningOutcomes": "After you’ve completed this learning journey you’ll:\n•        be more familiar with the digital world\n•        understand how you and you team can make greater use of digital technology\n•        be more confident in using digital tools",
-    "price": 199
+    "learningOutcomes": "After you’ve completed this learning journey you’ll:\n•        be more familiar with the digital world\n•        understand how you and you team can make greater use of digital technology\n•        be more confident in using digital tools"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "ZNV8cW7vSxWyAnfP_-HbdA",
+    "id": "dqMpBBDtRaueIybTtj3mlw",
     "modules": [
       {
-        "id": "QGHEQ5KKQNW3crwt3VlgWA",
+        "id": "filY-xpTSpe0jvq8ePiOCw",
         "productCode": "PD14",
         "audiences": [
           {
@@ -2891,22 +2927,22 @@
             ]
           }
         ],
+        "duration": 57600,
+        "price": 560,
         "type": "face-to-face"
       }
     ],
     "title": "APM project fundamentals qualifications",
-    "duration": 57600,
     "shortDescription": "This introductory qualification guides you through the fundamentals of project management.",
     "description": "It is ideal if you are considering a career in project management or looking to improve your knowledge of the subject. You will cover project planning, project life cycles and quality management. Communication is also looked at, as well as teamwork models and the role of the leader.\n\nThis is an intensive course and you are required to complete around 10 hours of preparatory reading and to set aside time for study in the evening.\n\nAccredited by the Association of Project Management (APM), the qualification was formerly known as APM Introductory Certificate.\n",
-    "learningOutcomes": "After completing this topic, you’ll:\n•        have a broad understanding of project delivery tools, techniques, terminology and principles \n•        be able to make a positive contribution to any project you’re involved with\n",
-    "price": 560
+    "learningOutcomes": "After completing this topic, you’ll:\n•        have a broad understanding of project delivery tools, techniques, terminology and principles \n•        be able to make a positive contribution to any project you’re involved with\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "An-hBuUGT3mI-riUzV3GjA",
+    "id": "WJx2UQWESCeihf1HG70JxQ",
     "modules": [
       {
-        "id": "YJ53uaa3SqyEaKlhadvCuQ",
+        "id": "Nvt3uobiQXODEf-ZhVUasQ",
         "productCode": "PD11",
         "audiences": [
           {
@@ -2921,22 +2957,22 @@
             ]
           }
         ],
+        "duration": 144000,
+        "price": null,
         "type": "face-to-face"
       }
     ],
     "title": "APM project management qualification",
-    "duration": 144000,
     "shortDescription": "Learn about the tools, techniques and principles that are fundamental to successful project management and delivery. ",
     "description": "This intensive course gives project managers a broad understanding of the different elements of project management. It covers the structure of project lifecycles and the principles of leadership and teamwork. \n\nYou are taken through the APM syllabus in preparation for an examination (3-hour, closed book) on the fifth day.\n\nYou are required to do around 15 hours of preparatory reading, as well as a further 2 to 3 hours of study each evening.\n \nThe estimated learning time is 58 to 62 hours.\n",
-    "learningOutcomes": "After completing this topic and gaining the PMQ, you’ll:\n•        hold an internationally-recognised qualification\n•        be able to make a positive contribution to any project\n",
-    "price": null
+    "learningOutcomes": "After completing this topic and gaining the PMQ, you’ll:\n•        hold an internationally-recognised qualification\n•        be able to make a positive contribution to any project\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "YcOru4zYSi-SAjuCqtbFWw",
+    "id": "NByFtSuCR0qntDRMcBNc7g",
     "modules": [
       {
-        "id": "fiZvJcYxTrSmIZkbm9-yYQ",
+        "id": "TaM_VWceTH-T2osGgZfo0g",
         "productCode": "PD48",
         "audiences": [
           {
@@ -2953,22 +2989,22 @@
             ]
           }
         ],
+        "duration": 86400,
+        "price": 657,
         "type": "face-to-face"
       }
     ],
     "title": "PRINCE2: practitioner",
-    "duration": 86400,
     "shortDescription": "This accelerated course covers the 4 components of PRINCE2 – the principles, themes, processes and project environment. ",
     "description": "You look at management roles required in a PRINCE2 project and what management products must be created to ensure the project is delivered in a coordinated, consistent and transparent manner.\nThe 2017 update of PRINCE2 is used, which tailors the needs of organisations and project environments. For details of this update to the 2009 version of PRINCE, go to the AXELOS website.\nYou have to complete 10 to 15 hours of preparatory online work, as well as study in the evenings. The estimated learning time is 33 hours.\nOn day 3, you sit the practitioner examination, which is 2 hours 30 minutes long, open book and multiple choice.\n",
-    "learningOutcomes": "After completing this topic, you’ll:\n•        be able to apply the PRINCE2 methodology to any given scenario\n•        hold an industry-recognised qualification\n•        be a more rounded and confident project manager\n",
-    "price": 657
+    "learningOutcomes": "After completing this topic, you’ll:\n•        be able to apply the PRINCE2 methodology to any given scenario\n•        hold an industry-recognised qualification\n•        be a more rounded and confident project manager\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "baPEA3hTRGCad-RW6HTfKA",
+    "id": "EFyUpGvySFKg971bSCZ2Aw",
     "modules": [
       {
-        "id": "ScNvW5icQx-A1n3MG-pU8w",
+        "id": "CL8pH9aTRyGxnyzn9ufcsA",
         "productCode": "PD47",
         "audiences": [
           {
@@ -2983,22 +3019,22 @@
             ]
           }
         ],
+        "duration": 57600,
+        "price": 679,
         "type": "face-to-face"
       }
     ],
     "title": "PRINCE2: foundation",
-    "duration": 57600,
     "shortDescription": "This topic introduces you to the PRINCE2 project management concepts, processes, techniques and vocabulary. ",
     "description": "You learn about the 7 principles of a PRINCE2 project, as well as the 7 themes. You also find out how – and when – to adapt the methodology for your individual projects.\nThe 2017 update of PRINCE2 is used, which tailors the needs of organisations and project environments. For details of this update to the 2009 version of PRINCE, go to the AXELOS website.\nThe 1-hour examination is on the second day; it is closed-book and multiple choice.\nYou have some preparatory learning to complete (10 to 15 hours), plus further study on the evening of day 1.\nThe estimated learning time is 26 hours.\n\n",
-    "learningOutcomes": "After completing this topic, you’ll:\n•        hold an industry-recognised qualification\n•        be a more rounded and confident project manager\n•        be able to progress to the next PRINCE2 stage (practitioner)\n",
-    "price": 679
+    "learningOutcomes": "After completing this topic, you’ll:\n•        hold an industry-recognised qualification\n•        be a more rounded and confident project manager\n•        be able to progress to the next PRINCE2 stage (practitioner)\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "BJVmgeWiQ4ObcuKpQMxoFA",
+    "id": "HcDt46kAQauDnuAG-zkf0Q",
     "modules": [
       {
-        "id": "MRnMEuZhRSa1V8tzajOa3A",
+        "id": "IPzUBr4EQ_e9B9BJaO-Xng",
         "productCode": "PD30",
         "audiences": [
           {
@@ -3013,22 +3049,22 @@
             ]
           }
         ],
+        "duration": 86400,
+        "price": 766,
         "type": "face-to-face"
       }
     ],
     "title": "Managing Successful Programmes (MSP): foundation",
-    "duration": 86400,
     "shortDescription": "Gain the knowledge, tools and techniques required to work in, engage with or manage government programmes.",
     "description": "On this intensive workshop, you learn about the fundamental concepts of Managing Successful Programmes and how to apply its principles. Ideally, you should already have some experience of managing or working with programmes before booking. Some prior knowledge of, or exposure to, a project management method would be beneficial, but not mandatory.\nThe 1-hour, multiple choice examination is held on the third day. If you have a disability or if English is not your first language, you may qualify for additional time when sitting the exam. You must inform the CSL helpdesk when booking so they can arrange for an extra time allowance.\nYou must complete 4 to 6 hours of preparatory reading and around 2 hours of study each evening. \nThe estimated learning time is 28 hours. \n",
-    "learningOutcomes": "After completing this topic, you’ll:\n•        be familiar with the processes, techniques and vocabulary associated with MSP\n•        appreciate how the critical components of MSP may feature within your own programmes and how and where they can add value\n•        be part of the drive to apply consistent standards of programme management across the whole Civil Service\n",
-    "price": 766
+    "learningOutcomes": "After completing this topic, you’ll:\n•        be familiar with the processes, techniques and vocabulary associated with MSP\n•        appreciate how the critical components of MSP may feature within your own programmes and how and where they can add value\n•        be part of the drive to apply consistent standards of programme management across the whole Civil Service\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "R1czPocvRnqtvXjusvKCEA",
+    "id": "LlMFAPOZQZuE06_vCWthJQ",
     "modules": [
       {
-        "id": "WhErl0q5SNmrC7qUx0rOxQ",
+        "id": "b9VXRRjpRayS9MIP896q6g",
         "productCode": "PD38",
         "audiences": [
           {
@@ -3044,22 +3080,22 @@
             ]
           }
         ],
+        "duration": 86400,
+        "price": 594,
         "type": "face-to-face"
       }
     ],
     "title": "Agile project management: foundation",
-    "duration": 86400,
     "shortDescription": "This topic introduces you to the fundamental philosophy and principles of Agile project management. It is for aspiring and practising project managers. ",
     "description": "You learn how to set up an Agile project, identify risks and communicate with project stakeholders. You will find it beneficial to have some practical experience of working within an Agile project environment.\n \nThis learning features the Dynamic Systems Development Method (DSDM) for Agile project management and is accredited by the APMG examination board. Although there is no required preparatory reading, you should familiarise yourself with the DSDM framework beforehand.\n\nYou sit a 1-hour examination on the third day\n\nThe estimated learning time is at least 25 hours.\n",
-    "learningOutcomes": "After completing this topic, you’ll:\n•        be able to set up an Agile project and use Agile techniques to ensure your project is delivered on time and to the expected standard\n•        be part of the drive to apply consistent standards of Agile project delivery across the whole Civil Service\n",
-    "price": 594
+    "learningOutcomes": "After completing this topic, you’ll:\n•        be able to set up an Agile project and use Agile techniques to ensure your project is delivered on time and to the expected standard\n•        be part of the drive to apply consistent standards of Agile project delivery across the whole Civil Service\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "KFlA6mFCT9aW4xrf-k1Zug",
+    "id": "MfWf43sWRqSSKfSGraM68A",
     "modules": [
       {
-        "id": "TonWkOO8RSqObnZ-lvRqIg",
+        "id": "Lt31ZWihROCLsX6bzzJ1lg",
         "productCode": "PD32",
         "audiences": [
           {
@@ -3074,22 +3110,22 @@
             ]
           }
         ],
+        "duration": 86400,
+        "price": 951,
         "type": "face-to-face"
       }
     ],
     "title": "APM project management qualification (PMQ) for PRINCE2® practitioners",
-    "duration": 86400,
     "shortDescription": "This qualification is only for project managers who already have PRINCE2 practitioner accreditation and have at least 2 years’ project experience.",
     "description": "The qualification is accredited to Association for Project Management (APM) and the learning covers those components of the APM Body of Knowledge syllabus that are not covered within PRINCE2. You’ll expand your knowledge beyond what you learned for the PRINCE2 qualification.\r\n\r\nYou are expected to complete 2 hours of study each evening. The PMQ examination (2-hour; closed book) is held in the afternoon of the third day. \r\n\r\nThe estimated learning time is 40 hours.\n",
-    "learningOutcomes": "After completing this topic and gaining your qualification, you’ll be able to:\n•        apply APM techniques to areas of project management as diverse as risk management, communication and procurement\n•        contribute to more projects being successfully delivered in line with expectations of time, cost and quality\n",
-    "price": 951
+    "learningOutcomes": "After completing this topic and gaining your qualification, you’ll be able to:\n•        apply APM techniques to areas of project management as diverse as risk management, communication and procurement\n•        contribute to more projects being successfully delivered in line with expectations of time, cost and quality\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "bNUeQAF9RF6af2uxB4HXjw",
+    "id": "O7KAMHJgRgayCITpEmmpAw",
     "modules": [
       {
-        "id": "W1FJ9bjzRrS866Ae8rDDyg",
+        "id": "cHFIuU1dQGGIAYfZdk5brA",
         "productCode": "PD33",
         "audiences": [
           {
@@ -3104,149 +3140,22 @@
             ]
           }
         ],
-        "type": "face-to-face",
-        "events": [
-          {
-            "id": "bmzS6DO6QtO59T9F-KPVrA",
-            "location": "Birmingham",
-            "date": "2018-04-23T00:00:00.000Z"
-          },
-          {
-            "id": "H3OGRVsJT-y_pSdtWduL0g",
-            "location": "Birmingham",
-            "date": "2018-04-24T00:00:00.000Z"
-          },
-          {
-            "id": "CkOPMvMARDei97d9jK2cUw",
-            "location": "London",
-            "date": "2018-05-03T00:00:00.000Z"
-          },
-          {
-            "id": "OjWlmXOMTf-GVGmzlgP9bA",
-            "location": "London",
-            "date": "2018-05-04T00:00:00.000Z"
-          }
-        ]
+        "duration": 57600,
+        "price": 945,
+        "type": "face-to-face"
       }
     ],
     "title": "APM project management qualification (PMQ) preparation workshop",
-    "duration": 57600,
     "shortDescription": "This workshop is for project managers with at least 2 years’ experience in a project environment, who are working toward their PMQ.",
     "description": "It helps prepare you for the eventual exam, although you should have already studies extensively for the PMA before attending. The focus in on assessing areas for improvement. You are also expected to complete 2 hours of study in the evening. This qualification is accredited by the Association for Project Management (APM).\n\nThe estimated learning time is at least 18 hours. \n\nYou must book the PMQ examination separately; the exam is not included in this topic.\n",
-    "learningOutcomes": "After completing this topic and attaining your PMQ, you’ll be able to:\n•        apply APM techniques to areas of project management as diverse as risk management, communication and procurement\n•        contribute to more projects being successfully delivered in line with expectations of time, cost and quality\n",
-    "price": 945
+    "learningOutcomes": "After completing this topic and attaining your PMQ, you’ll be able to:\n•        apply APM techniques to areas of project management as diverse as risk management, communication and procurement\n•        contribute to more projects being successfully delivered in line with expectations of time, cost and quality\n"
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "Qc2g9U2ySwewdDPVRADKgQ",
+    "id": "d__vPh36R2CCNR0je6Jxyg",
     "modules": [
       {
-        "id": "Qmi-o7OkR5KawpYHmegIzw",
-        "productCode": "GDLU",
-        "audiences": [
-          {
-            "mandatory": false,
-            "areasOfWork": [
-              "digital"
-            ],
-            "grades": [
-              "AA",
-              "AO",
-              "EO",
-              "HEO",
-              "SEO",
-              "G6",
-              "G7"
-            ]
-          }
-        ],
-        "type": "video",
-        "location": ""
-      }
-    ],
-    "title": "Digital skills: listening to users",
-    "duration": 120,
-    "shortDescription": "Hear practical and candid advice on running a service, based on experience of digital transformation at the Driver & Vehicle Licensing Agency.",
-    "description": "There are plenty of top tips for service managers, including the importance of customer feedback, evidence and buy-in.  ",
-    "learningOutcomes": "After completing this topic, you’ll understand the importance of breaking down the task of building a new service into small chunks, so you can concentrate on the bits that are most relevant to you and your project.",
-    "price": 0
-  },
-  {
-    "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "FfInu8VwQueUdB0KbcNntg",
-    "modules": [
-      {
-        "id": "TDtT_BDISSaP-JAvSKAhMw",
-        "productCode": "GDUSMPS",
-        "audiences": [
-          {
-            "mandatory": false,
-            "areasOfWork": [
-              "digital"
-            ],
-            "grades": [
-              "AA",
-              "AO",
-              "EO",
-              "HEO",
-              "SEO",
-              "G6",
-              "G7"
-            ]
-          }
-        ],
-        "type": "video",
-        "location": ""
-      }
-    ],
-    "title": "Digital skills: using social media in public services",
-    "duration": 120,
-    "shortDescription": "Jobcentre staff show you how they are putting social media sites to practical use. ",
-    "description": "See how civil servants in south London are using digital tools to change the whole experience of using a jobcentre. Find out more with the introduction to social media resources topic.",
-    "learningOutcomes": "After watching this video, you’ll see how government departments can use social media to engage more with the public.",
-    "price": 0
-  },
-  {
-    "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "RVkPR9TRRcSldW666Lp0ug",
-    "modules": [
-      {
-        "id": "A0hTt_e5T2y_mkKx8qFzBg",
-        "productCode": "GDSUN",
-        "audiences": [
-          {
-            "mandatory": false,
-            "areasOfWork": [
-              "digital"
-            ],
-            "grades": [
-              "AA",
-              "AO",
-              "EO",
-              "HEO",
-              "SEO",
-              "G6",
-              "G7"
-            ]
-          }
-        ],
-        "type": "video",
-        "location": ""
-      }
-    ],
-    "title": "Digital skills: starting with user needs",
-    "duration": 120,
-    "shortDescription": "Find out the importance of defining who the user is and what the need is. ",
-    "description": "Discover the benefits of focussing on the user, exploring their needs and listening to them. With the example of GOV.UK, you learn how, by meeting user needs early on, they were able to solve a lot of problems later. ",
-    "learningOutcomes": "On completing this topic, you know about:\n•        discovering and prioritising needs\n•        writing and refining user stories\n",
-    "price": 0
-  },
-  {
-    "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "WcPph99qTTKK3fON0yLR4Q",
-    "modules": [
-      {
-        "id": "BeSMZrOhQY62xdhN0H-lHQ",
+        "id": "A23hZSvSR46JTXgGOKttWQ",
         "productCode": "",
         "audiences": [
           {
@@ -3265,23 +3174,23 @@
             ]
           }
         ],
+        "duration": 18000,
+        "price": 0,
         "type": "video",
         "location": "https://www.youtube.com/watch?v=IPYeCltXpxw"
       }
     ],
     "title": "Start with why",
-    "duration": 300,
     "shortDescription": "Simon Sinek explores the idea that starting with 'why' helps motivate people to achieve an end goal and increases the chances of  success. ",
     "description": "In this edited TED talk, he explains how the golden circle concept is helpful if you're thinking about how you communicate about your work or setting a strategy for a team or project.",
-    "learningOutcomes": "",
-    "price": 0
+    "learningOutcomes": ""
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "NEYhcyTqR6Ct8rG6EEE_TQ",
+    "id": "Av2UDMPGR8-YnKeeZY5C1Q",
     "modules": [
       {
-        "id": "WHLEjPzsQeCjnGwPXV4cOQ",
+        "id": "dqZEySW2QIuzLL-9hoQG1Q",
         "productCode": "",
         "audiences": [
           {
@@ -3301,23 +3210,23 @@
             ]
           }
         ],
-        "type": "video",
+        "duration": 46800,
+        "price": 0,
+        "type": "link",
         "location": "https://labs.spotify.com/2014/03/27/spotify-engineering-culture-part-1/"
       }
     ],
     "title": "Spotify engineering culture: part 1",
-    "duration": 780,
     "shortDescription": "This animation describes how Spotify operates a scaled Agile framework that supports teams to find ways of working that are right for them.",
     "description": " Find out how they balance the needs of a large organisation with consistency and fluidity.",
-    "learningOutcomes": "",
-    "price": 0
+    "learningOutcomes": ""
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "eGj4vs-LQiidb9_0DB35oQ",
+    "id": "YPEY2hVwTc2TQZiusdLgKQ",
     "modules": [
       {
-        "id": "Pn3896jRQ1uu7JDeJ7zCMw",
+        "id": "LvpG_CF1TxGa_thVEMFpmw",
         "productCode": "",
         "audiences": [
           {
@@ -3336,23 +3245,23 @@
             ]
           }
         ],
+        "duration": 10800,
+        "price": 0,
         "type": "video",
         "location": "https://www.youtube.com/watch?v=02__3UTqXmU"
       }
     ],
     "title": "The gubbins of government",
-    "duration": 180,
     "shortDescription": "Video shows how new technology will change the mechanics of government services - in plainish English.",
     "description": "Discover how the change to the cloud will effect processes, technology and suppliers.",
-    "learningOutcomes": "",
-    "price": 0
+    "learningOutcomes": ""
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "NHOzpgf3Qw-ALioBmgJP_A",
+    "id": "RpAUoT4_TES9N6M2N5Np8A",
     "modules": [
       {
-        "id": "C30S6kYaSNCwEihm0iaN7w",
+        "id": "RthYHSHRTsuBxsuO9GkzQg",
         "productCode": "",
         "audiences": [
           {
@@ -3371,23 +3280,23 @@
             ]
           }
         ],
+        "duration": 3600,
+        "price": 0,
         "type": "video",
         "location": "https://www.youtube.com/watch?v=ZzPU6Pdw05s"
       }
     ],
     "title": "Government as a platform",
-    "duration": 60,
     "shortDescription": "The Government Digital Service explains the idea of better, smarter public services.",
     "description": "By designing government services in blocks which do one job each, it's easier to fix them, upgrade them, share them, and scale them up.",
-    "learningOutcomes": "",
-    "price": 0
+    "learningOutcomes": ""
   },
   {
     "_class": "uk.gov.cslearning.catalogue.domain.Course",
-    "id": "LA8h4lVORU6VaqDYgyMjVQ",
+    "id": "CAVuGxbeRISlv2DTJJUu2Q",
     "modules": [
       {
-        "id": "KhBWPpRwS765CfZWsliK3g",
+        "id": "WFuggSK8T0WlMlT7Z4YMoA",
         "productCode": "",
         "audiences": [
           {
@@ -3398,15 +3307,15 @@
             "grades": []
           }
         ],
+        "duration": 7200,
+        "price": 0,
         "type": "video",
         "location": "https://www.youtube.com/watch?v=61RnrsWQE7A"
       }
     ],
     "title": "PRINCE2 in 100 seconds",
-    "duration": 120,
     "shortDescription": "Qualifications provider Axelos gives an overview of PRINCE2, the project managment method.",
     "description": "This animation highlights the 7 themes, processes and principles to help you understand the basic approaches of this project framework.",
-    "learningOutcomes": "",
-    "price": 0
+    "learningOutcomes": ""
   }
 ]
