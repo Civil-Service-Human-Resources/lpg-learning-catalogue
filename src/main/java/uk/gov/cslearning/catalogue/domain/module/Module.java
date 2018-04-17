@@ -24,6 +24,8 @@ public abstract class Module {
 
     private String title;
 
+    private String description;
+
     private Long duration;
 
     private BigDecimal price;
@@ -37,7 +39,6 @@ public abstract class Module {
     public Collection<Audience> getAudiences() {
         return unmodifiableCollection(audiences);
     }
-
     public void setAudiences(Collection<Audience> audiences) {
         this.audiences.clear();
         if (audiences != null) {
@@ -76,5 +77,13 @@ public abstract class Module {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
