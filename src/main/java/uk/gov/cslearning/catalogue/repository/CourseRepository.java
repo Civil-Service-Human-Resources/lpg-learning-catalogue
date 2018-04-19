@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
+import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 
@@ -19,5 +20,5 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
             "\"must_not\": [ { \"match\": { \"modules.audiences.mandatory\": \"true\" } }]}}")
     Page<Course> findSuggested(String department, String areaOfWork, Pageable pageable);
 
-    SearchPage search(String query, Pageable pageable);
+    SearchPage search(String query, Pageable pageable, FilterParameters filterParameters);
 }

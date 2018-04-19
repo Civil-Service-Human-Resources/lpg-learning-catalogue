@@ -29,11 +29,11 @@ public class SearchController {
     }
 
     @GetMapping
-    public ResponseEntity<SearchResults<Course>> search(String query, PageParameters pageParameters) {
+    public ResponseEntity<SearchResults<Course>> search(String query, FilterParameters filterParameters,PageParameters pageParameters) {
         LOGGER.debug("Searching courses with query {}", query);
         Pageable pageable = pageParameters.getPageRequest();
 
-        SearchPage searchPage = courseRepository.search(query, pageable);
+        SearchPage searchPage = courseRepository.search(query, pageable,filterParameters);
 
         SearchResults<Course> searchResults = new SearchResults(searchPage, pageable);
 
