@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.api.PageParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
@@ -33,9 +34,10 @@ public class CourseSearchRepositoryIT {
     @Test
     public void shouldReturnAccurateSuggestionAndCourseWithMisspelledSearchQuery() {
         PageParameters pageParameters = new PageParameters();
+        FilterParameters filterParameters = new FilterParameters();
         Pageable pageable = pageParameters.getPageRequest();
 
-        SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable);
+        SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable,filterParameters);
 
         String actualSuggestionText = actualSearchPage.getTopScoringSuggestion().getText().toString();
         Page<Course> coursePage = actualSearchPage.getCourses();
@@ -50,8 +52,9 @@ public class CourseSearchRepositoryIT {
     public void shouldReturnCorrectPageForSearchQuery() {
         PageParameters pageParameters = new PageParameters();
         Pageable pageable = pageParameters.getPageRequest();
+        FilterParameters filterParameters = new FilterParameters();
 
-        SearchPage actualSearchPage = repository.search("Budgets", pageable);
+        SearchPage actualSearchPage = repository.search("Budgets", pageable,filterParameters);
         List<Course> actualCourses = actualSearchPage.getCourses().getContent();
 
         assertThat(actualCourses.size(), is(4));
@@ -64,11 +67,27 @@ public class CourseSearchRepositoryIT {
     public void shouldReturnCorrectPageForSearchQueryWithMissingField() {
         PageParameters pageParameters = new PageParameters();
         Pageable pageable = pageParameters.getPageRequest();
+        FilterParameters filterParameters = new FilterParameters();
 
-        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable);
+        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable, filterParameters );
         List<Course> actualCourses = actualSearchPage.getCourses().getContent();
 
         assertThat(actualCourses.get(0).getTitle(), is("Spotify engineering culture: part 1"));
         assertThat(actualCourses.get(0).getLearningOutcomes(), is(""));
+    }
+
+    @Test
+    public void shouldReturnFilteredResultsCorrectlyForType() {
+        PageParameters pageParameters = new PageParameters();
+        Pageable pageable = pageParameters.getPageRequest();
+        FilterParameters filterParameters = new FilterParameters();
+        filterParameters.setType("face to face");
+
+        SearchPage actualSearchPage = repository.search("why", pageable, filterParameters );
+        List<Course> actualCourses = actualSearchPage.getCourses().getContent();
+
+
+        assertThat(actualCourses.get(0).getTitle(), is("Understanding and using business cases"));
+        assertThat(actualCourses.size(), is(299));
     }
 }
