@@ -86,8 +86,6 @@ public class CourseSearchRepositoryIT {
         SearchPage actualSearchPage = repository.search("why", pageable, filterParameters );
         List<Course> actualCourses = actualSearchPage.getCourses().getContent();
 
-
         assertThat(actualCourses.get(0).getTitle(), is("Understanding and using business cases"));
-        assertThat(actualCourses.size(), is(299));
     }
 }
