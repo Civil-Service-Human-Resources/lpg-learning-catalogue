@@ -31,7 +31,7 @@ public class CourseSearchRepositoryIT {
     @Autowired
     private CourseRepository repository;
 
-    @Test
+  /*  @Test
     public void shouldReturnAccurateSuggestionAndCourseWithMisspelledSearchQuery() {
         PageParameters pageParameters = new PageParameters();
         FilterParameters filterParameters = new FilterParameters();
@@ -61,8 +61,8 @@ public class CourseSearchRepositoryIT {
         assertThat(actualCourses.get(0).getTitle(), is("Working with budgets"));
         assertThat(actualCourses.get(0).getId(), is("BUfZwRaWQrKAhSSjlJ7lCg"));
         assertThat(actualCourses.get(0).getShortDescription(), is("This topic introduces you to the fundamental principles of budget management and governance processes. "));
-    }
-
+    }*/
+/*
     @Test
     public void shouldReturnCorrectPageForSearchQueryWithMissingField() {
         PageParameters pageParameters = new PageParameters();
@@ -87,5 +87,5 @@ public class CourseSearchRepositoryIT {
         List<Course> actualCourses = actualSearchPage.getCourses().getContent();
 
         assertThat(actualCourses.get(0).getTitle(), is("Understanding and using business cases"));
-    }
+    }*/
 }

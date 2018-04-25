@@ -1,11 +1,11 @@
 package uk.gov.cslearning.catalogue.repository;
 
-import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -13,10 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
-
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
-import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -24,13 +23,13 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 
 
 @Repository
-public class CourseSearchRepositoryImpl implements CourseSearchRepository {
+public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(CourseSearchRepositoryImpl.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ResourceSearchRepositoryImpl.class);
 
     private ElasticsearchOperations operations;
 
-    public CourseSearchRepositoryImpl(ElasticsearchOperations operations) {
+    public ResourceSearchRepositoryImpl(ElasticsearchOperations operations) {
         checkArgument(operations != null);
         this.operations = operations;
     }
@@ -39,14 +38,15 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     public SearchPage search(String query, Pageable pageable,FilterParameters filterParameters) {
         SearchPage searchPage = new SearchPage();
 
-        Page<Course> coursePage = executeSearchQuery(query, pageable,filterParameters);
+        Page<Resource> resourcePage = executeSearchQuery(query, pageable,filterParameters);
 
-        searchPage.setCourses(coursePage);
+        searchPage.setResources(resourcePage);
 
         return searchPage;
     }
 
-    public Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters) {
+
+    public Page<Resource> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters) {
 
         BoolQueryBuilder boolQuery =  boolQuery().must(QueryBuilders.multiMatchQuery(query)
                 .field("title", 8)
@@ -69,7 +69,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             boolQuery= boolQuery.must(filterQuery);
         }
 
-        if (filterParameters.getCost() != null && !filterParameters.getCost().equals("")) {
+       if (filterParameters.getCost() != null && !filterParameters.getCost().equals("")) {
             // only one possible value right now
                 boolQuery= boolQuery
                         .must(QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("modules.price", 0)));
@@ -80,10 +80,13 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
                 .withQuery(
                     boolQuery
                 )
+                .withSort(SortBuilders.scoreSort().order(SortOrder.ASC))
+                .withSort(SortBuilders.fieldSort("courseId").order(SortOrder.DESC)) // always want modules to come after courses
                 .withPageable(pageable)
                 .build();
 
-        return operations.queryForPage(searchQuery, Course.class);
+        return operations.queryForPage(searchQuery, Resource.class);
 
     }
 }
+ 

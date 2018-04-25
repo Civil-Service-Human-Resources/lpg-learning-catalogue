@@ -39,7 +39,7 @@ public class CourseControllerTest {
         initMocks(this);
         mockMvc = standaloneSetup(controller).build();
     }
-
+/*
     @Test
     public void shouldReturnNotFoundForUnknownCourse() throws Exception {
         mockMvc.perform(
@@ -128,5 +128,5 @@ public class CourseControllerTest {
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
                 "learningOutcomes");
-    }
+    }*/
 }

@@ -9,8 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,15 +32,27 @@ public class CourseController {
     private CourseRepository courseRepository;
 
     @Autowired
+    private ResourceRepository resourceRepository;
+
+    @Autowired
     public CourseController(CourseRepository courseRepository) {
         checkArgument(courseRepository != null);
         this.courseRepository = courseRepository;
+
     }
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody Course course, UriComponentsBuilder builder) {
         LOGGER.debug("Creating course {}", course);
         Course newCourse = courseRepository.save(course);
+
+        ArrayList<Resource> resources = Resource.fromCourse(newCourse);
+        for (Resource resource : resources) {
+            LOGGER.debug("Creating resource {}", resource);
+            System.out.println("Creating resource " + resource);
+            resourceRepository.save(resource);
+        }
+
         return ResponseEntity.created(builder.path("/courses/{courseId}").build(newCourse.getId())).build();
     }
 
@@ -83,6 +98,14 @@ public class CourseController {
             return ResponseEntity.badRequest().build();
         }
         courseRepository.save(course);
+
+        ArrayList<Resource> resources = Resource.fromCourse(course);
+        for (Resource resource : resources) {
+            LOGGER.debug("Creating resource {}", resource);
+            System.out.println("Creating resource " + resource);
+            resourceRepository.save(resource);
+        }
+
         return ResponseEntity.noContent().build();
     }
 
