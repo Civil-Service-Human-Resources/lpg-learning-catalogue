@@ -37,6 +37,7 @@ public class Course {
         this.learningOutcomes = learningOutcomes;
     }
 
+
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }

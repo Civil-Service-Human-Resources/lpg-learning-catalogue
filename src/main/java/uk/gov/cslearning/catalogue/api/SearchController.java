@@ -1,3 +1,4 @@
+ 
 package uk.gov.cslearning.catalogue.api;
 
 import org.slf4j.Logger;
@@ -8,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
-import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -20,22 +21,22 @@ public class SearchController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
 
-    private CourseRepository courseRepository;
+    private ResourceRepository resourceRepository;
 
     @Autowired
-    public SearchController(CourseRepository courseRepository) {
-        checkArgument(courseRepository != null);
-        this.courseRepository = courseRepository;
+    public SearchController(ResourceRepository resourceRepository) {
+        checkArgument(resourceRepository != null);
+        this.resourceRepository = resourceRepository;
     }
 
     @GetMapping
-    public ResponseEntity<SearchResults<Course>> search(String query, FilterParameters filterParameters,PageParameters pageParameters) {
-        LOGGER.debug("Searching courses with query {}", query);
+    public ResponseEntity<SearchResults<Resource>> search(String query, FilterParameters filterParameters, PageParameters pageParameters) {
+        LOGGER.debug("Searching resources with query {}", query);
         Pageable pageable = pageParameters.getPageRequest();
 
-        SearchPage searchPage = courseRepository.search(query, pageable,filterParameters);
+        SearchPage searchPage = resourceRepository.search(query, pageable,filterParameters);
 
-        SearchResults<Course> searchResults = new SearchResults(searchPage, pageable);
+        SearchResults<Resource> searchResults = new SearchResults<>(searchPage, pageable);
 
         return ResponseEntity.ok(searchResults);
     }
