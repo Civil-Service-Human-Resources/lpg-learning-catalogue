@@ -1,7 +1,9 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.elasticsearch.common.UUIDs;
 
 import java.math.BigDecimal;
@@ -59,6 +61,7 @@ public abstract class Module {
         return title;
     }
 
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -86,4 +89,27 @@ public abstract class Module {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getModuleType() {
+        String className = this.getClass().getName();
+
+        if (this instanceof FaceToFaceModule) {
+            return "face-to-face";
+        }
+
+        if (this instanceof LinkModule) {
+            return "link";
+        }
+
+        if (this instanceof VideoModule) {
+            return "video";
+        }
+
+        if (this instanceof ELearningModule) {
+            return "elearning";
+        }
+
+        return className;
+    }
+
 }

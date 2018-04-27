@@ -6,6 +6,8 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import uk.gov.cslearning.catalogue.domain.module.Module;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,10 @@ public class Resource {
 
     private String title;
 
+    private String type;
+
+    private BigDecimal price;
+
     private String shortDescription;
 
     private String description;
@@ -33,20 +39,15 @@ public class Resource {
     public Resource() {
     }
 
-    public Resource(String id,String courseId, String title, String shortDescription, String description, String learningOutcomes) {
+    public Resource(String id, String courseId, String type, String title, BigDecimal price, String shortDescription, String description, String learningOutcomes) {
         this.id = id;
         this.courseId = courseId;
+        this.type = type;
         this.title = title;
+        this.price = price;
         this.shortDescription = shortDescription;
         this.description = description;
         this.learningOutcomes = learningOutcomes;
-
-        System.out.println("creating "+id+" "+
-                courseId+" "+
-                title+" "+
-                shortDescription+" "+
-                description+" "+
-                learningOutcomes);
 
     }
 
@@ -57,7 +58,9 @@ public class Resource {
         Resource newResource = new Resource(
                 course.getId(),
                 "0", // for sorting
+                "course",
                 course.getTitle(),
+                null,
                 course.getShortDescription(),
                 course.getDescription(),
                 course.getLearningOutcomes()
@@ -77,7 +80,9 @@ public class Resource {
                 newResource = new Resource(
                         module.getId(),
                         course.getId(),
+                        module.getModuleType(),
                         module.getTitle(),
+                        module.getPrice(),
                         null,
                         module.getDescription(),
                         null
@@ -133,6 +138,7 @@ public class Resource {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
+                .append("type", type)
                 .append("title", title)
                 .toString();
     }
@@ -151,6 +157,22 @@ public class Resource {
 
     public void setCourseId(String courseId) {
         this.courseId = courseId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }
  

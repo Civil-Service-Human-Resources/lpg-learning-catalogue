@@ -64,6 +64,8 @@ public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
 
             for ( String type : types) { // should = OR but not restrictive
                 filterQuery = filterQuery.should(QueryBuilders.matchQuery("modules.type", type));
+                // for modules
+                filterQuery = filterQuery.should(QueryBuilders.matchQuery("type", type));
             }
             filterQuery.minimumShouldMatch(1); // implies restriction
             boolQuery= boolQuery.must(filterQuery);
@@ -72,7 +74,12 @@ public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
        if (filterParameters.getCost() != null && !filterParameters.getCost().equals("")) {
             // only one possible value right now
                 boolQuery= boolQuery
-                        .must(QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("modules.price", 0)));
+                        .must(
+                                QueryBuilders.boolQuery()
+                                        .should(QueryBuilders.matchQuery("modules.price", 0))
+                                        .should(QueryBuilders.matchQuery("price", 0))
+                                        .minimumShouldMatch(1)
+                        );
         }
 
 
@@ -80,8 +87,8 @@ public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
                 .withQuery(
                     boolQuery
                 )
-                .withSort(SortBuilders.scoreSort().order(SortOrder.ASC))
-                .withSort(SortBuilders.fieldSort("courseId").order(SortOrder.DESC)) // always want modules to come after courses
+                .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
+                .withSort(SortBuilders.fieldSort("courseId").order(SortOrder.ASC)) // always want modules to come after courses
                 .withPageable(pageable)
                 .build();
 
