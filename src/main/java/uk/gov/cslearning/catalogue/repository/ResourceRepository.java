@@ -10,6 +10,8 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 
+import java.util.ArrayList;
+
 @Repository
 public interface ResourceRepository extends ElasticsearchRepository<Resource, String>, ResourceSearchRepository {
 

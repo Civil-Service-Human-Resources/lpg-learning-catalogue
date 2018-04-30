@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 
 import java.util.Optional;
 
@@ -34,12 +35,16 @@ public class CourseControllerTest {
     @Mock
     private CourseRepository courseRepository;
 
+    @Mock
+    private ResourceRepository resourceRepository;
+
+
     @Before
     public void setup() {
         initMocks(this);
         mockMvc = standaloneSetup(controller).build();
     }
-/*
+
     @Test
     public void shouldReturnNotFoundForUnknownCourse() throws Exception {
         mockMvc.perform(
@@ -128,5 +133,5 @@ public class CourseControllerTest {
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
                 "learningOutcomes");
-    }*/
+    }
 }

@@ -35,9 +35,10 @@ public class CourseController {
     private ResourceRepository resourceRepository;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository) {
+    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository) {
         checkArgument(courseRepository != null);
         this.courseRepository = courseRepository;
+        this.resourceRepository = resourceRepository;
 
     }
 

@@ -35,6 +35,9 @@ public class Resource {
 
     private List<Module> modules = new ArrayList<>();
 
+    private Course course;
+
+
 
     public Resource() {
     }
@@ -48,6 +51,7 @@ public class Resource {
         this.shortDescription = shortDescription;
         this.description = description;
         this.learningOutcomes = learningOutcomes;
+        this.course = course;
 
     }
 
@@ -87,6 +91,7 @@ public class Resource {
                         module.getDescription(),
                         null
                 );
+                newResource.setCourse(course);
                 out.add(newResource);
             }
         }
@@ -173,6 +178,14 @@ public class Resource {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
     }
 }
  

@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.api.PageParameters;
-import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 
 import java.util.List;
@@ -24,15 +24,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class CourseSearchRepositoryIT {
+public class ResourceSearchRepositoryIT {
 
     private PageRequest all = PageRequest.of(0, 1000);
 
     @Autowired
-    private CourseRepository repository;
+    private ResourceRepository repository;
 
-  /*  @Test
-    public void shouldReturnAccurateSuggestionAndCourseWithMisspelledSearchQuery() {
+    @Test
+    public void shouldReturnAccurateSuggestionAndResourceWithMisspelledSearchQuery() {
         PageParameters pageParameters = new PageParameters();
         FilterParameters filterParameters = new FilterParameters();
         Pageable pageable = pageParameters.getPageRequest();
@@ -40,9 +40,9 @@ public class CourseSearchRepositoryIT {
         SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable,filterParameters);
 
         String actualSuggestionText = actualSearchPage.getTopScoringSuggestion().getText().toString();
-        Page<Course> coursePage = actualSearchPage.getCourses();
-        List<Course> courseList = coursePage.getContent();
-        String actualTitle = courseList.get(0).getTitle();
+        Page<Resource> resourcePage = actualSearchPage.getResources();
+        List<Resource> resourceList = resourcePage.getContent();
+        String actualTitle = resourceList.get(0).getTitle();
 
         assertThat(actualSuggestionText, is("working with budgets"));
         assertThat(actualTitle, is("Working with budgets"));
@@ -55,14 +55,14 @@ public class CourseSearchRepositoryIT {
         FilterParameters filterParameters = new FilterParameters();
 
         SearchPage actualSearchPage = repository.search("Budgets", pageable,filterParameters);
-        List<Course> actualCourses = actualSearchPage.getCourses().getContent();
+        List<Resource> actualResources = actualSearchPage.getResources().getContent();
 
-        assertThat(actualCourses.size(), is(4));
-        assertThat(actualCourses.get(0).getTitle(), is("Working with budgets"));
-        assertThat(actualCourses.get(0).getId(), is("BUfZwRaWQrKAhSSjlJ7lCg"));
-        assertThat(actualCourses.get(0).getShortDescription(), is("This topic introduces you to the fundamental principles of budget management and governance processes. "));
-    }*/
-/*
+        assertThat(actualResources.size(), is(4));
+        assertThat(actualResources.get(0).getTitle(), is("Working with budgets"));
+        assertThat(actualResources.get(0).getId(), is("BUfZwRaWQrKAhSSjlJ7lCg"));
+        assertThat(actualResources.get(0).getShortDescription(), is("This topic introduces you to the fundamental principles of budget management and governance processes. "));
+    }
+    
     @Test
     public void shouldReturnCorrectPageForSearchQueryWithMissingField() {
         PageParameters pageParameters = new PageParameters();
@@ -70,10 +70,10 @@ public class CourseSearchRepositoryIT {
         FilterParameters filterParameters = new FilterParameters();
 
         SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable, filterParameters );
-        List<Course> actualCourses = actualSearchPage.getCourses().getContent();
+        List<Resource> actualResources = actualSearchPage.getResources().getContent();
 
-        assertThat(actualCourses.get(0).getTitle(), is("Spotify engineering culture: part 1"));
-        assertThat(actualCourses.get(0).getLearningOutcomes(), is(""));
+        assertThat(actualResources.get(0).getTitle(), is("Spotify engineering culture: part 1"));
+        assertThat(actualResources.get(0).getLearningOutcomes(), is(""));
     }
 
     @Test
@@ -84,8 +84,8 @@ public class CourseSearchRepositoryIT {
         filterParameters.setType("face to face");
 
         SearchPage actualSearchPage = repository.search("why", pageable, filterParameters );
-        List<Course> actualCourses = actualSearchPage.getCourses().getContent();
+        List<Resource> actualResources = actualSearchPage.getResources().getContent();
 
-        assertThat(actualCourses.get(0).getTitle(), is("Understanding and using business cases"));
-    }*/
+        assertThat(actualResources.get(0).getTitle(), is("Understanding and using business cases"));
+    }
 }

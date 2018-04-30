@@ -31,7 +31,8 @@ public class CourseRepositoryIT {
 
     @Autowired
     private CourseRepository repository;
-/*
+
+
     @Test
     public void shouldSaveCourse() {
         Course course = createCourse();
@@ -195,5 +196,5 @@ public class CourseRepositoryIT {
         course.setModules(ImmutableList.of(module));
 
         return course;
-    }*/
+    }
 }
