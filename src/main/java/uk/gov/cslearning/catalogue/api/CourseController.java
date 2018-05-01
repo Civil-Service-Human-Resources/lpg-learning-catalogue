@@ -50,7 +50,6 @@ public class CourseController {
         ArrayList<Resource> resources = Resource.fromCourse(newCourse);
         for (Resource resource : resources) {
             LOGGER.debug("Creating resource {}", resource);
-            System.out.println("Creating resource " + resource);
             resourceRepository.save(resource);
         }
 
@@ -103,7 +102,6 @@ public class CourseController {
         ArrayList<Resource> resources = Resource.fromCourse(course);
         for (Resource resource : resources) {
             LOGGER.debug("Creating resource {}", resource);
-            System.out.println("Creating resource " + resource);
             resourceRepository.save(resource);
         }
 
