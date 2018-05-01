@@ -10,7 +10,6 @@ spring:
       name: ${AUTH_USER:user}
       password: ${AUTH_PASSWORD:password}
 
-
 server:
   port: 9001
 
