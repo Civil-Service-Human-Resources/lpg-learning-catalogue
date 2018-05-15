@@ -1,9 +1,7 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonValue;
 import org.elasticsearch.common.UUIDs;
 
 import java.math.BigDecimal;
@@ -19,7 +17,7 @@ import static java.util.Collections.unmodifiableCollection;
         @JsonSubTypes.Type(ELearningModule.class),
         @JsonSubTypes.Type(LinkModule.class),
         @JsonSubTypes.Type(VideoModule.class),
-        @JsonSubTypes.Type(DocumentModule.class)
+        @JsonSubTypes.Type(FileModule.class)
 })
 public abstract class Module {
 
@@ -110,8 +108,8 @@ public abstract class Module {
             return "elearning";
         }
 
-        if (this instanceof DocumentModule) {
-            return "document";
+        if (this instanceof FileModule) {
+            return "file";
         }
 
         return className;
