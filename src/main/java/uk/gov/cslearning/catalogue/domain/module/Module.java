@@ -18,7 +18,8 @@ import static java.util.Collections.unmodifiableCollection;
         @JsonSubTypes.Type(FaceToFaceModule.class),
         @JsonSubTypes.Type(ELearningModule.class),
         @JsonSubTypes.Type(LinkModule.class),
-        @JsonSubTypes.Type(VideoModule.class)
+        @JsonSubTypes.Type(VideoModule.class),
+        @JsonSubTypes.Type(DocumentModule.class)
 })
 public abstract class Module {
 
@@ -107,6 +108,10 @@ public abstract class Module {
 
         if (this instanceof ELearningModule) {
             return "elearning";
+        }
+
+        if (this instanceof DocumentModule) {
+            return "document";
         }
 
         return className;
