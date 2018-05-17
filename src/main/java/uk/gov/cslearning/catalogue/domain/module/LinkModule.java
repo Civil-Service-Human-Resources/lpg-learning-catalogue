@@ -10,17 +10,25 @@ import java.net.URL;
 public class LinkModule extends Module {
 
     private URL location;
+    private Long fileSize;
 
     @JsonCreator
-    public LinkModule(@JsonProperty("location") URL location) {
+    public LinkModule(@JsonProperty("location") URL location, @JsonProperty("fileSize") Long fileSize) {
         this.location = location;
+        this.fileSize = fileSize;
     }
 
     public URL getLocation() {
         return location;
     }
+    public Long getFileSize() {
+        return fileSize;
+    }
 
     public void setLocation(URL location) {
         this.location = location;
+    }
+    public void setInteger(Long fileSize) {
+        this.fileSize = fileSize;
     }
 }
