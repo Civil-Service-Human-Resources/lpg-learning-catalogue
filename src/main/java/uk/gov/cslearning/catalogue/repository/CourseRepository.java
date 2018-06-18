@@ -20,6 +20,11 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
             "\"must_not\": [ { \"match\": { \"modules.audiences.mandatory\": \"true\" } }]}}")
     Page<Course> findSuggested(String department, String areaOfWork, Pageable pageable);
 
+    @Query("{ \"bool\": { " +
+            "\"should\": [{ \"match\": { \"modules.audiences.interests\": \"?0\" }}], " +
+            "\"must_not\": [ { \"match\": { \"modules.audiences.mandatory\": \"true\" } }]}}")
+    Page<Course> findSuggestedByInterest(String interest, Pageable pageable);
+
     SearchPage search(String query, Pageable pageable, FilterParameters filterParameters);
     
 }
