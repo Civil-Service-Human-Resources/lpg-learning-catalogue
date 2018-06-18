@@ -19,6 +19,8 @@ public class Audience {
 
     private Set<String> grades = new HashSet<>();
 
+    private Set<String> interests = new HashSet<>();
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime requiredBy;
@@ -54,6 +56,14 @@ public class Audience {
         this.grades = grades;
     }
 
+    public Set<String> getInterests() {
+        return interests;
+    }
+
+    public void setInterests(Set<String> interests) {
+        this.interests = interests;
+    }
+
     public LocalDateTime getRequiredBy() {
         return requiredBy;
     }
@@ -84,7 +94,9 @@ public class Audience {
                 .append(areasOfWork)
                 .append(departments)
                 .append(grades)
+                .append(interests)
                 .append(mandatory)
                 .toHashCode();
     }
+
 }

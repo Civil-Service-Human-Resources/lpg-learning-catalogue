@@ -88,6 +88,26 @@ public class CourseController {
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
+    @GetMapping(params = {"interest"})
+    public ResponseEntity<PageResults<Course>> listByInterest(@RequestParam(name = "interest", required = false) List<String> interests,
+                                                    PageParameters pageParameters) {
+        LOGGER.debug("Listing courses by interest");
+
+        interests = defaultIfNull(interests, emptyList());
+
+        Pageable pageable = pageParameters.getPageRequest();
+        Page<Course> page;
+
+        if (interests.isEmpty()) {
+            page = courseRepository.findAll(pageable);
+        } else {
+            page = courseRepository.findSuggestedByInterest(
+                    String.join(",", interests),
+                    pageable);
+        }
+        return ResponseEntity.ok(new PageResults<>(page, pageable));
+    }
+
     @PutMapping(path = "/{courseId}")
     public ResponseEntity<Void> update(@PathVariable("courseId") String courseId, @RequestBody Course course) {
         LOGGER.debug("Updating course {}", course);
