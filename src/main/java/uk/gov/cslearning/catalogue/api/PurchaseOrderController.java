@@ -40,6 +40,14 @@ public class PurchaseOrderController {
     }
 
     @GetMapping
+    public ResponseEntity<Iterable<PurchaseOrder>> listAll() {
+        LOGGER.debug("Listing all purchase orders");
+
+        Iterable<PurchaseOrder> result = purchaseOrderRepository.findAll();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(params = {"department", "moduleId"})
     public ResponseEntity<PurchaseOrder> find(@RequestParam("department") String department,
                                               @RequestParam("moduleId") String moduleId) {
         LOGGER.debug("Finding purchaseOrder for department {} and moduleId {}", department, moduleId);
@@ -47,6 +55,16 @@ public class PurchaseOrderController {
         Optional<PurchaseOrder> result = purchaseOrderRepository
                 .findFirstByDepartmentAndModulesContainsAndValidFromLessThanEqualAndValidToGreaterThanEqual(
                         department, moduleId, LocalDate.now(), LocalDate.now());
+        return result
+                .map(purchaseOrder -> new ResponseEntity<>(purchaseOrder, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PurchaseOrder> get(@PathVariable String id) {
+        LOGGER.debug("Finding purchaseOrder with id {}", id);
+
+        Optional<PurchaseOrder> result = purchaseOrderRepository.findById(id);
         return result
                 .map(purchaseOrder -> new ResponseEntity<>(purchaseOrder, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
