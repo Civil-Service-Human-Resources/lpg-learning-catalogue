@@ -6,6 +6,13 @@ spring:
 server:
   port: 9000
 
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  level:
+    root: ${ROOT_LOGGING_LEVEL:INFO}
+    com.zaxxer.hikari: ERROR
+
 elasticsearch:
   clusterName:
   host: 127.0.0.1
