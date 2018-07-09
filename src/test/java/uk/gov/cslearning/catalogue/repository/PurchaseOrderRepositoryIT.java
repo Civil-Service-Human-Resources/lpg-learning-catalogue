@@ -1,6 +1,7 @@
 package uk.gov.cslearning.catalogue.repository;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class PurchaseOrderRepositoryIT {
 
     @Test
     public void shouldSavePurchaseOrder() {
-        PurchaseOrder purchaseOrder = createPurchaseOrder("co", LocalDate.now(), LocalDate.now(), "module1");
+        PurchaseOrder purchaseOrder = createPurchaseOrder("hmrc", LocalDate.now(), LocalDate.now(), "module11");
         repository.save(purchaseOrder);
         assertThat(purchaseOrder.getId(), notNullValue());
     }
@@ -41,14 +42,13 @@ public class PurchaseOrderRepositoryIT {
         LocalDate validFrom = LocalDate.now().minusDays(1);
         LocalDate validTo = LocalDate.now().plusDays(1);
 
-        repository.save(createPurchaseOrder("co", validFrom, validTo, "module1", "module2"));
-        repository.save(createPurchaseOrder("co", validFrom, validTo, "module1"));
-        repository.save(createPurchaseOrder("co", validFrom, validTo, "module3"));
+        repository.save(createPurchaseOrder("co", validFrom, validTo, "Module-21", "module22"));
+        repository.save(createPurchaseOrder("co", validFrom, validTo, "Module-21"));
+        repository.save(createPurchaseOrder("co", validFrom, validTo, "module23"));
 
-        Optional<PurchaseOrder> found = repository.findFirstByDepartmentAndModulesContainsAndValidFromLessThanEqualAndValidToGreaterThanEqual(
-                "co", "module1", LocalDate.now(), LocalDate.now());
+        Iterable<PurchaseOrder> found = repository.findByDepartmentAndModulesContains("co", "Module-21");
 
-        assertThat(found.isPresent(), is(true));
+        assertThat(Iterables.size(found), is(2));
     }
 
     private PurchaseOrder createPurchaseOrder(String department, LocalDate validFrom, LocalDate validTo, String... modules) {

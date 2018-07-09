@@ -12,6 +12,7 @@ import uk.gov.cslearning.catalogue.repository.PurchaseOrderRepository;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -52,10 +53,12 @@ public class PurchaseOrderController {
                                               @RequestParam("moduleId") String moduleId) {
         LOGGER.debug("Finding purchaseOrder for department {} and moduleId {}", department, moduleId);
 
-        Optional<PurchaseOrder> result = purchaseOrderRepository
-                .findFirstByDepartmentAndModulesContainsAndValidFromLessThanEqualAndValidToGreaterThanEqual(
-                        department, moduleId, LocalDate.now(), LocalDate.now());
-        return result
+        Iterable<PurchaseOrder> result = purchaseOrderRepository
+                .findByDepartmentAndModulesContains(department, moduleId);
+
+        return StreamSupport.stream(result.spliterator(), false)
+                .filter(purchaseOrder -> purchaseOrder.isValidFor(LocalDate.now()))
+                .findFirst()
                 .map(purchaseOrder -> new ResponseEntity<>(purchaseOrder, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

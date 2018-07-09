@@ -1,12 +1,12 @@
 plugins {
     id 'org.springframework.boot' version '2.0.0.RELEASE'
-    id "ajk.gradle.elastic" version "0.0.20"
+    id 'ajk.gradle.elastic' version '0.0.20'
 }
 
 repositories {
     mavenCentral()
     maven {
-        url "https://artifacts.elastic.co/maven"
+        url 'https://artifacts.elastic.co/maven'
     }
 }
 
@@ -39,7 +39,7 @@ dependencies {
     compile 'com.google.guava:guava:23.5-jre'
     compile 'org.apache.commons:commons-lang3:3.7'
     compile 'org.codehaus.janino:janino:3.0.8'
-    compile 'com.github.vanroy:spring-boot-starter-data-jest:3.1.1.RELEASE'
+    compile 'com.github.vanroy:spring-boot-starter-data-jest:3.1.2.RELEASE'
 
     testCompile 'com.google.code.gson:gson:2.8.2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
@@ -49,18 +49,18 @@ compileJava.dependsOn(processResources)
 
 task integrationTest(type: Test) {
     reports {
-        html.destination "$buildDir/reports/integration-test"
+        html.destination '$buildDir/reports/integration-test'
     }
 
-    include "**/*IT.*"
+    include '**/*IT.*'
 
     doFirst {
         startElastic {
-            elasticVersion = "5.1.2"
+            elasticVersion = '6.2.4'
             httpPort = 9998
             transportPort = 9999
-            dataDir = file("$buildDir/elastic")
-            logsDir = file("$buildDir/elastic/logs")
+            dataDir = file('$buildDir/elastic')
+            logsDir = file('$buildDir/elastic/logs')
         }
     }
 
@@ -72,7 +72,7 @@ task integrationTest(type: Test) {
 }
 
 gradle.taskGraph.afterTask { Task task, TaskState taskState ->
-    if (task.name == "integrationTest") {
+    if (task.name == 'integrationTest') {
         stopElastic {
             httpPort = 9998
         }
