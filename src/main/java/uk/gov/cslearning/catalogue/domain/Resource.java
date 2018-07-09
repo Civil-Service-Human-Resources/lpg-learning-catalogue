@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Document(indexName = "lpg-resources", type = "resources")
 public class Resource {
 
@@ -37,8 +36,6 @@ public class Resource {
 
     private Course course;
 
-
-
     public Resource() {
     }
 
@@ -51,12 +48,10 @@ public class Resource {
         this.shortDescription = shortDescription;
         this.description = description;
         this.learningOutcomes = learningOutcomes;
-        this.course = course;
-
     }
 
 
-    public  static ArrayList<Resource> fromCourse(Course course) {
+    public static ArrayList<Resource> fromCourse(Course course) {
         ArrayList<Resource> out = new ArrayList<Resource>();
 
         Resource newResource = new Resource(
@@ -80,7 +75,7 @@ public class Resource {
 
         if (!modules.isEmpty()) {
             // now lets iterate through any modules
-            for ( Module module: modules) {
+            for (Module module : modules) {
                 newResource = new Resource(
                         module.getId(),
                         course.getId(),
@@ -97,7 +92,7 @@ public class Resource {
         }
 
         return out;
-    };
+    }
 
     public String getId() {
         return id;
@@ -148,11 +143,11 @@ public class Resource {
                 .toString();
     }
 
-    public List <Module> getModules() {
+    public List<Module> getModules() {
         return modules;
     }
 
-    public void setModules(List <Module> modules) {
+    public void setModules(List<Module> modules) {
         this.modules = modules;
     }
 
