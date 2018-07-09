@@ -7,6 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,6 +33,7 @@ public class PurchaseOrder {
 
     private String department;
 
+    @Field(type = FieldType.keyword)
     private Collection<String> modules = new HashSet<>();
 
     public PurchaseOrder() {
@@ -82,5 +85,10 @@ public class PurchaseOrder {
 
     public void setModules(Collection<String> modules) {
         this.modules = modules;
+    }
+
+    public boolean isValidFor(LocalDate date) {
+        return (validFrom == null || validFrom.isBefore(date) || validFrom.isEqual(date))
+                && (validTo == null || validTo.isAfter(date) || validTo.isEqual(date));
     }
 }

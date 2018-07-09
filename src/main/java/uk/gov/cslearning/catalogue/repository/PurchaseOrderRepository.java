@@ -13,6 +13,5 @@ import java.util.Optional;
 @Repository
 public interface PurchaseOrderRepository extends ElasticsearchRepository<PurchaseOrder, String> {
 
-    Optional<PurchaseOrder> findFirstByDepartmentAndModulesContainsAndValidFromLessThanEqualAndValidToGreaterThanEqual(
-            String department, String moduleId, LocalDate validFrom, LocalDate validTo);
+    Iterable<PurchaseOrder> findByDepartmentAndModulesContains(String department, String moduleId);
 }
