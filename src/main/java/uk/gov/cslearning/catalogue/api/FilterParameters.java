@@ -1,11 +1,18 @@
 package uk.gov.cslearning.catalogue.api;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 public class FilterParameters {
 
-    private String types;
+    private List<String> types;
+
+    private List<String> departments;
+
+    private List<String> interests;
+
+    private List<String> areasOfWork;
 
     private String cost;
 
@@ -17,13 +24,43 @@ public class FilterParameters {
         this.cost = cost;
     }
 
-    public String getType() {
+    public List<String> getTypes() {
         return types;
     }
 
-    public void setType(String type) {
-        this.types = type;
+    public void setTypes(List<String> types) {
+        this.types = types;
     }
 
+    public List<String> getDepartments() {
+        return departments;
+    }
 
+    public void setDepartments(List<String> departments) {
+        this.departments = departments;
+    }
+
+    public List<String> getInterests() {
+        return interests;
+    }
+
+    public void setInterests(List<String> interests) {
+        this.interests = interests;
+    }
+
+    public List<String> getAreasOfWork() {
+        return areasOfWork;
+    }
+
+    public void setAreasOfWork(List<String> areasOfWork) {
+        this.areasOfWork = areasOfWork;
+    }
+
+    public boolean hasCost() {
+        return this.cost != null && this.cost.length() > 0;
+    }
+
+    public boolean hasTypes() {
+        return this.types != null && !this.types.isEmpty();
+    }
 }
