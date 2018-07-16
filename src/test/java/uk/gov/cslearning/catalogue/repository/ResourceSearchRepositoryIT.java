@@ -13,8 +13,10 @@ import uk.gov.cslearning.catalogue.api.PageParameters;
 import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 
+import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -81,7 +83,7 @@ public class ResourceSearchRepositoryIT {
         PageParameters pageParameters = new PageParameters();
         Pageable pageable = pageParameters.getPageRequest();
         FilterParameters filterParameters = new FilterParameters();
-        filterParameters.setType("face to face");
+        filterParameters.setTypes(asList("face to face"));
 
         SearchPage actualSearchPage = repository.search("why", pageable, filterParameters );
         List<Resource> actualResources = actualSearchPage.getResources().getContent();
