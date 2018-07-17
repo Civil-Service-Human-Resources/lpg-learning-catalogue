@@ -16,16 +16,9 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
     Page<Course> findMandatory(String department, Pageable pageable);
 
     @Query("{ \"bool\": { " +
-            "\"should\": [{ \"match\": { \"modules.audiences.departments\": \"?0\" }}, { \"match\": { \"modules.audiences.areasOfWork\": \"?1\" }}], " +
+            "\"should\": [{ \"match\": { \"modules.audiences.departments\": \"?0\" }}, { \"match\": { \"modules.audiences.areasOfWork\": \"?1\" }}, { \"match\": { \"modules.audiences.interests\": \"?2\" }}], " +
             "\"must_not\": [ { \"match\": { \"modules.audiences.mandatory\": \"true\" } }]}}")
-    Page<Course> findSuggested(String department, String areaOfWork, Pageable pageable);
-
-    @Query("{ \"bool\": { " +
-            "\"should\": [{ \"match\": { \"modules.audiences.interests\": \"?0\" }}], " +
-            "\"must_not\": [ { \"match\": { \"modules.audiences.mandatory\": \"true\" } }]}}")
-    Page<Course> findSuggestedByInterest(String interest, Pageable pageable);
+    Page<Course> findSuggested(String department, String areaOfWork, String interest, Pageable pageable);
 
     SearchPage search(String query, Pageable pageable, FilterParameters filterParameters);
-    
 }
- 
