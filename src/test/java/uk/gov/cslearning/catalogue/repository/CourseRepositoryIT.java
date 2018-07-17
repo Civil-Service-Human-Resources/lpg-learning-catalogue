@@ -106,14 +106,15 @@ public class CourseRepositoryIT {
 
         final String department = "co";
         final String areaOfWork = "commercial";
+        final String interest = "none";
 
-        final long currentCount = repository.findSuggested(department, areaOfWork, all).getTotalElements();
+        final long currentCount = repository.findSuggested(department, areaOfWork, interest, all).getTotalElements();
 
         repository.save(createCourse("one", null, false, areaOfWork));
         repository.save(createCourse("two", null, false, areaOfWork));
         repository.save(createCourse("three",null, false, areaOfWork));
 
-        Page<Course> page = repository.findSuggested(department, areaOfWork, all);
+        Page<Course> page = repository.findSuggested(department, areaOfWork, interest, all);
 
         assertThat(page.getTotalElements(), is(currentCount + 3));
     }
@@ -123,14 +124,15 @@ public class CourseRepositoryIT {
 
         final String department = "co";
         final String areaOfWork = "commercial";
+        final String interest = "none";
 
-        final long currentCount = repository.findSuggested(department, areaOfWork, all).getTotalElements();
+        final long currentCount = repository.findSuggested(department, areaOfWork, interest, all).getTotalElements();
 
         repository.save(createCourse("one", department, false, null));
         repository.save(createCourse("two", department, false, null));
         repository.save(createCourse("three", department, false, null));
 
-        Page<Course> page = repository.findSuggested(department, areaOfWork, all);
+        Page<Course> page = repository.findSuggested(department, areaOfWork, interest, all);
 
         assertThat(page.getTotalElements(), is(currentCount + 3));
     }
@@ -140,8 +142,9 @@ public class CourseRepositoryIT {
 
         final String department = "co";
         final String areaOfWork = "commercial";
+        final String interest = "none";
 
-        final long currentCount = repository.findSuggested(department, areaOfWork, all).getTotalElements();
+        final long currentCount = repository.findSuggested(department, areaOfWork, interest, all).getTotalElements();
 
         repository.save(createCourse("one", department, false, null));
         repository.save(createCourse("two", department, false, null));
@@ -149,7 +152,7 @@ public class CourseRepositoryIT {
         repository.save(createCourse("four", null, false, areaOfWork));
         repository.save(createCourse("five", null, false, areaOfWork));
 
-        Page<Course> page = repository.findSuggested(department, areaOfWork, all);
+        Page<Course> page = repository.findSuggested(department, areaOfWork, interest, all);
 
         assertThat(page.getTotalElements(), is(currentCount + 5));
     }
@@ -159,8 +162,9 @@ public class CourseRepositoryIT {
 
         final String department = "co";
         final String areaOfWork = "commercial";
+        final String interest = "none";
 
-        final long currentCount = repository.findSuggested(department, areaOfWork, all).getTotalElements();
+        final long currentCount = repository.findSuggested(department, areaOfWork, interest, all).getTotalElements();
 
         repository.save(createCourse("one", department, false, null));
         repository.save(createCourse("two", department, false, null));
@@ -168,7 +172,7 @@ public class CourseRepositoryIT {
         repository.save(createCourse("four", department, true, areaOfWork));
         repository.save(createCourse("five", null, false, areaOfWork));
 
-        Page<Course> page = repository.findSuggested(department, areaOfWork, all);
+        Page<Course> page = repository.findSuggested(department, areaOfWork, interest, all);
 
         assertThat(page.getTotalElements(), is(currentCount + 3));
     }

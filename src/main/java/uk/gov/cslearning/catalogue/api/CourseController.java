@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.emptyList;
+import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
@@ -68,11 +69,13 @@ public class CourseController {
     @GetMapping
     public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", required = false) List<String> areasOfWork,
                                                     @RequestParam(name = "department", required = false) List<String> departments,
+                                                    @RequestParam(name = "interest", required = false) List<String> interests,
                                                     PageParameters pageParameters) {
         LOGGER.debug("Listing courses");
 
         areasOfWork = defaultIfNull(areasOfWork, emptyList());
         departments = defaultIfNull(departments, emptyList());
+        interests = defaultIfNull(interests, emptyList());
 
         Pageable pageable = pageParameters.getPageRequest();
         Page<Course> page;
@@ -81,28 +84,9 @@ public class CourseController {
             page = courseRepository.findAll(pageable);
         } else {
             page = courseRepository.findSuggested(
-                    String.join(",", departments),
-                    String.join(",", areasOfWork),
-                    pageable);
-        }
-        return ResponseEntity.ok(new PageResults<>(page, pageable));
-    }
-
-    @GetMapping(params = {"interest"})
-    public ResponseEntity<PageResults<Course>> listByInterest(@RequestParam(name = "interest", required = false) List<String> interests,
-                                                    PageParameters pageParameters) {
-        LOGGER.debug("Listing courses by interest");
-
-        interests = defaultIfNull(interests, emptyList());
-
-        Pageable pageable = pageParameters.getPageRequest();
-        Page<Course> page;
-
-        if (interests.isEmpty()) {
-            page = courseRepository.findAll(pageable);
-        } else {
-            page = courseRepository.findSuggestedByInterest(
-                    String.join(",", interests),
+                    defaultIfEmpty(String.join(",", departments), "none"),
+                    defaultIfEmpty(String.join(",", areasOfWork), "none"),
+                    defaultIfEmpty(String.join(",", interests), "none"),
                     pageable);
         }
         return ResponseEntity.ok(new PageResults<>(page, pageable));
