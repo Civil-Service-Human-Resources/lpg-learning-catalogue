@@ -41,6 +41,9 @@ dependencies {
     compile 'org.codehaus.janino:janino:3.0.8'
     compile 'com.github.vanroy:spring-boot-starter-data-jest:3.1.2.RELEASE'
 
+    compile 'io.springfox:springfox-swagger2:2.7.0'
+    compile 'io.springfox:springfox-swagger-ui:2.7.0'
+
     testCompile 'com.google.code.gson:gson:2.8.2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
