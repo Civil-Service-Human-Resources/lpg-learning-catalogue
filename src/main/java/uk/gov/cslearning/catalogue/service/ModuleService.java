@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.service;
 
+import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@Service
 public class ModuleService {
     private final CourseRepository courseRepository;
 
