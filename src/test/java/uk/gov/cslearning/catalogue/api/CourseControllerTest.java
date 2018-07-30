@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.api;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,13 +13,19 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.module.LinkModule;
+import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
+import uk.gov.cslearning.catalogue.service.ModuleService;
 
+import java.net.URI;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,6 +47,11 @@ public class CourseControllerTest {
 
     @MockBean
     private ResourceRepository resourceRepository;
+
+    @MockBean
+    private ModuleService moduleService;
+
+    private Gson gson = new Gson();
 
     @Test
     public void shouldReturnNotFoundForUnknownCourse() throws Exception {
@@ -68,9 +80,6 @@ public class CourseControllerTest {
 
     @Test
     public void shouldCreateCourseAndRedirectToNewResource() throws Exception {
-
-        Gson gson = new Gson();
-
         final String newId = "newId";
 
         Course course = createCourse();
@@ -93,9 +102,6 @@ public class CourseControllerTest {
 
     @Test
     public void shouldUpdateExistingCourse() throws Exception {
-
-        Gson gson = new Gson();
-
         Course course = createCourse();
         when(courseRepository.existsById(course.getId())).thenReturn(true);
         when(courseRepository.save(any())).thenReturn(course);
@@ -111,9 +117,6 @@ public class CourseControllerTest {
 
     @Test
     public void shouldReturnBadRequestIfUpdatedCourseDoesntExist() throws Exception {
-
-        Gson gson = new Gson();
-
         Course course = createCourse();
         when(courseRepository.existsById(course.getId())).thenReturn(false);
 
@@ -126,8 +129,21 @@ public class CourseControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void shouldCreateModule() throws Exception {
+        Module module = new LinkModule(new URI("http://localhost").toURL());
+        String courseId = UUID.randomUUID().toString();
+        String json = gson.toJson(ImmutableMap.of("type", "link", "location", "http://localhost"));
 
+        when(moduleService.save(eq(courseId), any(Module.class))).thenReturn(module);
 
+        mockMvc.perform(
+                post(String.format("/courses/%s/modules/", courseId)).with(csrf())
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+    }
 
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
