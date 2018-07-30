@@ -43,13 +43,14 @@ dependencies {
 
     testCompile 'com.google.code.gson:gson:2.8.2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.security:spring-security-test:5.0.3.RELEASE'
 }
 
 compileJava.dependsOn(processResources)
 
 task integrationTest(type: Test) {
     reports {
-        html.destination '$buildDir/reports/integration-test'
+        html.destination new File('$buildDir/reports/integration-test')
     }
 
     include '**/*IT.*'
