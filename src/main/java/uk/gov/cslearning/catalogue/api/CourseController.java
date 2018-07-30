@@ -66,6 +66,13 @@ public class CourseController {
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
+    @GetMapping(params = "courseId")
+    public ResponseEntity<Iterable<Course>> get(@RequestParam("courseId") List<String> courseIds) {
+        LOGGER.debug("Getting courses with IDs {}", courseIds);
+        Iterable<Course> result = courseRepository.findAllById(courseIds);
+        return new ResponseEntity<>(result, OK);
+    }
+
     @GetMapping
     public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", required = false) List<String> areasOfWork,
                                                     @RequestParam(name = "department", required = false) List<String> departments,
