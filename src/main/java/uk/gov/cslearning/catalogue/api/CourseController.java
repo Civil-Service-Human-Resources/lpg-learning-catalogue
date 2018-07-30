@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Resource;
+import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
+import uk.gov.cslearning.catalogue.service.ModuleService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +32,17 @@ public class CourseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CourseController.class);
 
-    private CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
 
-    private ResourceRepository resourceRepository;
+    private final ResourceRepository resourceRepository;
+
+    private final ModuleService moduleService;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository) {
-        checkArgument(courseRepository != null);
+    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService) {
         this.courseRepository = courseRepository;
         this.resourceRepository = resourceRepository;
-
+        this.moduleService = moduleService;
     }
 
     @PostMapping
@@ -118,5 +121,14 @@ public class CourseController {
         return result
                 .map(course -> new ResponseEntity<>(course, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @PostMapping("/{courseId}/modules/")
+    public ResponseEntity<Void> createModule(@PathVariable String courseId, @RequestBody Module module, UriComponentsBuilder builder) {
+        LOGGER.debug("Adding module to course with ID {}", courseId);
+
+        Module saved = moduleService.save(courseId, module);
+
+        return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}").build(courseId, saved.getId())).build();
     }
 }
