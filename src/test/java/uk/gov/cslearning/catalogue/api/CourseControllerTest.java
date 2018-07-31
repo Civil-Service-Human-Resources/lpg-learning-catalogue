@@ -27,6 +27,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -153,6 +154,28 @@ public class CourseControllerTest {
     }
 
     @Test
+    public void shouldReturnBadRequestIfCourseNotFoundWhenSavingModule() throws Exception {
+        String moduleId = "module-id";
+        Module module = mock(LinkModule.class);
+        when(module.getId()).thenReturn(moduleId);
+
+        String courseId = "course-id";
+
+        String json = gson.toJson(ImmutableMap.of("type", "link", "location", "http://localhost"));
+
+        IllegalStateException exception = mock(IllegalStateException.class);
+
+        doThrow(exception).when(moduleService).save(eq(courseId), any(Module.class));
+
+        mockMvc.perform(
+                post(String.format("/courses/%s/modules/", courseId)).with(csrf())
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void shouldFindModule() throws Exception {
         String courseId = "course-id";
         String moduleId = "module-id";
@@ -167,6 +190,34 @@ public class CourseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.location", equalTo(location)));
+    }
+
+    @Test
+    public void shouldReturnBadRequestIfCourseNotFoundWhenFindingModule() throws Exception {
+        String courseId = "course-id";
+        String moduleId = "module-id";
+
+        IllegalStateException exception = mock(IllegalStateException.class);
+
+        doThrow(exception).when(moduleService).find(courseId, moduleId);
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfModuleNotFound() throws Exception {
+        String courseId = "course-id";
+        String moduleId = "module-id";
+
+        when(moduleService.find(courseId, moduleId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     private Course createCourse() {
