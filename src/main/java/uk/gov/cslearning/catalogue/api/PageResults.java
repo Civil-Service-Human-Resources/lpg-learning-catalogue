@@ -2,7 +2,6 @@ package uk.gov.cslearning.catalogue.api;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import uk.gov.cslearning.catalogue.domain.Course;
 
 import java.util.List;
 
