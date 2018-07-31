@@ -133,7 +133,7 @@ public class CourseController {
     }
 
     @GetMapping("/{courseId}/modules/{moduleId}")
-    public ResponseEntity<? extends Module> getModule(@PathVariable String courseId, @PathVariable String moduleId) {
+    public ResponseEntity<Module> getModule(@PathVariable String courseId, @PathVariable String moduleId) {
         LOGGER.debug("Getting module {} of course {}", moduleId, courseId);
 
         Optional<Module> result = moduleService.find(courseId, moduleId);
