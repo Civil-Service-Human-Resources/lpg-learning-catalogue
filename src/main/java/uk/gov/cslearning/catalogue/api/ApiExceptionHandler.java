@@ -1,5 +1,7 @@
 package uk.gov.cslearning.catalogue.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,9 +9,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalStateException.class)
-    public void handleIllegalState() {
+    public void handleIllegalStateException(Exception e) {
+        LOGGER.error("Bad Request: ", e);
     }
 }
