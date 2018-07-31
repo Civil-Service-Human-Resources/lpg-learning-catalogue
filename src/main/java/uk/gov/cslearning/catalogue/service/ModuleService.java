@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Service
 public class ModuleService {
@@ -19,7 +18,7 @@ public class ModuleService {
         this.courseRepository = courseRepository;
     }
 
-    public Module save(String courseId, Module module) throws IllegalStateException {
+    public Module save(String courseId, Module module) {
         Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
             throw new IllegalStateException(
                     String.format("Unable to add module. Course does not exist: %s", courseId));
