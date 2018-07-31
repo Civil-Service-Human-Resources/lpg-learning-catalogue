@@ -131,4 +131,14 @@ public class CourseController {
 
         return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}").build(courseId, saved.getId())).build();
     }
+
+    @GetMapping("/{courseId}/modules/{moduleId}")
+    public ResponseEntity<? extends Module> getModule(@PathVariable String courseId, @PathVariable String moduleId) {
+        LOGGER.debug("Getting module {} of course {}", moduleId, courseId);
+
+        Optional<Module> result = moduleService.find(courseId, moduleId);
+
+        return result.map(module -> new ResponseEntity<>(module, OK))
+                .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
 }

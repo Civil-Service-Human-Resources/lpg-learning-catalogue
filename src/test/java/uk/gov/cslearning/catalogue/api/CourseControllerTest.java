@@ -20,12 +20,14 @@ import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -131,7 +133,11 @@ public class CourseControllerTest {
 
     @Test
     public void shouldCreateModule() throws Exception {
-        Module module = new LinkModule(new URI("http://localhost").toURL());
+        String moduleId = "module-id";
+        Module module = mock(LinkModule.class);
+        when(module.getId()).thenReturn(moduleId);
+
+
         String courseId = UUID.randomUUID().toString();
         String json = gson.toJson(ImmutableMap.of("type", "link", "location", "http://localhost"));
 
@@ -142,7 +148,25 @@ public class CourseControllerTest {
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(header().string("location", String.format("http://localhost/courses/%s/modules/%s", courseId, moduleId)));
+    }
+
+    @Test
+    public void shouldFindModule() throws Exception {
+        String courseId = "course-id";
+        String moduleId = "module-id";
+        String location = "http://example.org";
+
+        Module module = new LinkModule(new URL(location));
+
+        when(moduleService.find(courseId, moduleId)).thenReturn(Optional.of(module));
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.location", equalTo(location)));
     }
 
     private Course createCourse() {

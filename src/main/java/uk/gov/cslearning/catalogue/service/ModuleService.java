@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 public class ModuleService {
@@ -19,18 +20,27 @@ public class ModuleService {
     }
 
     public Module save(String courseId, Module module) throws IllegalStateException {
-        Optional<Course> courseOptional = courseRepository.findById(courseId);
-
-        courseOptional.orElseThrow((Supplier<IllegalStateException>) () -> {
-            throw new IllegalStateException("Unable to add module. Course does not exist: " + courseId);
+        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
+            throw new IllegalStateException(
+                    String.format("Unable to add module. Course does not exist: %s", courseId));
         });
 
-        Course course = courseOptional.get();
         List<Module> modules = new ArrayList<>(course.getModules());
         modules.add(module);
         course.setModules(modules);
         courseRepository.save(course);
 
         return module;
+    }
+
+    public Optional<Module> find(String courseId, String moduleId) {
+        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
+            throw new IllegalStateException(
+                    String.format("Unable to find module: %s. Course does not exist: %s", moduleId, courseId));
+        });
+
+        return course.getModules().stream()
+                .filter(m -> m.getId().equals(moduleId))
+                .findFirst();
     }
 }
