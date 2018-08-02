@@ -16,7 +16,7 @@ import uk.gov.cslearning.catalogue.repository.LearningProviderRepository;
 @RestController
 @RequestMapping("/learning-provider")
 public class LearningProviderController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LearningProviderController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CourseController.class);
     private final LearningProviderRepository learningProviderRepository;
 
     @Autowired
@@ -26,10 +26,9 @@ public class LearningProviderController {
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody LearningProvider learningProvider, UriComponentsBuilder builder) {
-        LOGGER.debug("Creating LearningProvider {}", learningProvider);
-
+        LOGGER.debug("Creating course {}", learningProvider);
         LearningProvider newLearningProvider = learningProviderRepository.save(learningProvider);
 
-        return ResponseEntity.created(builder.path("/learning-provider/{learningProviderId}").build(newLearningProvider.getId())).build();
+        return ResponseEntity.created(builder.path("/learning-provider/{courseId}").build(newLearningProvider.getId())).build();
     }
 }
