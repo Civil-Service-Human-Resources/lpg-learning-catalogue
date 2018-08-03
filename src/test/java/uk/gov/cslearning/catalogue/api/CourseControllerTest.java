@@ -13,13 +13,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.LinkModule;
+import uk.gov.cslearning.catalogue.domain.module.BlogModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
@@ -135,7 +134,7 @@ public class CourseControllerTest {
     @Test
     public void shouldCreateModule() throws Exception {
         String moduleId = "module-id";
-        Module module = mock(LinkModule.class);
+        Module module = mock(BlogModule.class);
         when(module.getId()).thenReturn(moduleId);
 
 
@@ -156,7 +155,7 @@ public class CourseControllerTest {
     @Test
     public void shouldReturnBadRequestIfCourseNotFoundWhenSavingModule() throws Exception {
         String moduleId = "module-id";
-        Module module = mock(LinkModule.class);
+        Module module = mock(BlogModule.class);
         when(module.getId()).thenReturn(moduleId);
 
         String courseId = "course-id";
@@ -181,7 +180,7 @@ public class CourseControllerTest {
         String moduleId = "module-id";
         String location = "http://example.org";
 
-        Module module = new LinkModule(new URL(location));
+        Module module = new BlogModule(new URL(location));
 
         when(moduleService.find(courseId, moduleId)).thenReturn(Optional.of(module));
 
