@@ -136,20 +136,6 @@ public class TermsAndConditionsControllerTest {
     }
 
     @Test
-    public void shouldSendBadRequestIfTermsAndConditionsDoesntExistWhenDeleting() throws Exception {
-        TermsAndConditions TermsAndConditions = createTermsAndConditions();
-        when(termsAndConditionsRepository.existsById(TermsAndConditions.getId())).thenReturn(false);
-
-        mockMvc.perform(
-                post("/terms-and-conditions/" + TermsAndConditions.getId()).with(csrf())
-                        .content(gson.toJson(TermsAndConditions))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void shouldListCancellationPolicies() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
 
