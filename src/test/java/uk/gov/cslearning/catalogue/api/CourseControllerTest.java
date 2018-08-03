@@ -13,6 +13,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.domain.module.BlogModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
@@ -221,6 +222,6 @@ public class CourseControllerTest {
 
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
-                "learningOutcomes");
+                Visibility.PUBLIC);
     }
 }

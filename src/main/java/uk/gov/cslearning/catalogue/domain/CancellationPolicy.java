@@ -2,30 +2,35 @@ package uk.gov.cslearning.catalogue.domain;
 
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 
+import javax.validation.constraints.NotNull;
+
+@Document(indexName = "lpg-cancellation-policies", type = "cancellationPolicy")
 public class CancellationPolicy {
     @Id
     private String id = UUIDs.randomBase64UUID();
-    private String name;
-    private String shortVersion;
-    private String fullVersion;
-    private Long dateCreated;
-    private String createdByEmail;
 
-    public CancellationPolicy(String name, String shortVersion, String fullVersion, String createdByEmail) {
+    @NotNull
+    private String name;
+
+    @NotNull
+    private String shortVersion;
+
+    @NotNull
+    private String fullVersion;
+
+    public CancellationPolicy() {
+    }
+
+    public CancellationPolicy(@NotNull String name, @NotNull String shortVersion, @NotNull String fullVersion) {
         this.name = name;
         this.shortVersion = shortVersion;
         this.fullVersion = fullVersion;
-        this.createdByEmail = createdByEmail;
-        this.dateCreated = System.currentTimeMillis();
     }
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -50,21 +55,5 @@ public class CancellationPolicy {
 
     public void setFullVersion(String fullVersion) {
         this.fullVersion = fullVersion;
-    }
-
-    public Long getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Long dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public String getCreatedByEmail() {
-        return createdByEmail;
-    }
-
-    public void setCreatedByEmail(String createdByEmail) {
-        this.createdByEmail = createdByEmail;
     }
 }

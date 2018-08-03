@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -147,5 +146,12 @@ public class CourseController {
 
         return result.map(module -> new ResponseEntity<>(module, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @GetMapping("/delete")
+    public void delete() {
+
+     courseRepository.deleteAll();
+
     }
 }

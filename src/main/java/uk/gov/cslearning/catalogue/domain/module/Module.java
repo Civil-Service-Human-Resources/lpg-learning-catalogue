@@ -108,7 +108,7 @@ public abstract class Module {
         }
 
         if (this instanceof BlogModule) {
-            return "link";
+            return "blog";
         }
 
         if (this instanceof VideoModule) {

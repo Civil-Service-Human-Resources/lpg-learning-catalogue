@@ -2,29 +2,32 @@ package uk.gov.cslearning.catalogue.domain;
 
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 
+import javax.validation.constraints.NotNull;
+
+@Document(indexName = "lpg-terms-and-conditions", type = "termsAndConditions")
 public class TermsAndConditions {
 
     @Id
     private String id = UUIDs.randomBase64UUID();
-    private String name;
-    private String description;
-    private Long dateCreated;
-    private String createdByEmail;
 
-    public TermsAndConditions(String name, String description, String createdByEmail) {
+    @NotNull
+    private String name;
+
+    @NotNull
+    private String description;
+
+    public TermsAndConditions() {
+    }
+
+    public TermsAndConditions(@NotNull String name, @NotNull String description) {
         this.name = name;
         this.description = description;
-        this.createdByEmail = createdByEmail;
-        this.dateCreated = System.currentTimeMillis();
     }
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -41,21 +44,5 @@ public class TermsAndConditions {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Long getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Long dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public String getCreatedByEmail() {
-        return createdByEmail;
-    }
-
-    public void setCreatedByEmail(String createdByEmail) {
-        this.createdByEmail = createdByEmail;
     }
 }
