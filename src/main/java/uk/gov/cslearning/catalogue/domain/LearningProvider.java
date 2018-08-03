@@ -2,72 +2,62 @@ package uk.gov.cslearning.catalogue.domain;
 
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Collections.unmodifiableList;
+
+@Document(indexName = "lpg-learning-providers", type = "learningProvider")
 public class LearningProvider {
 
     @Id
     private String id = UUIDs.randomBase64UUID();
+
+    @NotNull
     private String name;
-    private Long dateCreated;
-    private String createdByEmail;
+
     private List<TermsAndConditions> termsAndConditions = new ArrayList<>();
+
     private List<CancellationPolicy> cancellationPolicies = new ArrayList<>();
 
-    public LearningProvider(String name, String createdByEmail) {
+    public LearningProvider() {
+    }
+
+    public LearningProvider(@NotNull String name) {
         this.name = name;
-        this.createdByEmail = createdByEmail;
-        this.dateCreated = System.currentTimeMillis();
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public List<TermsAndConditions> getTermsAndConditions() {
-        return termsAndConditions;
+        return unmodifiableList(termsAndConditions);
     }
 
     public void setTermsAndConditions(List<TermsAndConditions> termsAndConditions) {
-        this.termsAndConditions = termsAndConditions;
-    }
-
-    public Long getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Long dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public String getCreatedByEmail() {
-        return createdByEmail;
-    }
-
-    public void setCreatedByEmail(String createdByEmail) {
-        this.createdByEmail = createdByEmail;
+        this.termsAndConditions.clear();
+        if (termsAndConditions != null) {
+            this.termsAndConditions.addAll(termsAndConditions);
+        }
     }
 
     public List<CancellationPolicy> getCancellationPolicies() {
-        return cancellationPolicies;
+        return unmodifiableList(cancellationPolicies);
     }
 
-    public void setCancellationPolicies(List<CancellationPolicy> cancellationPolicies) {
-        this.cancellationPolicies = cancellationPolicies;
+    public void setCancellationPolicy(List<CancellationPolicy> cancellationPolicies) {
+        this.cancellationPolicies.clear();
+        if (cancellationPolicies != null) {
+            this.cancellationPolicies.addAll(cancellationPolicies);
+        }
     }
 }
 

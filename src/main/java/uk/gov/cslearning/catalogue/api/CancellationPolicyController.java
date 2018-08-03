@@ -21,6 +21,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/cancellation-policy")
 public class CancellationPolicyController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CancellationPolicyController.class);
+
     private final CancellationPolicyRepository cancellationPolicyRepository;
 
     @Autowired

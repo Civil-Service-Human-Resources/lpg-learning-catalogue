@@ -49,29 +49,29 @@ public class LearningProviderController {
     }
 
     @PutMapping(path = "/{learningProviderId}")
-    public ResponseEntity<Void> update(@PathVariable("learningProviderId") String learningProviderId, @RequestBody LearningProvider LearningProvider) {
-        LOGGER.debug("Updating Terms and Conditions {}", LearningProvider);
-        if (!learningProviderId.equals(LearningProvider.getId())) {
+    public ResponseEntity<Void> update(@PathVariable("learningProviderId") String learningProviderId, @RequestBody LearningProvider learningProvider) {
+        LOGGER.debug("Updating Terms and Conditions {}", learningProvider);
+        if (!learningProviderId.equals(learningProvider.getId())) {
             return ResponseEntity.badRequest().build();
         }
         if (!learningProviderRepository.existsById(learningProviderId)) {
             return ResponseEntity.badRequest().build();
         }
-        learningProviderRepository.save(LearningProvider);
+        learningProviderRepository.save(learningProvider);
 
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping(path = "/{learningProviderId}")
-    public ResponseEntity<Void> delete(@PathVariable("learningProviderId") String learningProviderId, @RequestBody LearningProvider LearningProvider) {
-        LOGGER.debug("Deleting Terms and Conditions{}", LearningProvider);
-        if (!learningProviderId.equals(LearningProvider.getId())) {
+    public ResponseEntity<Void> delete(@PathVariable("learningProviderId") String learningProviderId, @RequestBody LearningProvider learningProvider) {
+        LOGGER.debug("Deleting Terms and Conditions{}", learningProvider);
+        if (!learningProviderId.equals(learningProvider.getId())) {
             return ResponseEntity.badRequest().build();
         }
         if (!learningProviderRepository.existsById(learningProviderId)) {
             return ResponseEntity.badRequest().build();
         }
-        learningProviderRepository.delete(LearningProvider);
+        learningProviderRepository.delete(learningProvider);
 
         return ResponseEntity.noContent().build();
     }

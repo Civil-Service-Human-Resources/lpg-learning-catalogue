@@ -12,7 +12,7 @@ public class BlogModule extends Module {
     private URL url;
 
     @JsonCreator
-    public BlogModule(@JsonProperty("url") URL location) {
+    public BlogModule(@JsonProperty("url") URL url) {
         this.url = url;
     }
 
