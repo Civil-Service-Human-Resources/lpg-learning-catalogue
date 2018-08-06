@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.CancellationPolicy;
 
 @Repository
-public interface CancellationPolicyRepository extends ElasticsearchRepository<CancellationPolicy, String>, ResourceSearchRepository{
+public interface CancellationPolicyRepository extends ElasticsearchRepository<CancellationPolicy, String> {
 
 }
