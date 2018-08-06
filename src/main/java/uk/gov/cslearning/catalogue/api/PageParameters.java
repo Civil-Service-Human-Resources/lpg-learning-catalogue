@@ -31,4 +31,12 @@ public class PageParameters {
         }
         return PageRequest.of(0, 10);
     }
+
+    @Override
+    public String toString() {
+        return "PageParameters{" +
+                "page=" + page +
+                ", size=" + size +
+                '}';
+    }
 }

@@ -3,7 +3,6 @@ package uk.gov.cslearning.catalogue.api;
 import com.google.gson.Gson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,13 +31,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(TermsAndConditionsController.class)
-@WithMockUser(username = "user", password = "password")
+@WithMockUser()
 public class TermsAndConditionsControllerTest {
 
     public static final String ID = "abc123";
     public static final String NAME = "New Terms and Conditions";
     public static final String DESCRIPTION = "Example description";
-    public static final String EMAIL = "test@example.com";
+    public static final String TERMS_AND_CONDITIONS_CONTROLLER_PATH = "/terms-and-conditions/";
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,58 +48,63 @@ public class TermsAndConditionsControllerTest {
     private Gson gson = new Gson();
 
     private TermsAndConditions createTermsAndConditions() {
-        return new TermsAndConditions(NAME, DESCRIPTION, EMAIL);
+        return new TermsAndConditions(NAME, DESCRIPTION);
     }
 
     @Test
     public void shouldCreateTermsAndConditionsAndRedirectToNewPolicy() throws Exception {
-        TermsAndConditions TermsAndConditions = createTermsAndConditions();
+        TermsAndConditions termsAndConditions = createTermsAndConditions();
 
         when(termsAndConditionsRepository.save(any()))
-                .thenAnswer((Answer<TermsAndConditions>) invocation -> {
-                    TermsAndConditions.setId(ID);
-                    return TermsAndConditions;
-                });
+                .thenReturn(termsAndConditions);
 
         mockMvc.perform(
-                post("/terms-and-conditions").with(csrf())
-                        .content(gson.toJson(TermsAndConditions))
+                post(TERMS_AND_CONDITIONS_CONTROLLER_PATH).with(csrf())
+                        .content(gson.toJson(termsAndConditions))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(header().string("location", "http://localhost/terms-and-conditions/" + ID));
+                .andExpect(header().string("location", "http://localhost" + TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()));
     }
 
     @Test
-    public void shouldGetTermsAndConditions() throws Exception {
-        List<String> ids = new ArrayList<>();
-        ids.add(ID);
-
-        TermsAndConditions TermsAndConditions = createTermsAndConditions();
+    public void shouldGetTermsAndConditionsIfExists() throws Exception {
+        TermsAndConditions termsAndConditions = createTermsAndConditions();
 
         when(termsAndConditionsRepository.findById(ID))
-                .thenReturn(Optional.of(TermsAndConditions));
+                .thenReturn(Optional.of(termsAndConditions));
 
         mockMvc.perform(
-                get("/terms-and-conditions/" + ID)
+                get(TERMS_AND_CONDITIONS_CONTROLLER_PATH + ID)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(NAME)))
-                .andExpect(jsonPath("$.createdByEmail", is(EMAIL)))
                 .andExpect(jsonPath("$.description", is(DESCRIPTION)));
     }
 
     @Test
-    public void shouldUpdateTermsAndConditions() throws Exception {
-        TermsAndConditions TermsAndConditions = createTermsAndConditions();
-        when(termsAndConditionsRepository.existsById(TermsAndConditions.getId())).thenReturn(true);
-        when(termsAndConditionsRepository.save(any())).thenReturn(TermsAndConditions);
+    public void shouldReturnNotFoundIfTermsAndConditionsDoesNotExist() throws Exception {
+        when(termsAndConditionsRepository.findById(ID))
+                .thenReturn(Optional.empty());
 
         mockMvc.perform(
-                put("/terms-and-conditions/" + TermsAndConditions.getId()).with(csrf())
-                        .content(gson.toJson(TermsAndConditions))
+                get(TERMS_AND_CONDITIONS_CONTROLLER_PATH + ID)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldUpdateTermsAndConditions() throws Exception {
+        TermsAndConditions termsAndConditions = createTermsAndConditions();
+        when(termsAndConditionsRepository.existsById(termsAndConditions.getId())).thenReturn(true);
+        when(termsAndConditionsRepository.save(any())).thenReturn(termsAndConditions);
+
+        mockMvc.perform(
+                put(TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()).with(csrf())
+                        .content(gson.toJson(termsAndConditions))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -109,12 +113,12 @@ public class TermsAndConditionsControllerTest {
 
     @Test
     public void shouldSendBadRequestIfTermsAndConditionsDoesntExistWhenUpdating() throws Exception {
-        TermsAndConditions TermsAndConditions = createTermsAndConditions();
-        when(termsAndConditionsRepository.existsById(TermsAndConditions.getId())).thenReturn(false);
+        TermsAndConditions termsAndConditions = createTermsAndConditions();
+        when(termsAndConditionsRepository.existsById(termsAndConditions.getId())).thenReturn(false);
 
         mockMvc.perform(
-                put("/terms-and-conditions/" + TermsAndConditions.getId()).with(csrf())
-                        .content(gson.toJson(TermsAndConditions))
+                put(TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()).with(csrf())
+                        .content(gson.toJson(termsAndConditions))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -123,12 +127,12 @@ public class TermsAndConditionsControllerTest {
 
     @Test
     public void shouldDeleteTermsAndConditions() throws Exception {
-        TermsAndConditions TermsAndConditions = createTermsAndConditions();
-        when(termsAndConditionsRepository.existsById(TermsAndConditions.getId())).thenReturn(true);
+        TermsAndConditions termsAndConditions = createTermsAndConditions();
+        when(termsAndConditionsRepository.existsById(termsAndConditions.getId())).thenReturn(true);
 
         mockMvc.perform(
-                post("/terms-and-conditions/" + TermsAndConditions.getId()).with(csrf())
-                        .content(gson.toJson(TermsAndConditions))
+                post(TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()).with(csrf())
+                        .content(gson.toJson(termsAndConditions))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -136,12 +140,26 @@ public class TermsAndConditionsControllerTest {
     }
 
     @Test
+    public void shouldSendBadRequestIfTermsAndConditionsDoesntExistWhenDeleting() throws Exception {
+        TermsAndConditions termsAndConditions = createTermsAndConditions();
+        when(termsAndConditionsRepository.existsById(termsAndConditions.getId())).thenReturn(false);
+
+        mockMvc.perform(
+                post(TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()).with(csrf())
+                        .content(gson.toJson(termsAndConditions))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void shouldListCancellationPolicies() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
 
         List<TermsAndConditions> termsAndConditionsList = new ArrayList<>();
-        termsAndConditionsList.add(new TermsAndConditions(NAME + "1", DESCRIPTION, EMAIL));
-        termsAndConditionsList.add(new TermsAndConditions(NAME + "2", DESCRIPTION, EMAIL));
+        termsAndConditionsList.add(new TermsAndConditions(NAME + " 1", DESCRIPTION));
+        termsAndConditionsList.add(new TermsAndConditions(NAME + " 2", DESCRIPTION));
 
         Page<TermsAndConditions> cancellationPolicies = new PageImpl<>(termsAndConditionsList);
 
@@ -149,14 +167,13 @@ public class TermsAndConditionsControllerTest {
                 .thenReturn(cancellationPolicies);
 
         mockMvc.perform(
-                get("/terms-and-conditions")
+                get(TERMS_AND_CONDITIONS_CONTROLLER_PATH + "list")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results", hasSize(2)))
-                .andExpect(jsonPath("$.results[*].name", containsInAnyOrder(NAME + "1", NAME + "2")))
-                .andExpect(jsonPath("$.results[0].description", is("Example description")))
-                .andExpect(jsonPath("$.results[0].createdByEmail", is("test@example.com")));
+                .andExpect(jsonPath("$.results[*].name", containsInAnyOrder(NAME + " 1", NAME + " 2")))
+                .andExpect(jsonPath("$.results[0].description", is("Example description")));
     }
 
 }

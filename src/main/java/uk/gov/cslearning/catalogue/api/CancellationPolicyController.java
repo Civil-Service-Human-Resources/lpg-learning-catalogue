@@ -31,7 +31,7 @@ public class CancellationPolicyController {
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody CancellationPolicy cancellationPolicy, UriComponentsBuilder builder) {
-        LOGGER.debug("Creating CancellationPolicy {}", cancellationPolicy);
+        LOGGER.debug("Creating CancellationPolicy {}", cancellationPolicy.toString());
 
         CancellationPolicy newCancellationPolicy = cancellationPolicyRepository.save(cancellationPolicy);
 
@@ -51,7 +51,7 @@ public class CancellationPolicyController {
 
     @PutMapping(path = "/{cancellationPolicyId}")
     public ResponseEntity<Void> update(@PathVariable("cancellationPolicyId") String cancellationPolicyId, @RequestBody CancellationPolicy cancellationPolicy) {
-        LOGGER.debug("Updating cancellation policy {}", cancellationPolicy);
+        LOGGER.debug("Updating cancellation policy {}", cancellationPolicy.toString());
         if (!cancellationPolicyId.equals(cancellationPolicy.getId())) {
             return ResponseEntity.badRequest().build();
         }
@@ -65,7 +65,7 @@ public class CancellationPolicyController {
 
     @PostMapping(path = "/{cancellationPolicyId}")
     public ResponseEntity<Void> delete(@PathVariable("cancellationPolicyId") String cancellationPolicyId, @RequestBody CancellationPolicy cancellationPolicy) {
-        LOGGER.debug("Deleting cancellation policy {}", cancellationPolicy);
+        LOGGER.debug("Deleting cancellation policy {}", cancellationPolicy.toString());
         if (!cancellationPolicyId.equals(cancellationPolicy.getId())) {
             return ResponseEntity.badRequest().build();
         }
@@ -77,10 +77,10 @@ public class CancellationPolicyController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
+    @GetMapping(path = "/list")
     public ResponseEntity<PageResults<CancellationPolicy>> list(
             PageParameters pageParameters) {
-        LOGGER.debug("Listing cancellation policies");
+        LOGGER.debug("Listing cancellation policies with {}", pageParameters.toString());
 
         Pageable pageable = pageParameters.getPageRequest();
         Page<CancellationPolicy> page;
