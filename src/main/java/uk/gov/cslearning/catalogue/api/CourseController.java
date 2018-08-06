@@ -151,7 +151,9 @@ public class CourseController {
     @GetMapping("/delete")
     public void delete() {
 
-     courseRepository.deleteAll();
+        courseRepository.deleteAll();
 
     }
+
+
 }

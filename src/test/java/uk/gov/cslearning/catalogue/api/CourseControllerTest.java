@@ -135,7 +135,7 @@ public class CourseControllerTest {
         when(module.getId()).thenReturn(moduleId);
 
         String courseId = UUID.randomUUID().toString();
-        String json = gson.toJson(ImmutableMap.of("type", "link", "url", "http://localhost"));
+        String json = gson.toJson(ImmutableMap.of("type", "blog", "location", "http://localhost"));
 
         when(moduleService.save(eq(courseId), any(Module.class))).thenReturn(module);
 
@@ -145,7 +145,7 @@ public class CourseControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("url", String.format("http://localhost/courses/%s/modules/%s", courseId, moduleId)));
+                .andExpect(header().string("Location", String.format("http://localhost/courses/%s/modules/%s", courseId, moduleId)));
     }
 
     @Test
