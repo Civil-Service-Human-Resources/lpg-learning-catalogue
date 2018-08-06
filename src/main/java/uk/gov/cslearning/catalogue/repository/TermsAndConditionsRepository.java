@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.TermsAndConditions;
 
 @Repository
-public interface TermsAndConditionsRepository extends ElasticsearchRepository<TermsAndConditions, String>, ResourceSearchRepository{
+public interface TermsAndConditionsRepository extends ElasticsearchRepository<TermsAndConditions, String> {
 
 }

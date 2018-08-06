@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
 
 @Repository
-public interface LearningProviderRepository extends ElasticsearchRepository<LearningProvider, String>, ResourceSearchRepository{
+public interface LearningProviderRepository extends ElasticsearchRepository<LearningProvider, String> {
 
 }
