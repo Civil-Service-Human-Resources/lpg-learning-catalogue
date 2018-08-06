@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Document(indexName = "lpg-cancellation-policies", type = "cancellationPolicy")
 public class CancellationPolicy {
+
     @Id
     private String id = UUIDs.randomBase64UUID();
 
@@ -55,5 +56,13 @@ public class CancellationPolicy {
 
     public void setFullVersion(String fullVersion) {
         this.fullVersion = fullVersion;
+    }
+
+    @Override
+    public String toString() {
+        return "CancellationPolicy{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

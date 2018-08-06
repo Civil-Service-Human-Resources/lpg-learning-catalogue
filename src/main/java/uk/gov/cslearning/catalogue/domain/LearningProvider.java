@@ -59,5 +59,13 @@ public class LearningProvider {
             this.cancellationPolicies.addAll(cancellationPolicies);
         }
     }
+
+    @Override
+    public String toString() {
+        return "LearningProvider{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
 

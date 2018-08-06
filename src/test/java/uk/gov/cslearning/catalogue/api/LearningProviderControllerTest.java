@@ -3,7 +3,6 @@ package uk.gov.cslearning.catalogue.api;
 import com.google.gson.Gson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,12 +31,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(LearningProviderController.class)
-@WithMockUser(username = "user", password = "password")
+@WithMockUser()
 public class LearningProviderControllerTest {
 
     public static final String ID = "abc123";
     public static final String NAME = "New Learning Provider";
-    public static final String EMAIL = "test@example.com";
+    public static final String LEARNING_PROVIDER_CONTROLLER_PATH = "/learning-provider/";
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,57 +47,63 @@ public class LearningProviderControllerTest {
     private Gson gson = new Gson();
 
     private LearningProvider createLearningProvider() {
-        return new LearningProvider(NAME, EMAIL);
+        return new LearningProvider(NAME);
     }
 
     @Test
     public void shouldCreateLearningProviderAndRedirectToNewPolicy() throws Exception {
-        LearningProvider LearningProvider = createLearningProvider();
+        LearningProvider learningProvider = createLearningProvider();
 
         when(learningProviderRepository.save(any()))
-                .thenAnswer((Answer<LearningProvider>) invocation -> {
-                    LearningProvider.setId(ID);
-                    return LearningProvider;
-                });
+                .thenReturn(learningProvider);
 
         mockMvc.perform(
-                post("/learning-provider").with(csrf())
-                        .content(gson.toJson(LearningProvider))
+                post(LEARNING_PROVIDER_CONTROLLER_PATH).with(csrf())
+                        .content(gson.toJson(learningProvider))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(header().string("location", "http://localhost/learning-provider/" + ID));
+                .andExpect(header().string("location", "http://localhost/learning-provider/" + learningProvider.getId()));
     }
 
     @Test
-    public void shouldGetLearningProvider() throws Exception {
-        List<String> ids = new ArrayList<>();
-        ids.add(ID);
-
-        LearningProvider LearningProvider = createLearningProvider();
+    public void shouldGetLearningProviderIfExists() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
 
         when(learningProviderRepository.findById(ID))
-                .thenReturn(Optional.of(LearningProvider));
+                .thenReturn(Optional.of(learningProvider));
 
         mockMvc.perform(
-                get("/learning-provider/" + ID)
+                get(LEARNING_PROVIDER_CONTROLLER_PATH + ID)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(NAME)))
-                .andExpect(jsonPath("$.createdByEmail", is(EMAIL)));
+                .andExpect(jsonPath("$.name", is(NAME)));
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfLearningProviderDoesNotExist() throws Exception {
+        when(learningProviderRepository.findById(ID))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(
+                get(LEARNING_PROVIDER_CONTROLLER_PATH + ID)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void shouldUpdateLearningProvider() throws Exception {
-        LearningProvider LearningProvider = createLearningProvider();
-        when(learningProviderRepository.existsById(LearningProvider.getId())).thenReturn(true);
-        when(learningProviderRepository.save(any())).thenReturn(LearningProvider);
+        LearningProvider learningProvider = createLearningProvider();
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+        when(learningProviderRepository.save(any())).thenReturn(learningProvider);
 
         mockMvc.perform(
-                put("/learning-provider/" + LearningProvider.getId()).with(csrf())
-                        .content(gson.toJson(LearningProvider))
+                put(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId()).with(csrf())
+                        .content(gson.toJson(learningProvider))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -107,12 +112,12 @@ public class LearningProviderControllerTest {
 
     @Test
     public void shouldSendBadRequestIfLearningProviderDoesntExistWhenUpdating() throws Exception {
-        LearningProvider LearningProvider = createLearningProvider();
-        when(learningProviderRepository.existsById(LearningProvider.getId())).thenReturn(false);
+        LearningProvider learningProvider = createLearningProvider();
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(false);
 
         mockMvc.perform(
-                put("/learning-provider/" + LearningProvider.getId()).with(csrf())
-                        .content(gson.toJson(LearningProvider))
+                put(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId()).with(csrf())
+                        .content(gson.toJson(learningProvider))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -121,12 +126,12 @@ public class LearningProviderControllerTest {
 
     @Test
     public void shouldDeleteLearningProvider() throws Exception {
-        LearningProvider LearningProvider = createLearningProvider();
-        when(learningProviderRepository.existsById(LearningProvider.getId())).thenReturn(true);
+        LearningProvider learningProvider = createLearningProvider();
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
 
         mockMvc.perform(
-                post("/learning-provider/" + LearningProvider.getId()).with(csrf())
-                        .content(gson.toJson(LearningProvider))
+                post(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId()).with(csrf())
+                        .content(gson.toJson(learningProvider))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -134,26 +139,38 @@ public class LearningProviderControllerTest {
     }
 
     @Test
-    public void shouldListLearningProivders() throws Exception {
-        Pageable pageable = PageRequest.of(0, 10);
-
-        List<LearningProvider> learningProviderList = new ArrayList<>();
-        learningProviderList.add(new LearningProvider(NAME + "1", EMAIL));
-        learningProviderList.add(new LearningProvider(NAME + "2", EMAIL));
-
-        Page<LearningProvider> cancellationPolicies = new PageImpl<>(learningProviderList);
-
-        when(learningProviderRepository.findAll(pageable))
-                .thenReturn(cancellationPolicies);
+    public void shouldSendBadRequestIfLearningProviderDoesntExistWhenDeleting() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(false);
 
         mockMvc.perform(
-                get("/learning-provider")
+                post(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId()).with(csrf())
+                        .content(gson.toJson(learningProvider))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldListLearningProviders() throws Exception {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<LearningProvider> learningProvidersList = new ArrayList<>();
+        learningProvidersList.add(new LearningProvider(NAME + " 1"));
+        learningProvidersList.add(new LearningProvider(NAME + " 2"));
+
+        Page<LearningProvider> learningProviders = new PageImpl<>(learningProvidersList);
+
+        when(learningProviderRepository.findAll(pageable))
+                .thenReturn(learningProviders);
+
+        mockMvc.perform(
+                get(LEARNING_PROVIDER_CONTROLLER_PATH + "list")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results", hasSize(2)))
-                .andExpect(jsonPath("$.results[*].name", containsInAnyOrder(NAME + "1", NAME + "2")))
-                .andExpect(jsonPath("$.results[0].createdByEmail", is("test@example.com")));
+                .andExpect(jsonPath("$.results[*].name", containsInAnyOrder("New Learning Provider 1", "New Learning Provider 2")));
     }
-
 }

@@ -21,6 +21,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/learning-provider")
 public class LearningProviderController {
     private static final Logger LOGGER = LoggerFactory.getLogger(LearningProviderController.class);
+
     private final LearningProviderRepository learningProviderRepository;
 
     @Autowired
@@ -30,7 +31,7 @@ public class LearningProviderController {
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody LearningProvider learningProvider, UriComponentsBuilder builder) {
-        LOGGER.debug("Creating Terms and Conditions {}", learningProvider);
+        LOGGER.debug("Creating Learning Provider {}", learningProvider.toString());
 
         LearningProvider newLearningProvider = learningProviderRepository.save(learningProvider);
 
@@ -39,7 +40,7 @@ public class LearningProviderController {
 
     @GetMapping("/{learningProviderId}")
     public ResponseEntity<LearningProvider> get(@PathVariable("learningProviderId") String learningProviderId) {
-        LOGGER.debug("Getting Terms and Conditions with ID {}", learningProviderId);
+        LOGGER.debug("Getting Learning Provider with ID {}", learningProviderId);
 
         Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
 
@@ -50,7 +51,8 @@ public class LearningProviderController {
 
     @PutMapping(path = "/{learningProviderId}")
     public ResponseEntity<Void> update(@PathVariable("learningProviderId") String learningProviderId, @RequestBody LearningProvider learningProvider) {
-        LOGGER.debug("Updating Terms and Conditions {}", learningProvider);
+        LOGGER.debug("Updating Learning Provider {}", learningProvider.toString());
+
         if (!learningProviderId.equals(learningProvider.getId())) {
             return ResponseEntity.badRequest().build();
         }
@@ -64,7 +66,8 @@ public class LearningProviderController {
 
     @PostMapping(path = "/{learningProviderId}")
     public ResponseEntity<Void> delete(@PathVariable("learningProviderId") String learningProviderId, @RequestBody LearningProvider learningProvider) {
-        LOGGER.debug("Deleting Terms and Conditions{}", learningProvider);
+        LOGGER.debug("Deleting Learning Provider {}", learningProvider.toString());
+
         if (!learningProviderId.equals(learningProvider.getId())) {
             return ResponseEntity.badRequest().build();
         }
@@ -76,10 +79,10 @@ public class LearningProviderController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
+    @GetMapping(path = "/list")
     public ResponseEntity<PageResults<LearningProvider>> list(
             PageParameters pageParameters) {
-        LOGGER.debug("Listing Terms and Conditions");
+        LOGGER.debug("Listing Learning Providers with {}", pageParameters.toString());
 
         Pageable pageable = pageParameters.getPageRequest();
         Page<LearningProvider> page;

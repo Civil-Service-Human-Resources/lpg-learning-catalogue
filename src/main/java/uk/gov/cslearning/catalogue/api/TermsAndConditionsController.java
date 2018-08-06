@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.api;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class TermsAndConditionsController {
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody TermsAndConditions termsAndConditions, UriComponentsBuilder builder) {
-        LOGGER.debug("Creating Terms and Conditions {}", termsAndConditions);
+        LOGGER.debug("Creating Terms and Conditions {}", termsAndConditions.toString());
 
         TermsAndConditions newTermsAndConditions = termsAndConditionsRepository.save(termsAndConditions);
 
@@ -49,37 +48,39 @@ public class TermsAndConditionsController {
     }
 
     @PutMapping(path = "/{termsAndConditionsId}")
-    public ResponseEntity<Void> update(@PathVariable("termsAndConditionsId") String termsAndConditionsId, @RequestBody TermsAndConditions TermsAndConditions) {
-        LOGGER.debug("Updating Terms and Conditions {}", TermsAndConditions);
-        if (!termsAndConditionsId.equals(TermsAndConditions.getId())) {
+    public ResponseEntity<Void> update(@PathVariable("termsAndConditionsId") String termsAndConditionsId, @RequestBody TermsAndConditions termsAndConditions) {
+        LOGGER.debug("Updating Terms and Conditions {}", termsAndConditions.toString());
+
+        if (!termsAndConditionsId.equals(termsAndConditions.getId())) {
             return ResponseEntity.badRequest().build();
         }
         if (!termsAndConditionsRepository.existsById(termsAndConditionsId)) {
             return ResponseEntity.badRequest().build();
         }
-        termsAndConditionsRepository.save(TermsAndConditions);
+        termsAndConditionsRepository.save(termsAndConditions);
 
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping(path = "/{termsAndConditionsId}")
-    public ResponseEntity<Void> delete(@PathVariable("termsAndConditionsId") String termsAndConditionsId, @RequestBody TermsAndConditions TermsAndConditions) {
-        LOGGER.debug("Deleting Terms and Conditions{}", TermsAndConditions);
-        if (!termsAndConditionsId.equals(TermsAndConditions.getId())) {
+    public ResponseEntity<Void> delete(@PathVariable("termsAndConditionsId") String termsAndConditionsId, @RequestBody TermsAndConditions termsAndConditions) {
+        LOGGER.debug("Deleting Terms and Conditions{}", termsAndConditions.toString());
+
+        if (!termsAndConditionsId.equals(termsAndConditions.getId())) {
             return ResponseEntity.badRequest().build();
         }
         if (!termsAndConditionsRepository.existsById(termsAndConditionsId)) {
             return ResponseEntity.badRequest().build();
         }
-        termsAndConditionsRepository.delete(TermsAndConditions);
+        termsAndConditionsRepository.delete(termsAndConditions);
 
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
+    @GetMapping(path = "/list")
     public ResponseEntity<PageResults<TermsAndConditions>> list(
             PageParameters pageParameters) {
-        LOGGER.debug("Listing Terms and Conditions");
+        LOGGER.debug("Listing Terms and Conditions with {}", pageParameters.toString());
 
         Pageable pageable = pageParameters.getPageRequest();
         Page<TermsAndConditions> page;
