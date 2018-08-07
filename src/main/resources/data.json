@@ -1,54 +1,65 @@
-[{
-  "_class": "uk.gov.cslearning.catalogue.domain.Course",
-  "id": "RrGmBqIoRxKoYwGHUN7kfA",
-  "title": "Diversity and inclusion",
-  "shortDescription": "This topic covers the role unconscious bias can play in the workplace",
-  "description": "Description here ",
-  "learningOutcomes": "Learning outcomes here",
-  "preparation": "No preparation required",
-  "visibility": "PUBLIC",
-  "learningProvider": {
-    "name": "KPMG",
-    "termsAndConditions": [{
-      "name": "Example T&Cs 1",
-      "description": "This is an example description for T&C 1"
-    }],
-    "cancellationPolicies": [{
-      "name": "Example CP 1",
-      "shortVersion": "This is an example short version for CP 1",
-      "fullVersion": "This is an example full version for CP 1"
-    }]
-  },
-  "audiences": [{
-    "mandatory": true,
-    "departments": [
-      "co"
-    ],
-    "grades": [
-      "AA",
-      "AO",
-      "EO",
-      "HEO",
-      "SEO",
-      "G6",
-      "G7",
-      "SCS"
-    ]
-  },
-    {
-      "mandatory": true,
-      "departments": [
-        "hmrc"
+[
+  {
+    "_class": "uk.gov.cslearning.catalogue.domain.Course",
+    "id": "RrGmBqIoRxKoYwGHUN7kfA",
+    "title": "Diversity and inclusion",
+    "shortDescription": "This topic covers the role unconscious bias can play in the workplace",
+    "description": "Description here ",
+    "learningOutcomes": "Learning outcomes here",
+    "preparation": "No preparation required",
+    "visibility": "PUBLIC",
+    "learningProvider": {
+      "name": "KPMG",
+      "termsAndConditions": [
+        {
+          "_class": "uk.gov.cslearning.catalogue.domain.TermsAndConditions",
+          "name": "Example T&Cs 1",
+          "description": "This is an example description for T&C 1"
+        }
       ],
-      "grades": []
-    }
-  ],
-  "modules": [{
-    "title": "Challenging unconscious bias in recruitment decisions",
-    "description": "This is a description",
-    "type": "blog",
-    "duration": 600,
-    "cost": 0,
-    "url": "http://example.com/"
-  }]
-}]
+      "cancellationPolicies": [
+        {
+          "_class": "uk.gov.cslearning.catalogue.domain.CancellationPolicy",
+          "name": "Example CP 1",
+          "shortVersion": "This is an example short version for CP 1",
+          "fullVersion": "This is an example full version for CP 1"
+        }
+      ]
+    },
+    "audiences": [
+      {
+        "mandatory": true,
+        "departments": [
+          "co"
+        ],
+        "grades": [
+          "AA",
+          "AO",
+          "EO",
+          "HEO",
+          "SEO",
+          "G6",
+          "G7",
+          "SCS"
+        ]
+      },
+      {
+        "mandatory": true,
+        "departments": [
+          "hmrc"
+        ],
+        "grades": []
+      }
+    ],
+    "modules": [
+      {
+        "title": "Challenging unconscious bias in recruitment decisions",
+        "description": "This is a description",
+        "type": "blog",
+        "duration": 600,
+        "cost": 0,
+        "url": "http://example.com/"
+      }
+    ]
+  }
+]
