@@ -23,7 +23,7 @@ public class Event {
 
     private String joiningInstructions;
 
-    private List<Session> sessions = new ArrayList<>();
+    private List<DateRange> dateRanges = new ArrayList<>();
 
     public Event() {
     }
@@ -80,13 +80,14 @@ public class Event {
         this.joiningInstructions = joiningInstructions;
     }
 
-    public List<Session> getSessions() {
-        return unmodifiableList(sessions);
+    public List<DateRange> getDateRanges() {
+        return unmodifiableList(dateRanges);
     }
 
-    public void setSessions(List<Session> sessions) {
-        this.sessions.clear();
-        if (sessions != null) {
-            this.sessions.addAll(sessions);
-        }    }
+    public void setDateRanges(List<DateRange> dateRanges) {
+        this.dateRanges.clear();
+        if (dateRanges != null) {
+            this.dateRanges.addAll(dateRanges);
+        }
+    }
 }

@@ -147,13 +147,4 @@ public class CourseController {
         return result.map(module -> new ResponseEntity<>(module, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
-
-    @GetMapping("/delete")
-    public void delete() {
-
-        courseRepository.deleteAll();
-
-    }
-
-
 }
