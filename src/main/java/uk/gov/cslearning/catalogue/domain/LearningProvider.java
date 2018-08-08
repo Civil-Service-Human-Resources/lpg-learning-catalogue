@@ -23,6 +23,8 @@ public class LearningProvider {
 
     private List<CancellationPolicy> cancellationPolicies = new ArrayList<>();
 
+    private Status status = Status.PUBLISHED;
+
     public LearningProvider() {
     }
 
@@ -65,6 +67,7 @@ public class LearningProvider {
         return "LearningProvider{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", status=" + status +
                 '}';
     }
 }

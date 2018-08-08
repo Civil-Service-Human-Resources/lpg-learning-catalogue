@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Session {
+public class DateRange {
 
     @NotNull
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -28,10 +28,10 @@ public class Session {
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     LocalTime endTime;
 
-    public Session() {
+    public DateRange() {
     }
 
-    public Session(@NotNull LocalDate date, @NotNull LocalTime startTime, @NotNull LocalTime endTime) {
+    public DateRange(@NotNull LocalDate date, @NotNull LocalTime startTime, @NotNull LocalTime endTime) {
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
