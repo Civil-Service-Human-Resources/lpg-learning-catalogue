@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.domain;
 
+import org.apache.lucene.index.Term;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static java.util.Collections.unmodifiableList;
 
@@ -20,9 +22,9 @@ public class LearningProvider {
     @NotNull
     private String name;
 
-    private List<Policy> termsAndConditions = new ArrayList<>();
+    private List<TermsAndConditions> termsAndConditions = new ArrayList<>();
 
-    private List<Policy> cancellationPolicies = new ArrayList<>();
+    private List<CancellationPolicy> cancellationPolicies = new ArrayList<>();
 
     private Status status = Status.PUBLISHED;
 
@@ -41,40 +43,44 @@ public class LearningProvider {
         return name;
     }
 
-    public List<Policy> getTermsAndConditions() {
+    public List<TermsAndConditions> getTermsAndConditionsList() {
         return unmodifiableList(termsAndConditions);
     }
 
-    public void setTermsAndConditions(List<Policy> termsAndConditions) {
-        this.termsAndConditions.clear();
-        if (termsAndConditions != null) {
-            this.termsAndConditions.addAll(termsAndConditions);
-        }
+    public TermsAndConditions getTermsAndConditionsById(String id){
+        List<TermsAndConditions> termsAndConditionsList = getTermsAndConditionsList();
+        Optional<TermsAndConditions> termsAndConditions = termsAndConditionsList.stream().filter(t -> t.getId().equals(id)).findFirst();
+        return termsAndConditions.get();
     }
 
-    public void addCancellationPolicy(Policy cancellationPolicy) {
-        this.cancellationPolicies.add(cancellationPolicy);
+    public void addTermsAndConditions(TermsAndConditions termsAndConditions){
+        this.termsAndConditions .add(termsAndConditions);
     }
 
-    public void removeCancellationPolicy(Policy cancellationPolicy) {
-        this.cancellationPolicies.remove(cancellationPolicy);
+    public void removeTermsAndConditions(TermsAndConditions termsAndConditions){
+        this.termsAndConditions.remove(termsAndConditions);
     }
 
-    public Policy getCancellationPolicyById(String id) {
-        List<Policy> policies = getCancellationPolicies();
-        Optional<Policy> p = policies.stream().filter(policy -> policy.getId().equals(id)).findFirst();
-        return p.get();
-    }
-
-    public List<Policy> getCancellationPolicies() {
+    public List<CancellationPolicy> getCancellationPolicy() {
         return unmodifiableList(cancellationPolicies);
     }
 
-    public void setCancellationPolicy(List<Policy> cancellationPolicies) {
-        this.cancellationPolicies.clear();
-        if (cancellationPolicies != null) {
-            this.cancellationPolicies.addAll(cancellationPolicies);
-        }
+    public CancellationPolicy getCancellationPolicyById(String id) {
+        List<CancellationPolicy> policies = getCancellationPolicies();
+        Optional<CancellationPolicy> policy = policies.stream().filter(p -> p.getId().equals(id)).findFirst();
+        return policy.get();
+    }
+
+    public List<CancellationPolicy> getCancellationPolicies() {
+        return unmodifiableList(cancellationPolicies);
+    }
+
+    public void addCancellationPolicy(CancellationPolicy cancellationPolicy) {
+        this.cancellationPolicies.add(cancellationPolicy);
+    }
+
+    public void removeCancellationPolicy(CancellationPolicy cancellationPolicy) {
+        this.cancellationPolicies.remove(cancellationPolicy);
     }
 
     @Override
