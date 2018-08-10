@@ -14,8 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.cslearning.catalogue.domain.TermsAndConditions;
-import uk.gov.cslearning.catalogue.repository.TermsAndConditionsRepository;
+import uk.gov.cslearning.catalogue.domain.Policy;
+import uk.gov.cslearning.catalogue.repository.PolicyRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(TermsAndConditionsController.class)
+@WebMvcTest(PolicyController.class)
 @WithMockUser()
-public class TermsAndConditionsControllerTest {
+public class PolicyControllerTest {
 
     public static final String ID = "abc123";
     public static final String NAME = "New Terms and Conditions";
@@ -43,37 +43,37 @@ public class TermsAndConditionsControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private TermsAndConditionsRepository termsAndConditionsRepository;
+    private PolicyRepository policyRepository;
 
     private Gson gson = new Gson();
 
-    private TermsAndConditions createTermsAndConditions() {
-        return new TermsAndConditions(NAME, DESCRIPTION);
+    private Policy createTermsAndConditions() {
+        return new Policy(NAME, DESCRIPTION);
     }
 
     @Test
     public void shouldCreateTermsAndConditionsAndRedirectToNewPolicy() throws Exception {
-        TermsAndConditions termsAndConditions = createTermsAndConditions();
+        Policy policy = createTermsAndConditions();
 
-        when(termsAndConditionsRepository.save(any()))
-                .thenReturn(termsAndConditions);
+        when(policyRepository.save(any()))
+                .thenReturn(policy);
 
         mockMvc.perform(
                 post(TERMS_AND_CONDITIONS_CONTROLLER_PATH).with(csrf())
-                        .content(gson.toJson(termsAndConditions))
+                        .content(gson.toJson(policy))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(header().string("location", "http://localhost" + TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()));
+                .andExpect(header().string("location", "http://localhost" + TERMS_AND_CONDITIONS_CONTROLLER_PATH + policy.getId()));
     }
 
     @Test
     public void shouldGetTermsAndConditionsIfExists() throws Exception {
-        TermsAndConditions termsAndConditions = createTermsAndConditions();
+        Policy policy = createTermsAndConditions();
 
-        when(termsAndConditionsRepository.findById(ID))
-                .thenReturn(Optional.of(termsAndConditions));
+        when(policyRepository.findById(ID))
+                .thenReturn(Optional.of(policy));
 
         mockMvc.perform(
                 get(TERMS_AND_CONDITIONS_CONTROLLER_PATH + ID)
@@ -86,7 +86,7 @@ public class TermsAndConditionsControllerTest {
 
     @Test
     public void shouldReturnNotFoundIfTermsAndConditionsDoesNotExist() throws Exception {
-        when(termsAndConditionsRepository.findById(ID))
+        when(policyRepository.findById(ID))
                 .thenReturn(Optional.empty());
 
         mockMvc.perform(
@@ -98,13 +98,13 @@ public class TermsAndConditionsControllerTest {
 
     @Test
     public void shouldUpdateTermsAndConditions() throws Exception {
-        TermsAndConditions termsAndConditions = createTermsAndConditions();
-        when(termsAndConditionsRepository.existsById(termsAndConditions.getId())).thenReturn(true);
-        when(termsAndConditionsRepository.save(any())).thenReturn(termsAndConditions);
+        Policy policy = createTermsAndConditions();
+        when(policyRepository.existsById(policy.getId())).thenReturn(true);
+        when(policyRepository.save(any())).thenReturn(policy);
 
         mockMvc.perform(
-                put(TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()).with(csrf())
-                        .content(gson.toJson(termsAndConditions))
+                put(TERMS_AND_CONDITIONS_CONTROLLER_PATH + policy.getId()).with(csrf())
+                        .content(gson.toJson(policy))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -113,12 +113,12 @@ public class TermsAndConditionsControllerTest {
 
     @Test
     public void shouldSendBadRequestIfTermsAndConditionsDoesntExistWhenUpdating() throws Exception {
-        TermsAndConditions termsAndConditions = createTermsAndConditions();
-        when(termsAndConditionsRepository.existsById(termsAndConditions.getId())).thenReturn(false);
+        Policy policy = createTermsAndConditions();
+        when(policyRepository.existsById(policy.getId())).thenReturn(false);
 
         mockMvc.perform(
-                put(TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()).with(csrf())
-                        .content(gson.toJson(termsAndConditions))
+                put(TERMS_AND_CONDITIONS_CONTROLLER_PATH + policy.getId()).with(csrf())
+                        .content(gson.toJson(policy))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -127,12 +127,12 @@ public class TermsAndConditionsControllerTest {
 
     @Test
     public void shouldDeleteTermsAndConditions() throws Exception {
-        TermsAndConditions termsAndConditions = createTermsAndConditions();
-        when(termsAndConditionsRepository.existsById(termsAndConditions.getId())).thenReturn(true);
+        Policy policy = createTermsAndConditions();
+        when(policyRepository.existsById(policy.getId())).thenReturn(true);
 
         mockMvc.perform(
-                post(TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()).with(csrf())
-                        .content(gson.toJson(termsAndConditions))
+                post(TERMS_AND_CONDITIONS_CONTROLLER_PATH + policy.getId()).with(csrf())
+                        .content(gson.toJson(policy))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -141,12 +141,12 @@ public class TermsAndConditionsControllerTest {
 
     @Test
     public void shouldSendBadRequestIfTermsAndConditionsDoesntExistWhenDeleting() throws Exception {
-        TermsAndConditions termsAndConditions = createTermsAndConditions();
-        when(termsAndConditionsRepository.existsById(termsAndConditions.getId())).thenReturn(false);
+        Policy policy = createTermsAndConditions();
+        when(policyRepository.existsById(policy.getId())).thenReturn(false);
 
         mockMvc.perform(
-                post(TERMS_AND_CONDITIONS_CONTROLLER_PATH + termsAndConditions.getId()).with(csrf())
-                        .content(gson.toJson(termsAndConditions))
+                post(TERMS_AND_CONDITIONS_CONTROLLER_PATH + policy.getId()).with(csrf())
+                        .content(gson.toJson(policy))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -157,13 +157,13 @@ public class TermsAndConditionsControllerTest {
     public void shouldListCancellationPolicies() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
 
-        List<TermsAndConditions> termsAndConditionsList = new ArrayList<>();
-        termsAndConditionsList.add(new TermsAndConditions(NAME + " 1", DESCRIPTION));
-        termsAndConditionsList.add(new TermsAndConditions(NAME + " 2", DESCRIPTION));
+        List<Policy> policyList = new ArrayList<>();
+        policyList.add(new Policy(NAME + " 1", DESCRIPTION));
+        policyList.add(new Policy(NAME + " 2", DESCRIPTION));
 
-        Page<TermsAndConditions> cancellationPolicies = new PageImpl<>(termsAndConditionsList);
+        Page<Policy> cancellationPolicies = new PageImpl<>(policyList);
 
-        when(termsAndConditionsRepository.findAll(pageable))
+        when(policyRepository.findAll(pageable))
                 .thenReturn(cancellationPolicies);
 
         mockMvc.perform(
