@@ -3,52 +3,45 @@ package uk.gov.cslearning.catalogue.domain;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 
-import javax.validation.constraints.NotNull;
-
-public class Policy {
-
+public class TermsAndConditions {
     @Id
     private String id = UUIDs.randomBase64UUID();
 
-    @NotNull
     private String name;
 
-    @NotNull
     private String content;
 
-    private LearningProvider learningProvider;
-
-    public Policy() {
+    public TermsAndConditions() {
     }
 
-    public Policy(@NotNull String name, @NotNull String content) {
+    public TermsAndConditions(String name, String content) {
         this.name = name;
         this.content = content;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getContent() {
-        return content;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     public void setContent(String content) {
         this.content = content;
     }
 
+    public String getId(){
+        return id;
+    }
+
     @Override
     public String toString() {
-        return "Policy{" +
+        return "TermsAndConditions{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 '}';

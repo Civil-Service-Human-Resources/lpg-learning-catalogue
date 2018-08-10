@@ -10,10 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import springfox.documentation.swagger.readers.operation.ResponseHeaders;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.repository.LearningProviderRepository;
 
@@ -173,4 +174,44 @@ public class LearningProviderControllerTest {
                 .andExpect(jsonPath("$.results", hasSize(2)))
                 .andExpect(jsonPath("$.results[*].name", containsInAnyOrder("New Learning Provider 1", "New Learning Provider 2")));
     }
+
+    @Test
+    public void shouldCreateNewCancellationPolicy() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        when(learningProviderRepository.save(any())).thenReturn(learningProvider);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(any())).thenReturn(result);
+
+        mockMvc.perform(
+                post(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/cancellation-policies").with(csrf())
+                    .content(gson.toJson(learningProvider))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+    /*
+    @Test
+    public void shouldCreateLearningProviderAndRedirectToNewPolicy() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+
+        when(learningProviderRepository.save(any()))
+                .thenReturn(learningProvider);
+
+        mockMvc.perform(
+                post(LEARNING_PROVIDER_CONTROLLER_PATH).with(csrf())
+                        .content(gson.toJson(learningProvider))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(header().string("location", "http://localhost/learning-provider/" + learningProvider.getId()));
+    }
+     */
 }

@@ -8,7 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.cslearning.catalogue.domain.CancellationPolicy;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
+import uk.gov.cslearning.catalogue.domain.TermsAndConditions;
 import uk.gov.cslearning.catalogue.repository.LearningProviderRepository;
 
 import java.util.Optional;
@@ -86,6 +88,130 @@ public class LearningProviderController {
         page = learningProviderRepository.findAll(pageable);
 
         return ResponseEntity.ok(new PageResults<>(page, pageable));
+    }
+
+    @PostMapping(path = "/{learningProviderId}/cancellation-policies")
+    public ResponseEntity<Object> addCancellationPolicyToLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @RequestBody
+    CancellationPolicy cancellationPolicy){
+        LOGGER.debug("Updating Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            learningProvider.addCancellationPolicy(cancellationPolicy);
+
+            learningProviderRepository.save(learningProvider);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PutMapping(path = "/{learningProviderId}/cancellation-policies/{cancellationPolicyId}")
+    public ResponseEntity<Object> updateCancellationPolicyInLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @PathVariable("cancellationPolicyId")
+            String cancellationPolicyId, @RequestBody CancellationPolicy newCancellationPolicy){
+        LOGGER.debug("Updating Cancellation Policy with Id in Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            CancellationPolicy cancellationPolicy = learningProvider.getCancellationPolicyById(cancellationPolicyId);
+
+            cancellationPolicy.setName(newCancellationPolicy.getName());
+            cancellationPolicy.setFullVersion(newCancellationPolicy.getFullVersion());
+            cancellationPolicy.setShortVersion(newCancellationPolicy.getShortVersion());
+
+            learningProviderRepository.save(learningProvider);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping(path = "/{learningProviderId}/cancellation-policies/{cancellationPolicyId}")
+    public ResponseEntity<Object> deleteCancellationPolicyInLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @PathVariable("cancellationPolicyId") String cancellationPolicyId){
+        LOGGER.debug("Updating Cancellation Policy with Id in Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            CancellationPolicy cancellationPolicy = learningProvider.getCancellationPolicyById(learningProviderId);
+
+            learningProvider.removeCancellationPolicy(cancellationPolicy);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PostMapping(path = "/{learningProviderId}/terms-and-conditions")
+    public ResponseEntity<Object> addTermsAndConditionsToLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @RequestBody
+            TermsAndConditions termsAndConditions){
+        LOGGER.debug("Updating Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            learningProvider.addTermsAndConditions(termsAndConditions);
+
+            learningProviderRepository.save(learningProvider);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PutMapping(path = "/{learningProviderId/terms-and-conditions/{termsAndConditionsId}")
+    public ResponseEntity<Object> updateTermsAndConditionsInLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @PathVariable("termsAndConditionsId")
+            String termsAndConditionsId, @RequestBody TermsAndConditions newTermsAndConditions){
+        LOGGER.debug("Updating Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            TermsAndConditions termsAndConditions = learningProvider.getTermsAndConditionsById(termsAndConditionsId);
+
+            termsAndConditions.setName(newTermsAndConditions.getName());
+            termsAndConditions.setContent(newTermsAndConditions.getContent());
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping(path = "/{learningProviderId/terms-and-conditions/{termsAndConditionsId}")
+    public ResponseEntity<Object> deleteTermsAndConditionsInLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @PathVariable("termsAndConditionsId")
+            String termsAndConditionsId){
+        LOGGER.debug("Updating Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            TermsAndConditions termsAndConditions = learningProvider.getTermsAndConditionsById(termsAndConditionsId);
+
+            learningProvider.removeTermsAndConditions(termsAndConditions);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 //
 //    @PostMapping(path = "/{learningProviderId}/cancellation-policies")
