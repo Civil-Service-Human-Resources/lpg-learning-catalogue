@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.api;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class LearningProviderController {
 
     @GetMapping("/{learningProviderId}")
     public ResponseEntity<LearningProvider> get(@PathVariable("learningProviderId") String learningProviderId) {
-        LOGGER.debug("Getting Learning Provider with ID {}", learningProviderId);
+        LOGGER.debug("Getting Learning Provider with Id {}", learningProviderId);
 
         Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
 
@@ -64,17 +63,14 @@ public class LearningProviderController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(path = "/{learningProviderId}")
-    public ResponseEntity<Void> delete(@PathVariable("learningProviderId") String learningProviderId, @RequestBody LearningProvider learningProvider) {
-        LOGGER.debug("Deleting Learning Provider {}", learningProvider.toString());
+    @DeleteMapping(path = "/{learningProviderId}")
+    public ResponseEntity<Void> delete(@PathVariable("learningProviderId") String learningProviderId) {
+        LOGGER.debug("Deleting Learning Provider by Id {}", learningProviderId);
 
-        if (!learningProviderId.equals(learningProvider.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
         if (!learningProviderRepository.existsById(learningProviderId)) {
             return ResponseEntity.badRequest().build();
         }
-        learningProviderRepository.delete(learningProvider);
+        learningProviderRepository.deleteById(learningProviderId);
 
         return ResponseEntity.noContent().build();
     }
@@ -91,4 +87,28 @@ public class LearningProviderController {
 
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
+//
+//    @PostMapping(path = "/{learningProviderId}/cancellation-policies")
+//    public ResponseEntity<Object> addCancellationPolicyToLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @RequestBody Policy cancellationPolicy) {
+//        LOGGER.debug("Updating Learning Provider with Id {}", learningProviderId);
+//
+//        if (!learningProviderRepository.existsById(learningProviderId)) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+//
+//        return result.map(learningProvider -> {
+//            learningProvider.addCancellationPolicy(cancellationPolicy);
+//
+//            learningProviderRepository.save(learningProvider);
+//
+//            return ResponseEntity.noContent().build();
+//        }).orElseGet(() -> ResponseEntity.badRequest().build());
+//    }
+//
+////    edit
+////        @PostMapping(path = "/{learningProviderId}/cancellation-policies/{cancellationid}")
+//                learningProvider.getCancellationPolicy(cancellationPolicyId);
+
 }

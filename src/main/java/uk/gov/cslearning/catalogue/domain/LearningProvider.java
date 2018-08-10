@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.unmodifiableList;
 
@@ -19,9 +20,9 @@ public class LearningProvider {
     @NotNull
     private String name;
 
-    private List<TermsAndConditions> termsAndConditions = new ArrayList<>();
+    private List<Policy> termsAndConditions = new ArrayList<>();
 
-    private List<CancellationPolicy> cancellationPolicies = new ArrayList<>();
+    private List<Policy> cancellationPolicies = new ArrayList<>();
 
     private Status status = Status.PUBLISHED;
 
@@ -40,22 +41,36 @@ public class LearningProvider {
         return name;
     }
 
-    public List<TermsAndConditions> getTermsAndConditions() {
+    public List<Policy> getTermsAndConditions() {
         return unmodifiableList(termsAndConditions);
     }
 
-    public void setTermsAndConditions(List<TermsAndConditions> termsAndConditions) {
+    public void setTermsAndConditions(List<Policy> termsAndConditions) {
         this.termsAndConditions.clear();
         if (termsAndConditions != null) {
             this.termsAndConditions.addAll(termsAndConditions);
         }
     }
 
-    public List<CancellationPolicy> getCancellationPolicies() {
+    public void addCancellationPolicy(Policy cancellationPolicy) {
+        this.cancellationPolicies.add(cancellationPolicy);
+    }
+
+    public void removeCancellationPolicy(Policy cancellationPolicy) {
+        this.cancellationPolicies.remove(cancellationPolicy);
+    }
+
+    public Policy getCancellationPolicyById(String id) {
+        List<Policy> policies = getCancellationPolicies();
+        Optional<Policy> p = policies.stream().filter(policy -> policy.getId().equals(id)).findFirst();
+        return p.get();
+    }
+
+    public List<Policy> getCancellationPolicies() {
         return unmodifiableList(cancellationPolicies);
     }
 
-    public void setCancellationPolicy(List<CancellationPolicy> cancellationPolicies) {
+    public void setCancellationPolicy(List<Policy> cancellationPolicies) {
         this.cancellationPolicies.clear();
         if (cancellationPolicies != null) {
             this.cancellationPolicies.addAll(cancellationPolicies);
