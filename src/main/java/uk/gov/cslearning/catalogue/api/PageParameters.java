@@ -36,7 +36,7 @@ public class PageParameters {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("page,", page)
+                .append("page", page)
                 .append("size", size)
                 .toString();
     }
