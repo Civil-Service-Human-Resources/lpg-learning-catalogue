@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 
@@ -58,9 +59,9 @@ public class CancellationPolicy {
 
     @Override
     public String toString() {
-        return "CancellationPolicy{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+        return new ToStringBuilder(this)
+                .append("id,", id)
+                .append("name", name)
+                .toString();
     }
 }
