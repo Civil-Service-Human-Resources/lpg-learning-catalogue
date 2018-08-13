@@ -3,21 +3,26 @@ package uk.gov.cslearning.catalogue.domain;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotNull;
+
 public class CancellationPolicy {
 
     @Id
     private String id = UUIDs.randomBase64UUID();
 
+    @NotNull
     private String name;
 
+    @NotNull
     private String shortVersion;
 
+    @NotNull
     private String fullVersion;
 
     public CancellationPolicy() {
     }
 
-    public CancellationPolicy(String name, String shortVersion, String fullVersion) {
+    public CancellationPolicy(@NotNull String name, @NotNull String shortVersion, @NotNull String fullVersion) {
         this.name = name;
         this.shortVersion = shortVersion;
         this.fullVersion = fullVersion;
