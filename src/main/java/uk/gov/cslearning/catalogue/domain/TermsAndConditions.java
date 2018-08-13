@@ -3,18 +3,22 @@ package uk.gov.cslearning.catalogue.domain;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotNull;
+
 public class TermsAndConditions {
     @Id
     private String id = UUIDs.randomBase64UUID();
 
+    @NotNull
     private String name;
 
+    @NotNull
     private String content;
 
     public TermsAndConditions() {
     }
 
-    public TermsAndConditions(String name, String content) {
+    public TermsAndConditions(@NotNull String name, @NotNull String content) {
         this.name = name;
         this.content = content;
     }
@@ -35,7 +39,7 @@ public class TermsAndConditions {
         this.content = content;
     }
 
-    public String getId(){
+    public String getId() {
         return id;
     }
 
