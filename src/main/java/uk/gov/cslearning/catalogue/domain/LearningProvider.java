@@ -58,7 +58,7 @@ public class LearningProvider {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("id,", id)
+                .append("id", id)
                 .append("name", name)
                 .toString();
     }
