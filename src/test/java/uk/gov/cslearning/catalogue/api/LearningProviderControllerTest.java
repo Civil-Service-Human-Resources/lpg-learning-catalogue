@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.cslearning.catalogue.domain.CancellationPolicy;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.repository.LearningProviderRepository;
 
@@ -212,4 +213,49 @@ public class LearningProviderControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    public void shouldCreateNewCancellationPolicy() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        CancellationPolicy cancellationPolicy = new CancellationPolicy();
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        when(learningProviderRepository.save(any())).thenReturn(learningProvider);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(any())).thenReturn(result);
+
+        mockMvc.perform(
+                post(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/cancellation-policies").with(csrf())
+                        .content(gson.toJson(cancellationPolicy))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldSendBadRequestWhenCancellationPolicyIsNull() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        CancellationPolicy cancellationPolicy = null;
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        when(learningProviderRepository.save(any())).thenReturn(learningProvider);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(any())).thenReturn(result);
+
+        mockMvc.perform(
+                post(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/cancellation-policies").with(csrf())
+                        .content(gson.toJson(cancellationPolicy))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
 }

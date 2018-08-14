@@ -90,6 +90,24 @@ public class LearningProviderController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(path="/{learningProviderId}/cancellation-policies/{cancellationPolicyId}")
+    public ResponseEntity getCancellationPolicy(@PathVariable("learningProviderId") String learningProviderId, @PathVariable
+            ("cancellationPolicyId") String cancellationPolicyId){
+        LOGGER.info("Getting Cancellation Policy with Id {}", cancellationPolicyId);
+
+        if (!learningProviderRepository.existsById(learningProviderId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            CancellationPolicy cancellationPolicy = learningProvider.getCancellationPolicyById(cancellationPolicyId);
+
+            return ResponseEntity.ok().body(cancellationPolicy);
+        }).orElse(ResponseEntity.noContent().build());
+    }
+
     @PostMapping(path = "/{learningProviderId}/cancellation-policies")
     public ResponseEntity<Object> addCancellationPolicyToLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @RequestBody
             CancellationPolicy cancellationPolicy, UriComponentsBuilder builder) {
@@ -109,6 +127,69 @@ public class LearningProviderController {
             return ResponseEntity.created(builder.path("/learning-providers/{learningProviderId}").build(learningProvider.getId())).build();
 
         }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PutMapping(path = "/{learningProviderId}/cancellation-policies/{cancellationPolicyId}")
+    public ResponseEntity<Object> updateCancellationPolicyInLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @PathVariable("cancellationPolicyId")
+            String cancellationPolicyId, @RequestBody CancellationPolicy newCancellationPolicy){
+        LOGGER.debug("Updating Cancellation Policy with Id in Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            CancellationPolicy cancellationPolicy = learningProvider.getCancellationPolicyById(cancellationPolicyId);
+
+            cancellationPolicy.setName(newCancellationPolicy.getName());
+            cancellationPolicy.setFullVersion(newCancellationPolicy.getFullVersion());
+            cancellationPolicy.setShortVersion(newCancellationPolicy.getShortVersion());
+
+            learningProviderRepository.save(learningProvider);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping(path = "/{learningProviderId}/cancellation-policies/{cancellationPolicyId}")
+    public ResponseEntity<Object> deleteCancellationPolicyInLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @PathVariable("cancellationPolicyId") String cancellationPolicyId){
+        LOGGER.debug("Updating Cancellation Policy with Id in Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            CancellationPolicy cancellationPolicy = learningProvider.getCancellationPolicyById(cancellationPolicyId);
+
+            learningProvider.removeCancellationPolicy(cancellationPolicy);
+
+            learningProviderRepository.save(learningProvider);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @GetMapping(path="/{learningProviderId}/terms-and-conditions/{termsAndConditionsId}")
+    public ResponseEntity getTermsAndConditions(@PathVariable("learningProviderId") String learningProviderId, @PathVariable
+            ("termsAndConditionsId") String termsAndConditionsId){
+        LOGGER.info("Getting Terms and Conditions with Id {}", termsAndConditionsId);
+
+        if (!learningProviderRepository.existsById(learningProviderId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            TermsAndConditions termsAndConditions = learningProvider.getTermsAndConditionsById(termsAndConditionsId);
+
+            return ResponseEntity.ok().body(termsAndConditions);
+        }).orElse(ResponseEntity.noContent().build());
     }
 
     @PostMapping(path = "/{learningProviderId}/terms-and-conditions")
@@ -132,4 +213,48 @@ public class LearningProviderController {
         }).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
+    @PutMapping(path = "/{learningProviderId}/terms-and-conditions/{termsAndConditionsId}")
+    public ResponseEntity<Object> updateTermsAndConditionsInLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @PathVariable("termsAndConditionsId")
+            String termsAndConditionsId, @RequestBody TermsAndConditions newTermsAndConditions){
+        LOGGER.debug("Updating Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            TermsAndConditions termsAndConditions = learningProvider.getTermsAndConditionsById(termsAndConditionsId);
+
+            termsAndConditions.setName(newTermsAndConditions.getName());
+            termsAndConditions.setContent(newTermsAndConditions.getContent());
+
+            learningProviderRepository.save(learningProvider);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping(path = "/{learningProviderId}/terms-and-conditions/{termsAndConditionsId}")
+    public ResponseEntity<Object> deleteTermsAndConditionsInLearningProvider(@PathVariable("learningProviderId") String learningProviderId, @PathVariable("termsAndConditionsId")
+            String termsAndConditionsId){
+        LOGGER.debug("Updating Learning Provider with Id {}", learningProviderId);
+
+        if(!learningProviderRepository.existsById(learningProviderId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<LearningProvider> result = learningProviderRepository.findById(learningProviderId);
+
+        return result.map(learningProvider -> {
+            TermsAndConditions termsAndConditions = learningProvider.getTermsAndConditionsById(termsAndConditionsId);
+
+            learningProvider.removeTermsAndConditions(termsAndConditions);
+
+            learningProviderRepository.save(learningProvider);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
 }

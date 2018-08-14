@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Document(indexName = "lpg-learning-providers", type = "learningProvider")
 public class LearningProvider {
@@ -46,12 +47,32 @@ public class LearningProvider {
         return cancellationPolicies;
     }
 
+    public CancellationPolicy getCancellationPolicyById(String id) {
+        List<CancellationPolicy> policies = getCancellationPolicies();
+        Optional<CancellationPolicy> policy = policies.stream().filter(p -> p.getId().equals(id)).findFirst();
+        return policy.get();
+    }
+
+    public void removeCancellationPolicy(CancellationPolicy cancellationPolicy){
+        cancellationPolicies.remove(cancellationPolicy);
+    }
+
     public void addTermsAndConditions(TermsAndConditions termsAndConditions) {
         this.termsAndConditions.add(termsAndConditions);
     }
 
     public List<TermsAndConditions> getTermsAndConditions() {
         return termsAndConditions;
+    }
+
+    public TermsAndConditions getTermsAndConditionsById(String id){
+        List<TermsAndConditions> termsAndConditionsList = getTermsAndConditions();
+        Optional<TermsAndConditions> termsAndConditions = termsAndConditionsList.stream().filter(t -> t.getId().equals(id)).findFirst();
+        return termsAndConditions.get();
+    }
+
+    public void removeTermsAndConditions(TermsAndConditions termsAndConditions){
+        this.termsAndConditions.remove(termsAndConditions);
     }
 
     @Override
