@@ -11,6 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.repository.AuditableCourseRepository;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.ModuleService;
@@ -31,14 +32,14 @@ public class CourseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CourseController.class);
 
-    private final CourseRepository courseRepository;
+    private final AuditableCourseRepository courseRepository;
 
     private final ResourceRepository resourceRepository;
 
     private final ModuleService moduleService;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService) {
+    public CourseController(AuditableCourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService) {
         this.courseRepository = courseRepository;
         this.resourceRepository = resourceRepository;
         this.moduleService = moduleService;
