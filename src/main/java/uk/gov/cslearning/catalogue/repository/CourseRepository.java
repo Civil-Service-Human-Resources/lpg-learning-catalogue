@@ -7,10 +7,11 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 
 @Repository
-public interface CourseRepository extends ElasticsearchRepository<Course, String>, ResourceSearchRepository{
+public interface CourseRepository extends ElasticsearchRepository<Course, String>, ResourceSearchRepository {
 
     @Query("{ \"bool\": { \"must\": [{ \"match\": { \"modules.audiences.mandatory\": \"true\" } }, { \"term\": { \"modules.audiences.departments\": \"?0\" }}] }}")
     Page<Course> findMandatory(String department, Pageable pageable);
@@ -19,6 +20,4 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
             "\"should\": [{ \"match\": { \"modules.audiences.departments\": \"?0\" }}, { \"match\": { \"modules.audiences.areasOfWork\": \"?1\" }}, { \"match\": { \"modules.audiences.interests\": \"?2\" }}], " +
             "\"must_not\": [ { \"match\": { \"modules.audiences.mandatory\": \"true\" } }]}}")
     Page<Course> findSuggested(String department, String areaOfWork, String interest, Pageable pageable);
-
-    SearchPage search(String query, Pageable pageable, FilterParameters filterParameters);
 }

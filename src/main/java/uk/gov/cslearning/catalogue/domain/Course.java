@@ -18,7 +18,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
 @Document(indexName = "lpg-courses-0.3.0", type = "course")
-public class Course {
+public class Course extends Auditable {
 
     @Id
     private String id = UUIDs.randomBase64UUID();
