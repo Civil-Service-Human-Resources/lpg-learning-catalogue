@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.CancellationPolicy;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.domain.TermsAndConditions;
-import uk.gov.cslearning.catalogue.repository.LearningProviderRepository;
+import uk.gov.cslearning.catalogue.repository.AuditableLearningProviderRepository;
 
 import java.util.Optional;
 
@@ -23,10 +23,10 @@ import static org.springframework.http.HttpStatus.OK;
 public class LearningProviderController {
     private static final Logger LOGGER = LoggerFactory.getLogger(LearningProviderController.class);
 
-    private final LearningProviderRepository learningProviderRepository;
+    private final AuditableLearningProviderRepository learningProviderRepository;
 
     @Autowired
-    public LearningProviderController(LearningProviderRepository learningProviderRepository) {
+    public LearningProviderController(AuditableLearningProviderRepository learningProviderRepository) {
         this.learningProviderRepository = learningProviderRepository;
     }
 
