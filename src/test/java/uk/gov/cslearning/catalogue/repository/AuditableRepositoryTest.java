@@ -53,7 +53,7 @@ public class AuditableRepositoryTest {
         Course result = auditableRepository.save(course);
 
         assertEquals(username, result.getCreatedBy());
-        assertTrue(result.getCreatedDate() <= LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        assertTrue(result.getCreatedDate() <= LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond());
         assertTrue(result.getCreatedDate() >= LocalDateTime.now().atZone(ZoneId.systemDefault()).minusSeconds(5).toEpochSecond());
     }
 
@@ -85,7 +85,7 @@ public class AuditableRepositoryTest {
 
         assertEquals(username, result.getModifiedBy());
         assertTrue(result.getModifiedDate() >= LocalDateTime.now().atZone(ZoneId.systemDefault()).minusSeconds(5).toEpochSecond());
-        assertTrue(result.getModifiedDate() <= LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        assertTrue(result.getModifiedDate() <= LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond());
     }
 
     @Test
@@ -103,7 +103,7 @@ public class AuditableRepositoryTest {
         Course result = Lists.newArrayList(auditableRepository.saveAll(Collections.singletonList(course))).get(0);
 
         assertEquals(username, result.getCreatedBy());
-        assertTrue(result.getCreatedDate() <= LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        assertTrue(result.getCreatedDate() <= LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond());
         assertTrue(result.getCreatedDate() >= LocalDateTime.now().atZone(ZoneId.systemDefault()).minusSeconds(5).toEpochSecond());
     }
 
