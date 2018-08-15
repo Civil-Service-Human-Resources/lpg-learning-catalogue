@@ -2,7 +2,6 @@ package uk.gov.cslearning.catalogue.api;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.stubbing.Answer;
@@ -17,7 +16,7 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.domain.module.BlogModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
-import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.repository.AuditableCourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
@@ -34,7 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(CourseController.class)
 @WithMockUser(username = "user", password = "password")
@@ -44,7 +42,7 @@ public class CourseControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CourseRepository courseRepository;
+    private AuditableCourseRepository courseRepository;
 
     @MockBean
     private ResourceRepository resourceRepository;
@@ -79,27 +77,27 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.title", equalTo("title")));
     }
 
-//    @Test
-//    public void shouldCreateCourseAndRedirectToNewResource() throws Exception {
-//        final String newId = "newId";
-//
-//        Course course = createCourse();
-//
-//        when(courseRepository.save(any()))
-//                .thenAnswer((Answer<Course>) invocation -> {
-//                    course.setId(newId);
-//                    return course;
-//                });
-//
-//        mockMvc.perform(
-//                post("/courses").with(csrf())
-//                        .content(gson.toJson(course))
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andDo(print())
-//                .andExpect(status().isCreated())
-//                .andExpect(header().string("location", "http://localhost/courses/" + newId));
-//    }
+    @Test
+    public void shouldCreateCourseAndRedirectToNewResource() throws Exception {
+        final String newId = "newId";
+
+        Course course = createCourse();
+
+        when(courseRepository.save(any()))
+                .thenAnswer((Answer<Course>) invocation -> {
+                    course.setId(newId);
+                    return course;
+                });
+
+        mockMvc.perform(
+                post("/courses").with(csrf())
+                        .content(gson.toJson(course))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(header().string("location", "http://localhost/courses/" + newId));
+    }
 
 
     @Test

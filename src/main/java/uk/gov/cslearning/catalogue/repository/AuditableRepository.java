@@ -11,9 +11,8 @@ import uk.gov.cslearning.catalogue.domain.Auditable;
 import uk.gov.cslearning.catalogue.service.AuthenticationFacade;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -38,10 +37,10 @@ public abstract class AuditableRepository <T extends Auditable, R extends Elasti
             entity.setCreatedDate(existingEntity.getCreatedDate());
             entity.setCreatedBy(existingEntity.getCreatedBy());
             entity.setModifiedBy(authenticationFacade.getAuthentication().getName());
-            entity.setModifiedDate(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+            entity.setModifiedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond());
         } else {
             entity.setCreatedBy(authenticationFacade.getAuthentication().getName());
-            entity.setCreatedDate(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+            entity.setCreatedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond());
         }
 
         return this.wrappedRepository.save(entity);

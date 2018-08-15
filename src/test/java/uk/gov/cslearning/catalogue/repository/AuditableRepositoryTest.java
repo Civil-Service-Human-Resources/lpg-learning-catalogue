@@ -15,6 +15,7 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.service.AuthenticationFacade;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +54,7 @@ public class AuditableRepositoryTest {
 
         assertEquals(username, result.getCreatedBy());
         assertTrue(result.getCreatedDate() <= LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
-        assertTrue(result.getCreatedDate() >= LocalDateTime.now().minusSeconds(5).toEpochSecond(ZoneOffset.UTC));
+        assertTrue(result.getCreatedDate() >= LocalDateTime.now().atZone(ZoneId.systemDefault()).minusSeconds(5).toEpochSecond());
     }
 
     @Test
@@ -83,7 +84,7 @@ public class AuditableRepositoryTest {
         assertEquals(createUser, result.getCreatedBy());
 
         assertEquals(username, result.getModifiedBy());
-        assertTrue(result.getModifiedDate() >= LocalDateTime.now().minusSeconds(5).toEpochSecond(ZoneOffset.UTC));
+        assertTrue(result.getModifiedDate() >= LocalDateTime.now().atZone(ZoneId.systemDefault()).minusSeconds(5).toEpochSecond());
         assertTrue(result.getModifiedDate() <= LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
     }
 
@@ -103,7 +104,7 @@ public class AuditableRepositoryTest {
 
         assertEquals(username, result.getCreatedBy());
         assertTrue(result.getCreatedDate() <= LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
-        assertTrue(result.getCreatedDate() >= LocalDateTime.now().minusSeconds(5).toEpochSecond(ZoneOffset.UTC));
+        assertTrue(result.getCreatedDate() >= LocalDateTime.now().atZone(ZoneId.systemDefault()).minusSeconds(5).toEpochSecond());
     }
 
     @Test
