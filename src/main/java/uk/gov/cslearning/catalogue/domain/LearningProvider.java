@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document(indexName = "lpg-learning-providers", type = "learningProvider")
-public class LearningProvider {
+public class LearningProvider extends Auditable {
 
     @Id
     private String id = UUIDs.randomBase64UUID();
