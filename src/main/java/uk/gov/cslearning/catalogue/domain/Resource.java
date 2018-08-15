@@ -81,7 +81,7 @@ public class Resource {
                         course.getId(),
                         module.getModuleType(),
                         module.getTitle(),
-                        module.getPrice(),
+                        module.getCost(),
                         null,
                         module.getDescription(),
                         null

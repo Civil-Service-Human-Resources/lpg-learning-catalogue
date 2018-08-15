@@ -3,19 +3,16 @@ package uk.gov.cslearning.catalogue.domain.module;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.elasticsearch.common.UUIDs;
+import uk.gov.cslearning.catalogue.domain.Status;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashSet;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Collections.unmodifiableCollection;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(FaceToFaceModule.class),
         @JsonSubTypes.Type(ELearningModule.class),
-        @JsonSubTypes.Type(LinkModule.class),
+        @JsonSubTypes.Type(BlogModule.class),
         @JsonSubTypes.Type(VideoModule.class),
         @JsonSubTypes.Type(FileModule.class)
 })
@@ -23,33 +20,48 @@ public abstract class Module {
 
     private String id = UUIDs.randomBase64UUID();
 
+    @NotNull
     private String title;
 
+    @NotNull
     private String description;
 
+    @NotNull
     private Long duration;
 
-    private BigDecimal price;
+    private BigDecimal cost;
 
-    private Collection<Audience> audiences;
+    private boolean optional;
+
+    private Status status;
 
     public Module() {
-        audiences = new HashSet<>();
     }
 
-    public Collection<Audience> getAudiences() {
-        return unmodifiableCollection(audiences);
-    }
-    public void setAudiences(Collection<Audience> audiences) {
-        this.audiences.clear();
-        if (audiences != null) {
-            this.audiences.addAll(audiences);
-        }
+    public Module(@NotNull String title, @NotNull String description, @NotNull Long duration) {
+        this.title = title;
+        this.description = description;
+        this.duration = duration;
     }
 
-    public void addAudience(Audience audience) {
-        checkArgument(audience != null);
-        this.audiences.add(audience);
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean isOptional() {
+        return optional;
+    }
+
+    public void setOptional(boolean optional) {
+        this.optional = optional;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public String getId() {
@@ -59,7 +71,6 @@ public abstract class Module {
     public String getTitle() {
         return title;
     }
-
 
     public void setTitle(String title) {
         this.title = title;
@@ -73,12 +84,12 @@ public abstract class Module {
         this.duration = duration;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getCost() {
+        return cost;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setCost(BigDecimal cost) {
+        this.cost = cost;
     }
 
     public String getDescription() {
@@ -96,8 +107,8 @@ public abstract class Module {
             return "face-to-face";
         }
 
-        if (this instanceof LinkModule) {
-            return "link";
+        if (this instanceof BlogModule) {
+            return "blog";
         }
 
         if (this instanceof VideoModule) {

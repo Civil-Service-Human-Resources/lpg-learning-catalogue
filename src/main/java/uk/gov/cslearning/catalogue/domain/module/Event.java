@@ -1,46 +1,41 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.elasticsearch.common.UUIDs;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Collections.unmodifiableList;
 
 public class Event {
 
     private String id = UUIDs.randomBase64UUID();
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private String joiningInstructions;
 
-    private LocalDateTime date;
-    private String location;
-    private Integer capacity;
+    private Venue venue;
 
-    @JsonCreator
-    public Event(@JsonProperty("date") LocalDateTime date,
-                 @JsonProperty("location") String location,
-                 @JsonProperty("capacity") Integer capacity) {
-        this.date = date;
-        this.location = location;
-        this.capacity = capacity;
+    private List<DateRange> dateRanges = new ArrayList<>();
+
+    public Event() {
     }
 
-    public String getId() {
-        return id;
-    }
-    public LocalDateTime getDate() {
-        return date;
-    }
-    public String getLocation() {
-        return location;
-    }
-    public Integer getCapacity() {
-        return capacity;
+    public String getJoiningInstructions() {
+        return joiningInstructions;
     }
 
+    public void setJoiningInstructions(String joiningInstructions) {
+        this.joiningInstructions = joiningInstructions;
+    }
+
+    public List<DateRange> getDateRanges() {
+        return unmodifiableList(dateRanges);
+    }
+
+    public void setDateRanges(List<DateRange> dateRanges) {
+        this.dateRanges.clear();
+        if (dateRanges != null) {
+            this.dateRanges.addAll(dateRanges);
+        }
+    }
 }

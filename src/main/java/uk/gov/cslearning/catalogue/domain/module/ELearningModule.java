@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 @JsonTypeName("elearning")
 public class ELearningModule extends Module {
 
@@ -21,7 +19,6 @@ public class ELearningModule extends Module {
     }
 
     public void setStartPage(String startPage) {
-//        checkArgument(startPage != null);
         this.startPage = startPage;
     }
 }

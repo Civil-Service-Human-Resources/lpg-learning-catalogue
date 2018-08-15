@@ -1,13 +1,12 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.elasticsearch.ResourceNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.LinkModule;
+import uk.gov.cslearning.catalogue.domain.module.BlogModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
@@ -32,7 +31,7 @@ public class ModuleServiceTest {
     @Test
     public void shouldSaveModuleToCourse() throws Exception {
         String courseId = "course-id";
-        Module module = new LinkModule(new URI("http://localhost").toURL());
+        Module module = new BlogModule(new URI("http://localhost").toURL());
         Course course = new Course();
 
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
@@ -45,7 +44,7 @@ public class ModuleServiceTest {
     @Test
     public void shouldThrowExceptionIfCourseNotFound() throws Exception {
         String courseId = "course-id";
-        Module module = new LinkModule(new URI("http://localhost").toURL());
+        Module module = new BlogModule(new URI("http://localhost").toURL());
 
         when(courseRepository.findById(courseId)).thenReturn(Optional.empty());
 
@@ -61,9 +60,9 @@ public class ModuleServiceTest {
     public void shouldReturnModule() throws Exception {
         String courseId = "course-id";
 
-        Module module1 = new LinkModule(new URI("http://module1").toURL());
-        Module module2 = new LinkModule(new URI("http://module2").toURL());
-        Module module3 = new LinkModule(new URI("http://module3").toURL());
+        Module module1 = new BlogModule(new URI("http://module1").toURL());
+        Module module2 = new BlogModule(new URI("http://module2").toURL());
+        Module module3 = new BlogModule(new URI("http://module3").toURL());
 
         Course course = new Course();
         course.setModules(Arrays.asList(module1, module2, module3));
@@ -81,9 +80,9 @@ public class ModuleServiceTest {
         String courseId = "course-id";
         String moduleId = "module-id";
 
-        Module module1 = new LinkModule(new URI("http://module1").toURL());
-        Module module2 = new LinkModule(new URI("http://module2").toURL());
-        Module module3 = new LinkModule(new URI("http://module3").toURL());
+        Module module1 = new BlogModule(new URI("http://module1").toURL());
+        Module module2 = new BlogModule(new URI("http://module2").toURL());
+        Module module3 = new BlogModule(new URI("http://module3").toURL());
 
         Course course = new Course();
         course.setModules(Arrays.asList(module1, module2, module3));

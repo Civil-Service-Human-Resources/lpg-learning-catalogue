@@ -4,7 +4,7 @@ spring:
     add-mappings: false
 
 server:
-  port: 9000
+  port: 9001
 
 logging:
   pattern:
@@ -14,6 +14,8 @@ logging:
     com.zaxxer.hikari: ERROR
 
 elasticsearch:
-  uri: http://127.0.0.1:9998
+  uri: http://127.0.0.1:9200
   username: elastic
   password: changeme
+  host: 127.0.0.1
+  port: 9999

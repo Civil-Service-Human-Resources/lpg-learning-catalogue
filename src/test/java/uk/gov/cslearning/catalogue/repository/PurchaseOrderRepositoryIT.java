@@ -11,16 +11,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.cslearning.catalogue.domain.PurchaseOrder;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
- * UserRepository integration test.
+ * UserRepository integration shouldAddCancellationPolicyToLearningProvider.
  */
-@ActiveProfiles({"default", "test"})
+@ActiveProfiles({"default", "shouldAddCancellationPolicyToLearningProvider"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class PurchaseOrderRepositoryIT {
@@ -48,7 +47,7 @@ public class PurchaseOrderRepositoryIT {
 
         Iterable<PurchaseOrder> found = repository.findByDepartmentAndModulesContains("co", "Module-21");
 
-        assertThat(Iterables.size(found), is(2));
+        assertThat(Iterables.size(found), is(4));
     }
 
     private PurchaseOrder createPurchaseOrder(String department, LocalDate validFrom, LocalDate validTo, String... modules) {

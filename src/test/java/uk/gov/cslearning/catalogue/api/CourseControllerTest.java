@@ -13,13 +13,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.LinkModule;
+import uk.gov.cslearning.catalogue.domain.Visibility;
+import uk.gov.cslearning.catalogue.domain.module.BlogModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,13 +27,9 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -135,12 +131,11 @@ public class CourseControllerTest {
     @Test
     public void shouldCreateModule() throws Exception {
         String moduleId = "module-id";
-        Module module = mock(LinkModule.class);
+        Module module = mock(BlogModule.class);
         when(module.getId()).thenReturn(moduleId);
 
-
         String courseId = UUID.randomUUID().toString();
-        String json = gson.toJson(ImmutableMap.of("type", "link", "location", "http://localhost"));
+        String json = gson.toJson(ImmutableMap.of("type", "blog", "location", "http://localhost"));
 
         when(moduleService.save(eq(courseId), any(Module.class))).thenReturn(module);
 
@@ -150,13 +145,13 @@ public class CourseControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("location", String.format("http://localhost/courses/%s/modules/%s", courseId, moduleId)));
+                .andExpect(header().string("Location", String.format("http://localhost/courses/%s/modules/%s", courseId, moduleId)));
     }
 
     @Test
     public void shouldReturnBadRequestIfCourseNotFoundWhenSavingModule() throws Exception {
         String moduleId = "module-id";
-        Module module = mock(LinkModule.class);
+        Module module = mock(BlogModule.class);
         when(module.getId()).thenReturn(moduleId);
 
         String courseId = "course-id";
@@ -179,9 +174,9 @@ public class CourseControllerTest {
     public void shouldFindModule() throws Exception {
         String courseId = "course-id";
         String moduleId = "module-id";
-        String location = "http://example.org";
+        String url = "http://example.org";
 
-        Module module = new LinkModule(new URL(location));
+        Module module = new BlogModule(new URL(url));
 
         when(moduleService.find(courseId, moduleId)).thenReturn(Optional.of(module));
 
@@ -189,7 +184,7 @@ public class CourseControllerTest {
                 get(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.location", equalTo(location)));
+                .andExpect(jsonPath("$.url", equalTo(url)));
     }
 
     @Test
@@ -222,6 +217,6 @@ public class CourseControllerTest {
 
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
-                "learningOutcomes");
+                Visibility.PUBLIC);
     }
 }
