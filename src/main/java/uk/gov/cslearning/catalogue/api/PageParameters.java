@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.api;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -34,9 +35,9 @@ public class PageParameters {
 
     @Override
     public String toString() {
-        return "PageParameters{" +
-                "page=" + page +
-                ", size=" + size +
-                '}';
+        return new ToStringBuilder(this)
+                .append("page", page)
+                .append("size", size)
+                .toString();
     }
 }

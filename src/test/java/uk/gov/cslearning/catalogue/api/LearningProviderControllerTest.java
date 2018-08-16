@@ -16,7 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.repository.AuditableLearningProviderRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

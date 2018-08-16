@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -56,11 +57,10 @@ public class LearningProvider extends Auditable {
 
     @Override
     public String toString() {
-        return "LearningProvider{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", status=" + status +
-                '}';
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("name", name)
+                .toString();
     }
 }
 
