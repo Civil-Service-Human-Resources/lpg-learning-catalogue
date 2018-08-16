@@ -15,8 +15,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
-import uk.gov.cslearning.catalogue.repository.LearningProviderRepository;
-
+import uk.gov.cslearning.catalogue.repository.AuditableLearningProviderRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,15 +33,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser()
 public class LearningProviderControllerTest {
 
-    public static final String ID = "abc123";
-    public static final String NAME = "New Learning Provider";
-    public static final String LEARNING_PROVIDER_CONTROLLER_PATH = "/learning-providers/";
+    private static final String ID = "abc123";
+    private static final String NAME = "New Learning Provider";
+    private static final String LEARNING_PROVIDER_CONTROLLER_PATH = "/learning-providers/";
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private LearningProviderRepository learningProviderRepository;
+    private AuditableLearningProviderRepository learningProviderRepository;
 
     private Gson gson = new Gson();
 
