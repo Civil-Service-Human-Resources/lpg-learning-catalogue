@@ -16,7 +16,7 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.domain.module.BlogModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
-import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.repository.AuditableCourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
@@ -42,7 +42,7 @@ public class CourseControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CourseRepository courseRepository;
+    private AuditableCourseRepository courseRepository;
 
     @MockBean
     private ResourceRepository resourceRepository;
@@ -99,20 +99,6 @@ public class CourseControllerTest {
                 .andExpect(header().string("location", "http://localhost/courses/" + newId));
     }
 
-    @Test
-    public void shouldUpdateExistingCourse() throws Exception {
-        Course course = createCourse();
-        when(courseRepository.existsById(course.getId())).thenReturn(true);
-        when(courseRepository.save(any())).thenReturn(course);
-
-        mockMvc.perform(
-                put("/courses/" + course.getId()).with(csrf())
-                        .content(gson.toJson(course))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isNoContent());
-    }
 
     @Test
     public void shouldReturnBadRequestIfUpdatedCourseDoesntExist() throws Exception {
