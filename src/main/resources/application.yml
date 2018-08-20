@@ -24,3 +24,10 @@ elasticsearch:
   uri: ${ELASTICSEARCH_URI:http://127.0.0.1:9200}
   username: ${ELASTICSEARCH_USERNAME:elastic}
   password: ${ELASTICSEARCH_PASSWORD:changeme}
+
+azure:
+  account:
+    name: ${AZURE_ACCOUNT_NAME}
+    key: ${AZURE_ACCOUNT_KEY}
+  storage.connection: "DefaultEndpointsProtocol=https;AccountName=${azure.account.name};AccountKey=${azure.account.key}"
+
