@@ -19,3 +19,9 @@ elasticsearch:
   password: changeme
   host: 127.0.0.1
   port: 9999
+
+azure:
+  account:
+    name: ${AZURE_ACCOUNT_NAME:accountName}
+    key: ${AZURE_ACCOUNT_KEY:cGFzc3dvcmQ=}
+  storage.connection: "DefaultEndpointsProtocol=https;AccountName=${azure.account.name};AccountKey=${azure.account.key}"
