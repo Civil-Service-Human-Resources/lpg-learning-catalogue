@@ -1,14 +1,13 @@
 package uk.gov.cslearning.catalogue.dto.factory;
 
 import org.junit.Test;
+import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.Media;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +39,7 @@ public class MediaFactoryTest {
         // Yet to be implemented
         assertEquals("/test-container/file-name", media.getPath());
         assertEquals("test-container", media.getUid());
-        assertEquals(0, media.getId());
+        assertNull(media.getId());
 
     }
 }
