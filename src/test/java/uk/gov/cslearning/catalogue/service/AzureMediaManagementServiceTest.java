@@ -10,10 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
+import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.Media;
 import uk.gov.cslearning.catalogue.dto.factory.MediaFactory;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
+import uk.gov.cslearning.catalogue.repository.MediaRepository;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +31,9 @@ public class AzureMediaManagementServiceTest {
 
     @Mock
     private MediaFactory mediaFactory;
+
+    @Mock
+    private MediaRepository mediaRepository;
 
     @InjectMocks
     private AzureMediaManagementService mediaManagementService;
@@ -62,6 +66,8 @@ public class AzureMediaManagementServiceTest {
 
         Media media = mock(Media.class);
         when(mediaFactory.create(fileUpload)).thenReturn(media);
+
+        when(mediaRepository.save(media)).thenReturn(media);
 
         Media result = mediaManagementService.create(fileUpload);
 

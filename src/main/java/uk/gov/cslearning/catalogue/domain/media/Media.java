@@ -1,9 +1,9 @@
-package uk.gov.cslearning.catalogue.dto;
+package uk.gov.cslearning.catalogue.domain.media;
 
 import java.time.LocalDateTime;
 
 public interface Media {
-    String formatFileSize();
+    long getFileSize();
 
     String getContainer();
 
@@ -11,11 +11,13 @@ public interface Media {
 
     String getExtension();
 
-    long getId();
+    String getId();
 
     String getName();
 
     String getPath();
 
     String getUid();
+
+    String formatFileSize();
 }
