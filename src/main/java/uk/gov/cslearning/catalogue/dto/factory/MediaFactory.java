@@ -1,56 +1,36 @@
 package uk.gov.cslearning.catalogue.dto.factory;
 
-import org.apache.commons.io.FileUtils;
+import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Component;
+import uk.gov.cslearning.catalogue.domain.media.Document;
+import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.Media;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class MediaFactory {
 
+    private Map<String, Function<FileUpload, Media>> createMethods = ImmutableMap.of(
+            "doc", fileUpload -> {
+                Document document = new Document();
+                document.setContainer(fileUpload.getContainer());
+                document.setDateAdded(LocalDateTime.now());
+                document.setExtension(fileUpload.getExtension());
+                document.setName(fileUpload.getName());
+                document.setPath("/".concat(String.join("/", fileUpload.getContainer(), fileUpload.getName())));
+                document.setUid(fileUpload.getContainer());
+                document.setFileSize(fileUpload.getSize());
+
+                return document;
+            }
+    );
+
+
+
     public Media create(FileUpload fileUpload) {
-        return new Media() {
-            @Override
-            public String formatFileSize() {
-                return FileUtils.byteCountToDisplaySize(fileUpload.getSize() * 1024);
-            }
-
-            @Override
-            public String getContainer() {
-                return fileUpload.getContainer();
-            }
-
-            @Override
-            public LocalDateTime getDateAdded() {
-                return LocalDateTime.now();
-            }
-
-            @Override
-            public String getExtension() {
-                return fileUpload.getExtension();
-            }
-
-            @Override
-            public long getId() {
-                return 0;
-            }
-
-            @Override
-            public String getName() {
-                return fileUpload.getName();
-            }
-
-            @Override
-            public String getPath() {
-                return "/".concat(String.join("/", fileUpload.getContainer(), fileUpload.getName()));
-            }
-
-            @Override
-            public String getUid() {
-                return fileUpload.getContainer();
-            }
-        };
+        return createMethods.get(fileUpload.getExtension()).apply(fileUpload);
     }
 }
