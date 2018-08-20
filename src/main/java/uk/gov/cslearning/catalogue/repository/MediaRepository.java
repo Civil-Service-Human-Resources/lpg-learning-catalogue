@@ -1,7 +1,9 @@
 package uk.gov.cslearning.catalogue.repository;
 
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import uk.gov.cslearning.catalogue.domain.media.Media;
+import org.springframework.stereotype.Repository;
+import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
 
-public interface MediaRepository extends ElasticsearchRepository<Media, String> {
+@Repository
+public interface MediaRepository extends ElasticsearchRepository<MediaEntity, String> {
 }
