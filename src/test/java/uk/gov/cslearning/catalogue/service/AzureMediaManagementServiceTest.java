@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.domain.media.Media;
+import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.factory.MediaFactory;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
@@ -64,7 +65,7 @@ public class AzureMediaManagementServiceTest {
         when(multipartFile.getInputStream()).thenReturn(inputStream);
         when(multipartFile.getSize()).thenReturn(fileSize);
 
-        Media media = mock(Media.class);
+        MediaEntity media = mock(MediaEntity.class);
         when(mediaFactory.create(fileUpload)).thenReturn(media);
 
         when(mediaRepository.save(media)).thenReturn(media);
