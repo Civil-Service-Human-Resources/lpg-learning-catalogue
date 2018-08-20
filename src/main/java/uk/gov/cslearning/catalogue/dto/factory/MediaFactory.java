@@ -44,12 +44,12 @@ public class MediaFactory {
 
             @Override
             public String getPath() {
-                return null;
+                return "/".concat(String.join("/", fileUpload.getContainer(), fileUpload.getName()));
             }
 
             @Override
             public String getUid() {
-                return null;
+                return fileUpload.getContainer();
             }
         };
     }
