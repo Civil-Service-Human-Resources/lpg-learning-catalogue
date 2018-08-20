@@ -7,7 +7,8 @@ import uk.gov.cslearning.catalogue.dto.Media;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +38,8 @@ public class MediaFactoryTest {
         assertEquals(container, media.getContainer());
 
         // Yet to be implemented
-        assertNull(media.getPath());
+        assertEquals("/test-container/file-name", media.getPath());
+        assertEquals("test-container", media.getUid());
         assertEquals(0, media.getId());
 
     }
