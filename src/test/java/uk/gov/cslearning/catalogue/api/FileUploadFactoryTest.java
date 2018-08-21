@@ -22,7 +22,7 @@ public class FileUploadFactoryTest {
         MultipartFile file = mock(MultipartFile.class);
 
         when(file.getSize()).thenReturn(fileSizeBytes);
-        when(file.getName()).thenReturn(fileName);
+        when(file.getOriginalFilename()).thenReturn(fileName);
 
         FileUpload result = fileUploadFactory.create(file, container);
 
