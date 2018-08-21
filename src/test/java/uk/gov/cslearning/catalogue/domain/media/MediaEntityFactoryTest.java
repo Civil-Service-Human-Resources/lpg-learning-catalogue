@@ -39,7 +39,7 @@ public class MediaEntityFactoryTest {
         // Yet to be implemented
         assertEquals(String.join("/", fileContainer, name), media.getPath());
         assertEquals(fileContainer, media.getUid());
-        assertNull(media.getId());
+        assertEquals(22, media.getId().length());
     }
 
 
