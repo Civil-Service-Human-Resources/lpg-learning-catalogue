@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.service.FileUploadFactory;
 import uk.gov.cslearning.catalogue.service.MediaManagementService;
 
@@ -22,10 +24,10 @@ public class MediaController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> upload(MultipartFile file, @RequestParam String container) {
+    public ResponseEntity<Void> upload(MultipartFile file, @RequestParam String container, UriComponentsBuilder builder) {
 
-        mediaManagementService.create(fileUploadFactory.create(file, container));
+        Media media = mediaManagementService.create(fileUploadFactory.create(file, container));
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.created(builder.path("/service/media/{mediaUid}").build(media.getUid())).build();
     }
 }
