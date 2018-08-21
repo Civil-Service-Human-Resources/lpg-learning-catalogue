@@ -4,7 +4,7 @@ import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
@@ -21,22 +21,26 @@ public class AzureMediaManagementService implements MediaManagementService {
     private final CloudBlobClient azureClient;
     private final MediaFactory mediaFactory;
     private final MediaRepository mediaRepository;
+    private final String storageContainerName;
 
-    @Autowired
-    public AzureMediaManagementService(CloudBlobClient azureClient, MediaFactory mediaFactory, MediaRepository mediaRepository) {
+    public AzureMediaManagementService(CloudBlobClient azureClient, MediaFactory mediaFactory, MediaRepository mediaRepository, @Value("${azure.storage.container}") String storageContainerName) {
         this.azureClient = azureClient;
         this.mediaFactory = mediaFactory;
         this.mediaRepository = mediaRepository;
+        this.storageContainerName = storageContainerName;
     }
 
     @Override
     public Media create(FileUpload fileUpload) {
 
+        String filePath = String.join("/", fileUpload.getContainer(), fileUpload.getName());
+
         try {
-            CloudBlobContainer container = azureClient.getContainerReference(fileUpload.getContainer());
+            CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
             container.createIfNotExists();
-            CloudBlockBlob blob = container.getBlockBlobReference(fileUpload.getName());
+            CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.upload(fileUpload.getFile().getInputStream(), fileUpload.getFile().getSize());
+
             return mediaRepository.save(mediaFactory.create(fileUpload));
 
         } catch (URISyntaxException | StorageException | IOException e) {
