@@ -12,7 +12,7 @@ import uk.gov.cslearning.catalogue.service.FileUploadFactory;
 import uk.gov.cslearning.catalogue.service.MediaManagementService;
 
 @Controller
-@RequestMapping("/service/media")
+@RequestMapping("/media")
 public class MediaController {
 
     private final MediaManagementService mediaManagementService;
