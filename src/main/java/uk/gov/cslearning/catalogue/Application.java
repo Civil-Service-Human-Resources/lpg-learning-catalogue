@@ -2,7 +2,7 @@ package uk.gov.cslearning.catalogue;
 
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration;
@@ -18,16 +18,12 @@ import java.security.InvalidKeyException;
 @SpringBootApplication(exclude = {ElasticsearchAutoConfiguration.class, ElasticsearchDataAutoConfiguration.class})
 public class Application {
 
-    @Bean
-    public CloudBlobClient storageClient(
-        @Value("${azure.account.name}") final String azureAccountName,
-        @Value("${azure.account.key}") final String azureAccountKey
-    ) throws URISyntaxException, InvalidKeyException {
-        final String connectionString = String.format("DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s",
-                azureAccountName, azureAccountKey);
+    @Autowired
+    private CloudStorageAccount cloudStorageAccount;
 
-        final CloudStorageAccount account = CloudStorageAccount.parse(connectionString);
-        return account.createCloudBlobClient();
+    @Bean
+    public CloudBlobClient storageClient() throws URISyntaxException, InvalidKeyException {
+        return cloudStorageAccount.createCloudBlobClient();
     }
 
     public static void main(String[] args) {
