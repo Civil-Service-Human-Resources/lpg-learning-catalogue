@@ -51,7 +51,7 @@ public class MediaControllerTest {
         when(mediaManagementService.create(fileUpload)).thenReturn(media);
 
         mockMvc.perform(
-                multipart("/service/media")
+                multipart("/media")
                         .file(file)
                         .param("container", fileContainer)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
