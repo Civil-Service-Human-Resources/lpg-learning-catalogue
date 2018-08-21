@@ -12,8 +12,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
+import uk.gov.cslearning.catalogue.domain.media.MediaEntityFactory;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.factory.MediaFactory;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
 
@@ -31,7 +31,7 @@ public class AzureMediaManagementServiceTest {
     private CloudBlobClient client;
 
     @Mock
-    private MediaFactory mediaFactory;
+    private MediaEntityFactory mediaFactory;
 
     @Mock
     private MediaRepository mediaRepository;
