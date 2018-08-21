@@ -1,20 +1,35 @@
 package uk.gov.cslearning.catalogue.domain.media;
 
 import org.apache.commons.io.FileUtils;
+import org.elasticsearch.common.UUIDs;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Document(indexName = "media", type = "media")
 public abstract class MediaEntity implements Media {
-    private String id;
+    @Id
+    private String id = UUIDs.randomBase64UUID();
+
+    @NotNull
     private String name;
-    private long fileSize;
+
+    @NotNull
     private String container;
+
+    @NotNull
     private LocalDateTime dateAdded;
-    private String extension;
+
+    @NotNull
     private String path;
+
+    @NotNull
     private String uid;
+
+    private long fileSize;
+    private String extension;
 
     public String getId() {
         return id;

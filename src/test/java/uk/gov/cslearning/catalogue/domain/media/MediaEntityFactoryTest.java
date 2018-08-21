@@ -1,7 +1,6 @@
-package uk.gov.cslearning.catalogue.dto.factory;
+package uk.gov.cslearning.catalogue.domain.media;
 
 import org.junit.Test;
-import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
 
@@ -12,9 +11,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MediaFactoryTest {
+public class MediaEntityFactoryTest {
 
-    private final MediaFactory mediaFactory = new MediaFactory();
+    private final MediaEntityFactory mediaFactory = new MediaEntityFactory();
 
     @Test
     public void shouldReturnMediaFromFileUpload() {
