@@ -3,6 +3,7 @@ package uk.gov.cslearning.catalogue.dto.factory;
 import org.junit.Test;
 import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
+import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -20,10 +21,10 @@ public class MediaFactoryTest {
         long size = 10;
         String name = "file-name";
         String extension = "doc";
-        String container = "test-container";
+        String fileContainer = "file-container";
         FileUpload fileUpload = mock(FileUpload.class);
         when(fileUpload.getName()).thenReturn(name);
-        when(fileUpload.getContainer()).thenReturn(container);
+        when(fileUpload.getContainer()).thenReturn(fileContainer);
         when(fileUpload.getExtension()).thenReturn(extension);
         when(fileUpload.getSize()).thenReturn(size);
 
@@ -34,12 +35,26 @@ public class MediaFactoryTest {
         assertEquals(name, media.getName());
         assertEquals(extension, media.getExtension());
         assertEquals("10 KB", media.formatFileSize());
-        assertEquals(container, media.getContainer());
+        assertEquals(fileContainer, media.getContainer());
 
         // Yet to be implemented
-        assertEquals("/test-container/file-name", media.getPath());
-        assertEquals("test-container", media.getUid());
+        assertEquals(String.join("/", fileContainer, name), media.getPath());
+        assertEquals(fileContainer, media.getUid());
         assertNull(media.getId());
+    }
 
+
+    @Test
+    public void shouldThrowUnknownFileTypeExceptionIfExtensionNotRecognised() {
+        String extension = "xxx";
+        FileUpload fileUpload = mock(FileUpload.class);
+        when(fileUpload.getExtension()).thenReturn(extension);
+
+        try {
+            mediaFactory.create(fileUpload);
+            fail("Expected UnknownFileTypeException");
+        } catch (UnknownFileTypeException e) {
+            assertEquals("Uploaded file has an unknown extension: xxx", e.getMessage());
+        }
     }
 }
