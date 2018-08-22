@@ -34,7 +34,6 @@ public class MediaEntityFactory {
             document.setExtension(fileUpload.getExtension());
             document.setName(fileUpload.getName());
             document.setPath(String.join("/", fileUpload.getContainer(), fileUpload.getName()));
-            document.setUid(fileUpload.getContainer());
             document.setFileSize(fileUpload.getSize());
 
             return document;
