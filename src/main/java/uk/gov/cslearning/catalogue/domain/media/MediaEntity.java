@@ -25,9 +25,6 @@ public abstract class MediaEntity implements Media {
     @NotNull
     private String path;
 
-    @NotNull
-    private String uid;
-
     private long fileSize;
     private String extension;
 
@@ -92,10 +89,6 @@ public abstract class MediaEntity implements Media {
     }
 
     public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
+        return id;
     }
 }
