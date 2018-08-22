@@ -31,7 +31,7 @@ public class AzureMediaManagementServiceTest {
     private CloudBlobClient client;
 
     @Mock
-    private MediaEntityFactory mediaFactory;
+    private MediaEntityFactory mediaEntityFactory;
 
     @Mock
     private MediaRepository mediaRepository;
@@ -42,50 +42,56 @@ public class AzureMediaManagementServiceTest {
 
     @Before
     public void setUp() {
-        mediaManagementService = new AzureMediaManagementService(client, mediaFactory, mediaRepository, storageContainerName);
+        mediaManagementService = new AzureMediaManagementService(client, mediaEntityFactory, mediaRepository, storageContainerName);
     }
 
     @Test
     public void shouldUploadFileAndReturnMedia() throws URISyntaxException, StorageException, IOException {
-        String fileUploadContainer = "file-container";
-        String fileName = "file-name";
-        long fileSize = 78349873;
-
         FileUpload fileUpload = mock(FileUpload.class);
+        MediaEntity mediaEntity = mock(MediaEntity.class);
+        when(mediaEntityFactory.create(fileUpload)).thenReturn(mediaEntity);
+
+        String mediaEntityUid = "media-entity-uid";
+        when(mediaEntity.getUid()).thenReturn(mediaEntityUid);
+
+        String fileUploadContainer = "file-container";
         when(fileUpload.getContainer()).thenReturn(fileUploadContainer);
-        when(fileUpload.getName()).thenReturn(fileName);
 
         CloudBlobContainer container = mock(CloudBlobContainer.class);
-
         when(client.getContainerReference(storageContainerName)).thenReturn(container);
 
         CloudBlockBlob blob = mock(CloudBlockBlob.class);
+        when(container.getBlockBlobReference(String.join("/", fileUploadContainer, mediaEntityUid))).thenReturn(blob);
 
-        when(container.getBlockBlobReference(String.join("/", fileUploadContainer, fileName))).thenReturn(blob);
         MultipartFile multipartFile = mock(MultipartFile.class);
-
         when(fileUpload.getFile()).thenReturn(multipartFile);
 
         InputStream inputStream = mock(InputStream.class);
-
         when(multipartFile.getInputStream()).thenReturn(inputStream);
+
+        long fileSize = 78349873;
         when(multipartFile.getSize()).thenReturn(fileSize);
 
-        MediaEntity media = mock(MediaEntity.class);
-        when(mediaFactory.create(fileUpload)).thenReturn(media);
-
-        when(mediaRepository.save(media)).thenReturn(media);
+        when(mediaRepository.save(mediaEntity)).thenReturn(mediaEntity);
 
         Media result = mediaManagementService.create(fileUpload);
 
-        assertEquals(media, result);
+        assertEquals(mediaEntity, result);
         verify(container).createIfNotExists();
         verify(blob).upload(inputStream, fileSize);
     }
 
     @Test
     public void shouldCatchUriSyntaxExceptionAndThrowFileUploadException() throws URISyntaxException, StorageException {
+        String mediaEntityUid = "media-entity-uid";
+        String fileContainer = "file-container";
+
         FileUpload fileUpload = mock(FileUpload.class);
+        when(fileUpload.getContainer()).thenReturn(fileContainer);
+
+        MediaEntity mediaEntity = mock(MediaEntity.class);
+        when(mediaEntityFactory.create(fileUpload)).thenReturn(mediaEntity);
+        when(mediaEntity.getUid()).thenReturn(mediaEntityUid);
 
         URISyntaxException exception = mock(URISyntaxException.class);
 
@@ -106,6 +112,11 @@ public class AzureMediaManagementServiceTest {
         FileUpload fileUpload = mock(FileUpload.class);
         when(fileUpload.getContainer()).thenReturn(fileuploadContainer);
 
+        String mediaEntityUid = "media-entity-uid";
+        MediaEntity mediaEntity = mock(MediaEntity.class);
+        when(mediaEntityFactory.create(fileUpload)).thenReturn(mediaEntity);
+        when(mediaEntity.getUid()).thenReturn(mediaEntityUid);
+
         StorageException exception = mock(StorageException.class);
 
         doThrow(exception).when(client).getContainerReference(storageContainerName);
@@ -120,26 +131,25 @@ public class AzureMediaManagementServiceTest {
 
     @Test
     public void shouldCatchIOExceptionAndThrowFileUploadException() throws URISyntaxException, StorageException, IOException {
-        String fileUploadContainer = "test-container";
-        String fileName = "file-name";
-
         FileUpload fileUpload = mock(FileUpload.class);
+        MediaEntity mediaEntity = mock(MediaEntity.class);
+        when(mediaEntityFactory.create(fileUpload)).thenReturn(mediaEntity);
+
+        String fileUploadContainer = "test-container";
+        String mediaEntityUid = "media-entity-uid";
         when(fileUpload.getContainer()).thenReturn(fileUploadContainer);
-        when(fileUpload.getName()).thenReturn(fileName);
+        when(mediaEntity.getUid()).thenReturn(mediaEntityUid);
 
         CloudBlobContainer container = mock(CloudBlobContainer.class);
-
         when(client.getContainerReference(storageContainerName)).thenReturn(container);
 
         CloudBlockBlob blob = mock(CloudBlockBlob.class);
+        when(container.getBlockBlobReference(String.join("/", fileUploadContainer, mediaEntityUid))).thenReturn(blob);
 
-        when(container.getBlockBlobReference(String.join("/", fileUploadContainer, fileName))).thenReturn(blob);
         MultipartFile multipartFile = mock(MultipartFile.class);
-
         when(fileUpload.getFile()).thenReturn(multipartFile);
 
         IOException exception = mock(IOException.class);
-
         doThrow(exception).when(multipartFile).getInputStream();
 
         try {
