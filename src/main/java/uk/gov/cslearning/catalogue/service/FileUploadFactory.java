@@ -7,7 +7,7 @@ import uk.gov.cslearning.catalogue.dto.FileUpload;
 
 @Component
 public class FileUploadFactory {
-    public FileUpload create(MultipartFile file, String container) {
+    public FileUpload create(MultipartFile file, String container, String filename) {
         return new FileUpload() {
             @Override
             public String getContainer() {
@@ -26,7 +26,7 @@ public class FileUploadFactory {
 
             @Override
             public String getName() {
-                return file.getOriginalFilename();
+                return (null != filename) ? filename : file.getOriginalFilename();
             }
 
             /**
