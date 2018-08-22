@@ -16,7 +16,7 @@ public class FileUploadFactoryTest {
     @Test
     public void createReturnsFileUpload() {
         String container = "test-container";
-        String originalFilename = "original-filename.doc";
+        String originalFilename = "original-filename.xls";
         String filename = "custom-filename.doc";
         long fileSizeBytes = 10240;
 
@@ -30,14 +30,14 @@ public class FileUploadFactoryTest {
         assertEquals(container, result.getContainer());
         assertEquals(filename, result.getName());
         assertEquals(file, result.getFile());
-        assertEquals("doc", result.getExtension());
+        assertEquals("xls", result.getExtension());
         assertEquals(10, result.getSize());
     }
 
     @Test
     public void createReturnsFileUploadWithOriginalFilename() {
         String container = "test-container";
-        String originalFilename = "original-filename.doc";
+        String originalFilename = "original-filename.xls";
         long fileSizeBytes = 10240;
 
         MultipartFile file = mock(MultipartFile.class);
@@ -50,7 +50,7 @@ public class FileUploadFactoryTest {
         assertEquals(container, result.getContainer());
         assertEquals(originalFilename, result.getName());
         assertEquals(file, result.getFile());
-        assertEquals("doc", result.getExtension());
+        assertEquals("xls", result.getExtension());
         assertEquals(10, result.getSize());
     }
 }
