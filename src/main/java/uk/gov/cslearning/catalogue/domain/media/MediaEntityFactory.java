@@ -33,7 +33,7 @@ public class MediaEntityFactory {
             document.setDateAdded(LocalDateTime.now());
             document.setExtension(fileUpload.getExtension());
             document.setName(fileUpload.getName());
-            document.setPath(String.join("/", fileUpload.getContainer(), fileUpload.getName()));
+            document.setPath(String.join("/", fileUpload.getContainer(), document.getUid()));
             document.setFileSize(fileUpload.getSize());
 
             return document;
