@@ -16,7 +16,7 @@ public class FileUploadFactory {
 
             @Override
             public String getExtension() {
-                return FilenameUtils.getExtension(getName());
+                return FilenameUtils.getExtension(file.getOriginalFilename());
             }
 
             @Override
