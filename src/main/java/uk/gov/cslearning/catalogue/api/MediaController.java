@@ -28,6 +28,6 @@ public class MediaController {
 
         Media media = mediaManagementService.create(fileUploadFactory.create(file, container, filename));
 
-        return ResponseEntity.created(builder.path("/service/media/{mediaUid}").build(media.getUid())).build();
+        return ResponseEntity.created(builder.path("/media/{mediaUid}").build(media.getUid())).build();
     }
 }
