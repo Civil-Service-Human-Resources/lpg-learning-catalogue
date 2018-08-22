@@ -35,13 +35,14 @@ public class AzureMediaManagementService implements MediaManagementService {
     public Media create(FileUpload fileUpload) {
 
         MediaEntity mediaEntity = mediaEntityFactory.create(fileUpload);
-
         String filePath = String.join("/", fileUpload.getContainer(), mediaEntity.getUid());
 
         try {
             CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
             container.createIfNotExists();
+
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
+
             blob.upload(fileUpload.getFile().getInputStream(), fileUpload.getFile().getSize());
 
             return mediaRepository.save(mediaEntity);
