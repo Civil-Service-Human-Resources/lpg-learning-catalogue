@@ -59,6 +59,6 @@ public class MediaControllerTest {
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("location", "http://localhost/service/media/" + mediaUid));
+                .andExpect(header().string("location", "http://localhost/media/" + mediaUid));
     }
 }
