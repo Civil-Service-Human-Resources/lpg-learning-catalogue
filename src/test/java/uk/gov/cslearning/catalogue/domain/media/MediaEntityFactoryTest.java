@@ -36,7 +36,7 @@ public class MediaEntityFactoryTest {
         assertEquals("10 KB", media.formatFileSize());
         assertEquals(fileContainer, media.getContainer());
 
-        assertEquals(String.join("/", fileContainer, name), media.getPath());
+        assertEquals(String.join("/", fileContainer, media.getUid()), media.getPath());
         assertEquals(22, media.getId().length());
         assertEquals(media.getId(), media.getUid());
     }
