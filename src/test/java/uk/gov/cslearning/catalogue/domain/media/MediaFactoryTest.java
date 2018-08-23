@@ -4,16 +4,16 @@ import org.junit.Test;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MediaEntityFactoryTest {
+public class MediaFactoryTest {
 
-    private final MediaEntityFactory mediaFactory = new MediaEntityFactory();
+    private final MediaFactory mediaFactory = new MediaFactory();
 
     @Test
     public void shouldReturnMediaFromFileUpload() {
@@ -27,10 +27,10 @@ public class MediaEntityFactoryTest {
         when(fileUpload.getExtension()).thenReturn(extension);
         when(fileUpload.getSize()).thenReturn(size);
 
-        Media media = mediaFactory.create(fileUpload);
+        MediaEntity media = mediaFactory.create(fileUpload);
 
-        assertTrue(media.getDateAdded().isBefore(LocalDateTime.now()));
-        assertTrue(media.getDateAdded().isAfter(LocalDateTime.now().minus(5, ChronoUnit.SECONDS)));
+        assertTrue(media.getDateAdded().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1)));
+        assertTrue(media.getDateAdded().isAfter(LocalDateTime.now(Clock.systemUTC()).minusSeconds(5)));
         assertEquals(name, media.getName());
         assertEquals(extension, media.getExtension());
         assertEquals("10 KB", media.formatFileSize());

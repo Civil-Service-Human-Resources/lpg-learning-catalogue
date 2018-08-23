@@ -5,12 +5,13 @@ import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class MediaEntityFactory {
+public class MediaFactory {
 
     private Map<String, Function<FileUpload, MediaEntity>> createMethods = ImmutableMap.of(
             "doc", new CreateDocumentFunction()
@@ -30,7 +31,7 @@ public class MediaEntityFactory {
         public MediaEntity apply(FileUpload fileUpload) {
             Document document = new Document();
             document.setContainer(fileUpload.getContainer());
-            document.setDateAdded(LocalDateTime.now());
+            document.setDateAdded(LocalDateTime.now(Clock.systemUTC()));
             document.setExtension(fileUpload.getExtension());
             document.setName(fileUpload.getName());
             document.setPath(String.join("/", fileUpload.getContainer(), document.getUid()));
