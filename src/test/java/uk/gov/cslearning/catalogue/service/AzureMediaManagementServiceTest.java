@@ -10,9 +10,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
-import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
-import uk.gov.cslearning.catalogue.domain.media.MediaEntityFactory;
+import uk.gov.cslearning.catalogue.domain.media.MediaFactory;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
@@ -20,6 +19,7 @@ import uk.gov.cslearning.catalogue.repository.MediaRepository;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -31,7 +31,7 @@ public class AzureMediaManagementServiceTest {
     private CloudBlobClient client;
 
     @Mock
-    private MediaEntityFactory mediaEntityFactory;
+    private MediaFactory mediaFactory;
 
     @Mock
     private MediaRepository mediaRepository;
@@ -42,14 +42,14 @@ public class AzureMediaManagementServiceTest {
 
     @Before
     public void setUp() {
-        mediaManagementService = new AzureMediaManagementService(client, mediaEntityFactory, mediaRepository, storageContainerName);
+        mediaManagementService = new AzureMediaManagementService(client, mediaFactory, mediaRepository, storageContainerName);
     }
 
     @Test
     public void shouldUploadFileAndReturnMedia() throws URISyntaxException, StorageException, IOException {
         FileUpload fileUpload = mock(FileUpload.class);
         MediaEntity mediaEntity = mock(MediaEntity.class);
-        when(mediaEntityFactory.create(fileUpload)).thenReturn(mediaEntity);
+        when(mediaFactory.create(fileUpload)).thenReturn(mediaEntity);
 
         String mediaEntityUid = "media-entity-uid";
         when(mediaEntity.getUid()).thenReturn(mediaEntityUid);
@@ -74,7 +74,7 @@ public class AzureMediaManagementServiceTest {
 
         when(mediaRepository.save(mediaEntity)).thenReturn(mediaEntity);
 
-        Media result = mediaManagementService.create(fileUpload);
+        MediaEntity result = mediaManagementService.create(fileUpload);
 
         assertEquals(mediaEntity, result);
         verify(container).createIfNotExists();
@@ -90,7 +90,7 @@ public class AzureMediaManagementServiceTest {
         when(fileUpload.getContainer()).thenReturn(fileContainer);
 
         MediaEntity mediaEntity = mock(MediaEntity.class);
-        when(mediaEntityFactory.create(fileUpload)).thenReturn(mediaEntity);
+        when(mediaFactory.create(fileUpload)).thenReturn(mediaEntity);
         when(mediaEntity.getUid()).thenReturn(mediaEntityUid);
 
         URISyntaxException exception = mock(URISyntaxException.class);
@@ -114,7 +114,7 @@ public class AzureMediaManagementServiceTest {
 
         String mediaEntityUid = "media-entity-uid";
         MediaEntity mediaEntity = mock(MediaEntity.class);
-        when(mediaEntityFactory.create(fileUpload)).thenReturn(mediaEntity);
+        when(mediaFactory.create(fileUpload)).thenReturn(mediaEntity);
         when(mediaEntity.getUid()).thenReturn(mediaEntityUid);
 
         StorageException exception = mock(StorageException.class);
@@ -133,7 +133,7 @@ public class AzureMediaManagementServiceTest {
     public void shouldCatchIOExceptionAndThrowFileUploadException() throws URISyntaxException, StorageException, IOException {
         FileUpload fileUpload = mock(FileUpload.class);
         MediaEntity mediaEntity = mock(MediaEntity.class);
-        when(mediaEntityFactory.create(fileUpload)).thenReturn(mediaEntity);
+        when(mediaFactory.create(fileUpload)).thenReturn(mediaEntity);
 
         String fileUploadContainer = "test-container";
         String mediaEntityUid = "media-entity-uid";
@@ -158,5 +158,16 @@ public class AzureMediaManagementServiceTest {
         } catch (FileUploadException e) {
             assertEquals(exception, e.getCause());
         }
+    }
+
+
+    @Test
+    public void findByIdReturnsMediaOptional() {
+        String mediaId = "media-id";
+        Optional<MediaEntity> optional = Optional.empty();
+
+        when(mediaRepository.findById(mediaId)).thenReturn(optional);
+
+        assertEquals(optional, mediaManagementService.findByUid(mediaId));
     }
 }
