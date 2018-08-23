@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.domain.media;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Document(indexName = "media", type = "media")
-public abstract class MediaEntity implements Media {
+public class MediaEntity implements Media {
     @Id
     private String id = UUIDs.randomBase64UUID();
 
@@ -52,6 +53,7 @@ public abstract class MediaEntity implements Media {
         this.fileSize = fileSize;
     }
 
+    @JsonProperty
     public String formatFileSize() {
         return FileUtils.byteCountToDisplaySize(fileSize * 1024);
     }
