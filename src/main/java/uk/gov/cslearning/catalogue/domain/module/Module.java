@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @JsonSubTypes({
         @JsonSubTypes.Type(FaceToFaceModule.class),
         @JsonSubTypes.Type(ELearningModule.class),
-        @JsonSubTypes.Type(BlogModule.class),
+        @JsonSubTypes.Type(LinkModule.class),
         @JsonSubTypes.Type(VideoModule.class),
         @JsonSubTypes.Type(FileModule.class)
 })
@@ -107,8 +107,8 @@ public abstract class Module {
             return "face-to-face";
         }
 
-        if (this instanceof BlogModule) {
-            return "blog";
+        if (this instanceof LinkModule) {
+            return "link";
         }
 
         if (this instanceof VideoModule) {
