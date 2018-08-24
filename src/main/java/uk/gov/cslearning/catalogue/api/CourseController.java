@@ -129,11 +129,13 @@ public class CourseController {
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
-    @PostMapping("/{courseId}/modules/")
+    @PostMapping("/{courseId}/modules")
     public ResponseEntity<Void> createModule(@PathVariable String courseId, @RequestBody Module module, UriComponentsBuilder builder) {
         LOGGER.debug("Adding module to course with ID {}", courseId);
 
         Module saved = moduleService.save(courseId, module);
+
+        LOGGER.info("Saved module {}", saved.toString());
 
         return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}").build(courseId, saved.getId())).build();
     }
