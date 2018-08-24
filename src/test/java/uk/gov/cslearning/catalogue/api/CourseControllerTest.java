@@ -135,7 +135,7 @@ public class CourseControllerTest {
         when(module.getId()).thenReturn(moduleId);
 
         String courseId = UUID.randomUUID().toString();
-        String json = gson.toJson(ImmutableMap.of("type", "blog", "location", "http://localhost"));
+        String json = gson.toJson(ImmutableMap.of("type", "link", "location", "http://localhost"));
 
         when(moduleService.save(eq(courseId), any(Module.class))).thenReturn(module);
 
