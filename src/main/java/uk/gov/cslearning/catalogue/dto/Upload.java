@@ -9,7 +9,7 @@ public class Upload {
     private List<UploadedFile> uploadedFiles = new ArrayList<>();
     private UploadStatus status;
     private String path;
-    private Optional<Throwable> error;
+    private Throwable error;
 
     public ProcessedFile getProcessedFile() {
         return processedFile;
@@ -24,7 +24,7 @@ public class Upload {
     }
 
     public void setUploadedFiles(List<UploadedFile> uploadedFiles) {
-        this.uploadedFiles = uploadedFiles;
+        this.uploadedFiles = new ArrayList<>(uploadedFiles);
     }
 
     public UploadStatus getStatus() {
@@ -52,10 +52,10 @@ public class Upload {
     }
 
     public void setError(Throwable error) {
-        this.error = Optional.of(error);
+        this.error = error;
     }
 
     public Optional<Throwable> getError() {
-        return error;
+        return Optional.ofNullable(error);
     }
 }
