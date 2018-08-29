@@ -13,8 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.media.Document;
 import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.service.FileUploadFactory;
-import uk.gov.cslearning.catalogue.service.MediaManagementService;
+import uk.gov.cslearning.catalogue.service.upload.FileUploadFactory;
+import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
