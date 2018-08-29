@@ -2,7 +2,6 @@ package uk.gov.cslearning.catalogue.domain.media;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.io.FileUtils;
-import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @Document(indexName = "media", type = "media")
 public class MediaEntity implements Media {
     @Id
-    private String id = UUIDs.randomBase64UUID();
+    private String id;
 
     @NotNull
     private String name;
