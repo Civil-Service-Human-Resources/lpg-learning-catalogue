@@ -6,16 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-
 @Configuration
 public class AzureStorageConfig {
     @Autowired
     private CloudStorageAccount cloudStorageAccount;
 
     @Bean
-    public CloudBlobClient storageClient() throws URISyntaxException, InvalidKeyException {
+    public CloudBlobClient storageClient() {
         return cloudStorageAccount.createCloudBlobClient();
     }
 

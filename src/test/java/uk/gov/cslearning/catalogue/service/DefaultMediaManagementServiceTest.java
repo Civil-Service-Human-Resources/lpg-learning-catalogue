@@ -59,6 +59,6 @@ public class DefaultMediaManagementServiceTest {
 
         when(mediaRepository.findById(mediaId)).thenReturn(optional);
 
-        assertEquals(optional, mediaManagementService.findByUid(mediaId));
+        assertEquals(optional, mediaManagementService.findById(mediaId));
     }
 }
