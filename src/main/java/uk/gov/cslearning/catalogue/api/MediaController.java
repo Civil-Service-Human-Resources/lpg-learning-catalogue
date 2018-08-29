@@ -29,12 +29,12 @@ public class MediaController {
 
         MediaEntity media = mediaManagementService.create(fileUploadFactory.create(file, container, filename));
 
-        return ResponseEntity.created(builder.path("/media/{mediaUid}").build(media.getUid())).build();
+        return ResponseEntity.created(builder.path("/media/{mediaUid}").build(media.getId())).build();
     }
 
-    @GetMapping("/{mediaUid}")
-    public ResponseEntity<MediaEntity> read(@PathVariable String mediaUid) {
-        Optional<MediaEntity> media = mediaManagementService.findByUid(mediaUid);
+    @GetMapping("/{mediaId}")
+    public ResponseEntity<MediaEntity> read(@PathVariable String mediaId) {
+        Optional<MediaEntity> media = mediaManagementService.findById(mediaId);
 
         return media.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }

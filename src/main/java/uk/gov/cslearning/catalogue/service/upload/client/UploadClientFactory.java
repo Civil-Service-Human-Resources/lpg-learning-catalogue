@@ -6,9 +6,9 @@ import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 @Component
 public class UploadClientFactory {
 
-    private final AzureUploadClient azureUploadClient;
+    private final UploadClient azureUploadClient;
 
-    public UploadClientFactory(AzureUploadClient azureUploadClient) {
+    public UploadClientFactory(UploadClient azureUploadClient) {
         this.azureUploadClient = azureUploadClient;
     }
 

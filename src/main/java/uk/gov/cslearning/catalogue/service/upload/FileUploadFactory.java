@@ -13,7 +13,7 @@ public class FileUploadFactory {
 
             @Override
             public String getId() {
-                return UUIDs.base64UUID();
+                return UUIDs.randomBase64UUID();
             }
 
             @Override

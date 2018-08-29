@@ -13,5 +13,4 @@ public interface Media {
     LocalDateTime getDateAdded();
     String getExtension();
     String getPath();
-    String getUid();
 }
