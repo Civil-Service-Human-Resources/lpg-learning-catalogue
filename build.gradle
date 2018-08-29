@@ -53,6 +53,15 @@ dependencies {
     testCompile 'com.google.code.gson:gson:2.8.2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.security:spring-security-test'
+
+//    testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '1.7.0RC4'
+//    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.7.0RC4'
+
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '1.7.4'
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.7.4'
+
+    testCompile 'org.mockito:mockito-core:2.8.47'
+
 }
 
 compileJava.dependsOn(processResources)
