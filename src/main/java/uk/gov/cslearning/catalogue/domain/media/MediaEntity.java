@@ -88,8 +88,4 @@ public class MediaEntity implements Media {
     public void setPath(String path) {
         this.path = path;
     }
-
-    public String getUid() {
-        return id;
-    }
 }

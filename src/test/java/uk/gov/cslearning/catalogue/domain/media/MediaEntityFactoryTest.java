@@ -54,7 +54,6 @@ public class MediaEntityFactoryTest {
 
         assertEquals(path, media.getPath());
         assertEquals(fileUploadId, media.getId());
-        assertEquals(media.getId(), media.getUid());
     }
 
 

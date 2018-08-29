@@ -9,10 +9,10 @@ import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.service.upload.DefaultFileUploadService;
-import uk.gov.cslearning.catalogue.service.upload.FileProcessor;
-import uk.gov.cslearning.catalogue.service.upload.FileProcessorFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClientFactory;
+import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessorFactory;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.UploaderFactory;
 
@@ -42,7 +42,7 @@ public class DefaultFileUploadServiceTest {
         when(fileProcessorFactory.create(fileUpload)).thenReturn(fileProcessor);
 
         ProcessedFile processedFile = mock(ProcessedFile.class);
-        when(fileProcessor.process()).thenReturn(processedFile);
+        when(fileProcessor.process(fileUpload)).thenReturn(processedFile);
 
         UploadClient uploadClient = mock(UploadClient.class);
         when(uploadClientFactory.create(processedFile)).thenReturn(uploadClient);
