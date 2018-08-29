@@ -2,7 +2,7 @@ package uk.gov.cslearning.catalogue.domain.media;
 
 import java.time.LocalDateTime;
 
-interface Media {
+public interface Media {
 
     String getId();
     String getName();

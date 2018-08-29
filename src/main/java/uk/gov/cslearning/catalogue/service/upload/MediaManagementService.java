@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.service;
+package uk.gov.cslearning.catalogue.service.upload;
 
 import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
