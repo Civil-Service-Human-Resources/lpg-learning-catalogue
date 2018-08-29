@@ -1,6 +1,7 @@
-package uk.gov.cslearning.catalogue.service;
+package uk.gov.cslearning.catalogue.service.upload;
 
 import org.apache.commons.io.FilenameUtils;
+import org.elasticsearch.common.UUIDs;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
@@ -9,6 +10,12 @@ import uk.gov.cslearning.catalogue.dto.FileUpload;
 public class FileUploadFactory {
     public FileUpload create(MultipartFile file, String container, String filename) {
         return new FileUpload() {
+
+            @Override
+            public String getId() {
+                return UUIDs.base64UUID();
+            }
+
             @Override
             public String getContainer() {
                 return container;

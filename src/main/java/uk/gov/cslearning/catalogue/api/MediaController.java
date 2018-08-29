@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
-import uk.gov.cslearning.catalogue.service.FileUploadFactory;
-import uk.gov.cslearning.catalogue.service.MediaManagementService;
+import uk.gov.cslearning.catalogue.service.upload.FileUploadFactory;
+import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
 import java.util.Optional;
 

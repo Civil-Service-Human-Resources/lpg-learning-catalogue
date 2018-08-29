@@ -3,7 +3,7 @@ package uk.gov.cslearning.catalogue.api;
 import org.junit.Test;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.service.FileUploadFactory;
+import uk.gov.cslearning.catalogue.service.upload.FileUploadFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
