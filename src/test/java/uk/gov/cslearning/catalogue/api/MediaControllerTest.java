@@ -28,10 +28,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(MediaController.class)
-@WithMockUser(username = "user", password = "password")
+@WithMockUser(username = "user")
 public class MediaControllerTest {
 
     @Autowired
@@ -46,7 +45,7 @@ public class MediaControllerTest {
     @Test
     public void shouldUploadFileOnPostRequest() throws Exception {
         String fileContainer = "container-id";
-        String mediaUid = "media-uid";
+        String mediaId = "media-uid";
         String filename = "custom-filename";
 
         MockMultipartFile file = new MockMultipartFile("file", "file.doc", "application/octet-stream", "abc".getBytes());
@@ -55,7 +54,7 @@ public class MediaControllerTest {
         when(fileUploadFactory.create(file, fileContainer, filename)).thenReturn(fileUpload);
 
         MediaEntity media = mock(MediaEntity.class);
-        when(media.getUid()).thenReturn(mediaUid);
+        when(media.getId()).thenReturn(mediaId);
         when(mediaManagementService.create(fileUpload)).thenReturn(media);
 
         mockMvc.perform(
@@ -66,12 +65,12 @@ public class MediaControllerTest {
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("location", "http://localhost/media/" + mediaUid));
+                .andExpect(header().string("location", "http://localhost/media/" + mediaId));
     }
 
     @Test
     public void shouldReturn200OnSuccessfulGetRequest() throws Exception {
-        String mediaUid = "media-uid";
+        String mediaId = "media-id";
 
         long filesize = 10;
         String container = "test-container";
@@ -90,10 +89,10 @@ public class MediaControllerTest {
         document.setName(name);
         document.setPath(path);
 
-        when(mediaManagementService.findByUid(mediaUid)).thenReturn(Optional.of(document));
+        when(mediaManagementService.findById(mediaId)).thenReturn(Optional.of(document));
 
         mockMvc.perform(
-                get("/media/" + mediaUid)
+                get("/media/" + mediaId)
                         .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.container", is(container)))
@@ -102,15 +101,14 @@ public class MediaControllerTest {
                 .andExpect(jsonPath("$.extension", is(extension)))
                 .andExpect(jsonPath("$.name", is(name)))
                 .andExpect(jsonPath("$.dateAdded", is(date.format(DateTimeFormatter.ISO_DATE_TIME))))
-                .andExpect(jsonPath("$.path", is(path)))
-                .andExpect(jsonPath("$.uid", is(id)));
+                .andExpect(jsonPath("$.path", is(path)));
     }
 
     @Test
     public void shouldReturn404IfMediaNotFound() throws Exception {
         String mediaUid = "media-uid";
 
-        when(mediaManagementService.findByUid(mediaUid)).thenReturn(Optional.empty());
+        when(mediaManagementService.findById(mediaUid)).thenReturn(Optional.empty());
 
         mockMvc.perform(
                 get("/media/" + mediaUid)

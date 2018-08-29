@@ -6,6 +6,8 @@ import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClientFactory;
+import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessorFactory;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.UploaderFactory;
 
@@ -25,7 +27,7 @@ public class DefaultFileUploadService implements FileUploadService {
     public Upload upload(FileUpload fileUpload) {
 
         FileProcessor fileProcessor = fileProcessorFactory.create(fileUpload);
-        ProcessedFile processedFile = fileProcessor.process();
+        ProcessedFile processedFile = fileProcessor.process(fileUpload);
 
         UploadClient uploadClient = uploadClientFactory.create(processedFile);
         Uploader uploader = uploaderFactory.create(processedFile);

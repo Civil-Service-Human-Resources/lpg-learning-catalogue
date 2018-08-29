@@ -32,7 +32,7 @@ public class DefaultMediaManagementService implements MediaManagementService {
     }
 
     @Override
-    public Optional<MediaEntity> findByUid(String mediaId) {
+    public Optional<MediaEntity> findById(String mediaId) {
         return mediaRepository.findById(mediaId);
     }
 }
