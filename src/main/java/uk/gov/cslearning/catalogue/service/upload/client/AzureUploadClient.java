@@ -7,6 +7,7 @@ import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.dto.UploadedFile;
+import uk.gov.cslearning.catalogue.exception.FileUploadException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +33,7 @@ public class AzureUploadClient implements UploadClient {
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.upload(inputStream, fileSize);
         } catch (StorageException | URISyntaxException | IOException e) {
-            e.printStackTrace();
+            throw new FileUploadException(e);
         }
 
 

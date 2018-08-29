@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface MediaManagementService {
     MediaEntity create(FileUpload fileUpload);
 
-    Optional<MediaEntity> findByUid(String mediaUid);
+    Optional<MediaEntity> findById(String mediaId);
 }

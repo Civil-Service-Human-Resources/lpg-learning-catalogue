@@ -58,4 +58,5 @@ public class Upload {
     public Optional<Throwable> getError() {
         return Optional.ofNullable(error);
     }
+
 }
