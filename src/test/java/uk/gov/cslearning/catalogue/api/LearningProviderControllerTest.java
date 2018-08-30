@@ -14,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.cslearning.catalogue.domain.CancellationPolicy;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
+import uk.gov.cslearning.catalogue.domain.TermsAndConditions;
 import uk.gov.cslearning.catalogue.repository.LearningProviderRepository;
 
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -195,6 +198,131 @@ public class LearningProviderControllerTest {
     }
 
     @Test
+    public void shouldSendBadRequestWhenCancellationPolicyIsNull() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        CancellationPolicy cancellationPolicy = null;
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        when(learningProviderRepository.save(any())).thenReturn(learningProvider);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(any())).thenReturn(result);
+
+        mockMvc.perform(
+                post(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/cancellation-policies").with(csrf())
+                        .content(gson.toJson(cancellationPolicy))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldGetCancellationPolicyFromLearningProvider() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        CancellationPolicy cancellationPolicy = new CancellationPolicy();
+
+        learningProvider.addCancellationPolicy(cancellationPolicy);
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(learningProvider.getId())).thenReturn(result);
+
+        mockMvc.perform(
+                get(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/cancellation-policies/" + cancellationPolicy.getId()).with(csrf())
+                        .content(gson.toJson(cancellationPolicy))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void shouldUpdateCancellationPolicyInLearningProvider() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        CancellationPolicy cancellationPolicy = new CancellationPolicy();
+        CancellationPolicy newCancellationPolicy = new CancellationPolicy();
+
+        cancellationPolicy.setName("old");
+        newCancellationPolicy.setName("new");
+
+        learningProvider.addCancellationPolicy(cancellationPolicy);
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        when(learningProviderRepository.save(any())).thenReturn(learningProvider);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(learningProvider.getId())).thenReturn(result);
+
+        mockMvc.perform(
+                put(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/cancellation-policies/" + cancellationPolicy.getId()).with(csrf())
+                        .content(gson.toJson(newCancellationPolicy))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assert (learningProvider.getCancellationPolicies().size() == 1);
+        assertEquals(learningProvider.getCancellationPolicies().get(0).getId(), cancellationPolicy.getId());
+        assertEquals(learningProvider.getCancellationPolicies().get(0).getName(), "new");
+    }
+
+    @Test
+    public void shouldDeleteCancellationPolicyFromLearningProvider() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        CancellationPolicy cancellationPolicy = new CancellationPolicy();
+
+        learningProvider.addCancellationPolicy(cancellationPolicy);
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        when(learningProviderRepository.save(any())).thenReturn(learningProvider);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(learningProvider.getId())).thenReturn(result);
+
+        mockMvc.perform(
+                delete(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/cancellation-policies/" + cancellationPolicy.getId()).with(csrf())
+                        .content(gson.toJson(cancellationPolicy))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assert (learningProvider.getCancellationPolicies().isEmpty());
+    }
+
+    @Test
+    public void shouldGetTermsAndConditionsFromLearningProvider() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        TermsAndConditions termsAndConditions = new TermsAndConditions();
+
+        learningProvider.addTermsAndConditions(termsAndConditions);
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(learningProvider.getId())).thenReturn(result);
+
+        mockMvc.perform(
+                get(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/terms-and-conditions/" + termsAndConditions.getId()).with(csrf())
+                        .content(gson.toJson(termsAndConditions))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void shouldAddTermsAndConditionsToLearningProvider() throws Exception {
         LearningProvider learningProvider = createLearningProvider();
 
@@ -211,5 +339,63 @@ public class LearningProviderControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void shouldUpdateTermsAndConditionsInLearningProvider() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        TermsAndConditions termsAndConditions = new TermsAndConditions();
+        TermsAndConditions newTermsAndConditions = new TermsAndConditions();
+
+        termsAndConditions.setName("old");
+        newTermsAndConditions.setName("new");
+
+        learningProvider.addTermsAndConditions(termsAndConditions);
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        when(learningProviderRepository.save(any())).thenReturn(learningProvider);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(learningProvider.getId())).thenReturn(result);
+
+        mockMvc.perform(
+                put(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/terms-and-conditions/" + termsAndConditions.getId()).with(csrf())
+                        .content(gson.toJson(newTermsAndConditions))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assert (learningProvider.getTermsAndConditions().size() == 1);
+        assertEquals(learningProvider.getTermsAndConditions().get(0).getId(), termsAndConditions.getId());
+        assertEquals(learningProvider.getTermsAndConditions().get(0).getName(), "new");
+    }
+
+    @Test
+    public void shouldDeleteTermsAndConditionsFromLearningProvider() throws Exception {
+        LearningProvider learningProvider = createLearningProvider();
+        TermsAndConditions termsAndConditions = new TermsAndConditions();
+
+        learningProvider.addTermsAndConditions(termsAndConditions);
+
+        when(learningProviderRepository.existsById(learningProvider.getId())).thenReturn(true);
+
+        when(learningProviderRepository.save(any())).thenReturn(learningProvider);
+
+        Optional<LearningProvider> result = Optional.of(learningProvider);
+
+        when(learningProviderRepository.findById(learningProvider.getId())).thenReturn(result);
+
+        mockMvc.perform(
+                delete(LEARNING_PROVIDER_CONTROLLER_PATH + learningProvider.getId() + "/terms-and-conditions/" + termsAndConditions.getId()).with(csrf())
+                        .content(gson.toJson(termsAndConditions))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assert (learningProvider.getTermsAndConditions().isEmpty());
     }
 }
