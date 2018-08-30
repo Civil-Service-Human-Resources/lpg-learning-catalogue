@@ -28,11 +28,11 @@ public class DefaultUploader implements Uploader {
             UploadedFile uploadedFile = uploadClient.upload(processedFile.getFileUpload().getFile().getInputStream(),
                     filePath, processedFile.getFileUpload().getFile().getSize());
 
-            return uploadFactory.successfulUpload(processedFile, Collections.singletonList(uploadedFile), filePath);
+            return uploadFactory.createUpload(processedFile, Collections.singletonList(uploadedFile), filePath);
 
         } catch (IOException e) {
             LOG.error("Upload failed", e);
-            return uploadFactory.failedUpload(processedFile, filePath, e);
+            return uploadFactory.createFailedUpload(processedFile, filePath, e);
 
 
         }
