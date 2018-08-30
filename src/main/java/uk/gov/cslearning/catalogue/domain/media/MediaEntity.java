@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Document(indexName = "media", type = "media")
 public class MediaEntity implements Media {
@@ -24,6 +25,8 @@ public class MediaEntity implements Media {
 
     @NotNull
     private String path;
+
+    private Map<String, String> metadata;
 
     private long fileSize;
     private String extension;
@@ -87,5 +90,14 @@ public class MediaEntity implements Media {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @Override
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 }
