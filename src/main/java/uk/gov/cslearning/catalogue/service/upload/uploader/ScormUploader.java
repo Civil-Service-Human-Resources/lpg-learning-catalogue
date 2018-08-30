@@ -39,7 +39,7 @@ public class ScormUploader implements Uploader {
                 }
 
                 upload.addToUploadedFiles(uploadClient.upload(inputStream, filePath, size));
-                upload.setStatus(UploadStatus.OK);
+                upload.setStatus(UploadStatus.SUCCESS);
 
                 zipEntry = inputStream.getNextEntry();
             }
