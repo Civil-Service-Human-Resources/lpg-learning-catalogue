@@ -40,8 +40,8 @@ public class UploaderFactoryTest {
     }
 
     @Test
-    public void shouldReturnScormUploaderWithScormExtension() {
-        String extension = "scorm";
+    public void shouldReturnScormUploaderWithZipExtension() {
+        String extension = "zip";
         FileUpload fileUpload = mock(FileUpload.class);
         ProcessedFile processedFile = mock(ProcessedFile.class);
 
