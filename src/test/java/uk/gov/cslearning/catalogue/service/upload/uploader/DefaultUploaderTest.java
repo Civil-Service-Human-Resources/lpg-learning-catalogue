@@ -56,7 +56,7 @@ public class DefaultUploaderTest {
 
         Upload upload = mock(Upload.class);
 
-        when(uploadFactory.successfulUpload(processedFile, Collections.singletonList(uploadedFile), path)).thenReturn(upload);
+        when(uploadFactory.createUpload(processedFile, Collections.singletonList(uploadedFile), path)).thenReturn(upload);
 
         Upload result = uploader.upload(processedFile, uploadClient);
 
@@ -81,7 +81,7 @@ public class DefaultUploaderTest {
         doThrow(exception).when(multipartFile).getInputStream();
 
         Upload upload = mock(Upload.class);
-        when(uploadFactory.failedUpload(processedFile, path, exception)).thenReturn(upload);
+        when(uploadFactory.createFailedUpload(processedFile, path, exception)).thenReturn(upload);
 
         UploadClient uploadClient = mock(UploadClient.class);
         Upload result = uploader.upload(processedFile, uploadClient);

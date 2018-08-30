@@ -6,32 +6,39 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
-import uk.gov.cslearning.catalogue.dto.*;
+import uk.gov.cslearning.catalogue.dto.FileUpload;
+import uk.gov.cslearning.catalogue.dto.ProcessedFile;
+import uk.gov.cslearning.catalogue.dto.Upload;
+import uk.gov.cslearning.catalogue.dto.UploadedFile;
 import uk.gov.cslearning.catalogue.service.upload.ZipInputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
+import uk.gov.cslearning.catalogue.service.upload.uploader.UploadFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScormUploaderTest {
 
-    @InjectMocks
-    private ScormUploader uploader;
-
     @Mock
     private ZipInputStreamFactory zipInputStreamFactory;
 
+    @Mock
+    private UploadFactory uploadFactory;
+
+    @InjectMocks
+    private ScormUploader uploader;
+
     @Test
-    public void uploadUnzipsFileAndUploadsEntries() throws Exception {
+    public void uploadShouldUnzipFileAndUploadEntries() throws Exception {
 
         UploadClient uploadClient = mock(UploadClient.class);
 
@@ -65,17 +72,20 @@ public class ScormUploaderTest {
 
         int size = 1024;
         UploadedFile uploadedFile = mock(UploadedFile.class);
-        when(uploadedFile.getSize()).thenReturn(new Integer(size).longValue());
-        when(uploadClient.upload(zipInputStream, String.join("/", containerName, fileUploadId, zipEntryName), 1024)).thenReturn(uploadedFile);
+        String destinationDirectory = String.join("/", containerName, fileUploadId);
+
+        when(uploadClient.upload(zipInputStream, String.join("/", destinationDirectory, zipEntryName), 1024)).thenReturn(uploadedFile);
 
         when(zipInputStream.read(any()))
                 .thenReturn(size)
                 .thenReturn(0);
 
-        Upload upload = uploader.upload(processedFile, uploadClient);
+        Upload upload = mock(Upload.class);
+        when(uploadFactory.createUpload(eq(processedFile), eq(Collections.singletonList(uploadedFile)), eq(destinationDirectory))).thenReturn(upload);
 
-        assertEquals(UploadStatus.SUCCESS, upload.getStatus());
-        assertEquals(size, upload.getUploadedFiles().get(0).getSize());
+        Upload result = uploader.upload(processedFile, uploadClient);
+
+        assertEquals(upload, result);
 
         verify(zipInputStream).closeEntry();
         verify(zipInputStream).close();
@@ -83,14 +93,18 @@ public class ScormUploaderTest {
 
     @Test
     public void uploadAddsErrorToUploadOnFailure() throws Exception {
+        String containerName = "container";
+        String fileUploadId = "file-upload-id";
+        String destinationDirectory = String.join("/", containerName, fileUploadId);
+
+        FileUpload fileUpload = mock(FileUpload.class);
+        when(fileUpload.getContainer()).thenReturn(containerName);
+        when(fileUpload.getId()).thenReturn(fileUploadId);
 
         ProcessedFile processedFile = mock(ProcessedFile.class);
-        FileUpload fileUpload = mock(FileUpload.class);
-
         when(processedFile.getFileUpload()).thenReturn(fileUpload);
 
         MultipartFile multipartFile = mock(MultipartFile.class);
-        InputStream fileInputStream = mock(InputStream.class);
 
         when(fileUpload.getFile()).thenReturn(multipartFile);
 
@@ -98,10 +112,11 @@ public class ScormUploaderTest {
 
         doThrow(exception).when(multipartFile).getInputStream();
 
-        Upload upload = uploader.upload(processedFile, mock(UploadClient.class));
+        Upload upload = mock(Upload.class);
+        when(uploadFactory.createFailedUpload(processedFile, destinationDirectory, exception)).thenReturn(upload);
 
-        assertEquals(UploadStatus.FAIL, upload.getStatus());
-        assertTrue(upload.getError().isPresent());
-        assertEquals(exception, upload.getError().get());
+        Upload result = uploader.upload(processedFile, mock(UploadClient.class));
+
+        assertEquals(upload, result);
     }
 }
