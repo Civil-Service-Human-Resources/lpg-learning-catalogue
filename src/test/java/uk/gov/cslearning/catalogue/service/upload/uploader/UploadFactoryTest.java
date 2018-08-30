@@ -21,7 +21,7 @@ public class UploadFactoryTest {
         UploadedFile uploadedFile = mock(UploadedFile.class);
         String path = "test-path";
 
-        Upload upload = uploadFactory.successfulUpload(processedFile, Collections.singletonList(uploadedFile), path);
+        Upload upload = uploadFactory.createUpload(processedFile, Collections.singletonList(uploadedFile), path);
 
         assertEquals(processedFile, upload.getProcessedFile());
         assertEquals(path, upload.getPath());
@@ -35,7 +35,7 @@ public class UploadFactoryTest {
         Throwable throwable = mock(Throwable.class);
         String path = "test-path";
 
-        Upload upload = uploadFactory.failedUpload(processedFile, path, throwable);
+        Upload upload = uploadFactory.createFailedUpload(processedFile, path, throwable);
 
         assertEquals(processedFile, upload.getProcessedFile());
         assertEquals(path, upload.getPath());
