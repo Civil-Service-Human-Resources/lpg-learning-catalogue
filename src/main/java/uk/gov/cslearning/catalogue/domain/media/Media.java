@@ -1,6 +1,7 @@
 package uk.gov.cslearning.catalogue.domain.media;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public interface Media {
 
@@ -13,4 +14,6 @@ public interface Media {
     LocalDateTime getDateAdded();
     String getExtension();
     String getPath();
+
+    Map<String, String> getMetadata();
 }
