@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 public class UploadFactory {
-    public Upload successfulUpload(ProcessedFile processedFile, List<UploadedFile> uploadedFiles, String path) {
+    public Upload createUpload(ProcessedFile processedFile, List<UploadedFile> uploadedFiles, String path) {
         Upload upload = new Upload();
         upload.setStatus(UploadStatus.SUCCESS);
         upload.setUploadedFiles(uploadedFiles);
@@ -20,7 +20,7 @@ public class UploadFactory {
         return upload;
     }
 
-    public Upload failedUpload(ProcessedFile processedFile, String path, Throwable e) {
+    public Upload createFailedUpload(ProcessedFile processedFile, String path, Throwable e) {
         Upload upload = new Upload();
         upload.setStatus(UploadStatus.FAIL);
         upload.setProcessedFile(processedFile);

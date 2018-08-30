@@ -15,6 +15,7 @@ public class MediaEntityFactory {
 
     private Map<String, Function<Upload, MediaEntity>> createMethods = ImmutableMap.of(
             "doc", new CreateDocumentFunction()
+//            "zip", new CreateScormFunction()
     );
 
     public MediaEntity create(Upload upload) {
@@ -42,4 +43,21 @@ public class MediaEntityFactory {
             return document;
         }
     }
+
+    private static class CreateScormFunction implements Function<Upload, MediaEntity> {
+        @Override
+        public MediaEntity apply(Upload upload) {
+            Scorm scorm = new Scorm();
+            scorm.setId(upload.getProcessedFile().getFileUpload().getId());
+            scorm.setContainer(upload.getProcessedFile().getFileUpload().getContainer());
+            scorm.setDateAdded(LocalDateTime.now(Clock.systemUTC()));
+            scorm.setExtension(upload.getProcessedFile().getFileUpload().getExtension());
+            scorm.setName(upload.getProcessedFile().getFileUpload().getName());
+            scorm.setPath(upload.getPath());
+            scorm.setFileSize(upload.getSize());
+
+            return scorm;
+        }
+    }
+
 }
