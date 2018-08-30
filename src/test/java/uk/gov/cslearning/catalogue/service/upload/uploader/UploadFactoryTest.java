@@ -26,7 +26,7 @@ public class UploadFactoryTest {
         assertEquals(processedFile, upload.getProcessedFile());
         assertEquals(path, upload.getPath());
         assertEquals(uploadedFile, upload.getUploadedFiles().get(0));
-        assertEquals(UploadStatus.OK, upload.getStatus());
+        assertEquals(UploadStatus.SUCCESS, upload.getStatus());
     }
 
     @Test

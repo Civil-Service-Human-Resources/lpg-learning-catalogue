@@ -12,7 +12,7 @@ import java.util.List;
 public class UploadFactory {
     public Upload successfulUpload(ProcessedFile processedFile, List<UploadedFile> uploadedFiles, String path) {
         Upload upload = new Upload();
-        upload.setStatus(UploadStatus.OK);
+        upload.setStatus(UploadStatus.SUCCESS);
         upload.setUploadedFiles(uploadedFiles);
         upload.setProcessedFile(processedFile);
         upload.setPath(path);

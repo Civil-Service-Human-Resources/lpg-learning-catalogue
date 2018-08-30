@@ -65,7 +65,7 @@ public class ScormUploaderTest {
 
         int size = 1024;
         UploadedFile uploadedFile = mock(UploadedFile.class);
-        when(uploadedFile.getSize()).thenReturn(size);
+        when(uploadedFile.getSize()).thenReturn(new Integer(size).longValue());
         when(uploadClient.upload(zipInputStream, String.join("/", containerName, fileUploadId, zipEntryName), 1024)).thenReturn(uploadedFile);
 
         when(zipInputStream.read(any()))
@@ -74,7 +74,7 @@ public class ScormUploaderTest {
 
         Upload upload = uploader.upload(processedFile, uploadClient);
 
-        assertEquals(UploadStatus.OK, upload.getStatus());
+        assertEquals(UploadStatus.SUCCESS, upload.getStatus());
         assertEquals(size, upload.getUploadedFiles().get(0).getSize());
 
         verify(zipInputStream).closeEntry();
