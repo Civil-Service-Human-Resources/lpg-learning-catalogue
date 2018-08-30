@@ -14,8 +14,8 @@ import java.util.function.Function;
 public class MediaEntityFactory {
 
     private Map<String, Function<Upload, MediaEntity>> createMethods = ImmutableMap.of(
-            "doc", new CreateDocumentFunction()
-//            "zip", new CreateScormFunction()
+            "doc", new CreateDocumentFunction(),
+            "zip", new CreateScormFunction()
     );
 
     public MediaEntity create(Upload upload) {
