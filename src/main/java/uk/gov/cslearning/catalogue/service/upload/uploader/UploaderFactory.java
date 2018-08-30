@@ -20,7 +20,7 @@ public class UploaderFactory {
             public Uploader get() {
                 return defaultUploader;
             }},
-        "scorm",new Supplier<Uploader>() {
+        "zip",new Supplier<Uploader>() {
                 @Override
                 public Uploader get() {
                     return scormUploader;
