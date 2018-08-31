@@ -11,19 +11,17 @@ import java.util.List;
 @Component
 public class UploadFactory {
     public Upload createUpload(ProcessedFile processedFile, List<UploadedFile> uploadedFiles, String path) {
-        Upload upload = new Upload();
+        Upload upload = new Upload(processedFile);
         upload.setStatus(UploadStatus.SUCCESS);
         upload.setUploadedFiles(uploadedFiles);
-        upload.setProcessedFile(processedFile);
         upload.setPath(path);
 
         return upload;
     }
 
     public Upload createFailedUpload(ProcessedFile processedFile, String path, Throwable e) {
-        Upload upload = new Upload();
+        Upload upload = new Upload(processedFile);
         upload.setStatus(UploadStatus.FAIL);
-        upload.setProcessedFile(processedFile);
         upload.setPath(path);
         upload.setError(e);
 

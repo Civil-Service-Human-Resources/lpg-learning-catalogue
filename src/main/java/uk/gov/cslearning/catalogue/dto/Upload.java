@@ -7,18 +7,18 @@ import java.util.List;
 import java.util.Optional;
 
 public class Upload {
-    private ProcessedFile processedFile;
+    private final ProcessedFile processedFile;
     private List<UploadedFile> uploadedFiles = new ArrayList<>();
     private UploadStatus status;
     private String path;
     private Throwable error;
 
-    public ProcessedFile getProcessedFile() {
-        return processedFile;
+    public Upload(ProcessedFile processedFile) {
+        this.processedFile = processedFile;
     }
 
-    public void setProcessedFile(ProcessedFile processedFile) {
-        this.processedFile = processedFile;
+    public ProcessedFile getProcessedFile() {
+        return processedFile;
     }
 
     public List<UploadedFile> getUploadedFiles() {

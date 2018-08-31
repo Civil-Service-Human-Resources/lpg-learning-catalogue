@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+
 @Component
 public class FileUploadFactory {
     public FileUpload create(MultipartFile file, String container, String filename) {
@@ -16,6 +19,7 @@ public class FileUploadFactory {
             private final String extension = FilenameUtils.getExtension(file.getOriginalFilename());
             private final String name = (null != filename) ? filename : file.getOriginalFilename();
             private long sizeKB = file.getSize() / 1024;
+            private final LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
 
             @Override
             public String getId() {
@@ -48,6 +52,11 @@ public class FileUploadFactory {
             }
 
             @Override
+            public LocalDateTime getTimestamp() {
+                return timestamp;
+            }
+
+            @Override
             public String toString() {
                 return new ToStringBuilder(this)
                         .append("id", id)
@@ -56,6 +65,7 @@ public class FileUploadFactory {
                         .append("extension", extension)
                         .append("name", name)
                         .append("sizeKB", sizeKB)
+                        .append("timestamp", timestamp)
                         .toString();
             }
         };

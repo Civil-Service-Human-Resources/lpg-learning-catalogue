@@ -1,11 +1,9 @@
 package uk.gov.cslearning.catalogue.service.upload;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
-import uk.gov.cslearning.catalogue.domain.media.MediaEntityFactory;
+import uk.gov.cslearning.catalogue.domain.media.factory.MediaEntityFactory;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
@@ -14,8 +12,6 @@ import java.util.Optional;
 
 @Service
 public class DefaultMediaManagementService implements MediaManagementService {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultMediaManagementService.class);
-
     private final MediaEntityFactory mediaEntityFactory;
     private final MediaRepository mediaRepository;
     private final FileUploadService fileUploadService;

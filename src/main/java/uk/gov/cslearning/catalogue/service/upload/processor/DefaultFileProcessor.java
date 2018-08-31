@@ -7,8 +7,6 @@ public class DefaultFileProcessor implements FileProcessor {
 
     @Override
     public ProcessedFile process(FileUpload fileUpload) {
-        ProcessedFile processedFile = new ProcessedFile();
-        processedFile.setFileUpload(fileUpload);
-        return processedFile;
+        return new ProcessedFile(fileUpload);
     }
 }
