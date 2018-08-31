@@ -1,7 +1,9 @@
 package uk.gov.cslearning.catalogue.dto;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class UploadedFile {
-    private long size;
+    private long sizeKB;
     private String path;
     private UploadStatus status;
     private Throwable error;
@@ -10,7 +12,7 @@ public class UploadedFile {
     }
 
     public UploadedFile(UploadedFile uploadedFile) {
-        this.size = uploadedFile.getSize();
+        this.sizeKB = uploadedFile.getSizeKB();
         this.path = uploadedFile.getPath();
         this.status = uploadedFile.getStatus();
         this.error = uploadedFile.getError();
@@ -24,12 +26,12 @@ public class UploadedFile {
         this.path = path;
     }
 
-    public long getSize() {
-        return size;
+    public long getSizeKB() {
+        return sizeKB;
     }
 
-    public void setSize(long size) {
-        this.size = size;
+    public void setSizeKB(long sizeKB) {
+        this.sizeKB = sizeKB;
     }
 
     public UploadStatus getStatus() {
@@ -46,5 +48,15 @@ public class UploadedFile {
 
     public void setError(Throwable error) {
         this.error = error;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("sizeKB", sizeKB)
+                .append("path", path)
+                .append("status", status)
+                .append("error", error)
+                .toString();
     }
 }
