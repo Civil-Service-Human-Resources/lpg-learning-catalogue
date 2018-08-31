@@ -54,11 +54,6 @@ public class ElasticSearchConfig {
                 new DefaultJestResultsMapper(simpleElasticsearchMappingContext, new CustomEntityMapper()));
     }
 
-//    @Bean
-//    public ElasticsearchOperations elasticsearchTemplate(JestClient client) {
-//        return new JestElasticsearchTemplate(client);
-//    }
-
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
 
@@ -76,13 +71,11 @@ public class ElasticSearchConfig {
         return new DefaultJestResultsMapper(mappingContext, entityMapper);
     }
 
-
-
-    public class CustomEntityMapper implements EntityMapper {
+    class CustomEntityMapper implements EntityMapper {
 
         private final ObjectMapper objectMapper;
 
-        public CustomEntityMapper(){
+        CustomEntityMapper(){
             super();
 
             final ObjectMapper mapper = new ObjectMapper();
@@ -105,6 +98,5 @@ public class ElasticSearchConfig {
         public <T> T mapToObject(String source, Class<T> clazz) throws IOException {
             return objectMapper.readValue(source, clazz);
         }
-
     }
 }
