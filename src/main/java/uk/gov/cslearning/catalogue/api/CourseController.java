@@ -17,6 +17,7 @@ import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
+import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -155,14 +156,23 @@ public class CourseController {
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
-    @PostMapping("/{courseId}/modules/{modulesId}/events")
-    public ResponseEntity createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder){
+    @PostMapping("/{courseId}/modules/{moduleId}/events")
+    public ResponseEntity<Void> createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder){
         LOGGER.debug("Adding event to module with ID {}", moduleId);
 
         Event saved = eventService.save(courseId, moduleId, event);
 
         LOGGER.info("Saved event {}", saved.toString());
 
-        return ResponseEntity.created(builder.path("/course/{courseId}/modules/{moduleId}/events/{eventId}").build(courseId, saved.getId())).build();
+        return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}/events/{eventId}").build(courseId, moduleId, saved.getId())).build();
+    }
+
+    @GetMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
+    public ResponseEntity<Event> getEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId) {
+        LOGGER.debug("Getting event {} of module{} of course {}");
+
+        Optional<Event> result = eventService.find(courseId, moduleId, eventId);
+
+        return result.map(event -> new ResponseEntity<>(event, OK)).orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 }

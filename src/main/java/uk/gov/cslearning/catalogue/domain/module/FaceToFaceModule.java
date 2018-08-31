@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.unmodifiableCollection;
 
 @JsonTypeName("face-to-face")
