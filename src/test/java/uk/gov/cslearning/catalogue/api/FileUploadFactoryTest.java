@@ -31,7 +31,7 @@ public class FileUploadFactoryTest {
         assertEquals(filename, result.getName());
         assertEquals(file, result.getFile());
         assertEquals("xls", result.getExtension());
-        assertEquals(10, result.getSize());
+        assertEquals(10, result.getSizeKB());
         assertEquals(22, result.getId().length());
     }
 
@@ -52,6 +52,6 @@ public class FileUploadFactoryTest {
         assertEquals(originalFilename, result.getName());
         assertEquals(file, result.getFile());
         assertEquals("xls", result.getExtension());
-        assertEquals(10, result.getSize());
+        assertEquals(10, result.getSizeKB());
     }
 }

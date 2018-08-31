@@ -1,5 +1,7 @@
 package uk.gov.cslearning.catalogue.dto;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,8 +45,8 @@ public class Upload {
         this.path = path;
     }
 
-    public long getSize() {
-        return uploadedFiles.stream().mapToLong(UploadedFile::getSize).sum();
+    public long getSizeKB() {
+        return uploadedFiles.stream().mapToLong(UploadedFile::getSizeKB).sum();
     }
 
     public void addToUploadedFiles(UploadedFile uploadedFile) {
@@ -59,4 +61,14 @@ public class Upload {
         return Optional.ofNullable(error);
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("processedFile", processedFile)
+                .append("uploadedFiles", uploadedFiles)
+                .append("status", status)
+                .append("path", path)
+                .append("error", error)
+                .toString();
+    }
 }
