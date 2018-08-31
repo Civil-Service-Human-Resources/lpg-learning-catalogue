@@ -1,10 +1,7 @@
 package uk.gov.cslearning.catalogue.service.upload.uploader;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
@@ -13,17 +10,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class UploaderFactoryTest {
 
-    @Mock
-    private DefaultUploader defaultUploader;
-
-    @Mock
-    private ScormUploader scormUploader;
-
-    @InjectMocks
-    private UploaderFactory uploaderFactory;
+    private UploaderFactory uploaderFactory = new UploaderFactory(ImmutableMap.of(
+            "doc", () -> mock(DefaultUploader.class),
+            "zip", ()-> mock(ScormUploader.class)
+    ));
 
     @Test
     public void shouldReturnDefaultUploaderWithDocExtension() {
@@ -69,6 +61,4 @@ public class UploaderFactoryTest {
             assertEquals("Uploaded file has an unknown extension: xxx", e.getMessage());
         }
     }
-
-
 }
