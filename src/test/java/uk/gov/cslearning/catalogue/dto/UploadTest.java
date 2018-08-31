@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class UploadTest {
     @Test
@@ -16,7 +17,7 @@ public class UploadTest {
         UploadedFile file3 = new UploadedFile();
         file3.setSizeKB(100);
 
-        Upload upload = new Upload();
+        Upload upload = new Upload(mock(ProcessedFile.class));
         upload.setUploadedFiles(Arrays.asList(file1, file2, file3));
 
 
