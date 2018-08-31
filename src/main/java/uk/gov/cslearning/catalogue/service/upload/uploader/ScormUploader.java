@@ -54,7 +54,7 @@ public class ScormUploader implements Uploader {
             return uploadFactory.createUpload(processedFile, uploadedFiles, destinationDirectory);
 
         } catch (IOException e) {
-            LOG.error("Unable to upload Scorm package", e);
+            LOG.error(String.format("Unable to upload Scorm package: %s", processedFile), e);
             return uploadFactory.createFailedUpload(processedFile, destinationDirectory, e);
         }
     }

@@ -24,7 +24,7 @@ public class MediaEntityFactory {
             return createMethods.get(upload.getProcessedFile().getFileUpload().getExtension()).apply(upload);
         }
 
-        throw new UnknownFileTypeException(String.format("Uploaded file has an unknown extension: %s",
-                upload.getProcessedFile().getFileUpload().getExtension()));
+        throw new UnknownFileTypeException(String.format("Uploaded file has an unknown extension: %s %s",
+                upload.getProcessedFile().getFileUpload().getExtension(), upload));
     }
 }
