@@ -1,6 +1,6 @@
 package uk.gov.cslearning.catalogue.service.upload.uploader;
 
-import com.google.common.collect.ImmutableMap;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
@@ -11,32 +11,17 @@ import java.util.function.Supplier;
 @Component
 public class UploaderFactory {
 
-    private final DefaultUploader defaultUploader;
-    private final ScormUploader scormUploader;
+    private final Map<String, Supplier<Uploader>> uploaderFactoryMethods;
 
-    private final Map<String, Supplier<Uploader>> createSuppliers = ImmutableMap.of(
-        "doc", new Supplier<Uploader>() {
-            @Override
-            public Uploader get() {
-                return defaultUploader;
-            }},
-        "zip",new Supplier<Uploader>() {
-                @Override
-                public Uploader get() {
-                    return scormUploader;
-                }
-        });
-
-    public UploaderFactory(DefaultUploader defaultUploader, ScormUploader scormUploader) {
-        this.defaultUploader = defaultUploader;
-        this.scormUploader = scormUploader;
+    public UploaderFactory(@Qualifier("uploaderFactoryMethods") Map<String, Supplier<Uploader>> uploaderFactoryMethods) {
+        this.uploaderFactoryMethods = uploaderFactoryMethods;
     }
 
     public Uploader create(ProcessedFile processedFile) {
         String extension = processedFile.getFileUpload().getExtension();
 
-        if (createSuppliers.containsKey(extension)) {
-            return createSuppliers.get(extension).get();
+        if (uploaderFactoryMethods.containsKey(extension)) {
+            return uploaderFactoryMethods.get(extension).get();
         }
 
         throw new UnknownFileTypeException(String.format("Uploaded file has an unknown extension: %s", extension));
