@@ -8,7 +8,8 @@ import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +50,7 @@ public class MediaEntityFactoryTest {
             mediaEntityFactory.create(upload);
             fail("Expected UnknownFileTypeException");
         } catch (UnknownFileTypeException e) {
-            assertEquals("Uploaded file has an unknown extension: xxx", e.getMessage());
+            assertTrue(e.getMessage().contains("Uploaded file has an unknown extension: xxx"));
         }
     }
 }

@@ -31,10 +31,8 @@ public class DefaultUploader implements Uploader {
             return uploadFactory.createUpload(processedFile, Collections.singletonList(uploadedFile), filePath);
 
         } catch (IOException e) {
-            LOG.error("Upload failed", e);
+            LOG.error(String.format("Upload failed: %s", processedFile), e);
             return uploadFactory.createFailedUpload(processedFile, filePath, e);
-
-
         }
     }
 }
