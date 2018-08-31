@@ -10,17 +10,17 @@ public class UploadTest {
     @Test
     public void sizeReturnsSizeOfAllUploadedFiles() {
         UploadedFile file1 = new UploadedFile();
-        file1.setSize(1);
+        file1.setSizeKB(1);
         UploadedFile file2 = new UploadedFile();
-        file2.setSize(10);
+        file2.setSizeKB(10);
         UploadedFile file3 = new UploadedFile();
-        file3.setSize(100);
+        file3.setSizeKB(100);
 
         Upload upload = new Upload();
         upload.setUploadedFiles(Arrays.asList(file1, file2, file3));
 
 
-        assertEquals(111, upload.getSize());
+        assertEquals(111, upload.getSizeKB());
 
 
     }

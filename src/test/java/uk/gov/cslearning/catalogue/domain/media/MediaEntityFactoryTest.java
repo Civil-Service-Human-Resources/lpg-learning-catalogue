@@ -32,14 +32,14 @@ public class MediaEntityFactoryTest {
         when(fileUpload.getName()).thenReturn(name);
         when(fileUpload.getContainer()).thenReturn(fileContainer);
         when(fileUpload.getExtension()).thenReturn(extension);
-        when(fileUpload.getSize()).thenReturn(size);
+        when(fileUpload.getSizeKB()).thenReturn(size);
 
         ProcessedFile processedFile = mock(ProcessedFile.class);
         when(processedFile.getFileUpload()).thenReturn(fileUpload);
 
         Upload upload = mock(Upload.class);
         when(upload.getProcessedFile()).thenReturn(processedFile);
-        when(upload.getSize()).thenReturn(size);
+        when(upload.getSizeKB()).thenReturn(size);
         when(upload.getPath()).thenReturn(path);
 
 

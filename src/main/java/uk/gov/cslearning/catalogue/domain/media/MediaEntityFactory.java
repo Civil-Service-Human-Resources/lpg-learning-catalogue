@@ -38,7 +38,7 @@ public class MediaEntityFactory {
             document.setExtension(upload.getProcessedFile().getFileUpload().getExtension());
             document.setName(upload.getProcessedFile().getFileUpload().getName());
             document.setPath(upload.getPath());
-            document.setFileSize(upload.getSize());
+            document.setFileSize(upload.getSizeKB());
 
             return document;
         }
@@ -54,7 +54,7 @@ public class MediaEntityFactory {
             scorm.setExtension(upload.getProcessedFile().getFileUpload().getExtension());
             scorm.setName(upload.getProcessedFile().getFileUpload().getName());
             scorm.setPath(upload.getPath());
-            scorm.setFileSize(upload.getSize());
+            scorm.setFileSize(upload.getSizeKB());
 
             return scorm;
         }
