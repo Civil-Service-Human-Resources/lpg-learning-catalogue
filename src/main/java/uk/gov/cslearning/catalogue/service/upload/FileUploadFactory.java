@@ -1,6 +1,7 @@
 package uk.gov.cslearning.catalogue.service.upload;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,9 +12,14 @@ public class FileUploadFactory {
     public FileUpload create(MultipartFile file, String container, String filename) {
         return new FileUpload() {
 
+            private final String id = UUIDs.randomBase64UUID();
+            private final String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+            private final String name = (null != filename) ? filename : file.getOriginalFilename();
+            private long sizeKB = file.getSize() / 1024;
+
             @Override
             public String getId() {
-                return UUIDs.randomBase64UUID();
+                return id;
             }
 
             @Override
@@ -23,7 +29,7 @@ public class FileUploadFactory {
 
             @Override
             public String getExtension() {
-                return FilenameUtils.getExtension(file.getOriginalFilename());
+                return extension;
             }
 
             @Override
@@ -33,15 +39,24 @@ public class FileUploadFactory {
 
             @Override
             public String getName() {
-                return (null != filename) ? filename : file.getOriginalFilename();
+                return name;
             }
 
-            /**
-             * File size in KB
-             **/
             @Override
-            public long getSize() {
-                return file.getSize() / 1024;
+            public long getSizeKB() {
+                return sizeKB;
+            }
+
+            @Override
+            public String toString() {
+                return new ToStringBuilder(this)
+                        .append("id", id)
+                        .append("container", container)
+                        .append("file", file)
+                        .append("extension", extension)
+                        .append("name", name)
+                        .append("sizeKB", sizeKB)
+                        .toString();
             }
         };
     }
