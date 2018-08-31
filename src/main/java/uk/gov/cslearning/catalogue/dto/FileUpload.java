@@ -13,5 +13,5 @@ public interface FileUpload {
 
     String getName();
 
-    long getSize();
+    long getSizeKB();
 }

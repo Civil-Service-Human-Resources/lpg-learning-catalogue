@@ -30,7 +30,7 @@ public class AzureUploadClient implements UploadClient {
     }
 
     @Override
-    public UploadedFile upload(InputStream inputStream, String filePath, long fileSize) {
+    public UploadedFile upload(InputStream inputStream, String filePath, long fileSize /* in bytes */) {
 
         try {
             CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);

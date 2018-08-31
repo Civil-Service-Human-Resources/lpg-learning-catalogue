@@ -120,5 +120,4 @@ public class AzureUploadClientTest {
 
         verify(uploadedFileFactory).failedUploadedFile(filePath, fileSize, exception);
     }
-
 }
