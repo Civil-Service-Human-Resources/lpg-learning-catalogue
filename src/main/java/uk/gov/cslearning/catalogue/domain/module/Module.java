@@ -7,6 +7,7 @@ import uk.gov.cslearning.catalogue.domain.Status;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
@@ -35,6 +36,8 @@ public abstract class Module {
 
     private Status status;
 
+    private ArrayList<Event> events;
+
     public Module() {
     }
 
@@ -42,6 +45,8 @@ public abstract class Module {
         this.title = title;
         this.description = description;
         this.duration = duration;
+
+        events = new ArrayList<>();
     }
 
     public void setId(String id) {
@@ -98,6 +103,14 @@ public abstract class Module {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(ArrayList<Event> events) {
+        this.events = events;
     }
 
     public String getModuleType() {

@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Resource;
+import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
+import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
 import java.util.ArrayList;
@@ -37,11 +39,14 @@ public class CourseController {
 
     private final ModuleService moduleService;
 
+    private final EventService eventService;
+
     @Autowired
-    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService) {
+    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService, EventService eventService) {
         this.courseRepository = courseRepository;
         this.resourceRepository = resourceRepository;
         this.moduleService = moduleService;
+        this.eventService = eventService;
     }
 
     @PostMapping
@@ -148,5 +153,16 @@ public class CourseController {
 
         return result.map(module -> new ResponseEntity<>(module, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @PostMapping("/{courseId}/modules/{modulesId}/events")
+    public ResponseEntity createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder){
+        LOGGER.debug("Adding event to module with ID {}", moduleId);
+
+        Event saved = eventService.save(courseId, moduleId, event);
+
+        LOGGER.info("Saved event {}", saved.toString());
+
+        return ResponseEntity.created(builder.path("/course/{courseId}/modules/{moduleId}/events/{eventId}").build(courseId, saved.getId())).build();
     }
 }

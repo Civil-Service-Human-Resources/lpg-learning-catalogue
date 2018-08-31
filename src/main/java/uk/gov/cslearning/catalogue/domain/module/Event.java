@@ -38,4 +38,8 @@ public class Event {
             this.dateRanges.addAll(dateRanges);
         }
     }
+
+    public String getId() {
+        return id;
+    }
 }
