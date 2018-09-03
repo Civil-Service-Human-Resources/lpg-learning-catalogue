@@ -49,9 +49,11 @@ public class ScormUploader implements Uploader {
                 String filePath = String.join("/", destinationDirectory, zipEntry.getName());
 
                 if (fileSubstitutions.containsKey(zipEntry.getName())) {
-                    File file = fileFactory.get(fileSubstitutions.get(zipEntry.getName()));
-                    try (InputStream fileInputStream = inputStreamFactory.createFileInputStream(file)) {
-                        uploadedFiles.add(uploadClient.upload(fileInputStream, filePath, file.length()));
+                    if (!fileSubstitutions.get(zipEntry.getName()).isEmpty()) {
+                        File file = fileFactory.get(fileSubstitutions.get(zipEntry.getName()));
+                        try (InputStream fileInputStream = inputStreamFactory.createFileInputStream(file)) {
+                            uploadedFiles.add(uploadClient.upload(fileInputStream, filePath, file.length()));
+                        }
                     }
                 }
                 else {
