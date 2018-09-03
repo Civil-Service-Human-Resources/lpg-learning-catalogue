@@ -42,4 +42,12 @@ public class Event {
     public String getId() {
         return id;
     }
+
+    public Venue getVenue() {
+        return venue;
+    }
+
+    public void setVenue(Venue venue) {
+        this.venue = venue;
+    }
 }
