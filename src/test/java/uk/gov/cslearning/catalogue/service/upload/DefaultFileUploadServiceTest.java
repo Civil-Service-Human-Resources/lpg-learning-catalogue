@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.service;
+package uk.gov.cslearning.catalogue.service.upload;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,7 +8,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.Upload;
-import uk.gov.cslearning.catalogue.service.upload.DefaultFileUploadService;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClientFactory;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
