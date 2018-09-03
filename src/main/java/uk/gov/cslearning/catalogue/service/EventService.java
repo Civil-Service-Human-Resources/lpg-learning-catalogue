@@ -38,10 +38,6 @@ public class EventService {
 
         newEvents.add(event);
 
-        System.out.println(event.getDateRanges().get(0).getDate());
-        System.out.println(event.getDateRanges().get(0).getStartTime());
-        System.out.println(event.getDateRanges().get(0).getEndTime());
-
         module.setEvents(newEvents);
         courseRepository.save(course);
 
