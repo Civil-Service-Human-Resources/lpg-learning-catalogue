@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.service;
+package uk.gov.cslearning.catalogue.service.upload;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,8 +11,6 @@ import uk.gov.cslearning.catalogue.domain.media.factory.MediaEntityFactory;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
-import uk.gov.cslearning.catalogue.service.upload.DefaultMediaManagementService;
-import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
 
 import java.util.Optional;
 

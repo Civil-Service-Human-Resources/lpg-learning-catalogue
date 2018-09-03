@@ -45,4 +45,16 @@ public class UploadConfig {
                 "zip", createScormFunction
         );
     }
+
+    @Bean("fileSubstitions")
+    public Map<String, String> fileSubstitions() {
+        return ImmutableMap.of(
+                "close_methods.js", "/file-substitions/close_methods.js",
+                "portal_overrides.js", "/file-substitutions/portal_overrides.js",
+                "tincan_wrapper.js", "/file-substitutions/tincan_wrapper.js",
+                "user.js", "/file-substitutions/user.js",
+                "Configuration.js", "/file-substitutions/Configuration.js"
+        );
+    }
+
 }
