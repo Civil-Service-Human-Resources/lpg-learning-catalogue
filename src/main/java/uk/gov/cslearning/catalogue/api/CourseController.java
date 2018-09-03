@@ -11,12 +11,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
+import javax.ws.rs.Path;
 import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,10 +171,56 @@ public class CourseController {
 
     @GetMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
     public ResponseEntity<Event> getEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId) {
-        LOGGER.debug("Getting event {} of module{} of course {}");
+        LOGGER.debug("Getting event {} of module{} of course {}", eventId, moduleId, courseId);
 
         Optional<Event> result = eventService.find(courseId, moduleId, eventId);
 
         return result.map(event -> new ResponseEntity<>(event, OK)).orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @PutMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
+    public ResponseEntity<Object> updateEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId, @RequestBody Event newEvent){
+        LOGGER.debug("Updating event with id {}", eventId);
+
+        if(!eventId.equals(newEvent.getId())){
+            return ResponseEntity.badRequest().build();
+        }
+        if(!courseRepository.existsById(courseId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<Course> result = courseRepository.findById(courseId);
+
+        return result.map(course -> {
+            FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
+            Event event = module.getEventById(eventId);
+
+            event.setDateRanges(newEvent.getDateRanges());
+            event.setJoiningInstructions(newEvent.getJoiningInstructions());
+
+            courseRepository.save(course);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
+    public ResponseEntity<Object> deleteEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId){
+        if(!courseRepository.existsById(courseId)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<Course> result = courseRepository.findById(courseId);
+
+        return result.map(course -> {
+            FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
+            Event event = module.getEventById(eventId);
+
+            module.removeEvent(event);
+
+            courseRepository.save(course);
+
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }

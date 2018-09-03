@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 
 import static java.util.Collections.unmodifiableCollection;
 
@@ -22,6 +23,12 @@ public class FaceToFaceModule extends Module {
         this.events = new HashSet<>();
     }
 
+    public Event getEventById(String eventId){
+        Collection<Event> events = getEvents();
+        Optional<Event> event = events.stream().filter(e -> e.getId().equals(eventId)).findFirst();
+        return event.get();
+    }
+
     public Collection<Event> getEvents() {
         return unmodifiableCollection(events);
     }
@@ -31,6 +38,10 @@ public class FaceToFaceModule extends Module {
         if (events != null) {
             this.events.addAll(events);
         }
+    }
+
+    public void removeEvent(Event event){
+        events.remove(event);
     }
 
     public String getProductCode() {
