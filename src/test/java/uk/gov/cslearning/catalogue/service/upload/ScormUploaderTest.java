@@ -14,11 +14,8 @@ import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.UploadFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -131,7 +128,7 @@ public class ScormUploaderTest {
 
 
     @Test
-    public void shouldSubstituteFileIfExistsInMap() throws IOException, URISyntaxException {
+    public void shouldSubstituteFileIfExistsInMap() throws IOException {
         UploadClient uploadClient = mock(UploadClient.class);
 
         ProcessedFile processedFile = mock(ProcessedFile.class);
@@ -162,31 +159,31 @@ public class ScormUploaderTest {
         String zipEntryName = "zip-entry-name";
         when(zipEntry.getName()).thenReturn(zipEntryName);
 
-        int size = 1024;
-        UploadedFile uploadedFile = mock(UploadedFile.class);
         String destinationDirectory = String.join("/", containerName, fileUploadId);
 
         when(fileSubstitions.containsKey(zipEntryName))
                 .thenReturn(true)
                 .thenReturn(false);
-        String filePath = "file-path";
+        String filePath = "";
         when(fileSubstitions.get(zipEntryName)).thenReturn(filePath);
-        File file = mock(File.class);
-        when(fileFactory.get(filePath)).thenReturn(file);
-        when(file.length()).thenReturn(1024L);
-        FileInputStream fileInputStream = mock(FileInputStream.class);
-        when(inputStreamFactory.createFileInputStream(file)).thenReturn(fileInputStream);
 
-        when(uploadClient.upload(fileInputStream, String.join("/", destinationDirectory, zipEntryName), 1024)).thenReturn(uploadedFile);
 
         Upload upload = mock(Upload.class);
-        when(uploadFactory.createUpload(eq(processedFile), eq(Collections.singletonList(uploadedFile)), eq(destinationDirectory))).thenReturn(upload);
+        when(uploadFactory.createUpload(eq(processedFile), eq(Collections.emptyList()), eq(destinationDirectory))).thenReturn(upload);
 
         Upload result = uploader.upload(processedFile, uploadClient);
 
         assertEquals(upload, result);
 
+        verifyZeroInteractions(uploadClient);
+        verifyZeroInteractions(fileFactory);
         verify(zipInputStream).closeEntry();
         verify(zipInputStream).close();
+    }
+
+
+    @Test
+    public void shouldSkipUploadIfSubstitutionIsEmptyString() {
+
     }
 }
