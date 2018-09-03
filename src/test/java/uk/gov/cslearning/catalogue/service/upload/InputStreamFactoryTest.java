@@ -8,13 +8,13 @@ import java.io.InputStream;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-public class ZipInputStreamFactoryTest {
-    private ZipInputStreamFactory zipInputStreamFactory = new ZipInputStreamFactory();
+public class InputStreamFactoryTest {
+    private InputStreamFactory inputStreamFactory = new InputStreamFactory();
 
     @Test
     public void shouldReturnZipInputStream() throws IOException {
         InputStream inputStream = mock(InputStream.class);
 
-        assertNotNull(zipInputStreamFactory.create(inputStream));
+        assertNotNull(inputStreamFactory.createZipInputStream(inputStream));
     }
 }
