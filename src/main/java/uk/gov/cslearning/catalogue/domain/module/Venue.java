@@ -12,6 +12,9 @@ public class Venue {
 
     private Integer minCapacity;
 
+    public Venue() {
+    }
+
     public Venue(@NotNull String location) {
         this.location = location;
     }
