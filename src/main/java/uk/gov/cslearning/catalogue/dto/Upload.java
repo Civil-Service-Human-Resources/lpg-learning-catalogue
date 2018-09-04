@@ -2,6 +2,8 @@ package uk.gov.cslearning.catalogue.dto;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +14,7 @@ public class Upload {
     private UploadStatus status;
     private String path;
     private Throwable error;
+    private LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
 
     public Upload(ProcessedFile processedFile) {
         this.processedFile = processedFile;
@@ -69,6 +72,7 @@ public class Upload {
                 .append("status", status)
                 .append("path", path)
                 .append("error", error)
+                .append("timestamp", timestamp)
                 .toString();
     }
 }
