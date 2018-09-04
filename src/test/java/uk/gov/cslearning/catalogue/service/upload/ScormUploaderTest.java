@@ -13,16 +13,17 @@ import uk.gov.cslearning.catalogue.dto.UploadedFile;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.UploadFactory;
+import uk.gov.cslearning.catalogue.service.upload.uploader.ZipEntryUploader;
+import uk.gov.cslearning.catalogue.service.upload.uploader.ZipEntryUploaderFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.Map;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,10 +36,7 @@ public class ScormUploaderTest {
     private UploadFactory uploadFactory;
 
     @Mock
-    private FileFactory fileFactory;
-
-    @Mock
-    private Map<String, String> fileSubstitions;
+    private ZipEntryUploaderFactory zipEntryUploaderFactory;
 
     @InjectMocks
     private ScormUploader uploader;
@@ -76,15 +74,14 @@ public class ScormUploaderTest {
         String zipEntryName = "zip-entry-name";
         when(zipEntry.getName()).thenReturn(zipEntryName);
 
-        int size = 1024;
         UploadedFile uploadedFile = mock(UploadedFile.class);
         String destinationDirectory = String.join("/", containerName, fileUploadId);
 
-        when(uploadClient.upload(zipInputStream, String.join("/", destinationDirectory, zipEntryName), 1024)).thenReturn(uploadedFile);
+        ZipEntryUploader zipEntryUploader = mock(ZipEntryUploader.class);
+        when(zipEntryUploaderFactory.get(zipEntry)).thenReturn(zipEntryUploader);
 
-        when(zipInputStream.read(any()))
-                .thenReturn(size)
-                .thenReturn(0);
+        when(zipEntryUploader.upload(uploadClient, zipEntry, zipInputStream,
+                String.join("/", destinationDirectory, zipEntryName))).thenReturn(Optional.of(uploadedFile));
 
         Upload upload = mock(Upload.class);
         when(uploadFactory.createUpload(eq(processedFile), eq(Collections.singletonList(uploadedFile)), eq(destinationDirectory))).thenReturn(upload);
@@ -124,66 +121,5 @@ public class ScormUploaderTest {
         Upload result = uploader.upload(processedFile, mock(UploadClient.class));
 
         assertEquals(upload, result);
-    }
-
-
-    @Test
-    public void shouldSubstituteFileIfExistsInMap() throws IOException {
-        UploadClient uploadClient = mock(UploadClient.class);
-
-        ProcessedFile processedFile = mock(ProcessedFile.class);
-        FileUpload fileUpload = mock(FileUpload.class);
-
-        when(processedFile.getFileUpload()).thenReturn(fileUpload);
-
-        MultipartFile multipartFile = mock(MultipartFile.class);
-        InputStream inputStream = mock(InputStream.class);
-
-        when(fileUpload.getFile()).thenReturn(multipartFile);
-        when(multipartFile.getInputStream()).thenReturn(inputStream);
-
-        ZipInputStream zipInputStream = mock(ZipInputStream.class);
-
-        when(inputStreamFactory.createZipInputStream(inputStream)).thenReturn(zipInputStream);
-
-        ZipEntry zipEntry = mock(ZipEntry.class);
-
-        when(zipInputStream.getNextEntry())
-                .thenReturn(zipEntry)
-                .thenReturn(null);
-
-        String containerName = "container";
-        when(fileUpload.getContainer()).thenReturn(containerName);
-        String fileUploadId = "file-upload-id";
-        when(fileUpload.getId()).thenReturn(fileUploadId);
-        String zipEntryName = "zip-entry-name";
-        when(zipEntry.getName()).thenReturn(zipEntryName);
-
-        String destinationDirectory = String.join("/", containerName, fileUploadId);
-
-        when(fileSubstitions.containsKey(zipEntryName))
-                .thenReturn(true)
-                .thenReturn(false);
-        String filePath = "";
-        when(fileSubstitions.get(zipEntryName)).thenReturn(filePath);
-
-
-        Upload upload = mock(Upload.class);
-        when(uploadFactory.createUpload(eq(processedFile), eq(Collections.emptyList()), eq(destinationDirectory))).thenReturn(upload);
-
-        Upload result = uploader.upload(processedFile, uploadClient);
-
-        assertEquals(upload, result);
-
-        verifyZeroInteractions(uploadClient);
-        verifyZeroInteractions(fileFactory);
-        verify(zipInputStream).closeEntry();
-        verify(zipInputStream).close();
-    }
-
-
-    @Test
-    public void shouldSkipUploadIfSubstitutionIsEmptyString() {
-
     }
 }
