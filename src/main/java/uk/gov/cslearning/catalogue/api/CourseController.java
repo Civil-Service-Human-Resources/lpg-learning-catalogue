@@ -152,6 +152,10 @@ public class CourseController {
     public ResponseEntity<Module> getModule(@PathVariable String courseId, @PathVariable String moduleId) {
         LOGGER.debug("Getting module {} of course {}", moduleId, courseId);
 
+        if (!courseRepository.existsById(courseId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         Optional<Module> result = moduleService.find(courseId, moduleId);
 
         return result.map(module -> new ResponseEntity<>(module, OK))
@@ -159,8 +163,12 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/modules/{moduleId}/events")
-    public ResponseEntity<Void> createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder){
+    public ResponseEntity<Object> createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder){
         LOGGER.debug("Adding event to module with ID {}", moduleId);
+
+        if (!courseRepository.existsById(courseId)) {
+            return ResponseEntity.badRequest().build();
+        }
 
         Event saved = eventService.save(courseId, moduleId, event);
 
@@ -179,12 +187,9 @@ public class CourseController {
     }
 
     @PutMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
-    public ResponseEntity<Object> updateEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId, @RequestBody Event newEvent){
+    public ResponseEntity<Event> updateEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId, @RequestBody Event newEvent){
         LOGGER.debug("Updating event with id {}", eventId);
 
-        if(!eventId.equals(newEvent.getId())){
-            return ResponseEntity.badRequest().build();
-        }
         if(!courseRepository.existsById(courseId)){
             return ResponseEntity.badRequest().build();
         }
@@ -200,7 +205,7 @@ public class CourseController {
 
             courseRepository.save(course);
 
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().body(event);
         }).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
