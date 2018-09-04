@@ -18,6 +18,7 @@ import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
+import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
 import java.net.URL;
@@ -49,6 +50,9 @@ public class CourseControllerTest {
 
     @MockBean
     private ModuleService moduleService;
+
+    @MockBean
+    private EventService eventService;
 
     private Gson gson = new Gson();
 
