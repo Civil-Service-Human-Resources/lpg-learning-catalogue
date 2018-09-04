@@ -46,7 +46,7 @@ public class UploadConfig {
         );
     }
 
-    @Bean("fileSubstitions")
+    @Bean("fileSubstitutions")
     public Map<String, String> fileSubstitions() {
         return ImmutableMap.of(
                 /* file-to-substitute => substituted-with */

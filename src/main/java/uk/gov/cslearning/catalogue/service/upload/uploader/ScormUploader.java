@@ -2,38 +2,32 @@ package uk.gov.cslearning.catalogue.service.upload.uploader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.dto.UploadedFile;
-import uk.gov.cslearning.catalogue.service.upload.FileFactory;
 import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 @Component
 public class ScormUploader implements Uploader {
     private static final Logger LOG = LoggerFactory.getLogger(ScormUploader.class);
+
     private final InputStreamFactory inputStreamFactory;
     private final UploadFactory uploadFactory;
-    private FileFactory fileFactory;
-    private final Map<String, String> fileSubstitutions;
+    private final ZipEntryUploaderFactory zipEntryUploaderFactory;
 
-    public ScormUploader(InputStreamFactory inputStreamFactory, UploadFactory uploadFactory, FileFactory fileFactory, @Qualifier("fileSubstitions") Map<String, String> fileSubstitutions) {
+    public ScormUploader(InputStreamFactory inputStreamFactory, UploadFactory uploadFactory, ZipEntryUploaderFactory zipEntryUploaderFactory) {
         this.inputStreamFactory = inputStreamFactory;
         this.uploadFactory = uploadFactory;
-        this.fileFactory = fileFactory;
-        this.fileSubstitutions = fileSubstitutions;
+        this.zipEntryUploaderFactory = zipEntryUploaderFactory;
     }
 
     @Override
@@ -48,23 +42,9 @@ public class ScormUploader implements Uploader {
             while (zipEntry != null) {
                 String filePath = String.join("/", destinationDirectory, zipEntry.getName());
 
-                if (fileSubstitutions.containsKey(zipEntry.getName())) {
-                    if (!fileSubstitutions.get(zipEntry.getName()).isEmpty()) {
-                        File file = fileFactory.get(fileSubstitutions.get(zipEntry.getName()));
-                        try (InputStream fileInputStream = inputStreamFactory.createFileInputStream(file)) {
-                            uploadedFiles.add(uploadClient.upload(fileInputStream, filePath, file.length()));
-                        }
-                    }
-                }
-                else {
-                    long length;
-                    long size = 0;
-                    while ((length = inputStream.read(new byte[1024])) > 0) {
-                        size += length;
-                    }
-
-                    uploadedFiles.add(uploadClient.upload(inputStream, filePath, size));
-                }
+                ZipEntryUploader zipEntryUploader = zipEntryUploaderFactory.get(zipEntry);
+                zipEntryUploader.upload(uploadClient, zipEntry, inputStream, filePath)
+                        .ifPresent(uploadedFiles::add);
 
                 zipEntry = inputStream.getNextEntry();
             }
