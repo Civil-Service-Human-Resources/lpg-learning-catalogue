@@ -29,10 +29,18 @@ public class UploadConfig {
             DefaultUploader defaultUploader,
             ScormUploader scormUploader
     ) {
-        return ImmutableMap.of(
-                "doc", () -> defaultUploader,
-                "zip", () -> scormUploader
-        );
+        return ImmutableMap.<String, Supplier<Uploader>>builder()
+                .put("doc",  () -> defaultUploader) // MS Word
+                .put("docx", () -> defaultUploader) // MS Word
+                .put("pdf",  () -> defaultUploader) // PDF
+                .put("ppsm", () -> defaultUploader) // MS PowerPoint
+                .put("ppt",  () -> defaultUploader) // MS PowerPoint
+                .put("pptx", () -> defaultUploader) // MS PowerPoint
+                .put("xls",  () -> defaultUploader) // MS Excel
+                .put("xlsx", () -> defaultUploader) // MS Excel
+                .put("zip",  () -> scormUploader)   // Scorm
+                .build();
+
     }
 
     @Bean(name="mediaEntityFactoryMethods")
@@ -40,10 +48,17 @@ public class UploadConfig {
             CreateDocumentFunction createDocumentFunction,
             CreateScormFunction createScormFunction
     ){
-        return ImmutableMap.of(
-                "doc", createDocumentFunction,
-                "zip", createScormFunction
-        );
+        return ImmutableMap.<String, Function<Upload, MediaEntity>>builder()
+                .put("doc",  createDocumentFunction) // MS Word
+                .put("docx", createDocumentFunction) // MS Word
+                .put("pdf",  createDocumentFunction) // PDF
+                .put("ppsm", createDocumentFunction) // MS PowerPoint
+                .put("ppt",  createDocumentFunction) // MS PowerPoint
+                .put("pptx", createDocumentFunction) // MS PowerPoint
+                .put("xls",  createDocumentFunction) // MS Excel
+                .put("xlsx", createDocumentFunction) // MS Excel
+                .put("zip",  createScormFunction)    // Scorm
+                .build();
     }
 
     @Bean("fileSubstitutions")
@@ -57,5 +72,4 @@ public class UploadConfig {
                 "SCORMDriver/Configuration.js", "/file-substitutions/Configuration.js" // DominKNOW
         );
     }
-
 }
