@@ -4,11 +4,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ProcessedFile {
     private final FileUpload fileUpload;
-    private Map<String, String> metadata;
+    private Map<String, String> metadata = new HashMap<>();
     private final LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
 
     public ProcessedFile(FileUpload fileUpload) {
