@@ -18,8 +18,6 @@ import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
-import javax.ws.rs.Path;
-import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
