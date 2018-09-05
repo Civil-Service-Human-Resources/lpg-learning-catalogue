@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Visibility;
-import uk.gov.cslearning.catalogue.domain.module.BlogModule;
+import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
@@ -131,11 +131,11 @@ public class CourseControllerTest {
     @Test
     public void shouldCreateModule() throws Exception {
         String moduleId = "module-id";
-        Module module = mock(BlogModule.class);
+        Module module = mock(LinkModule.class);
         when(module.getId()).thenReturn(moduleId);
 
         String courseId = UUID.randomUUID().toString();
-        String json = gson.toJson(ImmutableMap.of("type", "blog", "location", "http://localhost"));
+        String json = gson.toJson(ImmutableMap.of("type", "link", "location", "http://localhost"));
 
         when(moduleService.save(eq(courseId), any(Module.class))).thenReturn(module);
 
@@ -151,7 +151,7 @@ public class CourseControllerTest {
     @Test
     public void shouldReturnBadRequestIfCourseNotFoundWhenSavingModule() throws Exception {
         String moduleId = "module-id";
-        Module module = mock(BlogModule.class);
+        Module module = mock(LinkModule.class);
         when(module.getId()).thenReturn(moduleId);
 
         String courseId = "course-id";
@@ -176,7 +176,7 @@ public class CourseControllerTest {
         String moduleId = "module-id";
         String url = "http://example.org";
 
-        Module module = new BlogModule(new URL(url));
+        Module module = new LinkModule(new URL(url));
 
         when(moduleService.find(courseId, moduleId)).thenReturn(Optional.of(module));
 

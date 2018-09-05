@@ -6,13 +6,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.net.URL;
 
-@JsonTypeName("blog")
-public class BlogModule extends Module {
+@JsonTypeName("link")
+public class LinkModule extends Module {
 
     private URL url;
 
     @JsonCreator
-    public BlogModule(@JsonProperty("url") URL url) {
+    public LinkModule(@JsonProperty("url") URL url) {
         this.url = url;
     }
 
