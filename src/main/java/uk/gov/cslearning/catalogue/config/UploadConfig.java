@@ -9,6 +9,9 @@ import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
 import uk.gov.cslearning.catalogue.domain.media.factory.CreateDocumentFunction;
 import uk.gov.cslearning.catalogue.domain.media.factory.CreateScormFunction;
 import uk.gov.cslearning.catalogue.dto.Upload;
+import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.mp4.Mp4FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
@@ -71,5 +74,24 @@ public class UploadConfig {
                 "story_content/user.js", "/file-substitutions/user.js", //Storyline
                 "SCORMDriver/Configuration.js", "/file-substitutions/Configuration.js" // DominKNOW
         );
+    }
+
+    @Bean("fileProcessorMap")
+    public Map<String, FileProcessor> fileProcessorMap(
+            DefaultFileProcessor defaultFileProcessor,
+            Mp4FileProcessor mp4FileProcessor
+    ) {
+        return ImmutableMap.<String, FileProcessor>builder()
+                .put("doc",  defaultFileProcessor) // MS Word
+                .put("docx", defaultFileProcessor) // MS Word
+                .put("pdf",  defaultFileProcessor) // PDF
+                .put("ppsm", defaultFileProcessor) // MS PowerPoint
+                .put("ppt",  defaultFileProcessor) // MS PowerPoint
+                .put("pptx", defaultFileProcessor) // MS PowerPoint
+                .put("xls",  defaultFileProcessor) // MS Excel
+                .put("xlsx", defaultFileProcessor) // MS Excel
+                .put("zip",  defaultFileProcessor) // Scorm
+                .put("mp4",  mp4FileProcessor)     // Video
+                .build();
     }
 }

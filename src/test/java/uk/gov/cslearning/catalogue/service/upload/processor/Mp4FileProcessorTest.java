@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class Mp4ProcessorTest {
+public class Mp4FileProcessorTest {
     @Mock
     private ProcessedFileFactory processedFileFactory;
 
@@ -49,7 +49,7 @@ public class Mp4ProcessorTest {
     private ParseContextFactory parseContextFactory;
 
     @InjectMocks
-    private Mp4Processor mp4Processor;
+    private Mp4FileProcessor mp4FileProcessor;
 
     @Test
     public void processShouldSetMetadata() throws IOException, TikaException, SAXException {
@@ -90,7 +90,7 @@ public class Mp4ProcessorTest {
         when(processedFileFactory.create(eq(fileUpload), argThat(allOf(hasEntry("duration", (Object) duration),
                 hasEntry("imageWidth", (Object) imageWidth), hasEntry("imageHeight", (Object) imageHeight))))).thenReturn(processedFile);
 
-        ProcessedFile result = mp4Processor.process(fileUpload);
+        ProcessedFile result = mp4FileProcessor.process(fileUpload);
 
         assertEquals(processedFile, result);
 
@@ -119,7 +119,7 @@ public class Mp4ProcessorTest {
         when(fileUpload.getFile()).thenReturn(multipartFile);
 
         try {
-            mp4Processor.process(fileUpload);
+            mp4FileProcessor.process(fileUpload);
             fail("Expected FileUploadException");
         } catch (FileUploadException e) {
             assertEquals(ioException, e.getCause());
@@ -150,7 +150,7 @@ public class Mp4ProcessorTest {
         doThrow(tikaException).when(parser).parse(inputStream, contentHandler, metadata, parseContext);
 
         try {
-            mp4Processor.process(fileUpload);
+            mp4FileProcessor.process(fileUpload);
             fail("Expected FileUploadException");
         } catch (FileUploadException e) {
             assertEquals(tikaException, e.getCause());
@@ -181,7 +181,7 @@ public class Mp4ProcessorTest {
         doThrow(saxException).when(parser).parse(inputStream, contentHandler, metadata, parseContext);
 
         try {
-            mp4Processor.process(fileUpload);
+            mp4FileProcessor.process(fileUpload);
             fail("Expected FileUploadException");
         } catch (FileUploadException e) {
             assertEquals(saxException, e.getCause());
