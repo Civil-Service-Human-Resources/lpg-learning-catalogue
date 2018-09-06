@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.api;
 
+import org.codehaus.janino.Mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,10 +151,6 @@ public class CourseController {
     public ResponseEntity<Module> getModule(@PathVariable String courseId, @PathVariable String moduleId) {
         LOGGER.debug("Getting module {} of course {}", moduleId, courseId);
 
-        if (!courseRepository.existsById(courseId)) {
-            return ResponseEntity.badRequest().build();
-        }
-
         Optional<Module> result = moduleService.find(courseId, moduleId);
 
         return result.map(module -> new ResponseEntity<>(module, OK))
@@ -164,10 +161,6 @@ public class CourseController {
     public ResponseEntity<Object> createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder){
         LOGGER.debug("Adding event to module with ID {}", moduleId);
 
-        if (!courseRepository.existsById(courseId)) {
-            return ResponseEntity.badRequest().build();
-        }
-
         Event saved = eventService.save(courseId, moduleId, event);
 
         LOGGER.info("Saved event {}", saved.toString());
@@ -177,7 +170,7 @@ public class CourseController {
 
     @GetMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
     public ResponseEntity<Event> getEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId) {
-        LOGGER.debug("Getting event {} of module{} of course {}", eventId, moduleId, courseId);
+        LOGGER.debug("Getting event {} of module {} of course {}", eventId, moduleId, courseId);
 
         Optional<Event> result = eventService.find(courseId, moduleId, eventId);
 
@@ -191,39 +184,60 @@ public class CourseController {
         if(!courseRepository.existsById(courseId)){
             return ResponseEntity.badRequest().build();
         }
-
-        Optional<Course> result = courseRepository.findById(courseId);
-
-        return result.map(course -> {
-            FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
-            Event event = module.getEventById(eventId);
-
-            event.setDateRanges(newEvent.getDateRanges());
-            event.setJoiningInstructions(newEvent.getJoiningInstructions());
-
-            courseRepository.save(course);
-
-            return ResponseEntity.ok().body(event);
-        }).orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-
-    @DeleteMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
-    public ResponseEntity<Object> deleteEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId){
-        if(!courseRepository.existsById(courseId)){
+        if(courseRepository.findById(courseId).get().getModuleById(moduleId) == null){
             return ResponseEntity.badRequest().build();
         }
 
         Optional<Course> result = courseRepository.findById(courseId);
 
         return result.map(course -> {
-            FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
-            Event event = module.getEventById(eventId);
+            Module module = course.getModuleById(moduleId);
 
-            module.removeEvent(event);
+            if(module instanceof FaceToFaceModule) {
+                FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
 
-            courseRepository.save(course);
+                Event event = faceToFaceModule.getEventById(eventId);
 
-            return ResponseEntity.noContent().build();
+                event.setDateRanges(newEvent.getDateRanges());
+                event.setJoiningInstructions(newEvent.getJoiningInstructions());
+
+                courseRepository.save(course);
+
+                return ResponseEntity.ok().body(event);
+            }
+
+            return ResponseEntity.badRequest().body(newEvent);
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
+    public ResponseEntity<Object> deleteEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId){
+        LOGGER.debug("Deleting event with id {}", eventId);
+        if(!courseRepository.existsById(courseId)){
+            return ResponseEntity.badRequest().build();
+        }
+        if(courseRepository.findById(courseId).get().getModuleById(moduleId) == null){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<Course> result = courseRepository.findById(courseId);
+
+        return result.map(course -> {
+            Module module = course.getModuleById(moduleId);
+
+            if(module instanceof  FaceToFaceModule) {
+                FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
+
+                Event event = faceToFaceModule.getEventById(eventId);
+
+                faceToFaceModule.removeEvent(event);
+
+                courseRepository.save(course);
+
+                return ResponseEntity.noContent().build();
+            }
+
+            return ResponseEntity.badRequest().build();
         }).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }
