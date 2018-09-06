@@ -369,8 +369,8 @@ public class LearningProviderControllerTest {
                 .andExpect(status().isNoContent());
 
         assert (learningProvider.getTermsAndConditions().size() == 1);
-        assertEquals(learningProvider.getTermsAndConditions().get(0).getId(), termsAndConditions.getId());
-        assertEquals(learningProvider.getTermsAndConditions().get(0).getName(), "new");
+        assertEquals(termsAndConditions.getId(), learningProvider.getTermsAndConditions().get(0).getId());
+        assertEquals("new", learningProvider.getTermsAndConditions().get(0).getName());
     }
 
     @Test

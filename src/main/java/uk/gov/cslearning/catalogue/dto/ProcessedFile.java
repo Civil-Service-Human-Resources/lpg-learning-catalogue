@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.dto;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.Clock;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 public class ProcessedFile {
     private final FileUpload fileUpload;
-    private Map<String, String> metadata = new HashMap<>();
+    private Map<String, Object> metadata = new HashMap<>();
     private final LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
 
     public ProcessedFile(FileUpload fileUpload) {
@@ -20,12 +21,12 @@ public class ProcessedFile {
         return fileUpload;
     }
 
-    public Map<String, String> getMetadata() {
-        return metadata;
+    public Map<String, Object> getMetadata() {
+        return ImmutableMap.copyOf(metadata);
     }
 
-    public void setMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
+    public void setMetadata(Map<String, Object> metadata) {
+        this.metadata = ImmutableMap.copyOf(metadata);
     }
 
     public LocalDateTime getTimestamp() {

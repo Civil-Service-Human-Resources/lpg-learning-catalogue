@@ -25,7 +25,7 @@ public class CreateDocumentFunctionTest {
         String name = "file-name";
         String path = "test-path";
         long sizeKB = 13;
-        Map<String, String> metadata = ImmutableMap.of("key", "value");
+        Map<String, Object> metadata = ImmutableMap.of("key", "value");
 
         FileUpload fileUpload = mock(FileUpload.class);
         when(fileUpload.getId()).thenReturn(id);
@@ -33,9 +33,8 @@ public class CreateDocumentFunctionTest {
         when(fileUpload.getExtension()).thenReturn(extension);
         when(fileUpload.getName()).thenReturn(name);
 
-        ProcessedFile processedFile = mock(ProcessedFile.class);
-        when(processedFile.getFileUpload()).thenReturn(fileUpload);
-        when(processedFile.getMetadata()).thenReturn(metadata);
+        ProcessedFile processedFile = new ProcessedFile(fileUpload);
+        processedFile.setMetadata(metadata);
 
         Upload upload = mock(Upload.class);
         when(upload.getProcessedFile()).thenReturn(processedFile);

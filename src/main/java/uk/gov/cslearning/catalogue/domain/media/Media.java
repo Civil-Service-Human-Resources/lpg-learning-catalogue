@@ -15,5 +15,5 @@ public interface Media {
     String getExtension();
     String getPath();
 
-    Map<String, String> getMetadata();
+    Map<String, Object> getMetadata();
 }
