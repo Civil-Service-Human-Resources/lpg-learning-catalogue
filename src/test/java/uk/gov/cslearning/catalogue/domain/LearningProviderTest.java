@@ -15,7 +15,7 @@ public class LearningProviderTest {
     public void shouldGetLearningProviderName() {
         LearningProvider learningProvider = new LearningProvider(LEARNING_PROVIDER_NAME);
 
-        assertEquals(learningProvider.getName(), LEARNING_PROVIDER_NAME);
+        assertEquals(LEARNING_PROVIDER_NAME, learningProvider.getName());
     }
 
     @Test
@@ -24,11 +24,11 @@ public class LearningProviderTest {
 
         CancellationPolicy cancellationPolicy = new CancellationPolicy("Example cancellation", "Short", "Full");
 
-        assertEquals(learningProvider.getCancellationPolicies().size(), 0);
+        assertEquals(0, learningProvider.getCancellationPolicies().size());
 
         learningProvider.addCancellationPolicy(cancellationPolicy);
 
-        assertEquals(learningProvider.getCancellationPolicies().size(), 1);
+        assertEquals(1, learningProvider.getCancellationPolicies().size());
     }
 
     @Test
@@ -40,7 +40,7 @@ public class LearningProviderTest {
 
         learningProvider.addCancellationPolicy(cancellationPolicy);
 
-        assertEquals(learningProvider.getCancellationPolicyById(id), cancellationPolicy);
+        assertEquals(cancellationPolicy, learningProvider.getCancellationPolicyById(id));
     }
 
     @Test
@@ -50,11 +50,11 @@ public class LearningProviderTest {
         CancellationPolicy cancellationPolicy = new CancellationPolicy("Example cancellation", "Short", "Full");
 
         learningProvider.addCancellationPolicy(cancellationPolicy);
-        assertEquals(learningProvider.getCancellationPolicies().size(), 1);
+        assertEquals(1, learningProvider.getCancellationPolicies().size());
 
         learningProvider.removeCancellationPolicy(cancellationPolicy);
 
-        assertEquals(learningProvider.getCancellationPolicies().size(), 0);
+        assertEquals(0, learningProvider.getCancellationPolicies().size());
     }
 
     @Test
@@ -63,11 +63,11 @@ public class LearningProviderTest {
 
         TermsAndConditions termsAndConditions = new TermsAndConditions("Example terms", "Full");
 
-        assertEquals(learningProvider.getTermsAndConditions().size(), 0);
+        assertEquals(0, learningProvider.getTermsAndConditions().size());
 
         learningProvider.addTermsAndConditions(termsAndConditions);
 
-        assertEquals(learningProvider.getTermsAndConditions().size(), 1);
+        assertEquals(1, learningProvider.getTermsAndConditions().size());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class LearningProviderTest {
 
         learningProvider.addTermsAndConditions(termsAndConditions);
 
-        assertEquals(learningProvider.getTermsAndConditionsById(id), termsAndConditions);
+        assertEquals(termsAndConditions, learningProvider.getTermsAndConditionsById(id));
     }
 
     @Test
@@ -89,10 +89,10 @@ public class LearningProviderTest {
         TermsAndConditions termsAndConditions = new TermsAndConditions("Example terms", "Full");
 
         learningProvider.addTermsAndConditions(termsAndConditions);
-        assertEquals(learningProvider.getTermsAndConditions().size(), 1);
+        assertEquals(1, learningProvider.getTermsAndConditions().size());
 
         learningProvider.removeTermsAndConditions(termsAndConditions);
 
-        assertEquals(learningProvider.getTermsAndConditions().size(), 0);
+        assertEquals(0, learningProvider.getTermsAndConditions().size());
     }
 }

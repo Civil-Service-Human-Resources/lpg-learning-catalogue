@@ -27,7 +27,7 @@ public class MediaEntity implements Media {
     @NotNull
     private String path;
 
-    private Map<String, String> metadata = new HashMap<>();
+    private Map<String, Object> metadata = new HashMap<>();
 
     private long fileSize;
     private String extension;
@@ -94,11 +94,11 @@ public class MediaEntity implements Media {
     }
 
     @Override
-    public Map<String, String> getMetadata() {
+    public Map<String, Object> getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(Map<String, String> metadata) {
+    public void setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
     }
 }
