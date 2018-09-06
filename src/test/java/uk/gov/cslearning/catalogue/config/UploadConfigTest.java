@@ -12,6 +12,9 @@ import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
 import uk.gov.cslearning.catalogue.domain.media.factory.CreateDocumentFunction;
 import uk.gov.cslearning.catalogue.domain.media.factory.CreateScormFunction;
 import uk.gov.cslearning.catalogue.dto.Upload;
+import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.mp4.Mp4FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
@@ -97,5 +100,32 @@ public class UploadConfigTest {
         PowerMockito.when(cloudStorageAccount.createCloudBlobClient()).thenReturn(cloudBlobClient);
 
         assertEquals(cloudBlobClient, config.storageClient(cloudStorageAccount));
+    }
+
+
+    @Test
+    public void shouldHaveCorrectFileProcessorMap() {
+        DefaultFileProcessor defaultFileProcessor = mock(DefaultFileProcessor.class);
+        Mp4FileProcessor mp4FileProcessor = mock(Mp4FileProcessor.class);
+
+        Map<String, FileProcessor> fileProcessorMap = ImmutableMap.<String, FileProcessor>builder()
+                .put("doc",  defaultFileProcessor) // MS Word
+                .put("docx", defaultFileProcessor) // MS Word
+                .put("pdf",  defaultFileProcessor) // PDF
+                .put("ppsm", defaultFileProcessor) // MS PowerPoint
+                .put("ppt",  defaultFileProcessor) // MS PowerPoint
+                .put("pptx", defaultFileProcessor) // MS PowerPoint
+                .put("xls",  defaultFileProcessor) // MS Excel
+                .put("xlsx", defaultFileProcessor) // MS Excel
+                .put("zip",  defaultFileProcessor) // Scorm
+                .put("mp4",  mp4FileProcessor)     // Video
+                .build();
+
+        assertEquals(fileProcessorMap.keySet(),
+                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor).keySet());
+
+
+        fileProcessorMap.forEach((key, value) -> assertEquals(key, value,
+                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor).get(key)));
     }
 }

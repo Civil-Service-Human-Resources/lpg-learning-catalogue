@@ -20,7 +20,7 @@ import java.time.Duration;
 import java.util.Map;
 
 @Component
-public class Mp4Processor implements FileProcessor {
+public class Mp4FileProcessor implements FileProcessor {
 
     private final ProcessedFileFactory processedFileFactory;
     private final ParserFactory parserFactory;
@@ -28,7 +28,7 @@ public class Mp4Processor implements FileProcessor {
     private final MetadataFactory metadataFactory;
     private final ParseContextFactory parseContextFactory;
 
-    public Mp4Processor(ProcessedFileFactory processedFileFactory, ParserFactory parserFactory, ContentHandlerFactory contentHandlerFactory, MetadataFactory metadataFactory, ParseContextFactory parseContextFactory) {
+    public Mp4FileProcessor(ProcessedFileFactory processedFileFactory, ParserFactory parserFactory, ContentHandlerFactory contentHandlerFactory, MetadataFactory metadataFactory, ParseContextFactory parseContextFactory) {
         this.processedFileFactory = processedFileFactory;
         this.parserFactory = parserFactory;
         this.contentHandlerFactory = contentHandlerFactory;
