@@ -9,6 +9,10 @@ spring:
     user:
       name: ${AUTH_USER:user}
       password: ${AUTH_PASSWORD:password}
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
 
 server:
   port: 9001
@@ -24,3 +28,12 @@ elasticsearch:
   uri: ${ELASTICSEARCH_URI:http://127.0.0.1:9200}
   username: ${ELASTICSEARCH_USERNAME:elastic}
   password: ${ELASTICSEARCH_PASSWORD:changeme}
+
+azure:
+  account:
+    name: ${AZURE_ACCOUNT_NAME:lpgdev}
+    key: ${AZURE_ACCOUNT_KEY}
+  storage:
+    container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
+    connection-string: "DefaultEndpointsProtocol=https;AccountName=${azure.account.name};AccountKey=${azure.account.key}"
+
