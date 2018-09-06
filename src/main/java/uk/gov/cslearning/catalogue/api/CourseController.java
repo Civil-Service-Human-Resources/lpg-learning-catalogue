@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.api;
 
-import org.codehaus.janino.Mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
