@@ -36,6 +36,7 @@ public class UploadConfig {
                 .put("pptx", () -> defaultUploader) // MS PowerPoint
                 .put("xls",  () -> defaultUploader) // MS Excel
                 .put("xlsx", () -> defaultUploader) // MS Excel
+                .put("mp4",  () -> defaultUploader) // Video
                 .put("zip",  () -> scormUploader)   // Scorm
                 .build();
 
