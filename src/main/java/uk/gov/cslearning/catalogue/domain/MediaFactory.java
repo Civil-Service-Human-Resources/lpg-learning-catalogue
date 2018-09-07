@@ -18,7 +18,7 @@ public class MediaFactory {
         media.setExtension(upload.getProcessedFile().getFileUpload().getExtension());
         media.setName(upload.getProcessedFile().getFileUpload().getName());
         media.setPath(upload.getPath());
-        media.setFileSize(upload.getSizeKB());
+        media.setFileSizeKB(upload.getSizeKB());
         media.setMetadata(upload.getProcessedFile().getMetadata());
 
         return media;

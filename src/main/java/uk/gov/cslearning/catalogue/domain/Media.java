@@ -1,11 +1,11 @@
 package uk.gov.cslearning.catalogue.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.io.FileUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.validation.constraints.NotNull;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class Media {
 
     private Map<String, Object> metadata = new HashMap<>();
 
-    private long fileSize;
+    private long fileSizeKB;
     private String extension;
 
     public String getId() {
@@ -48,17 +48,21 @@ public class Media {
         this.name = name;
     }
 
-    public long getFileSize() {
-        return fileSize;
+    public long getFileSizeKB() {
+        return fileSizeKB;
     }
 
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
+    public void setFileSizeKB(long fileSizeKB) {
+        this.fileSizeKB = fileSizeKB;
     }
 
     @JsonProperty
     public String formatFileSize() {
-        return FileUtils.byteCountToDisplaySize(fileSize * 1024);
+        long sizeBytes = fileSizeKB * 1024;
+        if(sizeBytes <= 0) return "0";
+        final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
+        int digitGroups = (int) (Math.log10(sizeBytes)/Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(sizeBytes/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
     public String getContainer() {
