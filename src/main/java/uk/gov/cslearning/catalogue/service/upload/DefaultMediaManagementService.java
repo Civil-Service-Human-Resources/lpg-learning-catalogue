@@ -1,9 +1,8 @@
 package uk.gov.cslearning.catalogue.service.upload;
 
 import org.springframework.stereotype.Service;
-import uk.gov.cslearning.catalogue.domain.media.Media;
-import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
-import uk.gov.cslearning.catalogue.domain.media.factory.MediaEntityFactory;
+import uk.gov.cslearning.catalogue.domain.Media;
+import uk.gov.cslearning.catalogue.domain.MediaFactory;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
@@ -12,26 +11,26 @@ import java.util.Optional;
 
 @Service
 public class DefaultMediaManagementService implements MediaManagementService {
-    private final MediaEntityFactory mediaEntityFactory;
+    private final MediaFactory mediaFactory;
     private final MediaRepository mediaRepository;
     private final FileUploadService fileUploadService;
 
-    public DefaultMediaManagementService(MediaEntityFactory mediaEntityFactory, MediaRepository mediaRepository, FileUploadService fileUploadService) {
-        this.mediaEntityFactory = mediaEntityFactory;
+    public DefaultMediaManagementService(MediaFactory mediaFactory, MediaRepository mediaRepository, FileUploadService fileUploadService) {
+        this.mediaFactory = mediaFactory;
         this.mediaRepository = mediaRepository;
         this.fileUploadService = fileUploadService;
     }
 
     @Override
-    public MediaEntity create(FileUpload fileUpload) {
+    public Media create(FileUpload fileUpload) {
         Upload upload = fileUploadService.upload(fileUpload);
-        Media media = mediaEntityFactory.create(upload);
+        Media media = mediaFactory.create(upload);
 
-        return mediaRepository.save((MediaEntity) media);
+        return mediaRepository.save((Media) media);
     }
 
     @Override
-    public Optional<MediaEntity> findById(String mediaId) {
+    public Optional<Media> findById(String mediaId) {
         return mediaRepository.findById(mediaId);
     }
 }

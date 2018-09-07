@@ -8,10 +8,6 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
-import uk.gov.cslearning.catalogue.domain.media.factory.CreateDocumentFunction;
-import uk.gov.cslearning.catalogue.domain.media.factory.CreateScormFunction;
-import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.mp4.Mp4FileProcessor;
@@ -20,7 +16,6 @@ import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 
 import java.util.Map;
-import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -52,29 +47,6 @@ public class UploadConfigTest {
 
         uploaderMap.forEach((key, value) -> assertEquals(
                 key, value, config.uploaderFactoryMethods(defaultUploader, scormUploader).get(key).get()));
-    }
-
-    @Test
-    public void shouldHaveCorrectMediaEntityFactoryMappings() {
-        CreateDocumentFunction createDocumentFunction = mock(CreateDocumentFunction.class);
-        CreateScormFunction createScormFunction = mock(CreateScormFunction.class);
-
-        Map<String, Function<Upload, MediaEntity>> functions = ImmutableMap.<String, Function<Upload, MediaEntity>>builder()
-                .put("doc", createDocumentFunction)
-                .put("docx", createDocumentFunction)
-                .put("pdf", createDocumentFunction)
-                .put("ppsm", createDocumentFunction)
-                .put("ppt", createDocumentFunction)
-                .put("pptx", createDocumentFunction)
-                .put("xls", createDocumentFunction)
-                .put("xlsx", createDocumentFunction)
-                .put("zip", createScormFunction)
-                .build();
-
-        assertEquals(functions.keySet(), config.mediaEntityFactoryMethods(createDocumentFunction, createScormFunction).keySet());
-
-        functions.forEach((key, value) -> assertEquals(key, value,
-                config.mediaEntityFactoryMethods(createDocumentFunction, createScormFunction).get(key)));
     }
 
     @Test
