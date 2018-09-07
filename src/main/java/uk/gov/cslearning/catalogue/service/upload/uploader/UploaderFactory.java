@@ -6,22 +6,21 @@ import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 @Component
 public class UploaderFactory {
 
-    private final Map<String, Supplier<Uploader>> uploaderFactoryMethods;
+    private final Map<String, Uploader> uploaderMap;
 
-    public UploaderFactory(@Qualifier("uploaderFactoryMethods") Map<String, Supplier<Uploader>> uploaderFactoryMethods) {
-        this.uploaderFactoryMethods = uploaderFactoryMethods;
+    public UploaderFactory(@Qualifier("uploaderMap") Map<String, Uploader> uploaderMap) {
+        this.uploaderMap = uploaderMap;
     }
 
     public Uploader create(ProcessedFile processedFile) {
         String extension = processedFile.getFileUpload().getExtension();
 
-        if (uploaderFactoryMethods.containsKey(extension)) {
-            return uploaderFactoryMethods.get(extension).get();
+        if (uploaderMap.containsKey(extension)) {
+            return uploaderMap.get(extension);
         }
 
         throw new UnknownFileTypeException(String.format("Uploaded file has an unknown extension: %s", extension));

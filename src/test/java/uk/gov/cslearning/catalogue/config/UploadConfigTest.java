@@ -44,10 +44,10 @@ public class UploadConfigTest {
                 .put("zip", scormUploader)
                 .build();
 
-        assertEquals(uploaderMap.keySet(), config.uploaderFactoryMethods(defaultUploader, scormUploader).keySet());
+        assertEquals(uploaderMap.keySet(), config.uploaderMap(defaultUploader, scormUploader).keySet());
 
         uploaderMap.forEach((key, value) -> assertEquals(
-                key, value, config.uploaderFactoryMethods(defaultUploader, scormUploader).get(key).get()));
+                key, value, config.uploaderMap(defaultUploader, scormUploader).get(key)));
     }
 
     @Test
@@ -60,8 +60,8 @@ public class UploadConfigTest {
                 "SCORMDriver/Configuration.js", "/file-substitutions/Configuration.js"
         );
 
-        assertEquals(substitutionMap.keySet(), config.fileSubstitions().keySet());
-        substitutionMap.forEach((key, value) -> assertEquals(key, value, config.fileSubstitions().get(key)));
+        assertEquals(substitutionMap.keySet(), config.fileSubstitutions().keySet());
+        substitutionMap.forEach((key, value) -> assertEquals(key, value, config.fileSubstitutions().get(key)));
     }
 
 
