@@ -1,27 +1,23 @@
-package uk.gov.cslearning.catalogue.domain.media.factory;
+package uk.gov.cslearning.catalogue.domain;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.cslearning.catalogue.domain.media.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.Upload;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreateScormFunctionTest {
+public class MediaFactoryTest {
 
-    private final CreateScormFunction function = new CreateScormFunction();
+    private final MediaFactory mediaFactory = new MediaFactory();
 
     @Test
-    public void applyReturnsScorm() {
+    public void createReturnsMedia() {
         String id = "test-id";
         String container = "test-container";
         String extension = "xxx";
@@ -44,7 +40,7 @@ public class CreateScormFunctionTest {
         when(upload.getPath()).thenReturn(path);
         when(upload.getSizeKB()).thenReturn(sizeKB);
 
-        Media media = function.apply(upload);
+        Media media = mediaFactory.create(upload);
 
         assertEquals(id, media.getId());
         assertEquals(container, media.getContainer());
@@ -54,8 +50,6 @@ public class CreateScormFunctionTest {
         assertEquals(sizeKB, media.getFileSize());
         assertEquals(metadata, media.getMetadata());
         assertEquals("13 KB", media.formatFileSize());
-        assertTrue(media.getDateAdded().isBefore(LocalDateTime.now(Clock.systemUTC()).plusSeconds(1)));
-        assertTrue(media.getDateAdded().isAfter(LocalDateTime.now(Clock.systemUTC()).minusSeconds(5)));
-
     }
+
 }

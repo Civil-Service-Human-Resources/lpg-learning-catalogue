@@ -5,10 +5,6 @@ import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
-import uk.gov.cslearning.catalogue.domain.media.factory.CreateDocumentFunction;
-import uk.gov.cslearning.catalogue.domain.media.factory.CreateScormFunction;
-import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.mp4.Mp4FileProcessor;
@@ -17,7 +13,6 @@ import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Configuration
@@ -44,24 +39,6 @@ public class UploadConfig {
                 .put("zip",  () -> scormUploader)   // Scorm
                 .build();
 
-    }
-
-    @Bean(name="mediaEntityFactoryMethods")
-    public Map<String, Function<Upload, MediaEntity>> mediaEntityFactoryMethods(
-            CreateDocumentFunction createDocumentFunction,
-            CreateScormFunction createScormFunction
-    ){
-        return ImmutableMap.<String, Function<Upload, MediaEntity>>builder()
-                .put("doc",  createDocumentFunction) // MS Word
-                .put("docx", createDocumentFunction) // MS Word
-                .put("pdf",  createDocumentFunction) // PDF
-                .put("ppsm", createDocumentFunction) // MS PowerPoint
-                .put("ppt",  createDocumentFunction) // MS PowerPoint
-                .put("pptx", createDocumentFunction) // MS PowerPoint
-                .put("xls",  createDocumentFunction) // MS Excel
-                .put("xlsx", createDocumentFunction) // MS Excel
-                .put("zip",  createScormFunction)    // Scorm
-                .build();
     }
 
     @Bean("fileSubstitutions")

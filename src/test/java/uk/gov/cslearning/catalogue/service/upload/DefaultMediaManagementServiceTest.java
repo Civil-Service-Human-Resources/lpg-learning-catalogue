@@ -5,9 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import uk.gov.cslearning.catalogue.domain.media.Document;
-import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
-import uk.gov.cslearning.catalogue.domain.media.factory.MediaEntityFactory;
+import uk.gov.cslearning.catalogue.domain.Media;
+import uk.gov.cslearning.catalogue.domain.MediaFactory;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultMediaManagementServiceTest {
     @Mock
-    private MediaEntityFactory mediaEntityFactory;
+    private MediaFactory mediaFactory;
 
     @Mock
     private MediaRepository mediaRepository;
@@ -33,27 +32,27 @@ public class DefaultMediaManagementServiceTest {
 
     @Before
     public void setUp() {
-        mediaManagementService = new DefaultMediaManagementService(mediaEntityFactory, mediaRepository, fileUploadService);
+        mediaManagementService = new DefaultMediaManagementService(mediaFactory, mediaRepository, fileUploadService);
     }
 
     @Test
     public void shouldUploadFileAndReturnMedia() {
         FileUpload fileUpload = mock(FileUpload.class);
         Upload upload = mock(Upload.class);
-        Document document = mock(Document.class);
-        Document savedDocument = mock(Document.class);
+        Media media = mock(Media.class);
+        Media savedMedia = mock(Media.class);
 
         when(fileUploadService.upload(fileUpload)).thenReturn(upload);
-        when(mediaEntityFactory.create(upload)).thenReturn(document);
-        when(mediaRepository.save(document)).thenReturn(savedDocument);
+        when(mediaFactory.create(upload)).thenReturn(media);
+        when(mediaRepository.save(media)).thenReturn(savedMedia);
 
-        assertEquals(savedDocument, mediaManagementService.create(fileUpload));
+        assertEquals(savedMedia, mediaManagementService.create(fileUpload));
     }
 
     @Test
     public void findByIdReturnsMediaOptional() {
         String mediaId = "media-id";
-        Optional<MediaEntity> optional = Optional.empty();
+        Optional<Media> optional = Optional.empty();
 
         when(mediaRepository.findById(mediaId)).thenReturn(optional);
 

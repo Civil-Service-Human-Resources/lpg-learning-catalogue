@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.domain.media;
+package uk.gov.cslearning.catalogue.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.io.FileUtils;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Document(indexName = "media", type = "media")
-public class MediaEntity implements Media {
+public class Media {
     @Id
     private String id;
 
@@ -93,7 +93,6 @@ public class MediaEntity implements Media {
         this.path = path;
     }
 
-    @Override
     public Map<String, Object> getMetadata() {
         return metadata;
     }
