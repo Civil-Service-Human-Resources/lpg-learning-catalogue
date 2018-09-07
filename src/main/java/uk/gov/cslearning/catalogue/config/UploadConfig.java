@@ -13,7 +13,6 @@ import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 @Configuration
 public class UploadConfig {
@@ -22,28 +21,28 @@ public class UploadConfig {
         return cloudStorageAccount.createCloudBlobClient();
     }
 
-    @Bean(name = "uploaderFactoryMethods")
-    public Map<String, Supplier<Uploader>> uploaderFactoryMethods(
+    @Bean(name = "uploaderMap")
+    public Map<String, Uploader> uploaderMap(
             DefaultUploader defaultUploader,
             ScormUploader scormUploader
     ) {
-        return ImmutableMap.<String, Supplier<Uploader>>builder()
-                .put("doc",  () -> defaultUploader) // MS Word
-                .put("docx", () -> defaultUploader) // MS Word
-                .put("pdf",  () -> defaultUploader) // PDF
-                .put("ppsm", () -> defaultUploader) // MS PowerPoint
-                .put("ppt",  () -> defaultUploader) // MS PowerPoint
-                .put("pptx", () -> defaultUploader) // MS PowerPoint
-                .put("xls",  () -> defaultUploader) // MS Excel
-                .put("xlsx", () -> defaultUploader) // MS Excel
-                .put("mp4",  () -> defaultUploader) // Video
-                .put("zip",  () -> scormUploader)   // Scorm
+        return ImmutableMap.<String, Uploader>builder()
+                .put("doc",  defaultUploader) // MS Word
+                .put("docx", defaultUploader) // MS Word
+                .put("pdf",  defaultUploader) // PDF
+                .put("ppsm", defaultUploader) // MS PowerPoint
+                .put("ppt",  defaultUploader) // MS PowerPoint
+                .put("pptx", defaultUploader) // MS PowerPoint
+                .put("xls",  defaultUploader) // MS Excel
+                .put("xlsx", defaultUploader) // MS Excel
+                .put("mp4",  defaultUploader) // Video
+                .put("zip",  scormUploader)   // Scorm
                 .build();
 
     }
 
     @Bean("fileSubstitutions")
-    public Map<String, String> fileSubstitions() {
+    public Map<String, String> fileSubstitutions() {
         return ImmutableMap.of(
                 /* file-to-substitute => substituted-with */
                 "js/player_management/close_methods.js", "/file-substitutions/close_methods.js", //GOMO
