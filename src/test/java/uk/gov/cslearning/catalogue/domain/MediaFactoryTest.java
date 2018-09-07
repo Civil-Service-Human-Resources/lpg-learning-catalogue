@@ -47,7 +47,7 @@ public class MediaFactoryTest {
         assertEquals(extension, media.getExtension());
         assertEquals(name, media.getName());
         assertEquals(path, media.getPath());
-        assertEquals(sizeKB, media.getFileSize());
+        assertEquals(sizeKB, media.getFileSizeKB());
         assertEquals(metadata, media.getMetadata());
         assertEquals("13 KB", media.formatFileSize());
     }

@@ -80,7 +80,7 @@ public class MediaControllerTest {
         String path = "test-path";
 
         Media media = new Media();
-        media.setFileSize(filesize);
+        media.setFileSizeKB(filesize);
         media.setContainer(container);
         media.setDateAdded(date);
         media.setExtension(extension);
