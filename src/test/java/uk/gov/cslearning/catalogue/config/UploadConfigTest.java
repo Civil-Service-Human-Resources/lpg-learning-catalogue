@@ -40,6 +40,7 @@ public class UploadConfigTest {
                 .put("pptx", defaultUploader)
                 .put("xls", defaultUploader)
                 .put("xlsx", defaultUploader)
+                .put("mp4", defaultUploader)
                 .put("zip", scormUploader)
                 .build();
 

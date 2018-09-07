@@ -96,7 +96,7 @@ public class MediaControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.container", is(container)))
                 .andExpect(jsonPath("$.id", is(id)))
-                .andExpect(jsonPath("$.fileSize", is((int) filesize)))
+                .andExpect(jsonPath("$.fileSizeKB", is((int) filesize)))
                 .andExpect(jsonPath("$.extension", is(extension)))
                 .andExpect(jsonPath("$.name", is(name)))
                 .andExpect(jsonPath("$.dateAdded", is(date.format(DateTimeFormatter.ISO_DATE_TIME))))

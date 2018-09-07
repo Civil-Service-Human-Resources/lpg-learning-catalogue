@@ -49,7 +49,7 @@ public class MediaFactoryTest {
         assertEquals(path, media.getPath());
         assertEquals(sizeKB, media.getFileSizeKB());
         assertEquals(metadata, media.getMetadata());
-        assertEquals("13 KB", media.formatFileSize());
+        assertEquals("13 kB", media.formatFileSize());
     }
 
 }
