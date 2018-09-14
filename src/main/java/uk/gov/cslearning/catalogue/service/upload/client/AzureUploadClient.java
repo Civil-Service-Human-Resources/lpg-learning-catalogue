@@ -30,18 +30,26 @@ public class AzureUploadClient implements UploadClient {
     }
 
     @Override
-    public UploadedFile upload(InputStream inputStream, String filePath, long fileSize /* in bytes */) {
+    public UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes) {
+        return upload(inputStream, filePath, fileSizeBytes, "application/octet-stream");
+    }
+
+    @Override
+    public UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes, String contentType) {
 
         try {
             CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
             container.createIfNotExists();
 
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
-            blob.upload(inputStream, fileSize);
-            return uploadedFileFactory.successulUploadedFile(filePath, fileSize);
+            blob.getProperties().setContentType(contentType);
+            blob.upload(inputStream, fileSizeBytes);
+
+            return uploadedFileFactory.successulUploadedFile(filePath, fileSizeBytes);
         } catch (StorageException | URISyntaxException | IOException e) {
             LOG.error("Unable to upload file", e);
-            return uploadedFileFactory.failedUploadedFile(filePath, fileSize, e);
+            return uploadedFileFactory.failedUploadedFile(filePath, fileSizeBytes, e);
         }
     }
+
 }
