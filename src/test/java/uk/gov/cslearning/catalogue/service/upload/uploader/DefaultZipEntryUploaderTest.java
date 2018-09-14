@@ -12,8 +12,7 @@ import java.util.zip.ZipEntry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class DefaultZipEntryUploaderTest {
 
@@ -27,6 +26,7 @@ public class DefaultZipEntryUploaderTest {
         byte[] buffer = new byte[1024];
 
         ZipEntry zipEntry = mock(ZipEntry.class);
+        when(zipEntry.isDirectory()).thenReturn(false);
 
         when(inputStream.read(buffer)).thenReturn(1024).thenReturn(0);
 
@@ -37,5 +37,20 @@ public class DefaultZipEntryUploaderTest {
 
         assertTrue(result.isPresent());
         assertEquals(uploadedFile, result.get());
+    }
+
+    @Test
+    public void shouldNotUploadDirectoryEntries() throws IOException, URISyntaxException {
+        UploadClient uploadClient = mock(UploadClient.class);
+        String path = "test-path";
+        InputStream inputStream = mock(InputStream.class);
+
+        ZipEntry zipEntry = mock(ZipEntry.class);
+        when(zipEntry.isDirectory()).thenReturn(true);
+
+        uploader.upload(uploadClient, zipEntry, inputStream, path);
+
+        verifyZeroInteractions(uploadClient);
+        verifyZeroInteractions(inputStream);
     }
 }
