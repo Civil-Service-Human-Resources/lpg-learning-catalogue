@@ -13,7 +13,10 @@ import java.util.zip.ZipEntry;
 public class DefaultZipEntryUploader implements ZipEntryUploader {
 
     public Optional<UploadedFile> upload(UploadClient uploadClient, ZipEntry zipEntry, InputStream inputStream, String path) throws IOException {
-        return Optional.of(uploadClient.upload(inputStream, path, getSize(inputStream)));
+        if (!zipEntry.isDirectory()) {
+            return Optional.of(uploadClient.upload(inputStream, path, getSize(inputStream)));
+        }
+        return Optional.empty();
     }
 
     public long getSize(InputStream inputStream) throws IOException {
