@@ -4,7 +4,6 @@ import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
-import uk.gov.cslearning.catalogue.service.upload.processor.mp4.MetadataFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
