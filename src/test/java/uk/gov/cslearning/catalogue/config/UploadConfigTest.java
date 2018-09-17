@@ -3,6 +3,7 @@ package uk.gov.cslearning.catalogue.config;
 import com.google.common.collect.ImmutableMap;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
+import org.apache.tika.Tika;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -10,7 +11,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
-import uk.gov.cslearning.catalogue.service.upload.processor.mp4.Mp4FileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.Mp4FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
@@ -18,6 +19,7 @@ import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 @RunWith(PowerMockRunner.class)
@@ -100,5 +102,11 @@ public class UploadConfigTest {
 
         fileProcessorMap.forEach((key, value) -> assertEquals(key, value,
                 config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor).get(key)));
+    }
+
+    @Test
+    public void tikaShouldReturnTika() {
+        Tika tika = config.tika();
+        assertNotNull(tika);
     }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ProcessedFile {
     private final FileUpload fileUpload;
-    private Map<String, Object> metadata = new HashMap<>();
+    private Map<String, String> metadata = new HashMap<>();
     private final LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
 
     public ProcessedFile(FileUpload fileUpload) {
@@ -25,7 +25,7 @@ public class ProcessedFile {
         return ImmutableMap.copyOf(metadata);
     }
 
-    public void setMetadata(Map<String, Object> metadata) {
+    public void setMetadata(Map<String, String> metadata) {
         this.metadata = ImmutableMap.copyOf(metadata);
     }
 

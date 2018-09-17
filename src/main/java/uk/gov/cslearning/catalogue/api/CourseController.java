@@ -141,7 +141,7 @@ public class CourseController {
 
         Module saved = moduleService.save(courseId, module);
 
-        LOGGER.info("Saved module {}", saved.toString());
+        LOGGER.info("Saved module {}", saved);
 
         return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}").build(courseId, saved.getId())).build();
     }
@@ -162,7 +162,7 @@ public class CourseController {
 
         Event saved = eventService.save(courseId, moduleId, event);
 
-        LOGGER.info("Saved event {}", saved.toString());
+        LOGGER.info("Saved event {}", saved);
 
         return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}/events/{eventId}").build(courseId, moduleId, saved.getId())).build();
     }

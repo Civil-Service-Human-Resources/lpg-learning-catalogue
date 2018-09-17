@@ -271,7 +271,7 @@ public class LearningProviderControllerTest {
 
         assert (learningProvider.getCancellationPolicies().size() == 1);
         assertEquals(learningProvider.getCancellationPolicies().get(0).getId(), cancellationPolicy.getId());
-        assertEquals(learningProvider.getCancellationPolicies().get(0).getName(), "new");
+        assertEquals("new", learningProvider.getCancellationPolicies().get(0).getName());
     }
 
     @Test
