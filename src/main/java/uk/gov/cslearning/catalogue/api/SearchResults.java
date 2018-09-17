@@ -1,11 +1,11 @@
- 
+
 package uk.gov.cslearning.catalogue.api;
 
 import org.springframework.data.domain.Pageable;
 import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 
-public class SearchResults<T> extends PageResults<Resource> {
+public class SearchResults extends PageResults<Resource> {
 
     private String suggestion;
 
