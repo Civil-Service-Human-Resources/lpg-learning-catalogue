@@ -24,7 +24,7 @@ public class MediaFactoryTest {
         String name = "file-name";
         String path = "test-path";
         long sizeKB = 13;
-        Map<String, Object> metadata = ImmutableMap.of("key", "value");
+        Map<String, String> metadata = ImmutableMap.of("key", "value");
 
         FileUpload fileUpload = mock(FileUpload.class);
         when(fileUpload.getId()).thenReturn(id);

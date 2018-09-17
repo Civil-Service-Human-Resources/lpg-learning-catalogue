@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 public class ProcessedFileTest {
     @Test
     public void shouldSetProperties() {
-        Map<String, Object> metadata = ImmutableMap.of("key", "value");
+        Map<String, String> metadata = ImmutableMap.of("key", "value");
 
         FileUpload fileUpload = mock(FileUpload.class);
 
