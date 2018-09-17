@@ -20,6 +20,10 @@ public class FileModule extends Module {
         return url;
     }
 
+    public Long getFileSize() {
+        return fileSize;
+    }
+
     public void setUrl(String url) {
         this.url = url;
     }
