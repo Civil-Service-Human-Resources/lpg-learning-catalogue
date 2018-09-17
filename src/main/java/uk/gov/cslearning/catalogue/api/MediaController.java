@@ -29,9 +29,9 @@ public class MediaController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> upload(MultipartFile file, @RequestParam String courseId, @RequestParam(required = false) String filename, UriComponentsBuilder builder) {
+    public ResponseEntity<Void> upload(MultipartFile file, @RequestParam String container, @RequestParam(required = false) String filename, UriComponentsBuilder builder) {
 
-        Media media = mediaManagementService.create(fileUploadFactory.create(file, courseId, filename));
+        Media media = mediaManagementService.create(fileUploadFactory.create(file, container, filename));
 
         return (ResponseEntity.created(builder.path("/media/{mediaUid}").build(media.getId()))
                 .header("Access-Control-Expose-Headers",  "Location")).build();
