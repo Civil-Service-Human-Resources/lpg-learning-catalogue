@@ -46,11 +46,12 @@ public class MediaControllerTest {
         String fileContainer = "container-id";
         String mediaId = "media-uid";
         String filename = "custom-filename";
+        String courseId = "course-id";
 
         MockMultipartFile file = new MockMultipartFile("file", "file.doc", "application/octet-stream", "abc".getBytes());
         FileUpload fileUpload = mock(FileUpload.class);
 
-        when(fileUploadFactory.create(file, fileContainer, filename)).thenReturn(fileUpload);
+        when(fileUploadFactory.create(file, courseId, filename)).thenReturn(fileUpload);
 
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
@@ -59,7 +60,7 @@ public class MediaControllerTest {
         mockMvc.perform(
                 multipart("/media")
                         .file(file)
-                        .param("container", fileContainer)
+                        .param("container", courseId)
                         .param("filename", filename)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .accept(MediaType.APPLICATION_JSON).with(csrf()))
