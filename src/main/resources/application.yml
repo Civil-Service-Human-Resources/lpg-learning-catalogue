@@ -32,7 +32,7 @@ elasticsearch:
 azure:
   account:
     name: ${AZURE_ACCOUNT_NAME:lpgdev}
-    key: ${AZURE_ACCOUNT_KEY:1111}
+    key: ${AZURE_ACCOUNT_KEY:changeme}
   storage:
     container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
     connection-string: "DefaultEndpointsProtocol=https;AccountName=${azure.account.name};AccountKey=${azure.account.key}"
