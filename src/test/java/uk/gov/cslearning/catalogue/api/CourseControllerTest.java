@@ -369,7 +369,7 @@ public class CourseControllerTest {
 
         assert (module.getEvents().size() == 1);
         assertEquals(savedEvent.getId(), oldEvent.getId());
-        assertEquals(savedEvent.getJoiningInstructions(), "new");
+        assertEquals("new", savedEvent.getJoiningInstructions());
     }
 
     @Test
