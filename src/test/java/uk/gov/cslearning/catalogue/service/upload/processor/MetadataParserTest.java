@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.xml.sax.SAXException;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
-import uk.gov.cslearning.catalogue.service.upload.processor.mp4.MetadataFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
