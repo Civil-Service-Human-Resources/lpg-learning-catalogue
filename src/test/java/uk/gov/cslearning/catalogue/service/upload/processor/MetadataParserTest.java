@@ -1,22 +1,17 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
-import uk.gov.cslearning.catalogue.service.upload.processor.mp4.ContentHandlerFactory;
 import uk.gov.cslearning.catalogue.service.upload.processor.mp4.MetadataFactory;
-import uk.gov.cslearning.catalogue.service.upload.processor.mp4.ParseContextFactory;
-import uk.gov.cslearning.catalogue.service.upload.processor.mp4.ParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,37 +21,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class MetadataParserTest {
     @Mock
-    private ParserFactory parserFactory;
-
-    @Mock
-    private ContentHandlerFactory contentHandlerFactory;
+    private Tika tika;
 
     @Mock
     private MetadataFactory metadataFactory;
-
-    @Mock
-    private ParseContextFactory parseContextFactory;
-
 
     @InjectMocks
     private MetadataParser metadataParser;
 
     @Test
     public void parseShouldReturnMetadata() throws IOException, TikaException, SAXException {
-        Parser parser = mock(Parser.class);
-        when(parserFactory.create()).thenReturn(parser);
-        ContentHandler contentHandler = mock(ContentHandler.class);
-        when(contentHandlerFactory.createBodyContentHandler()).thenReturn(contentHandler);
-
         Metadata metadata = mock(Metadata.class);
         when(metadataFactory.create()).thenReturn(metadata);
-
-        ParseContext parseContext = mock(ParseContext.class);
-        when(parseContextFactory.create()).thenReturn(parseContext);
 
         InputStream inputStream = mock(InputStream.class);
 
@@ -66,7 +45,7 @@ public class MetadataParserTest {
                     when(metadata.get("key1")).thenReturn("value1");
                     when(metadata.get("key2")).thenReturn("value2");
                     return null;
-                }).when(parser).parse(inputStream, contentHandler, metadata, parseContext);
+                }).when(tika).parse(inputStream, metadata);
 
         Map<String, String> expected = ImmutableMap.of(
             "key1", "value1",
@@ -77,23 +56,15 @@ public class MetadataParserTest {
     }
 
     @Test
-    public void shouldThrowFileUploadExceptionOnIOException() throws IOException, TikaException, SAXException {
-        Parser parser = mock(Parser.class);
-        when(parserFactory.create()).thenReturn(parser);
-        ContentHandler contentHandler = mock(ContentHandler.class);
-        when(contentHandlerFactory.createBodyContentHandler()).thenReturn(contentHandler);
-
+    public void shouldThrowFileUploadExceptionOnIOException() throws IOException {
         Metadata metadata = mock(Metadata.class);
         when(metadataFactory.create()).thenReturn(metadata);
-
-        ParseContext parseContext = mock(ParseContext.class);
-        when(parseContextFactory.create()).thenReturn(parseContext);
 
         InputStream inputStream = mock(InputStream.class);
 
         IOException ioException = mock(IOException.class);
 
-        doThrow(ioException).when(parser).parse(inputStream, contentHandler, metadata, parseContext);
+        doThrow(ioException).when(tika).parse(inputStream, metadata);
 
         try {
             metadataParser.parse(inputStream);
@@ -104,56 +75,30 @@ public class MetadataParserTest {
     }
 
     @Test
-    public void shouldThrowFileUploadExceptionOnTikaException() throws IOException, TikaException, SAXException {
-        Parser parser = mock(Parser.class);
-        when(parserFactory.create()).thenReturn(parser);
-        ContentHandler contentHandler = mock(ContentHandler.class);
-        when(contentHandlerFactory.createBodyContentHandler()).thenReturn(contentHandler);
-
-        Metadata metadata = mock(Metadata.class);
-        when(metadataFactory.create()).thenReturn(metadata);
-
-        ParseContext parseContext = mock(ParseContext.class);
-        when(parseContextFactory.create()).thenReturn(parseContext);
-
+    public void getContentTypeShouldReturnContentTypeString() throws IOException {
         InputStream inputStream = mock(InputStream.class);
+        String filename = "file.txt";
+        String contentType = "text/plain";
 
-        TikaException tikaException = mock(TikaException.class);
+        when(tika.detect(inputStream, filename)).thenReturn(contentType);
 
-        doThrow(tikaException).when(parser).parse(inputStream, contentHandler, metadata, parseContext);
-
-        try {
-            metadataParser.parse(inputStream);
-            fail("Expected FileUploadException");
-        } catch (FileUploadException e) {
-            assertEquals(tikaException, e.getCause());
-        }
+        assertEquals(contentType, metadataParser.getContentType(inputStream, filename));
     }
 
     @Test
-    public void shouldThrowFileUploadExceptionOnSAXException() throws IOException, TikaException, SAXException {
-        Parser parser = mock(Parser.class);
-        when(parserFactory.create()).thenReturn(parser);
-        ContentHandler contentHandler = mock(ContentHandler.class);
-        when(contentHandlerFactory.createBodyContentHandler()).thenReturn(contentHandler);
-
-        Metadata metadata = mock(Metadata.class);
-        when(metadataFactory.create()).thenReturn(metadata);
-
-        ParseContext parseContext = mock(ParseContext.class);
-        when(parseContextFactory.create()).thenReturn(parseContext);
-
+    public void getContentTypeShouldCatchIOExceptionAndThrowFileUploadException() throws IOException {
         InputStream inputStream = mock(InputStream.class);
+        String filename = "file.txt";
+        IOException ioException = mock(IOException.class);
 
-        SAXException saxException = mock(SAXException.class);
-
-        doThrow(saxException).when(parser).parse(inputStream, contentHandler, metadata, parseContext);
+        doThrow(ioException).when(tika).detect(inputStream, filename);
 
         try {
-            metadataParser.parse(inputStream);
+            metadataParser.getContentType(inputStream, filename);
             fail("Expected FileUploadException");
-        } catch (FileUploadException e) {
-            assertEquals(saxException, e.getCause());
+        }
+        catch (Exception e) {
+            assertEquals(ioException, e.getCause());
         }
     }
 }
