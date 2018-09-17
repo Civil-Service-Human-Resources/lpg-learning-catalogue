@@ -19,13 +19,12 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
-import uk.gov.cslearning.catalogue.domain.module.Event;
 
 import java.net.URL;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -317,7 +316,7 @@ public class CourseControllerTest {
 
         assert(module.getEvents().size() == 1);
         assertEquals(savedEvent.getId(), oldEvent.getId());
-        assertEquals(savedEvent.getJoiningInstructions(), "new");
+        assertEquals("new", savedEvent.getJoiningInstructions());
     }
 
     @Test

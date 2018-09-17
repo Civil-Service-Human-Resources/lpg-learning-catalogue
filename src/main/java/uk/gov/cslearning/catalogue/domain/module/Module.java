@@ -7,10 +7,6 @@ import uk.gov.cslearning.catalogue.domain.Status;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static java.util.Collections.unmodifiableCollection;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
