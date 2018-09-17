@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,6 +21,7 @@ import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.net.URL;
 import java.util.*;
@@ -53,6 +55,9 @@ public class CourseControllerTest {
 
     @MockBean
     private EventService eventService;
+
+    @MockBean
+    private AudienceService audienceService;
 
     private Gson gson = new Gson();
 
@@ -190,6 +195,55 @@ public class CourseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.url", equalTo(url)));
+    }
+
+    @Test
+    public void shouldCreateAudience() throws Exception {
+        String audienceId = "audience-id";
+        Audience audience = mock(Audience.class);
+        when(audience.getId()).thenReturn(audienceId);
+
+        String courseId = UUID.randomUUID().toString();
+
+        mockMvc.perform(
+                post(String.format("/courses/%s/audiences/", courseId)).with(csrf())
+                        .content(gson.toJson(ImmutableMap.of("id", audienceId, "name", "Audience name")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", String.format("http://localhost/courses/%s/audience/%s", courseId, audienceId)));
+    }
+
+    @Test
+    public void shouldFindAudience() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        Audience audience = new Audience();
+        audience.setId(audienceId);
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.of(audience));
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", equalTo(audienceId)));
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfAudienceNotFound() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test

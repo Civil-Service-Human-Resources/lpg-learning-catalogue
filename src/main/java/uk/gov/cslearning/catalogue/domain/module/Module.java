@@ -48,6 +48,10 @@ public abstract class Module {
         this.duration = duration;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -66,10 +70,6 @@ public abstract class Module {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getTitle() {
@@ -129,5 +129,4 @@ public abstract class Module {
 
         return className;
     }
-
 }
