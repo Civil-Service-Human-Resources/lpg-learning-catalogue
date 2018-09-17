@@ -13,7 +13,6 @@ import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.ProcessedFileFactory;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
-import uk.gov.cslearning.catalogue.service.upload.processor.mp4.Mp4FileProcessor;
 
 import java.io.IOException;
 import java.io.InputStream;
