@@ -56,7 +56,6 @@ public class Course {
         this.visibility = visibility;
     }
 
-
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }

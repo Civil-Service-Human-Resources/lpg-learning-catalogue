@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Resource;
+import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
@@ -17,6 +18,7 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
+import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,12 +44,16 @@ public class CourseController {
 
     private final EventService eventService;
 
+    private final AudienceService audienceService;
+
     @Autowired
-    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService, EventService eventService) {
+    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService,
+                            EventService eventService, AudienceService audienceService) {
         this.courseRepository = courseRepository;
         this.resourceRepository = resourceRepository;
         this.moduleService = moduleService;
         this.eventService = eventService;
+        this.audienceService = audienceService;
     }
 
     @PostMapping
@@ -238,5 +244,26 @@ public class CourseController {
 
             return ResponseEntity.badRequest().build();
         }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PostMapping("/{courseId}/audiences")
+    public ResponseEntity<Void> createAudience(@PathVariable String courseId, @RequestBody Audience audience, UriComponentsBuilder builder) {
+        LOGGER.debug("Adding audience to course with ID {}", courseId);
+
+        audienceService.save(courseId, audience);
+
+        LOGGER.info("Saved audience {}", audience.toString());
+
+        return ResponseEntity.created(builder.path("/courses/{courseId}/audience/{audienceId}").build(courseId, audience.getId())).build();
+    }
+
+    @GetMapping("/{courseId}/audiences/{audienceId}")
+    public ResponseEntity<Audience> getAudience(@PathVariable String courseId, @PathVariable String audienceId) {
+        LOGGER.debug("Getting audience {} of course {}", audienceId, courseId);
+
+        Optional<Audience> result = audienceService.find(courseId, audienceId);
+
+        return result.map(audience -> new ResponseEntity<>(audience, OK))
+                .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 }
