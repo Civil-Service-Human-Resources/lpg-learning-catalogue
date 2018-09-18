@@ -15,7 +15,7 @@ import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://lpg.local.cshr.digital:3005", allowCredentials = "true")
+@CrossOrigin(allowCredentials = "true")
 @Controller
 @RequestMapping(value = "/media")
 public class MediaController {
