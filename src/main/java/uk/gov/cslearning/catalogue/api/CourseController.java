@@ -254,7 +254,7 @@ public class CourseController {
 
         LOGGER.info("Saved audience {}", audience.toString());
 
-        return ResponseEntity.created(builder.path("/courses/{courseId}/audience/{audienceId}").build(courseId, audience.getId())).build();
+        return ResponseEntity.created(builder.path("/courses/{courseId}/audiences/{audienceId}").build(courseId, audience.getId())).build();
     }
 
     @GetMapping("/{courseId}/audiences/{audienceId}")
