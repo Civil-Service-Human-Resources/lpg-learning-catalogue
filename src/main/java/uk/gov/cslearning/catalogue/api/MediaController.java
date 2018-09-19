@@ -39,9 +39,9 @@ public class MediaController {
 
     //Work around for uploading without js enabled
     @PostMapping("/nojs")
-    public ResponseEntity<Void> uploadWithNoJs(MultipartFile file, @RequestParam(required = false) String filename, UriComponentsBuilder builder, HttpServletRequest request){
+    public ResponseEntity<Void> uploadWithNoJs(MultipartFile file, @RequestParam String container, @RequestParam(required = false) String filename, UriComponentsBuilder builder, HttpServletRequest request){
 
-        Media media = mediaManagementService.create(fileUploadFactory.create(file, "lpgdevcontent", filename));
+        Media media = mediaManagementService.create(fileUploadFactory.create(file, container, filename));
 
         String referrer = request.getHeader("referer");
 
