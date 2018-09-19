@@ -1,11 +1,15 @@
 package uk.gov.cslearning.catalogue.service.upload.uploader;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import uk.gov.cslearning.catalogue.dto.UploadedFile;
+import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
 
@@ -19,11 +23,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(IOUtils.class)
 public class DefaultZipEntryUploaderTest {
 
     @Mock
     private MetadataParser metadataParser;
+
+    @Mock
+    private InputStreamFactory inputStreamFactory;
 
     @InjectMocks
     private DefaultZipEntryUploader uploader;
@@ -34,23 +42,31 @@ public class DefaultZipEntryUploaderTest {
         String path = "test-path";
         String filename = "file.txt";
         String contentType = "text/plain";
-        InputStream inputStream = mock(InputStream.class);
+        InputStream zipEntryInputStream = mock(InputStream.class);
+        InputStream byteArrayInputStream1 = mock(InputStream.class);
+        InputStream byteArrayInputStream2 = mock(InputStream.class);
 
-        byte[] buffer = new byte[1024];
+        byte[] bytes = "Hello World!".getBytes();
+
+        PowerMockito.mockStatic(IOUtils.class);
+        when(IOUtils.toByteArray(zipEntryInputStream)).thenReturn(bytes);
 
         ZipEntry zipEntry = mock(ZipEntry.class);
 
         when(zipEntry.isDirectory()).thenReturn(false);
+
+        when(inputStreamFactory.createByteArrayInputStream(bytes))
+                .thenReturn(byteArrayInputStream1)
+                .thenReturn(byteArrayInputStream2);
+
         when(zipEntry.getName()).thenReturn(filename);
 
-        when(metadataParser.getContentType(inputStream, filename)).thenReturn(contentType);
-
-        when(inputStream.read(buffer)).thenReturn(1024).thenReturn(0);
+        when(metadataParser.getContentType(byteArrayInputStream1, filename)).thenReturn(contentType);
 
         UploadedFile uploadedFile = mock(UploadedFile.class);
-        when(uploadClient.upload(inputStream, path, 1024, contentType)).thenReturn(uploadedFile);
+        when(uploadClient.upload(byteArrayInputStream2, path, 12, contentType)).thenReturn(uploadedFile);
 
-        Optional<UploadedFile> result = uploader.upload(uploadClient, zipEntry, inputStream, path);
+        Optional<UploadedFile> result = uploader.upload(uploadClient, zipEntry, zipEntryInputStream, path);
 
         assertTrue(result.isPresent());
         assertEquals(uploadedFile, result.get());
