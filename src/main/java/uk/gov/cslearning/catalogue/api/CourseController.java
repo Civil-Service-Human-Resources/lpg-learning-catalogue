@@ -163,7 +163,7 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/modules/{moduleId}/events")
-    public ResponseEntity<Object> createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder){
+    public ResponseEntity<Object> createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder) {
         LOGGER.debug("Adding event to module with ID {}", moduleId);
 
         Event saved = eventService.save(courseId, moduleId, event);
@@ -183,13 +183,13 @@ public class CourseController {
     }
 
     @PutMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
-    public ResponseEntity<Event> updateEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId, @RequestBody Event newEvent){
+    public ResponseEntity<Event> updateEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId, @RequestBody Event newEvent) {
         LOGGER.debug("Updating event with id {}", eventId);
 
-        if(!courseRepository.existsById(courseId)){
+        if (!courseRepository.existsById(courseId)) {
             return ResponseEntity.badRequest().build();
         }
-        if(courseRepository.findById(courseId).get().getModuleById(moduleId) == null){
+        if (courseRepository.findById(courseId).get().getModuleById(moduleId) == null) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -198,7 +198,7 @@ public class CourseController {
         return result.map(course -> {
             Module module = course.getModuleById(moduleId);
 
-            if(module instanceof FaceToFaceModule) {
+            if (module instanceof FaceToFaceModule) {
                 FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
 
                 Event event = faceToFaceModule.getEventById(eventId);
@@ -216,12 +216,12 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
-    public ResponseEntity<Object> deleteEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId){
+    public ResponseEntity<Object> deleteEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId) {
         LOGGER.debug("Deleting event with id {}", eventId);
-        if(!courseRepository.existsById(courseId)){
+        if (!courseRepository.existsById(courseId)) {
             return ResponseEntity.badRequest().build();
         }
-        if(courseRepository.findById(courseId).get().getModuleById(moduleId) == null){
+        if (courseRepository.findById(courseId).get().getModuleById(moduleId) == null) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -230,7 +230,7 @@ public class CourseController {
         return result.map(course -> {
             Module module = course.getModuleById(moduleId);
 
-            if(module instanceof  FaceToFaceModule) {
+            if (module instanceof FaceToFaceModule) {
                 FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
 
                 Event event = faceToFaceModule.getEventById(eventId);
@@ -254,7 +254,7 @@ public class CourseController {
 
         LOGGER.info("Saved audience {}", audience.toString());
 
-        return ResponseEntity.created(builder.path("/courses/{courseId}/audience/{audienceId}").build(courseId, audience.getId())).build();
+        return ResponseEntity.created(builder.path("/courses/{courseId}/audiences/{audienceId}").build(courseId, audience.getId())).build();
     }
 
     @GetMapping("/{courseId}/audiences/{audienceId}")

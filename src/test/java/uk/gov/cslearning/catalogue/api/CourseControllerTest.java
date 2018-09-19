@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,14 +19,13 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
-import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.net.URL;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -211,7 +209,7 @@ public class CourseControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", String.format("http://localhost/courses/%s/audience/%s", courseId, audienceId)));
+                .andExpect(header().string("Location", String.format("http://localhost/courses/%s/audiences/%s", courseId, audienceId)));
     }
 
     @Test
@@ -299,7 +297,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void shouldReturnEvent() throws Exception{
+    public void shouldReturnEvent() throws Exception {
         String courseId = "course-id";
         String moduleId = "module-id";
         String eventId = "event-id";
@@ -369,7 +367,7 @@ public class CourseControllerTest {
 
         Event savedEvent = module.getEvents().stream().filter(e -> e.getId().equals(oldEvent.getId())).findFirst().get();
 
-        assert(module.getEvents().size() == 1);
+        assert (module.getEvents().size() == 1);
         assertEquals(savedEvent.getId(), oldEvent.getId());
         assertEquals(savedEvent.getJoiningInstructions(), "new");
     }
@@ -403,7 +401,7 @@ public class CourseControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assert(module.getEvents().isEmpty());
+        assert (module.getEvents().isEmpty());
     }
 
     private Course createCourse() {
