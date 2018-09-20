@@ -12,6 +12,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.Mp4FileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.ScormFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
@@ -82,6 +83,7 @@ public class UploadConfigTest {
     public void shouldHaveCorrectFileProcessorMap() {
         DefaultFileProcessor defaultFileProcessor = mock(DefaultFileProcessor.class);
         Mp4FileProcessor mp4FileProcessor = mock(Mp4FileProcessor.class);
+        ScormFileProcessor scormFileProcessor = mock(ScormFileProcessor.class);
 
         Map<String, FileProcessor> fileProcessorMap = ImmutableMap.<String, FileProcessor>builder()
                 .put("doc",  defaultFileProcessor) // MS Word
@@ -92,16 +94,16 @@ public class UploadConfigTest {
                 .put("pptx", defaultFileProcessor) // MS PowerPoint
                 .put("xls",  defaultFileProcessor) // MS Excel
                 .put("xlsx", defaultFileProcessor) // MS Excel
-                .put("zip",  defaultFileProcessor) // Scorm
+                .put("zip",  scormFileProcessor) // Scorm
                 .put("mp4",  mp4FileProcessor)     // Video
                 .build();
 
         assertEquals(fileProcessorMap.keySet(),
-                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor).keySet());
+                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor, scormFileProcessor).keySet());
 
 
         fileProcessorMap.forEach((key, value) -> assertEquals(key, value,
-                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor).get(key)));
+                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor, scormFileProcessor).get(key)));
     }
 
     @Test
