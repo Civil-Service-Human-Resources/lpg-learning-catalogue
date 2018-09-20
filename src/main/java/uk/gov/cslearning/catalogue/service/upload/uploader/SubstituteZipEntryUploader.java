@@ -42,13 +42,10 @@ public class SubstituteZipEntryUploader implements ZipEntryUploader {
         File file = fileFactory.get(fileSubstitutions.get(zipEntry.getName()));
 
         try (InputStream fileInputStream = inputStreamFactory.createFileInputStream(file)) {
-            String contentType = metadataParser.getContentType(fileInputStream, zipEntry.getName());
+            byte[] bytes = IOUtils.toByteArray(fileInputStream);
 
-            byte bytes[] = new byte[(int) file.length()];
-            fileInputStream.read(bytes);
-            fileInputStream.close();
-
-            return Optional.of(uploadClient.upload(inputStreamFactory.createByteArrayInputStream(bytes), path, file.length(), contentType));
+            String contentType = metadataParser.getContentType(inputStreamFactory.createByteArrayInputStream(bytes), zipEntry.getName());
+            return Optional.of(uploadClient.upload(inputStreamFactory.createByteArrayInputStream(bytes), path, bytes.length, contentType));
         }
     }
 

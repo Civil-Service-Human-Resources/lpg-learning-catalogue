@@ -10,7 +10,7 @@ var CLOSE_METHODS = {
         var scheme = match[1];
         var env = !!match[2] ? match[2] + '-' : '';
         var host = env + 'lpg.' +'cshr.digital/';
-        var path = 'learning-record/' + match[3] + '/' + match[4];
+        var path = 'courses/' + match[3];
 
         if (match[2] === 'local') {
             scheme = 'http';
