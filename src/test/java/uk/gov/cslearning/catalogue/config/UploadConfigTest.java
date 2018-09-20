@@ -17,6 +17,8 @@ import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathFactory;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -110,5 +112,25 @@ public class UploadConfigTest {
     public void tikaShouldReturnTika() {
         Tika tika = config.tika();
         assertNotNull(tika);
+    }
+
+    @Test
+    public void shouldReturnDocumentBuilderFatory() {
+        DocumentBuilderFactory documentBuilderFactory = config.documentBuilderFactory();
+        assertNotNull(documentBuilderFactory);
+    }
+
+    @Test
+    public void shouldReturnXPathFctory() {
+        XPathFactory xPathFactory = config.xPathFactory();
+        assertNotNull(xPathFactory);
+    }
+
+    @Test
+    public void shouldHaveCorrectManifestXPathMap() {
+        Map<String, String> xPathMap = config.scormManifestXpathMap();
+        assertEquals("/manifest/resources/resource/@href", xPathMap.get("imsmanifest.xml"));
+        assertEquals("/tincan/activities/activity/launch", xPathMap.get("tincan.xml"));
+
     }
 }
