@@ -12,6 +12,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Audience {
+    public enum Type {
+        OPEN,
+        CLOSED_COURSE,
+        PRIVATE_COURSE,
+        REQUIRED_LEARNING
+    }
 
     private String id = UUIDs.randomBase64UUID();
 
@@ -31,7 +37,7 @@ public class Audience {
 
     private Frequency frequency;
 
-    private Boolean mandatory;
+    private Type type;
 
     public Audience() {
     }
@@ -100,11 +106,11 @@ public class Audience {
         this.frequency = frequency;
     }
 
-    public Boolean getMandatory() {
-        return mandatory;
+    public Type getType() {
+        return type;
     }
 
-    public void setMandatory(Boolean mandatory) {
-        this.mandatory = mandatory;
+    public void setType(Type type) {
+        this.type = type;
     }
 }
