@@ -9,7 +9,6 @@ import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
