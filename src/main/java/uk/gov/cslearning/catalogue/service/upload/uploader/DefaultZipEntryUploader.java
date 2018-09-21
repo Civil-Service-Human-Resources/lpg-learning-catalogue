@@ -31,4 +31,14 @@ public class DefaultZipEntryUploader implements ZipEntryUploader {
         }
         return Optional.empty();
     }
+
+    public long getSize(InputStream inputStream) throws IOException {
+        long length;
+        long size = 0;
+        while ((length = inputStream.read(new byte[1024])) > 0) {
+            size += length;
+        }
+
+        return size;
+    }
 }
