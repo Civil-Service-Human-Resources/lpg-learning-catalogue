@@ -10,8 +10,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.cslearning.catalogue.domain.media.Document;
-import uk.gov.cslearning.catalogue.domain.media.MediaEntity;
+import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.service.upload.FileUploadFactory;
 import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
@@ -53,7 +52,7 @@ public class MediaControllerTest {
 
         when(fileUploadFactory.create(file, fileContainer, filename)).thenReturn(fileUpload);
 
-        MediaEntity media = mock(MediaEntity.class);
+        Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
         when(mediaManagementService.create(fileUpload)).thenReturn(media);
 
@@ -80,16 +79,16 @@ public class MediaControllerTest {
         String name = "filename";
         String path = "test-path";
 
-        Document document = new Document();
-        document.setFileSize(filesize);
-        document.setContainer(container);
-        document.setDateAdded(date);
-        document.setExtension(extension);
-        document.setId(id);
-        document.setName(name);
-        document.setPath(path);
+        Media media = new Media();
+        media.setFileSizeKB(filesize);
+        media.setContainer(container);
+        media.setDateAdded(date);
+        media.setExtension(extension);
+        media.setId(id);
+        media.setName(name);
+        media.setPath(path);
 
-        when(mediaManagementService.findById(mediaId)).thenReturn(Optional.of(document));
+        when(mediaManagementService.findById(mediaId)).thenReturn(Optional.of(media));
 
         mockMvc.perform(
                 get("/media/" + mediaId)
@@ -97,7 +96,7 @@ public class MediaControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.container", is(container)))
                 .andExpect(jsonPath("$.id", is(id)))
-                .andExpect(jsonPath("$.fileSize", is((int) filesize)))
+                .andExpect(jsonPath("$.fileSizeKB", is((int) filesize)))
                 .andExpect(jsonPath("$.extension", is(extension)))
                 .andExpect(jsonPath("$.name", is(name)))
                 .andExpect(jsonPath("$.dateAdded", is(date.format(DateTimeFormatter.ISO_DATE_TIME))))

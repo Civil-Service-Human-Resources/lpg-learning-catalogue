@@ -28,8 +28,8 @@ public class ProcessedFileTest {
         assertTrue(processedFile.getTimestamp().isAfter(LocalDateTime.now(Clock.systemUTC()).minusSeconds(5)));
 
         String pattern = "uk.gov.cslearning.catalogue.dto.ProcessedFile@(\\w+)" +
-                "\\[fileUpload=Mock for FileUpload, hashCode: (\\d+),metadata=\\{key=value\\}," +
-                "timestamp=(\\d\\d\\d\\d\\-\\d\\d\\-\\d\\dT\\d\\d\\:\\d\\d\\:\\d\\d\\.\\d\\d\\d)\\]";
+                "\\[fileUpload=Mock for FileUpload, hashCode: (\\d+),metadata=\\{key=value}," +
+                "timestamp=(\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d)]";
 
         assertTrue(Pattern.matches(pattern, processedFile.toString()));
     }

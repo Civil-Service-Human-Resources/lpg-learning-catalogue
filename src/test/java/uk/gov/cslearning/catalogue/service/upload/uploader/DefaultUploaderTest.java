@@ -35,6 +35,7 @@ public class DefaultUploaderTest {
         String containerName = "test-container";
         String id = "file-upload-id";
         long fileSize = 99;
+        String contentType = "application/pdf";
 
         String path = String.join("/", containerName, id);
         FileUpload fileUpload = mock(FileUpload.class);
@@ -48,11 +49,12 @@ public class DefaultUploaderTest {
         when(fileUpload.getFile()).thenReturn(multipartFile);
         when(multipartFile.getInputStream()).thenReturn(inputStream);
         when(multipartFile.getSize()).thenReturn(fileSize);
+        when(multipartFile.getContentType()).thenReturn(contentType);
 
 
         UploadClient uploadClient = mock(UploadClient.class);
         UploadedFile uploadedFile = mock(UploadedFile.class);
-        when(uploadClient.upload(inputStream, path, fileSize)).thenReturn(uploadedFile);
+        when(uploadClient.upload(inputStream, path, fileSize, contentType)).thenReturn(uploadedFile);
 
         Upload upload = mock(Upload.class);
 

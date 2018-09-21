@@ -10,10 +10,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Resource;
+import uk.gov.cslearning.catalogue.domain.module.Audience;
+import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
+import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
+import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +42,18 @@ public class CourseController {
 
     private final ModuleService moduleService;
 
+    private final EventService eventService;
+
+    private final AudienceService audienceService;
+
     @Autowired
-    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService) {
+    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService,
+                            EventService eventService, AudienceService audienceService) {
         this.courseRepository = courseRepository;
         this.resourceRepository = resourceRepository;
         this.moduleService = moduleService;
+        this.eventService = eventService;
+        this.audienceService = audienceService;
     }
 
     @PostMapping
@@ -135,7 +147,7 @@ public class CourseController {
 
         Module saved = moduleService.save(courseId, module);
 
-        LOGGER.info("Saved module {}", saved.toString());
+        LOGGER.info("Saved module {}", saved);
 
         return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}").build(courseId, saved.getId())).build();
     }
@@ -147,6 +159,111 @@ public class CourseController {
         Optional<Module> result = moduleService.find(courseId, moduleId);
 
         return result.map(module -> new ResponseEntity<>(module, OK))
+                .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @PostMapping("/{courseId}/modules/{moduleId}/events")
+    public ResponseEntity<Object> createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder) {
+        LOGGER.debug("Adding event to module with ID {}", moduleId);
+
+        Event saved = eventService.save(courseId, moduleId, event);
+
+        LOGGER.info("Saved event {}", saved);
+
+        return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}/events/{eventId}").build(courseId, moduleId, saved.getId())).build();
+    }
+
+    @GetMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
+    public ResponseEntity<Event> getEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId) {
+        LOGGER.debug("Getting event {} of module {} of course {}", eventId, moduleId, courseId);
+
+        Optional<Event> result = eventService.find(courseId, moduleId, eventId);
+
+        return result.map(event -> new ResponseEntity<>(event, OK)).orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @PutMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
+    public ResponseEntity<Event> updateEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId, @RequestBody Event newEvent) {
+        LOGGER.debug("Updating event with id {}", eventId);
+
+        if (!courseRepository.existsById(courseId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (courseRepository.findById(courseId).get().getModuleById(moduleId) == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<Course> result = courseRepository.findById(courseId);
+
+        return result.map(course -> {
+            Module module = course.getModuleById(moduleId);
+
+            if (module instanceof FaceToFaceModule) {
+                FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
+
+                Event event = faceToFaceModule.getEventById(eventId);
+
+                event.setDateRanges(newEvent.getDateRanges());
+                event.setJoiningInstructions(newEvent.getJoiningInstructions());
+
+                courseRepository.save(course);
+
+                return ResponseEntity.ok().body(event);
+            }
+
+            return ResponseEntity.badRequest().body(newEvent);
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
+    public ResponseEntity<Object> deleteEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId) {
+        LOGGER.debug("Deleting event with id {}", eventId);
+        if (!courseRepository.existsById(courseId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (courseRepository.findById(courseId).get().getModuleById(moduleId) == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<Course> result = courseRepository.findById(courseId);
+
+        return result.map(course -> {
+            Module module = course.getModuleById(moduleId);
+
+            if (module instanceof FaceToFaceModule) {
+                FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
+
+                Event event = faceToFaceModule.getEventById(eventId);
+
+                faceToFaceModule.removeEvent(event);
+
+                courseRepository.save(course);
+
+                return ResponseEntity.noContent().build();
+            }
+
+            return ResponseEntity.badRequest().build();
+        }).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PostMapping("/{courseId}/audiences")
+    public ResponseEntity<Void> createAudience(@PathVariable String courseId, @RequestBody Audience audience, UriComponentsBuilder builder) {
+        LOGGER.debug("Adding audience to course with ID {}", courseId);
+
+        audienceService.save(courseId, audience);
+
+        LOGGER.info("Saved audience {}", audience.toString());
+
+        return ResponseEntity.created(builder.path("/courses/{courseId}/audiences/{audienceId}").build(courseId, audience.getId())).build();
+    }
+
+    @GetMapping("/{courseId}/audiences/{audienceId}")
+    public ResponseEntity<Audience> getAudience(@PathVariable String courseId, @PathVariable String audienceId) {
+        LOGGER.debug("Getting audience {} of course {}", audienceId, courseId);
+
+        Optional<Audience> result = audienceService.find(courseId, audienceId);
+
+        return result.map(audience -> new ResponseEntity<>(audience, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 }

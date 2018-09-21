@@ -36,13 +36,13 @@ public class SearchController {
     }
 
     @GetMapping
-    public ResponseEntity<SearchResults<Resource>> search(String query, FilterParameters filterParameters, PageParameters pageParameters) {
+    public ResponseEntity<SearchResults> search(String query, FilterParameters filterParameters, PageParameters pageParameters) {
         LOGGER.debug("Searching resources with query {}", query);
 
         Pageable pageable = pageParameters.getPageRequest();
         SearchPage searchPage = resourceRepository.search(query, pageable, filterParameters);
 
-        return ResponseEntity.ok(new SearchResults<>(searchPage, pageable));
+        return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }
 
     @GetMapping("/create")

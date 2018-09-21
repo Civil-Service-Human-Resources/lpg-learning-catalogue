@@ -14,17 +14,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Visibility;
-import uk.gov.cslearning.catalogue.domain.module.LinkModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
+import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
+import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.net.URL;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -49,6 +50,12 @@ public class CourseControllerTest {
 
     @MockBean
     private ModuleService moduleService;
+
+    @MockBean
+    private EventService eventService;
+
+    @MockBean
+    private AudienceService audienceService;
 
     private Gson gson = new Gson();
 
@@ -178,6 +185,7 @@ public class CourseControllerTest {
 
         Module module = new LinkModule(new URL(url));
 
+        when(courseRepository.existsById(courseId)).thenReturn(true);
         when(moduleService.find(courseId, moduleId)).thenReturn(Optional.of(module));
 
         mockMvc.perform(
@@ -185,6 +193,55 @@ public class CourseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.url", equalTo(url)));
+    }
+
+    @Test
+    public void shouldCreateAudience() throws Exception {
+        String audienceId = "audience-id";
+        Audience audience = mock(Audience.class);
+        when(audience.getId()).thenReturn(audienceId);
+
+        String courseId = UUID.randomUUID().toString();
+
+        mockMvc.perform(
+                post(String.format("/courses/%s/audiences/", courseId)).with(csrf())
+                        .content(gson.toJson(ImmutableMap.of("id", audienceId, "name", "Audience name")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", String.format("http://localhost/courses/%s/audiences/%s", courseId, audienceId)));
+    }
+
+    @Test
+    public void shouldFindAudience() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        Audience audience = new Audience();
+        audience.setId(audienceId);
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.of(audience));
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", equalTo(audienceId)));
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfAudienceNotFound() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -207,12 +264,144 @@ public class CourseControllerTest {
         String courseId = "course-id";
         String moduleId = "module-id";
 
+        when(courseRepository.existsById(courseId)).thenReturn(true);
         when(moduleService.find(courseId, moduleId)).thenReturn(Optional.empty());
 
         mockMvc.perform(
                 get(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldAddEventToModule() throws Exception {
+        Event event = new Event();
+        event.setJoiningInstructions("");
+        event.setDateRanges(new ArrayList<>());
+        event.setVenue(new Venue("location"));
+
+        String courseId = "course-id";
+        String moduleId = "module-id";
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+
+        when(eventService.save(eq(courseId), eq(moduleId), any(Event.class))).thenReturn(event);
+
+        mockMvc.perform(
+                post(String.format("/courses/%s/modules/%s/events", courseId, moduleId)).with(csrf())
+                        .content(gson.toJson(event))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void shouldReturnEvent() throws Exception {
+        String courseId = "course-id";
+        String moduleId = "module-id";
+        String eventId = "event-id";
+
+        Event event = new Event();
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(eventService.find(courseId, moduleId, eventId)).thenReturn(Optional.of(event));
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/modules/%s/events/%s", courseId, moduleId, eventId)).with(csrf())
+                        .content(gson.toJson(event))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfEventNotFound() throws Exception {
+        String courseId = "course-id";
+        String moduleId = "module-id";
+        String eventId = "event-id";
+
+        when(eventService.find(courseId, moduleId, eventId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/modules/%s/events/%s", courseId, moduleId, eventId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldUpdateEvent() throws Exception {
+        Course course = new Course();
+
+        Event oldEvent = new Event();
+        Event newEvent = new Event();
+
+        newEvent.setJoiningInstructions("new");
+        oldEvent.setJoiningInstructions("old");
+
+        FaceToFaceModule module = new FaceToFaceModule("product-code");
+
+        HashSet<Event> events = new HashSet<>();
+        events.add(oldEvent);
+        module.setEvents(events);
+
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+
+        when(courseRepository.existsById(course.getId())).thenReturn(true);
+
+        Optional<Course> result = Optional.of(course);
+        when(courseRepository.findById(course.getId())).thenReturn(result);
+
+        when(courseRepository.save(course)).thenReturn(course);
+
+        mockMvc.perform(
+                put(String.format("/courses/%s/modules/%s/events/%s", course.getId(), module.getId(), oldEvent.getId())).with(csrf())
+                        .content(gson.toJson(newEvent))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        Event savedEvent = module.getEvents().stream().filter(e -> e.getId().equals(oldEvent.getId())).findFirst().get();
+
+        assert (module.getEvents().size() == 1);
+        assertEquals(savedEvent.getId(), oldEvent.getId());
+        assertEquals("new", savedEvent.getJoiningInstructions());
+    }
+
+    @Test
+    public void shouldDeleteEvent() throws Exception {
+        Course course = new Course();
+        FaceToFaceModule module = new FaceToFaceModule("product-code");
+        Event event = new Event();
+
+        HashSet<Event> events = new HashSet<>();
+        events.add(event);
+        module.setEvents(events);
+
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+
+        when(courseRepository.existsById(course.getId())).thenReturn(true);
+
+        Optional<Course> result = Optional.of(course);
+        when(courseRepository.findById(course.getId())).thenReturn(result);
+
+        when(courseRepository.save(course)).thenReturn(course);
+
+        mockMvc.perform(
+                delete(String.format("/courses/%s/modules/%s/events/%s", course.getId(), module.getId(), event.getId())).with(csrf())
+                        .content(gson.toJson(event))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assert (module.getEvents().isEmpty());
     }
 
     private Course createCourse() {
