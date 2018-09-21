@@ -1,10 +1,14 @@
 package uk.gov.cslearning.catalogue.service.upload.uploader;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import uk.gov.cslearning.catalogue.dto.UploadedFile;
 import uk.gov.cslearning.catalogue.service.upload.FileFactory;
 import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
@@ -24,7 +28,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(IOUtils.class)
 public class SubstituteZipEntryUploaderTest {
 
     @Mock
@@ -48,6 +53,7 @@ public class SubstituteZipEntryUploaderTest {
         String zipEntryName = "zip-entry";
         String substitutePath = "substitute-path";
         String contentType = "content-type";
+        InputStream byteArrayInputStream = mock(InputStream.class);
 
         ZipEntry zipEntry = mock(ZipEntry.class);
         when(zipEntry.getName()).thenReturn(zipEntryName);
@@ -61,12 +67,19 @@ public class SubstituteZipEntryUploaderTest {
         when(fileFactory.get(substitutePath)).thenReturn(file);
 
         InputStream inputStream = mock(InputStream.class);
-        when(inputStreamFactory.createFileInputStream(file)).thenReturn(inputStream);
 
-        when(metadataParser.getContentType(inputStream, zipEntryName)).thenReturn(contentType);
+        byte[] bytes = "Hello World!".getBytes();
+
+        PowerMockito.mockStatic(IOUtils.class);
+        when(IOUtils.toByteArray(inputStream)).thenReturn(bytes);
+
+        when(inputStreamFactory.createFileInputStream(file)).thenReturn(inputStream);
+        when(inputStreamFactory.createByteArrayInputStream(bytes)).thenReturn(byteArrayInputStream);
+
+        when(metadataParser.getContentType(byteArrayInputStream, zipEntryName)).thenReturn(contentType);
 
         UploadedFile uploadedFile = mock(UploadedFile.class);
-        when(uploadClient.upload(inputStream, destinationPath, fileLength, contentType)).thenReturn(uploadedFile);
+        when(uploadClient.upload(byteArrayInputStream, destinationPath, bytes.length, contentType)).thenReturn(uploadedFile);
 
         Optional<UploadedFile> result = uploader.upload(uploadClient, zipEntry, inputStream, destinationPath);
 
