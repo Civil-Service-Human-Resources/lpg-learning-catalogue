@@ -9,10 +9,7 @@ import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
@@ -59,9 +56,14 @@ public class Course {
         this.visibility = visibility;
     }
 
-
     public List<Module> getModules() {
         return unmodifiableList(modules);
+    }
+
+    public Module getModuleById(String moduleId){
+        List<Module> modules = getModules();
+        Optional<Module> module = modules.stream().filter(m -> m.getId().equals(moduleId)).findFirst();
+        return module.get();
     }
 
     public void setModules(List<Module> modules) {

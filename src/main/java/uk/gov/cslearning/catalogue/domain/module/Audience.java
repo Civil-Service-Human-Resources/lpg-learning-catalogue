@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.elasticsearch.common.UUIDs;
 import uk.gov.cslearning.catalogue.domain.Frequency;
 
 import java.time.LocalDateTime;
@@ -12,6 +12,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Audience {
+    public enum Type {
+        OPEN,
+        CLOSED_COURSE,
+        PRIVATE_COURSE,
+        REQUIRED_LEARNING
+    }
+
+    private String id = UUIDs.randomBase64UUID();
+
+    private String name;
 
     private Set<String> areasOfWork = new HashSet<>();
 
@@ -27,9 +37,25 @@ public class Audience {
 
     private Frequency frequency;
 
-    private Boolean mandatory;
+    private Type type;
 
     public Audience() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<String> getAreasOfWork() {
@@ -80,23 +106,11 @@ public class Audience {
         this.frequency = frequency;
     }
 
-    public Boolean getMandatory() {
-        return mandatory;
+    public Type getType() {
+        return type;
     }
 
-    public void setMandatory(Boolean mandatory) {
-        this.mandatory = mandatory;
+    public void setType(Type type) {
+        this.type = type;
     }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(areasOfWork)
-                .append(departments)
-                .append(grades)
-                .append(interests)
-                .append(mandatory)
-                .toHashCode();
-    }
-
 }

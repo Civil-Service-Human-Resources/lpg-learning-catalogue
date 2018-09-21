@@ -11,8 +11,8 @@ spring:
       password: ${AUTH_PASSWORD:password}
   servlet:
     multipart:
-      max-file-size: 1024MB
-      max-request-size: 1024MB
+      max-file-size: 5120MB
+      max-request-size: 5120MB
 
 server:
   port: 9001

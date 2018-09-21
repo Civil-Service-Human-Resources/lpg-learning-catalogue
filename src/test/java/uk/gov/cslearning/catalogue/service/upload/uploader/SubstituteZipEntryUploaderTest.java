@@ -9,6 +9,7 @@ import uk.gov.cslearning.catalogue.dto.UploadedFile;
 import uk.gov.cslearning.catalogue.service.upload.FileFactory;
 import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
+import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,9 @@ public class SubstituteZipEntryUploaderTest {
     @Mock
     private Map<String, String> fileSubstitutions;
 
+    @Mock
+    private MetadataParser metadataParser;
+
     @InjectMocks
     private SubstituteZipEntryUploader uploader;
 
@@ -43,6 +47,7 @@ public class SubstituteZipEntryUploaderTest {
         String destinationPath = "destination-path";
         String zipEntryName = "zip-entry";
         String substitutePath = "substitute-path";
+        String contentType = "content-type";
 
         ZipEntry zipEntry = mock(ZipEntry.class);
         when(zipEntry.getName()).thenReturn(zipEntryName);
@@ -58,8 +63,10 @@ public class SubstituteZipEntryUploaderTest {
         InputStream inputStream = mock(InputStream.class);
         when(inputStreamFactory.createFileInputStream(file)).thenReturn(inputStream);
 
+        when(metadataParser.getContentType(inputStream, zipEntryName)).thenReturn(contentType);
+
         UploadedFile uploadedFile = mock(UploadedFile.class);
-        when(uploadClient.upload(inputStream, destinationPath, fileLength)).thenReturn(uploadedFile);
+        when(uploadClient.upload(inputStream, destinationPath, fileLength, contentType)).thenReturn(uploadedFile);
 
         Optional<UploadedFile> result = uploader.upload(uploadClient, zipEntry, inputStream, destinationPath);
 

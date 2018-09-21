@@ -33,7 +33,7 @@ public class LearningProviderController {
     @GetMapping
     public ResponseEntity<PageResults<LearningProvider>> list(
             PageParameters pageParameters) {
-        LOGGER.debug("Listing Learning Providers with {}", pageParameters.toString());
+        LOGGER.debug("Listing Learning Providers with {}", pageParameters);
 
         Pageable pageable = pageParameters.getPageRequest();
         Page<LearningProvider> page;
@@ -45,7 +45,7 @@ public class LearningProviderController {
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody LearningProvider learningProvider, UriComponentsBuilder builder) {
-        LOGGER.debug("Creating Learning Provider {}", learningProvider.toString());
+        LOGGER.debug("Creating Learning Provider {}", learningProvider);
 
         LearningProvider newLearningProvider = learningProviderRepository.save(learningProvider);
 
@@ -65,7 +65,7 @@ public class LearningProviderController {
 
     @PutMapping(path = "/{learningProviderId}")
     public ResponseEntity<Void> update(@PathVariable("learningProviderId") String learningProviderId, @RequestBody LearningProvider learningProvider) {
-        LOGGER.debug("Updating Learning Provider {}", learningProvider.toString());
+        LOGGER.debug("Updating Learning Provider {}", learningProvider);
 
         if (!learningProviderId.equals(learningProvider.getId())) {
             return ResponseEntity.badRequest().build();

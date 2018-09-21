@@ -12,9 +12,9 @@ import static org.mockito.Mockito.when;
 
 public class UploaderFactoryTest {
 
-    private UploaderFactory uploaderFactory = new UploaderFactory(ImmutableMap.of(
-            "doc", () -> mock(DefaultUploader.class),
-            "zip", ()-> mock(ScormUploader.class)
+    private UploaderFactory uploaderFactory = new UploaderFactory(ImmutableMap.<String, Uploader>of(
+            "doc",  mock(DefaultUploader.class),
+            "zip",  mock(ScormUploader.class)
     ));
 
     @Test
@@ -55,7 +55,7 @@ public class UploaderFactoryTest {
         when(processedFile.getFileUpload()).thenReturn(fileUpload);
 
         try {
-            Uploader uploader = uploaderFactory.create(processedFile);
+            uploaderFactory.create(processedFile);
             fail("Expected UknownFileTypeException");
         } catch (UnknownFileTypeException e) {
             assertEquals("Uploaded file has an unknown extension: xxx", e.getMessage());

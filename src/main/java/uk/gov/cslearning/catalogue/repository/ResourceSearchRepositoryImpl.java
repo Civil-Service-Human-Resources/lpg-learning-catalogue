@@ -6,8 +6,6 @@ import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -27,8 +25,6 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 
 @Repository
 public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(ResourceSearchRepositoryImpl.class);
 
     private ElasticsearchOperations operations;
 
@@ -110,4 +106,4 @@ public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
         return boolQuery;
     }
 }
- 
+
