@@ -58,7 +58,7 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity create(@RequestBody Course course, UriComponentsBuilder builder) {
+    public ResponseEntity<Void> create(@RequestBody Course course, UriComponentsBuilder builder) {
         LOGGER.debug("Creating course {}", course);
         Course newCourse = courseRepository.save(course);
 
@@ -114,7 +114,7 @@ public class CourseController {
     }
 
     @PutMapping(path = "/{courseId}")
-    public ResponseEntity update(@PathVariable("courseId") String courseId, @RequestBody Course course) {
+    public ResponseEntity<Void> update(@PathVariable("courseId") String courseId, @RequestBody Course course) {
         LOGGER.debug("Updating course {}", course);
         if (!courseId.equals(course.getId())) {
             return ResponseEntity.badRequest().build();
@@ -143,7 +143,7 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/modules")
-    public ResponseEntity createModule(@PathVariable String courseId, @RequestBody Module module, UriComponentsBuilder builder) {
+    public ResponseEntity<Void> createModule(@PathVariable String courseId, @RequestBody Module module, UriComponentsBuilder builder) {
         LOGGER.debug("Adding module to course with ID {}", courseId);
 
         Module saved = moduleService.save(courseId, module);
@@ -248,7 +248,7 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/audiences")
-    public ResponseEntity createAudience(@PathVariable String courseId, @RequestBody Audience audience, UriComponentsBuilder builder) {
+    public ResponseEntity<Void> createAudience(@PathVariable String courseId, @RequestBody Audience audience, UriComponentsBuilder builder) {
         LOGGER.debug("Adding audience to course with ID {}", courseId);
 
         audienceService.save(courseId, audience);
