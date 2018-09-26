@@ -26,7 +26,7 @@ public class DefaultUploader implements Uploader {
 
         try {
             UploadedFile uploadedFile = uploadClient.upload(processedFile.getFileUpload().getFile().getInputStream(),
-                    filePath, processedFile.getFileUpload().getFile().getSize());
+                    filePath, processedFile.getFileUpload().getFile().getSize(), processedFile.getFileUpload().getFile().getContentType());
 
             return uploadFactory.createUpload(processedFile, Collections.singletonList(uploadedFile), filePath);
 

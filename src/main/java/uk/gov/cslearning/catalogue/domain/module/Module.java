@@ -7,10 +7,6 @@ import uk.gov.cslearning.catalogue.domain.Status;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static java.util.Collections.unmodifiableCollection;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
@@ -48,6 +44,10 @@ public abstract class Module {
         this.duration = duration;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -66,10 +66,6 @@ public abstract class Module {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getTitle() {
@@ -129,5 +125,4 @@ public abstract class Module {
 
         return className;
     }
-
 }

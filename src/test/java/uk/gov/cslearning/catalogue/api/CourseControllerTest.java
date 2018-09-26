@@ -14,25 +14,46 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Visibility;
-import uk.gov.cslearning.catalogue.domain.module.*;
+import uk.gov.cslearning.catalogue.domain.module.Audience;
+import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
+import uk.gov.cslearning.catalogue.domain.module.LinkModule;
+import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.domain.module.Venue;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
-import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(CourseController.class)
@@ -54,6 +75,9 @@ public class CourseControllerTest {
     @MockBean
     private EventService eventService;
 
+    @MockBean
+    private AudienceService audienceService;
+
     private Gson gson = new Gson();
 
     @Test
@@ -61,7 +85,6 @@ public class CourseControllerTest {
         mockMvc.perform(
                 get("/courses/abc")
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
@@ -76,7 +99,6 @@ public class CourseControllerTest {
         mockMvc.perform(
                 get("/courses/1")
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", equalTo("title")));
     }
@@ -98,7 +120,6 @@ public class CourseControllerTest {
                         .content(gson.toJson(course))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().string("location", "http://localhost/courses/" + newId));
     }
@@ -114,7 +135,6 @@ public class CourseControllerTest {
                         .content(gson.toJson(course))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNoContent());
     }
 
@@ -128,7 +148,6 @@ public class CourseControllerTest {
                         .content(gson.toJson(course))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -193,6 +212,89 @@ public class CourseControllerTest {
     }
 
     @Test
+    public void shouldCreateAudience() throws Exception {
+        String audienceId = "audience-id";
+        Audience audience = mock(Audience.class);
+        when(audience.getId()).thenReturn(audienceId);
+
+        String courseId = UUID.randomUUID().toString();
+
+        mockMvc.perform(
+                post(String.format("/courses/%s/audiences/", courseId)).with(csrf())
+                        .content(gson.toJson(ImmutableMap.of("id", audienceId, "name", "Audience name")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", String.format("http://localhost/courses/%s/audiences/%s", courseId, audienceId)));
+    }
+
+    @Test
+    public void shouldFindAudience() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        Audience audience = new Audience();
+        audience.setId(audienceId);
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.of(audience));
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", equalTo(audienceId)));
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfAudienceNotFound() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfCourseNotFoundWhenFindingAudience() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        doThrow(resourceNotFoundException()).when(audienceService).find(courseId, audienceId);
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldDeleteAudience() throws Exception {
+        Course course = new Course();
+        Audience audience = new Audience();
+        Set<Audience> audiences = new HashSet<>();
+        audiences.add(audience);
+        course.setAudiences(audiences);
+
+        when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
+        when(audienceService.find(course, audience.getId())).thenReturn(Optional.of(audience));
+        when(courseRepository.save(course)).thenReturn(course);
+
+        assertThat(course.getAudiences().isEmpty(), is(not(true)));
+
+        mockMvc.perform(
+                delete(String.format("/courses/%s/audiences/%s", course.getId(), audience.getId())).with(csrf()))
+                .andExpect(status().isNoContent());
+
+        assertThat(course.getAudiences().isEmpty(), is(true));
+    }
+
+    @Test
     public void shouldReturnBadRequestIfCourseNotFoundWhenFindingModule() throws Exception {
         String courseId = "course-id";
         String moduleId = "module-id";
@@ -240,12 +342,11 @@ public class CourseControllerTest {
                         .content(gson.toJson(event))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isCreated());
     }
 
     @Test
-    public void shouldReturnEvent() throws Exception{
+    public void shouldReturnEvent() throws Exception {
         String courseId = "course-id";
         String moduleId = "module-id";
         String eventId = "event-id";
@@ -260,7 +361,6 @@ public class CourseControllerTest {
                         .content(gson.toJson(event))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk());
     }
 
@@ -315,9 +415,9 @@ public class CourseControllerTest {
 
         Event savedEvent = module.getEvents().stream().filter(e -> e.getId().equals(oldEvent.getId())).findFirst().get();
 
-        assert(module.getEvents().size() == 1);
+        assert (module.getEvents().size() == 1);
         assertEquals(savedEvent.getId(), oldEvent.getId());
-        assertEquals(savedEvent.getJoiningInstructions(), "new");
+        assertEquals("new", savedEvent.getJoiningInstructions());
     }
 
     @Test
@@ -342,14 +442,10 @@ public class CourseControllerTest {
         when(courseRepository.save(course)).thenReturn(course);
 
         mockMvc.perform(
-                delete(String.format("/courses/%s/modules/%s/events/%s", course.getId(), module.getId(), event.getId())).with(csrf())
-                        .content(gson.toJson(event))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
+                delete(String.format("/courses/%s/modules/%s/events/%s", course.getId(), module.getId(), event.getId())).with(csrf()))
                 .andExpect(status().isNoContent());
 
-        assert(module.getEvents().isEmpty());
+        assert (module.getEvents().isEmpty());
     }
 
     private Course createCourse() {

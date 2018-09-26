@@ -14,7 +14,7 @@ public class ProcessedFileFactoryTest {
     @Test
     public void shouldReturnProcessedFile() {
         FileUpload fileUpload = mock(FileUpload.class);
-        Map<String, Object> metadata = ImmutableMap.of("key", "value");
+        Map<String, String> metadata = ImmutableMap.of("key", "value");
 
         ProcessedFile processedFile = processedFileFactory.create(fileUpload, metadata);
 

@@ -56,12 +56,11 @@ public class Course {
         this.visibility = visibility;
     }
 
-
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }
 
-    public Module getModuleById(String moduleId){
+    public Module getModuleById(String moduleId) {
         List<Module> modules = getModules();
         Optional<Module> module = modules.stream().filter(m -> m.getId().equals(moduleId)).findFirst();
         return module.get();
@@ -131,6 +130,10 @@ public class Course {
         if (audiences != null) {
             this.audiences.addAll(audiences);
         }
+    }
+
+    public void deleteAudience(Audience audience) {
+        audiences.remove(audience);
     }
 
     public String getPreparation() {

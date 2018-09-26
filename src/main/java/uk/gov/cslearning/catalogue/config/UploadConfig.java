@@ -3,11 +3,12 @@ package uk.gov.cslearning.catalogue.config;
 import com.google.common.collect.ImmutableMap;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
+import org.apache.tika.Tika;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
-import uk.gov.cslearning.catalogue.service.upload.processor.mp4.Mp4FileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.Mp4FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
@@ -70,5 +71,10 @@ public class UploadConfig {
                 .put("zip",  defaultFileProcessor) // Scorm
                 .put("mp4",  mp4FileProcessor)     // Video
                 .build();
+    }
+
+    @Bean
+    public Tika tika() {
+        return new Tika();
     }
 }
