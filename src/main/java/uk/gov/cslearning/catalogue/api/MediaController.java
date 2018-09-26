@@ -39,14 +39,13 @@ public class MediaController {
 
     //Work around for uploading without js enabled
     @PostMapping("/nojs")
-    public ResponseEntity<Void> uploadWithNoJs(MultipartFile file, @RequestParam String container, @RequestParam(required = false) String filename, UriComponentsBuilder builder, HttpServletRequest request){
+    public ResponseEntity<Void> uploadWithNoJs(MultipartFile file, @RequestParam String container, @RequestParam(required = false) String filename, HttpServletRequest request){
 
         Media media = mediaManagementService.create(fileUploadFactory.create(file, container, filename));
 
         String referrer = request.getHeader("referer");
 
-        UriComponents uriComponents =
-                builder.fromHttpUrl(referrer + "/{id}").buildAndExpand(media.getId());
+        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(referrer + "/{id}").buildAndExpand(media.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
