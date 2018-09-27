@@ -26,4 +26,15 @@ public class InputStreamFactoryTest {
         assertNotNull(inputStreamFactory.createFileInputStream(file));
         assertTrue(inputStreamFactory.createFileInputStream(file) instanceof FileInputStream);
     }
+
+    @Test
+    public void shouldReturnByteArrayInputStream() throws IOException {
+        byte[] bytes = "Hello World!".getBytes();
+
+        InputStream inputStream = inputStreamFactory.createByteArrayInputStream(bytes);
+
+        assertNotNull(inputStream);
+        assertTrue(inputStream instanceof ByteArrayInputStream);
+    }
+
 }

@@ -9,9 +9,12 @@ public class ELearningModule extends Module {
 
     private String startPage;
 
+    private String url;
+
     @JsonCreator
-    public ELearningModule(@JsonProperty("startPage") String startPage) {
+    public ELearningModule(@JsonProperty("startPage") String startPage, @JsonProperty("url") String url) {
         setStartPage(startPage);
+        setUrl(url);
     }
 
     public String getStartPage() {
@@ -20,5 +23,13 @@ public class ELearningModule extends Module {
 
     public void setStartPage(String startPage) {
         this.startPage = startPage;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
