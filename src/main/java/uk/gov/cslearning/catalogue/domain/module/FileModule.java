@@ -12,7 +12,7 @@ public class FileModule extends Module {
     private String mediaId;
 
     @JsonCreator
-    public FileModule(@JsonProperty("url") String url,@JsonProperty("fileSize") Long fileSize) {
+    public FileModule(@JsonProperty("url") String url, @JsonProperty("fileSize") Long fileSize) {
         this.url = url;
         this.fileSize = fileSize;
     }
@@ -20,6 +20,7 @@ public class FileModule extends Module {
     public String getUrl() {
         return url;
     }
+
     public Long getFileSize() {
         return fileSize;
     }
@@ -27,6 +28,7 @@ public class FileModule extends Module {
     public void setUrl(String url) {
         this.url = url;
     }
+
     public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
     }

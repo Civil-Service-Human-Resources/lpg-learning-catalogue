@@ -29,6 +29,7 @@ import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
 @RestController
 @RequestMapping("/courses")
@@ -163,7 +164,7 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/modules/{moduleId}/events")
-    public ResponseEntity<Object> createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder) {
+    public ResponseEntity createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder) {
         LOGGER.debug("Adding event to module with ID {}", moduleId);
 
         Event saved = eventService.save(courseId, moduleId, event);
@@ -184,7 +185,7 @@ public class CourseController {
 
     @PutMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
     public ResponseEntity<Event> updateEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId, @RequestBody Event newEvent) {
-        LOGGER.debug("Updating event with id {}", eventId);
+        LOGGER.debug("Updating event with ID {}", eventId);
 
         if (!courseRepository.existsById(courseId)) {
             return ResponseEntity.badRequest().build();
@@ -216,7 +217,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
-    public ResponseEntity<Object> deleteEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId) {
+    public ResponseEntity deleteEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId) {
         LOGGER.debug("Deleting event with id {}", eventId);
         if (!courseRepository.existsById(courseId)) {
             return ResponseEntity.badRequest().build();
@@ -265,5 +266,22 @@ public class CourseController {
 
         return result.map(audience -> new ResponseEntity<>(audience, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @DeleteMapping("/{courseId}/audiences/{audienceId}")
+    public ResponseEntity deleteAudience(@PathVariable String courseId, @PathVariable String audienceId) {
+        LOGGER.debug("Deleting audience, course ID {}, audience ID {}", courseId, audienceId);
+
+        courseRepository.findById(courseId)
+                .map(course -> audienceService.find(course, audienceId)
+                        .map(audience -> {
+                            course.deleteAudience(audience);
+                            return courseRepository.save(course);
+                        })
+                        .orElseThrow(() -> resourceNotFoundException())
+                )
+                .orElseThrow(() -> resourceNotFoundException());
+
+        return ResponseEntity.noContent().build();
     }
 }

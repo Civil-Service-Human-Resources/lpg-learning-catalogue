@@ -36,6 +36,10 @@ public class AudienceService {
                     String.format("Unable to find audience: %s. Course does not exist: %s", audienceId, courseId));
         });
 
+        return find(course, audienceId);
+    }
+
+    public Optional<Audience> find(Course course, String audienceId) {
         return course.getAudiences().stream()
                 .filter(audience -> audience.getId().equals(audienceId))
                 .findFirst();
