@@ -15,6 +15,9 @@ import uk.gov.cslearning.catalogue.service.upload.processor.Mp4FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
+import uk.gov.cslearning.catalogue.service.upload.processor.ScormFileProcessor;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathFactory;
 
 import java.util.Map;
 
@@ -82,6 +85,7 @@ public class UploadConfigTest {
     public void shouldHaveCorrectFileProcessorMap() {
         DefaultFileProcessor defaultFileProcessor = mock(DefaultFileProcessor.class);
         Mp4FileProcessor mp4FileProcessor = mock(Mp4FileProcessor.class);
+        ScormFileProcessor scormFileProcessor = mock(ScormFileProcessor.class);
 
         Map<String, FileProcessor> fileProcessorMap = ImmutableMap.<String, FileProcessor>builder()
                 .put("doc",  defaultFileProcessor) // MS Word
@@ -92,21 +96,40 @@ public class UploadConfigTest {
                 .put("pptx", defaultFileProcessor) // MS PowerPoint
                 .put("xls",  defaultFileProcessor) // MS Excel
                 .put("xlsx", defaultFileProcessor) // MS Excel
-                .put("zip",  defaultFileProcessor) // Scorm
+                .put("zip",  scormFileProcessor) // Scorm
                 .put("mp4",  mp4FileProcessor)     // Video
                 .build();
 
         assertEquals(fileProcessorMap.keySet(),
-                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor).keySet());
+                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor, scormFileProcessor).keySet());
 
 
         fileProcessorMap.forEach((key, value) -> assertEquals(key, value,
-                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor).get(key)));
+                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor, scormFileProcessor).get(key)));
     }
 
     @Test
     public void tikaShouldReturnTika() {
         Tika tika = config.tika();
         assertNotNull(tika);
+    }
+
+    @Test
+    public void shouldReturnDocumentBuilderFatory() {
+        DocumentBuilderFactory documentBuilderFactory = config.documentBuilderFactory();
+        assertNotNull(documentBuilderFactory);
+    }
+
+    @Test
+    public void shouldReturnXPathFctory() {
+        XPathFactory xPathFactory = config.xPathFactory();
+        assertNotNull(xPathFactory);
+    }
+
+    @Test
+    public void shouldHaveCorrectManifestXPathMap() {
+        Map<String, String> xPathMap = config.scormManifestXpathMap();
+        assertEquals("/manifest/resources/resource/@href", xPathMap.get("imsmanifest.xml"));
+        assertEquals("/tincan/activities/activity/launch", xPathMap.get("tincan.xml"));
     }
 }

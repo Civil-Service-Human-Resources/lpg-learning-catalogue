@@ -2,10 +2,7 @@ package uk.gov.cslearning.catalogue.service.upload;
 
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.zip.ZipInputStream;
 
 @Component
@@ -17,5 +14,9 @@ public class InputStreamFactory {
 
     public InputStream createFileInputStream(File file) throws FileNotFoundException {
         return new FileInputStream(file);
+    }
+
+    public InputStream createByteArrayInputStream(byte[] bytes) {
+        return new ByteArrayInputStream(bytes);
     }
 }
