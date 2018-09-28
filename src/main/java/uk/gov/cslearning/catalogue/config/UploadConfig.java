@@ -12,6 +12,9 @@ import uk.gov.cslearning.catalogue.service.upload.processor.Mp4FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
+import uk.gov.cslearning.catalogue.service.upload.processor.ScormFileProcessor;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathFactory;
 
 import java.util.Map;
 
@@ -57,7 +60,8 @@ public class UploadConfig {
     @Bean("fileProcessorMap")
     public Map<String, FileProcessor> fileProcessorMap(
             DefaultFileProcessor defaultFileProcessor,
-            Mp4FileProcessor mp4FileProcessor
+            Mp4FileProcessor mp4FileProcessor,
+            ScormFileProcessor scormFileProcessor
     ) {
         return ImmutableMap.<String, FileProcessor>builder()
                 .put("doc",  defaultFileProcessor) // MS Word
@@ -68,7 +72,7 @@ public class UploadConfig {
                 .put("pptx", defaultFileProcessor) // MS PowerPoint
                 .put("xls",  defaultFileProcessor) // MS Excel
                 .put("xlsx", defaultFileProcessor) // MS Excel
-                .put("zip",  defaultFileProcessor) // Scorm
+                .put("zip", scormFileProcessor) // Scorm
                 .put("mp4",  mp4FileProcessor)     // Video
                 .build();
     }
@@ -76,5 +80,21 @@ public class UploadConfig {
     @Bean
     public Tika tika() {
         return new Tika();
+    }
+
+    @Bean
+    public DocumentBuilderFactory documentBuilderFactory() {
+        return DocumentBuilderFactory.newInstance();
+    }
+    @Bean
+    public XPathFactory xPathFactory() {
+        return XPathFactory.newInstance();
+    }
+    @Bean("scormManifestXpathMap")
+    public Map<String, String> scormManifestXpathMap() {
+        return ImmutableMap.of(
+                "imsmanifest.xml", "/manifest/resources/resource/@href",
+                "tincan.xml", "/tincan/activities/activity/launch"
+        );
     }
 }

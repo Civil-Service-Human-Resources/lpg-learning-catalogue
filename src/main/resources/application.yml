@@ -37,6 +37,13 @@ azure:
     container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
     connection-string: "DefaultEndpointsProtocol=https;AccountName=${azure.account.name};AccountKey=${azure.account.key}"
 
+management:
+  endpoints:
+    web:
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "GET, PUT, POST, DELETE, OPTIONS"
+
 oauth:
   serviceUrl: ${OAUTH_SERVICE_URL:http://localhost:8080}
   clientId: ${CLIENT_ID:9fbd4ae2-2db3-44c7-9544-88e80255b56e}

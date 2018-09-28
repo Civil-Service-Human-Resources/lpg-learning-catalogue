@@ -12,10 +12,12 @@ var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.d
 if (!match) {
     throw new Error('Content being accessed on invalid domain');
 }
+var moduleId = getParameterByName('module');
+
 var scheme = match[1];
 var env = !!match[2] ? match[2] + '-' : '';
 var host = env + 'lpg.' +'cshr.digital/';
-var path = 'courses/' + match[3] + '/' + match[4] + '/xapi';
+var path = 'learning-record/' + match[3] + '/' + moduleId + '/xapi';
 
 if (match[2] === 'local') {
     scheme = 'http';

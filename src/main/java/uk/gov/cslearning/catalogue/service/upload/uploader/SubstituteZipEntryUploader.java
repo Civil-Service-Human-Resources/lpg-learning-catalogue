@@ -8,6 +8,7 @@ import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
 
+import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,8 +41,9 @@ public class SubstituteZipEntryUploader implements ZipEntryUploader {
         File file = fileFactory.get(fileSubstitutions.get(zipEntry.getName()));
 
         try (InputStream fileInputStream = inputStreamFactory.createFileInputStream(file)) {
-            String contentType = metadataParser.getContentType(fileInputStream, zipEntry.getName());
-            return Optional.of(uploadClient.upload(fileInputStream, path, file.length(), contentType));
+            byte[] bytes = IOUtils.toByteArray(fileInputStream);
+            String contentType = metadataParser.getContentType(inputStreamFactory.createByteArrayInputStream(bytes), zipEntry.getName());
+            return Optional.of(uploadClient.upload(inputStreamFactory.createByteArrayInputStream(bytes), path, bytes.length, contentType));
         }
     }
 
