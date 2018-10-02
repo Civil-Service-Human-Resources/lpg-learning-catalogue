@@ -206,6 +206,7 @@ public class CourseController {
 
                 event.setDateRanges(newEvent.getDateRanges());
                 event.setJoiningInstructions(newEvent.getJoiningInstructions());
+                event.setVenue(newEvent.getVenue());
 
                 courseRepository.save(course);
 
