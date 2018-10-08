@@ -6,6 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -60,4 +62,29 @@ public class DateRange {
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DateRange dateRange = (DateRange) o;
+
+        return new EqualsBuilder()
+                .append(date, dateRange.date)
+                .append(startTime, dateRange.startTime)
+                .append(endTime, dateRange.endTime)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(date)
+                .append(startTime)
+                .append(endTime)
+                .toHashCode();
+    }
+
 }

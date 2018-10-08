@@ -1,5 +1,8 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.validation.constraints.NotNull;
 
 public class Venue {
@@ -50,4 +53,31 @@ public class Venue {
     public void setMinCapacity(Integer minCapacity) {
         this.minCapacity = minCapacity;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Venue venue = (Venue) o;
+
+        return new EqualsBuilder()
+                .append(location, venue.location)
+                .append(address, venue.address)
+                .append(capacity, venue.capacity)
+                .append(minCapacity, venue.minCapacity)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(location)
+                .append(address)
+                .append(capacity)
+                .append(minCapacity)
+                .toHashCode();
+    }
+
 }
