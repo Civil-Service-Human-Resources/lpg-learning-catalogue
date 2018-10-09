@@ -5,10 +5,6 @@ spring:
       write_dates_as_timestamps: false
   resources:
     add-mappings: false
-  security:
-    user:
-      name: ${AUTH_USER:user}
-      password: ${AUTH_PASSWORD:password}
   servlet:
     multipart:
       max-file-size: 5120MB
