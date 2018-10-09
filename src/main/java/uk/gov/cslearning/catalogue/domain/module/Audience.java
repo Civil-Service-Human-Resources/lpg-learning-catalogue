@@ -1,9 +1,5 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.elasticsearch.common.UUIDs;
 import uk.gov.cslearning.catalogue.domain.Frequency;
 
@@ -31,13 +27,13 @@ public class Audience {
 
     private Set<String> interests = new HashSet<>();
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime requiredBy;
 
     private Frequency frequency;
 
     private Type type;
+
+    private String eventId;
 
     public Audience() {
     }
@@ -112,5 +108,13 @@ public class Audience {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 }
