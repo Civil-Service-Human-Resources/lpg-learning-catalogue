@@ -2,8 +2,9 @@ package uk.gov.cslearning.catalogue.service.upload;
 
 import org.junit.Test;
 
-import java.io.*;
-import java.net.URISyntaxException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -17,14 +18,6 @@ public class InputStreamFactoryTest {
         InputStream inputStream = mock(InputStream.class);
 
         assertNotNull(inputStreamFactory.createZipInputStream(inputStream));
-    }
-
-    @Test
-    public void shouldReturnFileInputStream() throws FileNotFoundException, URISyntaxException {
-        File file = new File(getClass().getResource("/application.yml").toURI());
-
-        assertNotNull(inputStreamFactory.createFileInputStream(file));
-        assertTrue(inputStreamFactory.createFileInputStream(file) instanceof FileInputStream);
     }
 
     @Test

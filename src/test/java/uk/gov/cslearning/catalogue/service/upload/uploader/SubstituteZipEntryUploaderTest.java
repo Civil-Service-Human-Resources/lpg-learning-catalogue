@@ -14,7 +14,6 @@ import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -60,13 +59,11 @@ public class SubstituteZipEntryUploaderTest {
         UploadClient uploadClient = mock(UploadClient.class);
         when(fileSubstitutions.get(zipEntryName)).thenReturn(substitutePath);
 
-        File file = mock(File.class);
         int fileLength = 999;
 
         InputStream inputStream = mock(InputStream.class);
         when(inputStream.available()).thenReturn(fileLength);
-//        when(inputStreamFactory.createFileInputStream(file)).thenReturn(inputStream);
-        when(fileFactory.get(substitutePath)).thenReturn(inputStream);
+        when(fileFactory.getInputStreamFromPath(substitutePath)).thenReturn(inputStream);
 
         byte[] bytes = "Hello World!".getBytes();
         PowerMockito.mockStatic(IOUtils.class);

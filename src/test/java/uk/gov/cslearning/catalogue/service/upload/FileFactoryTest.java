@@ -3,17 +3,16 @@ package uk.gov.cslearning.catalogue.service.upload;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 public class FileFactoryTest {
 
     private final FileFactory fileFactory = new FileFactory();
 
     @Test
-    public void shouldReturnFileFromPath() throws URISyntaxException {
-        InputStream file = fileFactory.get("/application.yml");
-        assertTrue(file != null);
+    public void shouldReturnFileInputStreamFromPath() {
+        InputStream fileInputStream = fileFactory.getInputStreamFromPath("/application.yml");
+        assertNotNull(fileInputStream);
     }
 }
