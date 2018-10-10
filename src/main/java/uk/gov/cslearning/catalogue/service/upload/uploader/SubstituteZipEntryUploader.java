@@ -31,7 +31,7 @@ public class SubstituteZipEntryUploader implements ZipEntryUploader {
     public Optional<UploadedFile> upload(UploadClient uploadClient, ZipEntry zipEntry, InputStream inputStream,
                                          String path) throws IOException {
 
-        try (InputStream fileInputStream = inputStreamFactory.getInputStreamFromPath(fileSubstitutions.get(zipEntry.getName()))) {
+        try (InputStream fileInputStream = inputStreamFactory.getFileInputStreamFromPath(fileSubstitutions.get(zipEntry.getName()))) {
             String contentType = metadataParser.getContentType(fileInputStream, zipEntry.getName());
             return Optional.of(uploadClient.upload(fileInputStream, path, fileInputStream.available(), contentType));
         }
