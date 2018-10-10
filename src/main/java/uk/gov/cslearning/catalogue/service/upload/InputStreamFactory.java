@@ -16,4 +16,8 @@ public class InputStreamFactory {
     public InputStream createByteArrayInputStream(byte[] bytes) {
         return new ByteArrayInputStream(bytes);
     }
+
+    public InputStream getInputStreamFromPath(String path) {
+        return getClass().getResourceAsStream(path);
+    }
 }
