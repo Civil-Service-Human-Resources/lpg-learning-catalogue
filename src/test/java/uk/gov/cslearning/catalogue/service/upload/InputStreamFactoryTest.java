@@ -27,4 +27,10 @@ public class InputStreamFactoryTest {
         assertNotNull(inputStream);
         assertTrue(inputStream instanceof ByteArrayInputStream);
     }
+
+    @Test
+    public void shouldReturnFileInputStreamFromPath() {
+        InputStream fileInputStream = inputStreamFactory.getInputStreamFromPath("/application.yml");
+        assertNotNull(fileInputStream);
+    }
 }

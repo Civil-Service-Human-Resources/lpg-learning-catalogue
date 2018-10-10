@@ -9,14 +9,12 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import uk.gov.cslearning.catalogue.dto.UploadedFile;
-import uk.gov.cslearning.catalogue.service.upload.FileFactory;
 import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
@@ -31,9 +29,6 @@ import static org.mockito.Mockito.when;
 public class SubstituteZipEntryUploaderTest {
 
     @Mock
-    private FileFactory fileFactory;
-
-    @Mock
     private InputStreamFactory inputStreamFactory;
 
     @Mock
@@ -46,7 +41,7 @@ public class SubstituteZipEntryUploaderTest {
     private SubstituteZipEntryUploader uploader;
 
     @Test
-    public void shouldUploadReplacementFileAndReturnOptionalUploadedFile() throws URISyntaxException, IOException {
+    public void shouldUploadReplacementFileAndReturnOptionalUploadedFile() throws IOException {
         String destinationPath = "destination-path";
         String zipEntryName = "zip-entry";
         String substitutePath = "substitute-path";
@@ -63,7 +58,7 @@ public class SubstituteZipEntryUploaderTest {
 
         InputStream inputStream = mock(InputStream.class);
         when(inputStream.available()).thenReturn(fileLength);
-        when(fileFactory.getInputStreamFromPath(substitutePath)).thenReturn(inputStream);
+        when(inputStreamFactory.getInputStreamFromPath(substitutePath)).thenReturn(inputStream);
 
         byte[] bytes = "Hello World!".getBytes();
         PowerMockito.mockStatic(IOUtils.class);

@@ -3,7 +3,7 @@ package uk.gov.cslearning.catalogue.service.upload.uploader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.dto.UploadedFile;
-import uk.gov.cslearning.catalogue.service.upload.FileFactory;
+import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
 
@@ -15,14 +15,14 @@ import java.util.zip.ZipEntry;
 
 @Component
 public class SubstituteZipEntryUploader implements ZipEntryUploader {
-    private final FileFactory fileFactory;
+    private final InputStreamFactory inputStreamFactory;
     private final Map<String, String> fileSubstitutions;
     private final MetadataParser metadataParser;
 
-    public SubstituteZipEntryUploader(FileFactory fileFactory,
+    public SubstituteZipEntryUploader(InputStreamFactory inputStreamFactory,
                                       @Qualifier("fileSubstitutions") Map<String, String> fileSubstitutions,
                                       MetadataParser metadataParser) {
-        this.fileFactory = fileFactory;
+        this.inputStreamFactory = inputStreamFactory;
         this.fileSubstitutions = fileSubstitutions;
         this.metadataParser = metadataParser;
     }
@@ -31,7 +31,7 @@ public class SubstituteZipEntryUploader implements ZipEntryUploader {
     public Optional<UploadedFile> upload(UploadClient uploadClient, ZipEntry zipEntry, InputStream inputStream,
                                          String path) throws IOException {
 
-        try (InputStream fileInputStream = fileFactory.getInputStreamFromPath(fileSubstitutions.get(zipEntry.getName()))) {
+        try (InputStream fileInputStream = inputStreamFactory.getInputStreamFromPath(fileSubstitutions.get(zipEntry.getName()))) {
             String contentType = metadataParser.getContentType(fileInputStream, zipEntry.getName());
             return Optional.of(uploadClient.upload(fileInputStream, path, fileInputStream.available(), contentType));
         }
