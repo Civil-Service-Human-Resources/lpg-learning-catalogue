@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -62,12 +61,12 @@ public class SubstituteZipEntryUploaderTest {
         when(fileSubstitutions.get(zipEntryName)).thenReturn(substitutePath);
 
         File file = mock(File.class);
-        long fileLength = 999;
-        when(file.length()).thenReturn(fileLength);
-        when(fileFactory.get(substitutePath)).thenReturn(file);
+        int fileLength = 999;
 
         InputStream inputStream = mock(InputStream.class);
-        when(inputStreamFactory.createFileInputStream(file)).thenReturn(inputStream);
+        when(inputStream.available()).thenReturn(fileLength);
+//        when(inputStreamFactory.createFileInputStream(file)).thenReturn(inputStream);
+        when(fileFactory.get(substitutePath)).thenReturn(inputStream);
 
         byte[] bytes = "Hello World!".getBytes();
         PowerMockito.mockStatic(IOUtils.class);
