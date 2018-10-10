@@ -8,8 +8,6 @@ import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
 
-import org.apache.commons.io.IOUtils;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -38,12 +36,9 @@ public class SubstituteZipEntryUploader implements ZipEntryUploader {
     public Optional<UploadedFile> upload(UploadClient uploadClient, ZipEntry zipEntry, InputStream inputStream,
                                          String path) throws IOException, URISyntaxException {
 
-        File file = fileFactory.get(fileSubstitutions.get(zipEntry.getName()));
-
-        try (InputStream fileInputStream = inputStreamFactory.createFileInputStream(file)) {
-            byte[] bytes = IOUtils.toByteArray(fileInputStream);
-            String contentType = metadataParser.getContentType(inputStreamFactory.createByteArrayInputStream(bytes), zipEntry.getName());
-            return Optional.of(uploadClient.upload(inputStreamFactory.createByteArrayInputStream(bytes), path, bytes.length, contentType));
+        try (InputStream fileInputStream = fileFactory.get(fileSubstitutions.get(zipEntry.getName()))) {
+            String contentType = metadataParser.getContentType(fileInputStream, zipEntry.getName());
+            return Optional.of(uploadClient.upload(fileInputStream, path, fileInputStream.available(), contentType));
         }
     }
 
