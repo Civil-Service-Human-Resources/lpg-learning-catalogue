@@ -29,8 +29,8 @@ public class InputStreamFactoryTest {
     }
 
     @Test
-    public void shouldReturnFileInputStreamFromPath() {
-        InputStream fileInputStream = inputStreamFactory.getInputStreamFromPath("/application.yml");
-        assertNotNull(fileInputStream);
+    public void shouldReturnInputStreamFromPath() {
+        InputStream inputStream = inputStreamFactory.getInputStreamFromPath("/application.yml");
+        assertNotNull(inputStream);
     }
 }
