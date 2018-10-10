@@ -58,7 +58,7 @@ public class SubstituteZipEntryUploaderTest {
 
         InputStream inputStream = mock(InputStream.class);
         when(inputStream.available()).thenReturn(fileLength);
-        when(inputStreamFactory.getInputStreamFromPath(substitutePath)).thenReturn(inputStream);
+        when(inputStreamFactory.getFileInputStreamFromPath(substitutePath)).thenReturn(inputStream);
 
         byte[] bytes = "Hello World!".getBytes();
         PowerMockito.mockStatic(IOUtils.class);
