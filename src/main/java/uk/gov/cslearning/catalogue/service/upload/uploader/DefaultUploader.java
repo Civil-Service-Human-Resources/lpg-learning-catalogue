@@ -22,7 +22,7 @@ public class DefaultUploader implements Uploader {
 
     @Override
     public Upload upload(ProcessedFile processedFile, UploadClient uploadClient) {
-        String filePath = String.join("/", processedFile.getFileUpload().getContainer(), processedFile.getFileUpload().getId());
+        String filePath = String.join("/", processedFile.getFileUpload().getContainer(), processedFile.getFileUpload().getId(), processedFile.getFileUpload().getName());
 
         try {
             UploadedFile uploadedFile = uploadClient.upload(processedFile.getFileUpload().getFile().getInputStream(),
