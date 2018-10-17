@@ -34,10 +34,11 @@ public class DefaultUploaderTest {
     public void shouldUploadFileAndReturnUploadOnSuccessfulUpload() throws IOException {
         String containerName = "test-container";
         String id = "file-upload-id";
+        String filename = "test.pdf";
         long fileSize = 99;
         String contentType = "application/pdf";
 
-        String path = String.join("/", containerName, id);
+        String path = String.join("/", containerName, id, filename);
         FileUpload fileUpload = mock(FileUpload.class);
         ProcessedFile processedFile = mock(ProcessedFile.class);
         MultipartFile multipartFile = mock(MultipartFile.class);
@@ -47,6 +48,7 @@ public class DefaultUploaderTest {
         when(fileUpload.getContainer()).thenReturn(containerName);
         when(fileUpload.getId()).thenReturn(id);
         when(fileUpload.getFile()).thenReturn(multipartFile);
+        when(fileUpload.getName()).thenReturn(filename);
         when(multipartFile.getInputStream()).thenReturn(inputStream);
         when(multipartFile.getSize()).thenReturn(fileSize);
         when(multipartFile.getContentType()).thenReturn(contentType);
@@ -69,8 +71,9 @@ public class DefaultUploaderTest {
     public void shouldAddErrorToUploadOnIOException() throws IOException {
         String containerName = "test-container";
         String id = "file-upload-id";
+        String filename = "test.pdf";
 
-        String path = String.join("/", containerName, id);
+        String path = String.join("/", containerName, id, filename);
         FileUpload fileUpload = mock(FileUpload.class);
         ProcessedFile processedFile = mock(ProcessedFile.class);
         MultipartFile multipartFile = mock(MultipartFile.class);
@@ -79,6 +82,7 @@ public class DefaultUploaderTest {
         when(fileUpload.getContainer()).thenReturn(containerName);
         when(fileUpload.getId()).thenReturn(id);
         when(fileUpload.getFile()).thenReturn(multipartFile);
+        when(fileUpload.getName()).thenReturn(filename);
         IOException exception = mock(IOException.class);
         doThrow(exception).when(multipartFile).getInputStream();
 
