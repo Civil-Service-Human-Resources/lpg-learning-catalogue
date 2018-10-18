@@ -1,12 +1,14 @@
 package uk.gov.cslearning.catalogue.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
+import uk.gov.cslearning.catalogue.exception.UnknownStatusException;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class StatusTest {
 
@@ -40,5 +42,16 @@ public class StatusTest {
         assertEquals(Status.DRAFT, objectMapper.readValue("{ \"status\": \"Draft\" }", Course.class).getStatus());
         assertEquals(Status.PUBLISHED, objectMapper.readValue("{ \"status\": \"Published\" }", Course.class).getStatus());
         assertEquals(Status.ARCHIVED, objectMapper.readValue("{ \"status\": \"Archived\" }", Course.class).getStatus());
+    }
+
+    @Test
+    public void shouldThrowUnknownStatusExceptionIfInvalidStatus() throws IOException {
+        try {
+            objectMapper.readValue("{ \"status\": \"This is not a status\" }", Course.class);
+            fail("Expected UknownStatusException");
+        } catch (InvalidDefinitionException e) {
+            assertTrue(e.getCause() instanceof UnknownStatusException);
+            assertEquals("Unknown Status: 'This is not a status'", e.getCause().getMessage());
+        }
     }
 }

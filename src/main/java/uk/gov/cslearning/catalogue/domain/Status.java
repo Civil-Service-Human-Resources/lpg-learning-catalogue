@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import uk.gov.cslearning.catalogue.exception.UnknownStatusException;
 
 import java.util.Arrays;
 
@@ -21,7 +22,7 @@ public enum Status {
         return Arrays.stream(Status.values())
                 .filter(v -> v.value.equalsIgnoreCase(value))
                 .findAny()
-                .orElseThrow(() -> new RuntimeException("Uknown Status"));
+                .orElseThrow(() -> new UnknownStatusException(value));
     }
 
     @JsonValue
