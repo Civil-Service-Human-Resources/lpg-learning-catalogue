@@ -34,7 +34,8 @@ import java.time.LocalTime;
 import java.util.*;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -466,12 +467,6 @@ public class CourseControllerTest {
                 .andExpect(status().isNoContent());
 
         assert (module.getEvents().isEmpty());
-    }
-
-
-    @Test
-    public void shouldDefaultToPublishedStatus() {
-        fail("Unimplemented");
     }
 
     @Test
