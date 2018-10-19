@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Resource;
+import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
@@ -24,9 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
@@ -87,30 +85,20 @@ public class CourseController {
         return new ResponseEntity<>(result, OK);
     }
 
-    @GetMapping
-    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", required = false) List<String> areasOfWork,
-                                                    @RequestParam(name = "department", required = false) List<String> departments,
-                                                    @RequestParam(name = "interest", required = false) List<String> interests,
-                                                    PageParameters pageParameters) {
-        LOGGER.debug("Listing courses");
+    @GetMapping()
+    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "none") String areasOfWork,
+                                                    @RequestParam(name = "department", defaultValue = "none") String departments,
+                                                    @RequestParam(name = "interest", defaultValue = "none") String interests,
+                                                    @RequestParam(name = "status", defaultValue = "Published") String status,
+                                                    Pageable pageable) {
+        Page<Course> results;
 
-        areasOfWork = defaultIfNull(areasOfWork, emptyList());
-        departments = defaultIfNull(departments, emptyList());
-        interests = defaultIfNull(interests, emptyList());
-
-        Pageable pageable = pageParameters.getPageRequest();
-        Page<Course> page;
-
-        if (departments.isEmpty() && areasOfWork.isEmpty()) {
-            page = courseRepository.findAll(pageable);
+        if (areasOfWork.equals("none") && departments.equals("none") && interests.equals("none")) {
+            results = courseRepository.findAllByStatus(Status.forValue(status), pageable);
         } else {
-            page = courseRepository.findSuggested(
-                    defaultIfEmpty(String.join(",", departments), "none"),
-                    defaultIfEmpty(String.join(",", areasOfWork), "none"),
-                    defaultIfEmpty(String.join(",", interests), "none"),
-                    pageable);
+            results = courseRepository.findSuggested(departments, areasOfWork, interests, status, pageable);
         }
-        return ResponseEntity.ok(new PageResults<>(page, pageable));
+        return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
 
     @PutMapping(path = "/{courseId}")
