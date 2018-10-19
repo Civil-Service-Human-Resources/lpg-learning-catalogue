@@ -496,11 +496,26 @@ public class CourseControllerTest {
     public void shouldDefaultToShowingAllPublicCourses() throws Exception {
         Course course = new Course();
 
-        when(courseRepository.findAllByStatus(eq(Status.PUBLISHED), any(Pageable.class)))
+        when(courseRepository.findAllByStatusIn(eq(Collections.singletonList(Status.PUBLISHED)), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldFindMultipleStatuses() throws Exception {
+        Course course = new Course();
+
+        when(courseRepository.findAllByStatusIn(eq(Arrays.asList(Status.DRAFT, Status.PUBLISHED, Status.ARCHIVED)), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("status", "Draft", "Published", "Archived")
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));

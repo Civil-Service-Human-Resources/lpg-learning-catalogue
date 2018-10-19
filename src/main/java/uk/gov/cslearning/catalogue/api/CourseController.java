@@ -30,8 +30,10 @@ import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
@@ -102,7 +104,8 @@ public class CourseController {
         Page<Course> results;
 
         if (areasOfWork.equals("none") && departments.equals("none") && interests.equals("none")) {
-            results = courseRepository.findAllByStatus(Status.forValue(status), pageable);
+            results = courseRepository.findAllByStatusIn(
+                    Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
             results = courseRepository.findSuggested(departments, areasOfWork, interests, status, pageable);
         }

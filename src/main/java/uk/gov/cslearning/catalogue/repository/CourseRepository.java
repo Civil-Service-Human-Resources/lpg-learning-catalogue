@@ -10,10 +10,10 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 
+import java.util.Collection;
+
 @Repository
 public interface CourseRepository extends ElasticsearchRepository<Course, String>, ResourceSearchRepository{
-
-    Page<Course> findAllByStatus(Status status, Pageable pageable);
 
     @Query("{ \"bool\": { \"must\": [{ \"match\": { \"modules.audiences.mandatory\": \"true\" } }, { \"term\": { \"modules.audiences.departments\": \"?0\" }}] }}")
     Page<Course> findMandatory(String department, Pageable pageable);
@@ -22,4 +22,6 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
     Page<Course> findSuggested(String department, String areaOfWork, String interest, String status, Pageable pageable);
 
     SearchPage search(String query, Pageable pageable, FilterParameters filterParameters);
+
+    Page<Course> findAllByStatusIn(Collection<Status> status, Pageable pageable);
 }
