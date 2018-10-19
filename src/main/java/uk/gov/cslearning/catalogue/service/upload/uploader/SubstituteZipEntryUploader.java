@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.service.upload.uploader;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.dto.UploadedFile;
@@ -30,11 +31,11 @@ public class SubstituteZipEntryUploader implements ZipEntryUploader {
     @Override
     public Optional<UploadedFile> upload(UploadClient uploadClient, ZipEntry zipEntry, InputStream inputStream,
                                          String path) throws IOException {
-
         try (InputStream fileInputStream = inputStreamFactory.getFileInputStreamFromPath(fileSubstitutions.get(zipEntry.getName()))) {
-            String contentType = metadataParser.getContentType(fileInputStream, zipEntry.getName());
-            return Optional.of(uploadClient.upload(fileInputStream, path, fileInputStream.available(), contentType));
+            byte[] bytes = IOUtils.toByteArray(fileInputStream);
+            String contentType = metadataParser.getContentType(inputStreamFactory.createByteArrayInputStream(bytes), zipEntry.getName());
+            return Optional.of(uploadClient.upload(inputStreamFactory.createByteArrayInputStream(bytes), path, bytes.length, contentType));
         }
-    }
 
+    }
 }
