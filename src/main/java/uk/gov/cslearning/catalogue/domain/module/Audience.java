@@ -3,7 +3,7 @@ package uk.gov.cslearning.catalogue.domain.module;
 import org.elasticsearch.common.UUIDs;
 import uk.gov.cslearning.catalogue.domain.Frequency;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +27,7 @@ public class Audience {
 
     private Set<String> interests = new HashSet<>();
 
-    private LocalDateTime requiredBy;
+    private Instant requiredBy;
 
     private Frequency frequency;
 
@@ -86,11 +86,11 @@ public class Audience {
         this.interests = interests;
     }
 
-    public LocalDateTime getRequiredBy() {
+    public Instant getRequiredBy() {
         return requiredBy;
     }
 
-    public void setRequiredBy(LocalDateTime requiredBy) {
+    public void setRequiredBy(Instant requiredBy) {
         this.requiredBy = requiredBy;
     }
 
