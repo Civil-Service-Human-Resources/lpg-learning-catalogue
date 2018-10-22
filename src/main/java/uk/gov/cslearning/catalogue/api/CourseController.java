@@ -81,10 +81,11 @@ public class CourseController {
 
     @GetMapping(params = {"mandatory", "department"})
     public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
-                                                             PageParameters pageParameters) {
+                                                             @RequestParam(value = "status", defaultValue = "Published") String status,
+                                                             Pageable pageable) {
         LOGGER.debug("Listing mandatory courses for department {}", department);
-        Pageable pageable = pageParameters.getPageRequest();
-        Page<Course> page = courseRepository.findMandatory(department, pageParameters.getPageRequest());
+
+        Page<Course> page = courseRepository.findMandatory(department, status, pageable);
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
