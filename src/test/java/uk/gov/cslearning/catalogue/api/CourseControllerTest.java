@@ -584,6 +584,46 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
 
+    @Test
+    public void shouldListMandatoryCourses() throws Exception {
+        String department = "department1";
+        String status = "Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("department", "department1")
+                        .param("mandatory", "true")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldListMandatoryCoursesWithMultipleParameters() throws Exception {
+        String department = "department1,department2";
+        String status = "Draft,Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("department", "department1", "department2")
+                        .param("status", "Draft", "Published")
+                        .param("mandatory", "true")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+
+    }
+
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
                 Visibility.PUBLIC);

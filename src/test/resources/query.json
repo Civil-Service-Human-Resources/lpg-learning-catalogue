@@ -1,1 +1,1 @@
-{"bool": {"should": [{"match": {"audiences.departments": {"query": "none","zero_terms_query": "none"}}},{"match": {"audiences.areasOfWork": {"query": "none","zero_terms_query": "none"}}},{"match": {"audiences.interests": {"query": "none","zero_terms_query": "none"}}}],"must": [{"match": {"status": {"query": "PUBLISHED"}}}],"must_not": [{"match": {"audiences.type": "REQUIRED_LEARNING"}}]}}
+{"bool": {"must": [{"match": {"audiences.type": "REQUIRED_LEARNING"}},{"match": {"status": "Published"}},{"term": {"audiences.departments": "co"}}]}}
