@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 
-
 @Repository
 public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
 
@@ -70,16 +69,16 @@ public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
             boolQuery = boolQuery.must(filterQuery);
         }
 
-        boolQuery = addFilter(boolQuery, filterParameters.getAreasOfWork(), "modules.audiences.areasOfWork");
-        boolQuery = addFilter(boolQuery, filterParameters.getDepartments(), "modules.audiences.departments");
-        boolQuery = addFilter(boolQuery, filterParameters.getInterests(), "modules.audiences.interests");
+        boolQuery = addFilter(boolQuery, filterParameters.getAreasOfWork(), "audiences.areasOfWork");
+        boolQuery = addFilter(boolQuery, filterParameters.getDepartments(), "audiences.departments");
+        boolQuery = addFilter(boolQuery, filterParameters.getInterests(), "audiences.interests");
 
         if (filterParameters.hasCost()) {
             boolQuery = boolQuery
                     .must(QueryBuilders.boolQuery()
-                        .should(QueryBuilders.matchQuery("modules.price", 0))
-                        .should(QueryBuilders.matchQuery("price", 0))
-                        .minimumShouldMatch(1));
+                            .should(QueryBuilders.matchQuery("modules.price", 0))
+                            .should(QueryBuilders.matchQuery("price", 0))
+                            .minimumShouldMatch(1));
         }
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
@@ -106,4 +105,3 @@ public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
         return boolQuery;
     }
 }
-
