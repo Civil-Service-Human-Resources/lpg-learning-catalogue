@@ -5,11 +5,14 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Document(indexName = "lpg-resources", type = "resources")
 public class Resource {
@@ -34,6 +37,8 @@ public class Resource {
 
     private List<Module> modules = new ArrayList<>();
 
+    private Set<Audience> audiences = new HashSet<>();
+
     private Course course;
 
     public Resource() {
@@ -52,9 +57,9 @@ public class Resource {
 
 
     public static ArrayList<Resource> fromCourse(Course course) {
-        ArrayList<Resource> out = new ArrayList<Resource>();
+        ArrayList<Resource> resources = new ArrayList<Resource>();
 
-        Resource newResource = new Resource(
+        Resource courseResource = new Resource(
                 course.getId(),
                 "0", // for sorting
                 "course",
@@ -69,14 +74,14 @@ public class Resource {
         // java layer
 
         List<Module> modules = course.getModules();
-        newResource.setModules(modules);
-
-        out.add(newResource);
+        courseResource.setModules(modules);
+        courseResource.setAudiences(course.getAudiences());
+        resources.add(courseResource);
 
         if (!modules.isEmpty()) {
             // now lets iterate through any modules
             for (Module module : modules) {
-                newResource = new Resource(
+                Resource moduleResource = new Resource(
                         module.getId(),
                         course.getId(),
                         module.getModuleType(),
@@ -86,12 +91,12 @@ public class Resource {
                         module.getDescription(),
                         null
                 );
-                newResource.setCourse(course);
-                out.add(newResource);
+                moduleResource.setCourse(course);
+                resources.add(moduleResource);
             }
         }
 
-        return out;
+        return resources;
     }
 
     public String getId() {
@@ -149,6 +154,14 @@ public class Resource {
 
     public void setModules(List<Module> modules) {
         this.modules = modules;
+    }
+
+    public Set<Audience> getAudiences() {
+        return audiences;
+    }
+
+    public void setAudiences(Set<Audience> audiences) {
+        this.audiences = audiences;
     }
 
     public String getCourseId() {

@@ -14,7 +14,7 @@ import java.util.*;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
-@Document(indexName = "lpg-courses-0.4.0", type = "course")
+@Document(indexName = "courses", type = "course")
 public class Course {
 
     @Id

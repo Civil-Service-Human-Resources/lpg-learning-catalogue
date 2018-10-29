@@ -11,11 +11,15 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
@@ -43,7 +47,8 @@ import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.re
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(CourseController.class)
-@WithMockUser(username = "user", password = "password")
+@WithMockUser(username = "user")
+@EnableSpringDataWebSupport
 public class CourseControllerTest {
 
     @Autowired
@@ -66,8 +71,10 @@ public class CourseControllerTest {
 
     private ObjectMapper objectMapper;
 
+
     @Before
     public void setUp() throws Exception {
+
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -460,6 +467,161 @@ public class CourseControllerTest {
                 .andExpect(status().isNoContent());
 
         assert (module.getEvents().isEmpty());
+    }
+
+    @Test
+    public void shouldFindSuggestedCourses() throws Exception {
+        String areaOfWork = "area-of-work";
+        String department = "department";
+        String interest = "_interest";
+        String status = "status";
+
+        Course course = new Course();
+
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("areaOfWork", areaOfWork)
+                        .param("department", department)
+                        .param("interest", interest)
+                        .param("status", status)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldDefaultToShowingAllPublicCourses() throws Exception {
+        Course course = new Course();
+
+        when(courseRepository.findAllByStatusIn(eq(Collections.singletonList(Status.PUBLISHED)), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldFindMultipleStatuses() throws Exception {
+        Course course = new Course();
+
+        when(courseRepository.findAllByStatusIn(eq(Arrays.asList(Status.DRAFT, Status.PUBLISHED, Status.ARCHIVED)), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("status", "Draft", "Published", "Archived")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldDefaultMissingParametersToNone() throws Exception {
+        String areaOfWork = "none";
+        String department = "none";
+        String interest = "_interest";
+        String status = "Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("interest", interest)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldDefaultMissingInterestParameterToNone() throws Exception {
+        String areaOfWork = "area-of-work";
+        String department = "none";
+        String interest = "none";
+        String status = "Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("areaOfWork", areaOfWork)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+
+    @Test
+    public void shouldConcatenateMultipleParameters() throws Exception {
+        String areaOfWork = "area-of-work1,area-of-work2";
+        String department = "department1,department2";
+        String interest = "interest1,interest2";
+        String status = "Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("areaOfWork", "area-of-work1", "area-of-work2")
+                        .param("department", "department1", "department2")
+                        .param("interest", "interest1", "interest2")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldListMandatoryCourses() throws Exception {
+        String department = "department1";
+        String status = "Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("department", "department1")
+                        .param("mandatory", "true")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldListMandatoryCoursesWithMultipleParameters() throws Exception {
+        String department = "department1,department2";
+        String status = "Draft,Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("department", "department1", "department2")
+                        .param("status", "Draft", "Published")
+                        .param("mandatory", "true")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+
     }
 
     private Course createCourse() {

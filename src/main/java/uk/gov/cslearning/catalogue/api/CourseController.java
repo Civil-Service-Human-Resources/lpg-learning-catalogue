@@ -6,10 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Resource;
+import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
@@ -21,12 +30,11 @@ import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
@@ -73,10 +81,11 @@ public class CourseController {
 
     @GetMapping(params = {"mandatory", "department"})
     public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
-                                                             PageParameters pageParameters) {
+                                                             @RequestParam(value = "status", defaultValue = "Published") String status,
+                                                             Pageable pageable) {
         LOGGER.debug("Listing mandatory courses for department {}", department);
-        Pageable pageable = pageParameters.getPageRequest();
-        Page<Course> page = courseRepository.findMandatory(department, pageParameters.getPageRequest());
+
+        Page<Course> page = courseRepository.findMandatory(department, status, pageable);
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
@@ -87,30 +96,21 @@ public class CourseController {
         return new ResponseEntity<>(result, OK);
     }
 
-    @GetMapping
-    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", required = false) List<String> areasOfWork,
-                                                    @RequestParam(name = "department", required = false) List<String> departments,
-                                                    @RequestParam(name = "interest", required = false) List<String> interests,
-                                                    PageParameters pageParameters) {
-        LOGGER.debug("Listing courses");
+    @GetMapping()
+    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "none") String areasOfWork,
+                                                    @RequestParam(name = "department", defaultValue = "none") String departments,
+                                                    @RequestParam(name = "interest", defaultValue = "none") String interests,
+                                                    @RequestParam(name = "status", defaultValue = "Published") String status,
+                                                    Pageable pageable) {
+        Page<Course> results;
 
-        areasOfWork = defaultIfNull(areasOfWork, emptyList());
-        departments = defaultIfNull(departments, emptyList());
-        interests = defaultIfNull(interests, emptyList());
-
-        Pageable pageable = pageParameters.getPageRequest();
-        Page<Course> page;
-
-        if (departments.isEmpty() && areasOfWork.isEmpty()) {
-            page = courseRepository.findAll(pageable);
+        if (areasOfWork.equals("none") && departments.equals("none") && interests.equals("none")) {
+            results = courseRepository.findAllByStatusIn(
+                    Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
-            page = courseRepository.findSuggested(
-                    defaultIfEmpty(String.join(",", departments), "none"),
-                    defaultIfEmpty(String.join(",", areasOfWork), "none"),
-                    defaultIfEmpty(String.join(",", interests), "none"),
-                    pageable);
+            results = courseRepository.findSuggested(departments, areasOfWork, interests, status, pageable);
         }
-        return ResponseEntity.ok(new PageResults<>(page, pageable));
+        return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
 
     @PutMapping(path = "/{courseId}")
@@ -126,7 +126,7 @@ public class CourseController {
 
         ArrayList<Resource> resources = Resource.fromCourse(course);
         for (Resource resource : resources) {
-            LOGGER.debug("Creating resource {}", resource);
+            LOGGER.debug("Updating resource {}", resource);
             resourceRepository.save(resource);
         }
 
