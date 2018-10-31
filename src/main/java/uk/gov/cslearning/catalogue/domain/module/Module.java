@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.domain.module;
+    package uk.gov.cslearning.catalogue.domain.module;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

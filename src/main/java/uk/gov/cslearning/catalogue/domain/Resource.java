@@ -17,6 +17,9 @@ import java.util.Set;
 @Document(indexName = "lpg-resources", type = "resources")
 public class Resource {
 
+    private static final String COURSE_TYPE = "course";
+    private static final String COURSE_ID = "0";
+
     @Id
     private String id;
 
@@ -61,8 +64,8 @@ public class Resource {
 
         Resource courseResource = new Resource(
                 course.getId(),
-                "0", // for sorting
-                "course",
+                COURSE_ID, // for sorting
+                COURSE_TYPE,
                 course.getTitle(),
                 null,
                 course.getShortDescription(),
@@ -70,31 +73,10 @@ public class Resource {
                 course.getLearningOutcomes()
         );
 
-        // modules needed for various metrics. Potential to move this into
-        // java layer
-
         List<Module> modules = course.getModules();
         courseResource.setModules(modules);
         courseResource.setAudiences(course.getAudiences());
         resources.add(courseResource);
-
-        if (!modules.isEmpty()) {
-            // now lets iterate through any modules
-            for (Module module : modules) {
-                Resource moduleResource = new Resource(
-                        module.getId(),
-                        course.getId(),
-                        module.getModuleType(),
-                        module.getTitle(),
-                        module.getCost(),
-                        null,
-                        module.getDescription(),
-                        null
-                );
-                moduleResource.setCourse(course);
-                resources.add(moduleResource);
-            }
-        }
 
         return resources;
     }
