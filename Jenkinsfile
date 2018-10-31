@@ -23,7 +23,7 @@ pipeline {
                 stash 'workspace'
             }
         }
-        stage('Build Container & Push to ACR: "${env.BRANCH_NAME}-${env.BUILD_ID}"') {
+        stage('Build Container & Push to ACR') {
             agent { label 'master' }
             steps {
                 unstash 'workspace'
