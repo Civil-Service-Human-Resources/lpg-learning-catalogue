@@ -1,66 +1,39 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.Instant;
 
 public class DateRange {
 
-    @NotNull
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    LocalDate date;
+    private Instant startDateTime;
 
-    @NotNull
-    @JsonSerialize(using = LocalTimeSerializer.class)
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    LocalTime startTime;
-
-    @NotNull
-    @JsonSerialize(using = LocalTimeSerializer.class)
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    LocalTime endTime;
+    private Instant endDateTime;
 
     public DateRange() {
     }
 
-    public DateRange(@NotNull LocalDate date, @NotNull LocalTime startTime, @NotNull LocalTime endTime) {
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public DateRange(@NotNull Instant startDateTime, @NotNull Instant endDateTime) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public Instant getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setStartDateTime(Instant startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public LocalTime getStartTime() {
-        return startTime;
+    public Instant getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
+    public void setEndDateTime(Instant endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     @Override
@@ -72,19 +45,16 @@ public class DateRange {
         DateRange dateRange = (DateRange) o;
 
         return new EqualsBuilder()
-                .append(date, dateRange.date)
-                .append(startTime, dateRange.startTime)
-                .append(endTime, dateRange.endTime)
+                .append(startDateTime, dateRange.startDateTime)
+                .append(endDateTime, dateRange.endDateTime)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(date)
-                .append(startTime)
-                .append(endTime)
+                .append(startDateTime)
+                .append(endDateTime)
                 .toHashCode();
     }
-
 }

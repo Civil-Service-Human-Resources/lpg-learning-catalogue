@@ -2,48 +2,26 @@ package uk.gov.cslearning.catalogue.domain.module;
 
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.Assert.assertEquals;
 
 public class DateRangeTest {
     @Test
-    public void shouldEqualDateRangeWithSameVaues() {
-        LocalDate date = LocalDate.now();
-        LocalTime start = LocalTime.NOON;
-        LocalTime end = LocalTime.MIDNIGHT;
+    public void whenTwoDateRangesHaveTheSameStartAndEndDateTimes_thenTheyAreEqualAndHaveSameHashCodes() {
+        Instant startDateTime = Instant.now();
+        Instant endDateTime = Instant.now().plus(1, ChronoUnit.HOURS);
 
         DateRange dateRange1 = new DateRange();
-        dateRange1.setDate(date);
-        dateRange1.setStartTime(start);
-        dateRange1.setEndTime(end);
+        dateRange1.setStartDateTime(startDateTime);
+        dateRange1.setEndDateTime(endDateTime);
 
         DateRange dateRange2 = new DateRange();
-        dateRange2.setDate(date);
-        dateRange2.setStartTime(start);
-        dateRange2.setEndTime(end);
+        dateRange2.setStartDateTime(startDateTime);
+        dateRange2.setEndDateTime(endDateTime);
 
         assertEquals(dateRange1, dateRange2);
-    }
-
-    @Test
-    public void shouldHaveSameHashcodeAsEqualDateRange() {
-        LocalDate date = LocalDate.now();
-        LocalTime start = LocalTime.NOON;
-        LocalTime end = LocalTime.MIDNIGHT;
-
-        DateRange dateRange1 = new DateRange();
-        dateRange1.setDate(date);
-        dateRange1.setStartTime(start);
-        dateRange1.setEndTime(end);
-
-        DateRange dateRange2 = new DateRange();
-        dateRange2.setDate(date);
-        dateRange2.setStartTime(start);
-        dateRange2.setEndTime(end);
-
         assertEquals(dateRange1.hashCode(), dateRange2.hashCode());
     }
-
 }
