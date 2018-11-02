@@ -1,9 +1,9 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
 import org.elasticsearch.common.UUIDs;
-import uk.gov.cslearning.catalogue.domain.Frequency;
 
 import java.time.Instant;
+import java.time.Period;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +29,7 @@ public class Audience {
 
     private Instant requiredBy;
 
-    private Frequency frequency;
+    private Period frequency;
 
     private Type type;
 
@@ -94,11 +94,11 @@ public class Audience {
         this.requiredBy = requiredBy;
     }
 
-    public Frequency getFrequency() {
+    public Period getFrequency() {
         return frequency;
     }
 
-    public void setFrequency(Frequency frequency) {
+    public void setFrequency(Period frequency) {
         this.frequency = frequency;
     }
 
