@@ -163,6 +163,23 @@ public class CourseController {
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
+    @DeleteMapping("/{courseId}/modules/{moduleId}")
+    public ResponseEntity deleteModule(@PathVariable String courseId, @PathVariable String moduleId) {
+        LOGGER.debug("Deleting module, course ID {}, module ID {}", courseId, moduleId);
+
+        courseRepository.findById(courseId)
+                .map(course -> moduleService.find(courseId, moduleId)
+                        .map(module -> {
+                            course.deleteModule(module);
+                            return courseRepository.save(course);
+                        })
+                        .orElseThrow(() -> resourceNotFoundException())
+                )
+                .orElseThrow(() -> resourceNotFoundException());
+
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/{courseId}/modules/{moduleId}/events")
     public ResponseEntity createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder) {
         LOGGER.debug("Adding event to module with ID {}", moduleId);
