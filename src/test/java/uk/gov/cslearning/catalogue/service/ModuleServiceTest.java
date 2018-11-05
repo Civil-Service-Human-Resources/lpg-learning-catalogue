@@ -11,9 +11,8 @@ import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
+import java.net.URL;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -109,4 +108,31 @@ public class ModuleServiceTest {
         }
     }
 
+    @Test
+    public void shouldUpdateModule() throws Exception {
+        String moduleId = "moduleId";
+        String courseId = "course-id";
+        String url = "https://www.example.com";
+        String updatedTitle = "title-updated";
+
+        Course course = new Course();
+
+        Module module = new LinkModule(new URL(url));
+        module.setId(moduleId);
+        module.setTitle("title");
+
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+
+        Module newModule = new LinkModule(new URL(url));
+        newModule.setId(moduleId);
+        newModule.setTitle(updatedTitle);
+
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+
+        moduleService.updateModule(courseId, newModule);
+
+        assertEquals(course.getModuleById(moduleId).getTitle(), updatedTitle);
+    }
 }

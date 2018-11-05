@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.domain.module.Audience;
-import uk.gov.cslearning.catalogue.domain.module.Event;
-import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
@@ -154,6 +151,23 @@ public class CourseController {
                         .orElseThrow(() -> resourceNotFoundException())
                 )
                 .orElseThrow(() -> resourceNotFoundException());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{courseId}/modules/{moduleId}")
+    public ResponseEntity updateModule(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody LinkModule module) {
+        LOGGER.debug("Updating module {} in course {}", moduleId, courseId);
+
+        if (!moduleId.equals(module.getId())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (!courseRepository.existsById(courseId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        moduleService.updateModule(courseId, module);
 
         return ResponseEntity.noContent().build();
     }
