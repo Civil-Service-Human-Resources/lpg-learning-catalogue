@@ -28,7 +28,6 @@ import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -626,7 +625,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void shouldDeleteModule() throws Exception{
+    public void shouldDeleteModule() throws Exception {
         Course course = new Course();
         String courseId = "course-id";
         String moduleId = "module-id";
@@ -651,6 +650,49 @@ public class CourseControllerTest {
         assertThat(course.getModules().isEmpty(), is(false));
         assertThat(course.getModules().size(), is(1));
         assertThat(course.getModules().get(0), equalTo(module2));
+    }
+
+    @Test
+    public void shouldUpdateModule() throws Exception {
+        String courseId = "course-id";
+        String moduleId = "id-123";
+        String title = "old-title";
+        String updatedTitle = "updated-title";
+        String url = "https://www.example.org";
+
+        Course course = new Course();
+        Course updatedCourse = new Course();
+
+        Module module = new LinkModule(new URL(url));
+        module.setId(moduleId);
+        module.setTitle(title);
+
+        Module updatedModule = new LinkModule(new URL(url));
+        updatedModule.setId(moduleId);
+        updatedModule.setTitle(updatedTitle);
+
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+
+        List<Module> updatedModules = new ArrayList<>();
+        updatedModules.add(updatedModule);
+        updatedCourse.setModules(updatedModules);
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(courseRepository.save(course)).thenReturn(course);
+        when(moduleService.updateModule(courseId, updatedModule)).thenReturn(updatedCourse);
+
+        mockMvc.perform(
+                put(String.format("/courses/%s/modules/%s", courseId, module.getId())).with(csrf())
+                        .content(objectMapper.writeValueAsString(updatedModule))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        assertThat(updatedCourse.getModules().isEmpty(), is(false));
+        assertThat(updatedCourse.getModules().size(), is(1));
+        assertThat(updatedCourse.getModules().get(0).getTitle(), is(updatedTitle));
     }
 
 

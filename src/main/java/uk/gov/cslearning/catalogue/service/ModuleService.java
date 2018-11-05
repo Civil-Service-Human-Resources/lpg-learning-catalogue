@@ -6,10 +6,11 @@ import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class ModuleService {
@@ -42,5 +43,22 @@ public class ModuleService {
         return course.getModules().stream()
                 .filter(m -> m.getId().equals(moduleId))
                 .findFirst();
+    }
+
+    public Course updateModule(String courseId, Module newModule) {
+        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
+            throw new IllegalStateException(
+                    String.format("Unable to add module. Course does not exist: %s", courseId));
+        });
+
+        List<Module> updatedModules = course.getModules().stream()
+                .map(m -> m.getId().equals(newModule.getId()) ? newModule : m)
+                .collect(toList());
+
+        course.setModules(updatedModules);
+
+        courseRepository.save(course);
+
+        return course;
     }
 }
