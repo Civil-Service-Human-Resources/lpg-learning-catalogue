@@ -28,7 +28,6 @@ import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -626,7 +625,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void shouldDeleteModule() throws Exception{
+    public void shouldDeleteModule() throws Exception {
         Course course = new Course();
         String courseId = "course-id";
         String moduleId = "module-id";
