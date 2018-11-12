@@ -695,7 +695,6 @@ public class CourseControllerTest {
         assertThat(updatedCourse.getModules().get(0).getTitle(), is(updatedTitle));
     }
 
-
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
                 Visibility.PUBLIC);
