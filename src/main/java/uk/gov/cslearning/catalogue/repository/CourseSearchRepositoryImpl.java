@@ -15,7 +15,10 @@ import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
+import uk.gov.cslearning.catalogue.domain.Status;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -33,9 +36,9 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     @Override
-    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters) {
+    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection) {
 
-        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters);
+        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, statusCollection);
 
         SearchPage searchPage = new SearchPage();
         searchPage.setCourses(coursePage);
@@ -43,7 +46,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return searchPage;
     }
 
-    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters) {
+    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection) {
 
         BoolQueryBuilder boolQuery = boolQuery();
 
@@ -52,7 +55,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
                     .field("title", 8)
                     .field("shortDescription", 4)
                     .field("description", 2)
-                    .field("lexarningOutcomes", 2)
+                    .field("learningOutcomes", 2)
                     .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
                     .fuzziness(Fuzziness.ONE));
         }
@@ -80,6 +83,11 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
                             .should(QueryBuilders.matchQuery("price", 0))
                             .minimumShouldMatch(1));
         }
+
+        List<String> statusList = new ArrayList<>();
+        statusCollection.forEach(s -> statusList.add(s.getValue()));
+
+        boolQuery = addFilter(boolQuery, statusList, "status");
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)

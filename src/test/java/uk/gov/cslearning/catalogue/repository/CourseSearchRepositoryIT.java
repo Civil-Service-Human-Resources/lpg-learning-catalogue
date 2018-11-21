@@ -5,14 +5,16 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.api.PageParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
+import uk.gov.cslearning.catalogue.domain.Status;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -27,8 +29,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @SpringBootTest
 public class CourseSearchRepositoryIT {
 
-    private PageRequest all = PageRequest.of(0, 1000);
-
     @Autowired
     private CourseRepository repository;
 
@@ -37,8 +37,10 @@ public class CourseSearchRepositoryIT {
         PageParameters pageParameters = new PageParameters();
         FilterParameters filterParameters = new FilterParameters();
         Pageable pageable = pageParameters.getPageRequest();
+        Collection<Status> statusCollection = new ArrayList();
+        statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable, filterParameters);
+        SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable, filterParameters, statusCollection);
 
         String actualSuggestionText = actualSearchPage.getTopScoringSuggestion().getText().toString();
         Page<Course> resourcePage = actualSearchPage.getCourses();
@@ -54,8 +56,10 @@ public class CourseSearchRepositoryIT {
         PageParameters pageParameters = new PageParameters();
         Pageable pageable = pageParameters.getPageRequest();
         FilterParameters filterParameters = new FilterParameters();
+        Collection<Status> statusCollection = new ArrayList();
+        statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("Budgets", pageable, filterParameters);
+        SearchPage actualSearchPage = repository.search("Budgets", pageable, filterParameters, statusCollection);
         List<Course> actualResources = actualSearchPage.getCourses().getContent();
 
         assertThat(actualResources.size(), is(2));
@@ -68,8 +72,10 @@ public class CourseSearchRepositoryIT {
         PageParameters pageParameters = new PageParameters();
         Pageable pageable = pageParameters.getPageRequest();
         FilterParameters filterParameters = new FilterParameters();
+        Collection<Status> statusCollection = new ArrayList();
+        statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable, filterParameters);
+        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable, filterParameters, statusCollection);
         List<Course> actualResources = actualSearchPage.getCourses().getContent();
 
         assertThat(actualResources.get(0).getTitle(), is("Spotify engineering culture: part 1"));
@@ -82,8 +88,10 @@ public class CourseSearchRepositoryIT {
         Pageable pageable = pageParameters.getPageRequest();
         FilterParameters filterParameters = new FilterParameters();
         filterParameters.setTypes(asList("face to face"));
+        Collection<Status> statusCollection = new ArrayList();
+        statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("why", pageable, filterParameters);
+        SearchPage actualSearchPage = repository.search("why", pageable, filterParameters, statusCollection);
         List<Course> actualResources = actualSearchPage.getCourses().getContent();
 
         assertThat(actualResources.get(0).getTitle(), is("Understanding and using business cases"));

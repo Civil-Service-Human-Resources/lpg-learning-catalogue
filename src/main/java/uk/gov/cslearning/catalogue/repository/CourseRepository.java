@@ -21,7 +21,7 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
     @Query("{\"bool\": {\"should\": [{\"match\": {\"audiences.departments\": {\"query\": \"?0\",\"zero_terms_query\": \"none\"}}},{\"match\": {\"audiences.areasOfWork\": {\"query\": \"?1\",\"zero_terms_query\": \"none\"}}},{\"match\": {\"audiences.interests\": {\"query\": \"?2\",\"zero_terms_query\": \"none\"}}}],\"must\": [{\"match\": {\"status\": {\"query\": \"?3\"}}}],\"must_not\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}}]}}")
     Page<Course> findSuggested(String department, String areaOfWork, String interest, String status, Pageable pageable);
 
-    SearchPage search(String query, Pageable pageable, FilterParameters filterParameters);
+    SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> status);
 
     Page<Course> findAllByStatusIn(Collection<Status> status, Pageable pageable);
 }

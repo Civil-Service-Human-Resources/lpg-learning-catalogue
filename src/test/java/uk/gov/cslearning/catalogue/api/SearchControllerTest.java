@@ -19,6 +19,7 @@ import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -50,7 +51,7 @@ public class SearchControllerTest {
         searchPage.setTopScoringSuggestion(suggestion);
         searchPage.setCourses(coursePage);
 
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class)))
+        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class)))
                 .thenReturn(searchPage);
 
         mockMvc.perform(
