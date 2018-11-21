@@ -53,14 +53,16 @@ public class PurchaseOrderController {
                                               @RequestParam("moduleId") String moduleId) {
         LOGGER.debug("Finding purchaseOrder for department {} and moduleId {}", department, moduleId);
 
-        Iterable<PurchaseOrder> result = purchaseOrderRepository
-                .findByDepartmentAndModulesContains(department, moduleId);
+//        Iterable<PurchaseOrder> result = purchaseOrderRepository
+////                .findByDepartmentAndModulesContains(department, moduleId);
+////
+////        return StreamSupport.stream(result.spliterator(), false)
+////                .filter(purchaseOrder -> purchaseOrder.isValidFor(LocalDate.now()))
+////                .findFirst()
+////                .map(purchaseOrder -> new ResponseEntity<>(purchaseOrder, HttpStatus.OK))
+////                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
-        return StreamSupport.stream(result.spliterator(), false)
-                .filter(purchaseOrder -> purchaseOrder.isValidFor(LocalDate.now()))
-                .findFirst()
-                .map(purchaseOrder -> new ResponseEntity<>(purchaseOrder, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<PurchaseOrder>(new PurchaseOrder(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
