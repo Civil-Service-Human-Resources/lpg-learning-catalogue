@@ -13,7 +13,7 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import java.util.Collection;
 
 @Repository
-public interface CourseRepository extends ElasticsearchRepository<Course, String>, ResourceSearchRepository{
+public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository {
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?1\"}},{\"term\": {\"audiences.departments\": \"?0\"}}]}}")
     Page<Course> findMandatory(String department, String status, Pageable pageable);
