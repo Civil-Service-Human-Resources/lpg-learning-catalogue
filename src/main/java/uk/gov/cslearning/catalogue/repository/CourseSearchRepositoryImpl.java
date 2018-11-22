@@ -79,8 +79,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         if (filterParameters.hasCost()) {
             boolQuery = boolQuery
                     .must(QueryBuilders.boolQuery()
-                            .should(QueryBuilders.matchQuery("modules.price", 0))
-                            .should(QueryBuilders.matchQuery("price", 0))
+                            .should(QueryBuilders.matchQuery("modules.cost", 0))
                             .minimumShouldMatch(1));
         }
 

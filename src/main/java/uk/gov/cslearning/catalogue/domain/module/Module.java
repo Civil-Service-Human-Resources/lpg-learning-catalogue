@@ -29,7 +29,7 @@ public abstract class Module {
     @NotNull
     private Long duration;
 
-    private BigDecimal cost;
+    private BigDecimal cost = new BigDecimal(0);
 
     private boolean optional;
 
