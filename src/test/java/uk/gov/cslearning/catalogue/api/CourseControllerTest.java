@@ -624,6 +624,35 @@ public class CourseControllerTest {
 
     }
 
+    @Test
+    public void shouldDeleteModule() throws Exception {
+        Course course = new Course();
+        String courseId = "course-id";
+        String moduleId = "module-id";
+        String url = "http://example.org";
+
+        Module module1 = new LinkModule(new URL(url));
+        Module module2 = new LinkModule(new URL(url));
+
+        List<Module> modules = new ArrayList<>();
+        modules.add(module1);
+        modules.add(module2);
+        course.setModules(modules);
+
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(moduleService.find(courseId, moduleId)).thenReturn(Optional.of(module1));
+        when(courseRepository.save(course)).thenReturn(course);
+
+        mockMvc.perform(
+                delete(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf()))
+                .andExpect(status().isNoContent());
+
+        assertThat(course.getModules().isEmpty(), is(false));
+        assertThat(course.getModules().size(), is(1));
+        assertThat(course.getModules().get(0), equalTo(module2));
+    }
+
+
     private Course createCourse() {
         return new Course("title", "shortDescription", "description",
                 Visibility.PUBLIC);

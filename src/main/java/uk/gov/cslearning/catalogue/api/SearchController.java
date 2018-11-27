@@ -49,6 +49,7 @@ public class SearchController {
     public ResponseEntity create() {
         LOGGER.debug("Creating search indexes");
         Iterable<Course> courses = courseRepository.findAll();
+        resourceRepository.deleteAll();
         for (Course course : courses) {
             ArrayList<Resource> resources = Resource.fromCourse(course);
             for (Resource resource : resources) {
