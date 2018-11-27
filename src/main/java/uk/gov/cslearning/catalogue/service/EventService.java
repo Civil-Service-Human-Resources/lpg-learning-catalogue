@@ -5,9 +5,12 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
+import uk.gov.cslearning.catalogue.service.record.model.Booking;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -15,8 +18,11 @@ import java.util.function.Supplier;
 public class EventService {
     private final CourseRepository courseRepository;
 
-    public EventService(CourseRepository courseRepository){
+    private final LearnerRecordService learnerRecordService;
+
+    public EventService(CourseRepository courseRepository, LearnerRecordService learnerRecordService){
         this.courseRepository = courseRepository;
+        this.learnerRecordService = learnerRecordService;
     }
 
     public Event save(String courseId, String moduleId, Event event){
@@ -61,6 +67,21 @@ public class EventService {
                     String.format("Unable to find event: %s. Module does not exist: %s", eventId, moduleId));
         }
 
-        return module.getEvents().stream().filter(e -> e.getId().equals(eventId)).findFirst();
+        Optional<Event> result = module.getEvents().stream().filter(e -> e.getId().equals(eventId)).findFirst();
+
+        if(result.isPresent()){
+            Event event = result.get();
+
+            List<Booking> bookings = learnerRecordService.getEventBookings(eventId);
+
+            event.getVenue().setAvailability(event.getVenue().getCapacity());
+            bookings.forEach(b -> {
+                if (b.getStatus() != "Cancelled") {
+                    event.getVenue().setAvailability(event.getVenue().getAvailability() - 1);
+                }
+            });
+        }
+
+        return result;
     }
 }
