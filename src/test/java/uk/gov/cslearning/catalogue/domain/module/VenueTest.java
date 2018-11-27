@@ -11,18 +11,21 @@ public class VenueTest {
         String address = "test-address";
         int capacity = 12;
         int minCapacity = 6;
+        int availability = 10;
 
         Venue venue1 = new Venue();
         venue1.setLocation(location);
         venue1.setAddress(address);
         venue1.setCapacity(capacity);
         venue1.setMinCapacity(minCapacity);
+        venue1.setAvailability(availability);
 
         Venue venue2 = new Venue();
         venue2.setLocation(location);
         venue2.setAddress(address);
         venue2.setCapacity(capacity);
         venue2.setMinCapacity(minCapacity);
+        venue2.setAvailability(availability);
 
         assertEquals(venue1, venue2);
 
@@ -34,18 +37,21 @@ public class VenueTest {
         String address = "test-address";
         int capacity = 12;
         int minCapacity = 6;
+        int availability = 10;
 
         Venue venue1 = new Venue();
         venue1.setLocation(location);
         venue1.setAddress(address);
         venue1.setCapacity(capacity);
         venue1.setMinCapacity(minCapacity);
+        venue1.setAvailability(availability);
 
         Venue venue2 = new Venue();
         venue2.setLocation(location);
         venue2.setAddress(address);
         venue2.setCapacity(capacity);
         venue2.setMinCapacity(minCapacity);
+        venue2.setAvailability(availability);
 
         assertEquals(venue1.hashCode(), venue2.hashCode());
     }
