@@ -15,6 +15,7 @@ import uk.gov.cslearning.catalogue.domain.module.Venue;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
+import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
 
 import static org.mockito.Mockito.verify;
@@ -86,8 +87,10 @@ public class EventServiceTest {
         modules.add(module);
         course.setModules(modules);
 
+        Booking booking = new Booking();
+        booking.setStatus(BookingStatus.CONFIRMED);
         List<Booking> bookings = new ArrayList<>();
-        bookings.add(new Booking());
+        bookings.add(booking);
 
         Mockito.when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
         Mockito.when(learnerRecordService.getEventBookings(savedEvent.getId())).thenReturn(bookings);

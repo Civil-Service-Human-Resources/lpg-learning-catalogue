@@ -7,6 +7,7 @@ import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
+import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -76,7 +77,7 @@ public class EventService {
 
             event.getVenue().setAvailability(event.getVenue().getCapacity());
             bookings.forEach(b -> {
-                if (b.getStatus() != "Cancelled") {
+                if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.REQUESTED) {
                     event.getVenue().setAvailability(event.getVenue().getAvailability() - 1);
                 }
             });

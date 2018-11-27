@@ -12,7 +12,7 @@ public class Booking {
 
     private URI event;
 
-    private String status;
+    private BookingStatus status;
 
     private Instant bookingTime;
 
@@ -52,11 +52,11 @@ public class Booking {
         this.paymentDetails = paymentDetails;
     }
 
-    public String getStatus() {
+    public BookingStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(BookingStatus status) {
         this.status = status;
     }
 
