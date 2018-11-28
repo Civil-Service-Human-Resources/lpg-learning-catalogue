@@ -34,8 +34,7 @@ public class SearchController {
         LOGGER.debug("Searching courses with query {}", query);
 
         Pageable pageable = pageParameters.getPageRequest();
-        SearchPage searchPage;
-        searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()));
+        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()));
 
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }
