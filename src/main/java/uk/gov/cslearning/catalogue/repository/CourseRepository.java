@@ -15,7 +15,7 @@ import java.util.Collection;
 @Repository
 public interface CourseRepository extends ElasticsearchRepository<Course, String>, ResourceSearchRepository{
 
-    @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?1\"}},{\"term\": {\"audiences.departments\": \"?0\"}}]}}")
+    @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?1\"}},{\"match\": {\"audiences.departments\": \"?0\"}}]}}")
     Page<Course> findMandatory(String department, String status, Pageable pageable);
 
     @Query("{\"bool\": {\"should\": [{\"match\": {\"audiences.departments\": {\"query\": \"?0\",\"zero_terms_query\": \"none\"}}},{\"match\": {\"audiences.areasOfWork\": {\"query\": \"?1\",\"zero_terms_query\": \"none\"}}},{\"match\": {\"audiences.interests\": {\"query\": \"?2\",\"zero_terms_query\": \"none\"}}}],\"must\": [{\"match\": {\"status\": {\"query\": \"?3\"}}}],\"must_not\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}}]}}")
