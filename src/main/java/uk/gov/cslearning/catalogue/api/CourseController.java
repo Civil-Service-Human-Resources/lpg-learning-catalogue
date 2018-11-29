@@ -6,30 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.Resource;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
-import uk.gov.cslearning.catalogue.repository.ResourceRepository;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -47,8 +36,6 @@ public class CourseController {
 
     private final CourseRepository courseRepository;
 
-    private final ResourceRepository resourceRepository;
-
     private final ModuleService moduleService;
 
     private final EventService eventService;
@@ -56,10 +43,9 @@ public class CourseController {
     private final AudienceService audienceService;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository, ResourceRepository resourceRepository, ModuleService moduleService,
+    public CourseController(CourseRepository courseRepository, ModuleService moduleService,
                             EventService eventService, AudienceService audienceService) {
         this.courseRepository = courseRepository;
-        this.resourceRepository = resourceRepository;
         this.moduleService = moduleService;
         this.eventService = eventService;
         this.audienceService = audienceService;
@@ -69,12 +55,6 @@ public class CourseController {
     public ResponseEntity<Void> create(@RequestBody Course course, UriComponentsBuilder builder) {
         LOGGER.debug("Creating course {}", course);
         Course newCourse = courseRepository.save(course);
-
-        ArrayList<Resource> resources = Resource.fromCourse(newCourse);
-        for (Resource resource : resources) {
-            LOGGER.debug("Creating resource {}", resource);
-            resourceRepository.save(resource);
-        }
 
         return ResponseEntity.created(builder.path("/courses/{courseId}").build(newCourse.getId())).build();
     }
@@ -123,12 +103,6 @@ public class CourseController {
             return ResponseEntity.badRequest().build();
         }
         courseRepository.save(course);
-
-        ArrayList<Resource> resources = Resource.fromCourse(course);
-        for (Resource resource : resources) {
-            LOGGER.debug("Updating resource {}", resource);
-            resourceRepository.save(resource);
-        }
 
         return ResponseEntity.noContent().build();
     }
