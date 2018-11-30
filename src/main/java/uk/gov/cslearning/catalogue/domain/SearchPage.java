@@ -1,4 +1,4 @@
- 
+
 package uk.gov.cslearning.catalogue.domain;
 
 import org.elasticsearch.search.suggest.Suggest.Suggestion.Entry.Option;
@@ -8,7 +8,7 @@ public class SearchPage {
 
     private Option topScoringSuggestion;
 
-    private Page<Resource> resources;
+    private Page<Course> courses;
 
     public Option getTopScoringSuggestion() {
         return topScoringSuggestion;
@@ -18,12 +18,12 @@ public class SearchPage {
         this.topScoringSuggestion = topScoringSuggestion;
     }
 
-    public Page<Resource> getResources() {
-        return resources;
+    public Page<Course> getCourses() {
+        return courses;
     }
 
-    public void setResources(Page<Resource> resources) {
-        this.resources = resources;
+    public void setCourses(Page<Course> course) {
+        this.courses = course;
     }
 
     public String getSuggestedText() {
@@ -35,10 +35,10 @@ public class SearchPage {
     }
 
     public long getTotalResults() {
-        if(getResources() == null){
+        if (getCourses() == null) {
             return 0;
         } else {
-            return getResources().getTotalElements();
+            return getCourses().getTotalElements();
         }
     }
 }
