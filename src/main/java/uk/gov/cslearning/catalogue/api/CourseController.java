@@ -170,7 +170,7 @@ public class CourseController {
     }
 
     @PutMapping("/{courseId}/modules/{moduleId}")
-    public ResponseEntity updateModule(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody LinkModule module) {
+    public ResponseEntity updateModule(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Module module) {
         LOGGER.debug("Updating module {} in course {}", moduleId, courseId);
 
         if (!moduleId.equals(module.getId())) {
