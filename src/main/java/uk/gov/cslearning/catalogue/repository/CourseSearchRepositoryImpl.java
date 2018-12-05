@@ -13,9 +13,12 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
-import uk.gov.cslearning.catalogue.domain.Resource;
+import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
+import uk.gov.cslearning.catalogue.domain.Status;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -23,27 +26,27 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 
 @Repository
-public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
+public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
     private ElasticsearchOperations operations;
 
-    public ResourceSearchRepositoryImpl(ElasticsearchOperations operations) {
+    public CourseSearchRepositoryImpl(ElasticsearchOperations operations) {
         checkArgument(operations != null);
         this.operations = operations;
     }
 
     @Override
-    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters) {
+    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection) {
 
-        Page<Resource> resourcePage = executeSearchQuery(query, pageable, filterParameters);
+        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, statusCollection);
 
         SearchPage searchPage = new SearchPage();
-        searchPage.setResources(resourcePage);
+        searchPage.setCourses(coursePage);
 
         return searchPage;
     }
 
-    private Page<Resource> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters) {
+    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection) {
 
         BoolQueryBuilder boolQuery = boolQuery();
 
@@ -76,19 +79,22 @@ public class ResourceSearchRepositoryImpl implements ResourceSearchRepository {
         if (filterParameters.hasCost()) {
             boolQuery = boolQuery
                     .must(QueryBuilders.boolQuery()
-                            .should(QueryBuilders.matchQuery("modules.price", 0))
-                            .should(QueryBuilders.matchQuery("price", 0))
+                            .should(QueryBuilders.matchQuery("modules.cost", 0))
                             .minimumShouldMatch(1));
         }
+
+        List<String> statusList = new ArrayList<>();
+        statusCollection.forEach(s -> statusList.add(s.getValue()));
+
+        boolQuery = addFilter(boolQuery, statusList, "status");
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
-                .withSort(SortBuilders.fieldSort("courseId").order(SortOrder.ASC)) // always want modules to come after courses
                 .withPageable(pageable)
                 .build();
 
-        return operations.queryForPage(searchQuery, Resource.class);
+        return operations.queryForPage(searchQuery, Course.class);
     }
 
     private BoolQueryBuilder addFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
