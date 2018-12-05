@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.module.ELearningModule;
 import uk.gov.cslearning.catalogue.domain.module.FileModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.domain.module.VideoModule;
@@ -80,6 +81,9 @@ public class ModuleService {
             fileUploadService.delete(filePath);
         } else if (module instanceof VideoModule) {
             String filePath = ((VideoModule) module).getUrl().getPath();
+            fileUploadService.delete(filePath);
+        } else if (module instanceof ELearningModule) {
+            String filePath = ((ELearningModule) module).getUrl() + "/" + ((ELearningModule) module).getStartPage();
             fileUploadService.delete(filePath);
         }
 
