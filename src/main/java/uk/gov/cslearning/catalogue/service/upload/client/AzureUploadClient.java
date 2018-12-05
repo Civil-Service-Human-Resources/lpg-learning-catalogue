@@ -56,12 +56,11 @@ public class AzureUploadClient implements UploadClient {
     public void delete(String filePath) {
         try{
             CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
-
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
 
             blob.deleteIfExists();
         } catch (StorageException | URISyntaxException e) {
-
+            LOG.error("Unable to delete file", e);
         }
     }
 }
