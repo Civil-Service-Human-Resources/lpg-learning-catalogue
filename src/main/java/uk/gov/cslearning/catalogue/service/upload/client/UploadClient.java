@@ -9,4 +9,6 @@ public interface UploadClient {
     UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes);
 
     UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes, String contentType);
+
+    void delete(String filePath);
 }

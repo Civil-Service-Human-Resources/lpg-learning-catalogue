@@ -5,4 +5,6 @@ import uk.gov.cslearning.catalogue.dto.Upload;
 
 public interface FileUploadService {
     Upload upload(FileUpload fileUpload);
+
+    void delete(String filePath);
 }

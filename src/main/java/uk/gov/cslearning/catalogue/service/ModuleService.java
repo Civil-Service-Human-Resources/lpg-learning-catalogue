@@ -2,8 +2,10 @@ package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.module.FileModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +17,11 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class ModuleService {
     private final CourseRepository courseRepository;
+    private final FileUploadService fileUploadService;
 
-    public ModuleService(CourseRepository courseRepository) {
+    public ModuleService(CourseRepository courseRepository, FileUploadService fileUploadService) {
         this.courseRepository = courseRepository;
+        this.fileUploadService = fileUploadService;
     }
 
     public Module save(String courseId, Module module) {
@@ -60,5 +64,22 @@ public class ModuleService {
         courseRepository.save(course);
 
         return course;
+    }
+
+    public void deleteModule(String courseId, String moduleId) {
+        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
+            throw new IllegalStateException(
+                    String.format("Unable to add module. Course does not exist: %s", courseId));
+        });
+
+        Module module = course.getModuleById(moduleId);
+
+        if(module instanceof FileModule) {
+            String filePath = ((FileModule) module).getUrl();
+            fileUploadService.delete(filePath);
+        }
+
+        course.deleteModule(module);
+        courseRepository.save(course);
     }
 }

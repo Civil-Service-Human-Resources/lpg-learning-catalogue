@@ -33,4 +33,11 @@ public class DefaultFileUploadService implements FileUploadService {
         Uploader uploader = uploaderFactory.create(processedFile);
         return uploader.upload(processedFile, uploadClient);
     }
+
+    @Override
+    public void delete(String filePath){
+        UploadClient uploadClient = uploadClientFactory.create(null);
+
+        uploadClient.delete(filePath);
+    }
 }

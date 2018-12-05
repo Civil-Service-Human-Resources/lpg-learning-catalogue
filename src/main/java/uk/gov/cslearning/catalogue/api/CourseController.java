@@ -138,15 +138,7 @@ public class CourseController {
     public ResponseEntity deleteModule(@PathVariable String courseId, @PathVariable String moduleId) {
         LOGGER.debug("Deleting module, course ID {}, module ID {}", courseId, moduleId);
 
-        courseRepository.findById(courseId)
-                .map(course -> moduleService.find(courseId, moduleId)
-                        .map(module -> {
-                            course.deleteModule(module);
-                            return courseRepository.save(course);
-                        })
-                        .orElseThrow(() -> resourceNotFoundException())
-                )
-                .orElseThrow(() -> resourceNotFoundException());
+        moduleService.deleteModule(courseId, moduleId);
 
         return ResponseEntity.noContent().build();
     }
