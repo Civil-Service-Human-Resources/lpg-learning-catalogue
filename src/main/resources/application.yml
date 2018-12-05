@@ -41,7 +41,7 @@ management:
         allowed-methods: "GET, PUT, POST, DELETE, OPTIONS"
 
 record:
-  serviceUrl: ${LEARNER_RECORD_SERVICE_URL:http://localhost:9000}
+  serviceUrl: ${LEARNER_RECORD_URL:http://localhost:9000}
   bookingUrlFormat: "${record.serviceUrl}/event/%s/booking"
 
 oauth:
