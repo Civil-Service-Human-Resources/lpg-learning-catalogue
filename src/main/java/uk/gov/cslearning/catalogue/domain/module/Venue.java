@@ -15,6 +15,8 @@ public class Venue {
 
     private Integer minCapacity;
 
+    private Integer availability;
+
     public Venue() {
     }
 
@@ -54,6 +56,14 @@ public class Venue {
         this.minCapacity = minCapacity;
     }
 
+    public Integer getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(Integer availability) {
+        this.availability = availability;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -67,6 +77,7 @@ public class Venue {
                 .append(address, venue.address)
                 .append(capacity, venue.capacity)
                 .append(minCapacity, venue.minCapacity)
+                .append(availability, venue.availability)
                 .isEquals();
     }
 
@@ -77,6 +88,7 @@ public class Venue {
                 .append(address)
                 .append(capacity)
                 .append(minCapacity)
+                .append(availability)
                 .toHashCode();
     }
 
