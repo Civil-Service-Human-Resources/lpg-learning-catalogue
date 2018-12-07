@@ -23,6 +23,7 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
@@ -56,6 +57,8 @@ public class CourseControllerTest {
     @MockBean
     private CourseRepository courseRepository;
 
+    @MockBean
+    private CourseService courseService;
 
     @MockBean
     private ModuleService moduleService;
@@ -90,7 +93,7 @@ public class CourseControllerTest {
 
         Course course = createCourse();
 
-        when(courseRepository.findById("1"))
+        when(courseService.findById("1"))
                 .thenReturn(Optional.of(course));
 
         mockMvc.perform(

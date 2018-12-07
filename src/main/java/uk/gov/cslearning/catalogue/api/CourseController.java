@@ -12,6 +12,7 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
@@ -33,6 +34,8 @@ public class CourseController {
 
     private final CourseRepository courseRepository;
 
+    private final CourseService courseService;
+
     private final ModuleService moduleService;
 
     private final EventService eventService;
@@ -40,9 +43,10 @@ public class CourseController {
     private final AudienceService audienceService;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository, ModuleService moduleService,
+    public CourseController(CourseRepository courseRepository, CourseService courseService, ModuleService moduleService,
                             EventService eventService, AudienceService audienceService) {
         this.courseRepository = courseRepository;
+        this.courseService = courseService;
         this.moduleService = moduleService;
         this.eventService = eventService;
         this.audienceService = audienceService;
@@ -107,7 +111,7 @@ public class CourseController {
     @GetMapping("/{courseId}")
     public ResponseEntity<Course> get(@PathVariable("courseId") String courseId) {
         LOGGER.debug("Getting course with ID {}", courseId);
-        Optional<Course> result = courseRepository.findById(courseId);
+        Optional<Course> result = courseService.findById(courseId);
         return result
                 .map(course -> new ResponseEntity<>(course, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
