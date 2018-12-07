@@ -39,8 +39,20 @@ public class DefaultFileUploadService implements FileUploadService {
         UploadClient uploadClient = uploadClientFactory.create(null);
 
         String items[] = filePath.split("/");
-        String relativePath = items[items.length - 3] + "/" + items[items.length - 2] + "/" + items[items.length - 1];
 
-        uploadClient.delete(relativePath);
+        if(items.length > 3) {
+            String relativePath = items[items.length - 3] + "/" + items[items.length - 2] + "/" + items[items.length - 1];
+            uploadClient.delete(relativePath);
+        }
+    }
+
+    @Override
+    public void deleteDirectory(String filePath){
+        UploadClient uploadClient = uploadClientFactory.create(null);
+
+        String items[] = filePath.split("/");
+        String relativePath = items[items.length - 2] + "/" + items[items.length - 1];
+
+        uploadClient.deleteDirectory(relativePath);
     }
 }

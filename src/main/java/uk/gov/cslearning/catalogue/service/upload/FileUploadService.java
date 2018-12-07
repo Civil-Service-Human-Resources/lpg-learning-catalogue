@@ -7,4 +7,6 @@ public interface FileUploadService {
     Upload upload(FileUpload fileUpload);
 
     void delete(String filePath);
+
+    void deleteDirectory(String filePath);
 }

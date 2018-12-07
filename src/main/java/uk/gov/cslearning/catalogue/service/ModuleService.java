@@ -57,12 +57,16 @@ public class ModuleService {
                     String.format("Unable to add module. Course does not exist: %s", courseId));
         });
 
+        Module oldModule = course.getModuleById(newModule.getId());
+        if (hasFileChanged(newModule, oldModule)) {
+            deleteFile(oldModule);
+        }
+
         List<Module> updatedModules = course.getModules().stream()
                 .map(m -> m.getId().equals(newModule.getId()) ? newModule : m)
                 .collect(toList());
 
         course.setModules(updatedModules);
-
         courseRepository.save(course);
 
         return course;
@@ -76,18 +80,29 @@ public class ModuleService {
 
         Module module = course.getModuleById(moduleId);
 
-        if(module instanceof FileModule) {
+        deleteFile(module);
+
+        course.deleteModule(module);
+        courseRepository.save(course);
+    }
+
+    public void deleteFile(Module module){
+        if (module instanceof FileModule) {
             String filePath = ((FileModule) module).getUrl();
             fileUploadService.delete(filePath);
         } else if (module instanceof VideoModule) {
             String filePath = ((VideoModule) module).getUrl().getPath();
             fileUploadService.delete(filePath);
         } else if (module instanceof ELearningModule) {
-            String filePath = ((ELearningModule) module).getUrl() + "/" + ((ELearningModule) module).getStartPage();
-            fileUploadService.delete(filePath);
+            String filePath = ((ELearningModule) module).getUrl();
+            fileUploadService.deleteDirectory(filePath);
         }
+    }
 
-        course.deleteModule(module);
-        courseRepository.save(course);
+    private boolean hasFileChanged(Module newModule, Module oldModule) {
+        return newModule.getClass() != oldModule.getClass()
+                || (newModule instanceof FileModule && !((FileModule) newModule).getUrl().equals(((FileModule) oldModule).getUrl()))
+                || (newModule instanceof VideoModule && !((VideoModule) newModule).getUrl().equals(((VideoModule) oldModule).getUrl()))
+                || (newModule instanceof ELearningModule && !((ELearningModule) newModule).getUrl().equals(((ELearningModule) oldModule).getUrl()));
     }
 }

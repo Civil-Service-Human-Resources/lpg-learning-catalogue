@@ -1,9 +1,7 @@
 package uk.gov.cslearning.catalogue.service.upload.client;
 
 import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
-import com.microsoft.azure.storage.blob.CloudBlobContainer;
-import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.microsoft.azure.storage.blob.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +59,27 @@ public class AzureUploadClient implements UploadClient {
             blob.deleteIfExists();
         } catch (StorageException | URISyntaxException e) {
             LOG.error("Unable to delete file", e);
+        }
+    }
+
+    @Override
+    public void deleteDirectory(String filePath) {
+        try{
+            CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
+            CloudBlobDirectory directory = container.getDirectoryReference(filePath);
+
+            for(ListBlobItem blob : directory.listBlobsSegmented().getResults()) {
+                if(blob instanceof CloudBlobDirectory){
+                    String items[] = blob.getUri().getPath().split("/");
+                    String path = filePath + "/" + items[items.length - 1];
+                    deleteDirectory(path);
+                } else {
+                    ((CloudBlockBlob) blob).deleteIfExists();
+                }
+            }
+
+        } catch(StorageException | URISyntaxException e) {
+            LOG.error("Unable to delete folder", e);
         }
     }
 }
