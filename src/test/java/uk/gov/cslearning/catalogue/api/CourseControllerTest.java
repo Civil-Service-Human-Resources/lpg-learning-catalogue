@@ -636,17 +636,9 @@ public class CourseControllerTest {
         modules.add(module2);
         course.setModules(modules);
 
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-        when(moduleService.find(courseId, moduleId)).thenReturn(Optional.of(module1));
-        when(courseRepository.save(course)).thenReturn(course);
-
         mockMvc.perform(
                 delete(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf()))
                 .andExpect(status().isNoContent());
-
-        assertThat(course.getModules().isEmpty(), is(false));
-        assertThat(course.getModules().size(), is(1));
-        assertThat(course.getModules().get(0), equalTo(module2));
     }
 
     @Test

@@ -86,7 +86,7 @@ public class ModuleService {
         courseRepository.save(course);
     }
 
-    public void deleteFile(Module module){
+    private void deleteFile(Module module){
         if (module instanceof FileModule) {
             String filePath = ((FileModule) module).getUrl();
             fileUploadService.delete(filePath);
