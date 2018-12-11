@@ -6,25 +6,26 @@ import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
+import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.dto.EventDto;
+import uk.gov.cslearning.catalogue.dto.factory.EventDtoFactory;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
 import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 
 @Service
 public class EventService {
     private final CourseRepository courseRepository;
-
+    private final EventDtoFactory eventDtoFactory;
     private final LearnerRecordService learnerRecordService;
 
-    public EventService(CourseRepository courseRepository, LearnerRecordService learnerRecordService){
+    public EventService(CourseRepository courseRepository, EventDtoFactory eventDtoFactory, LearnerRecordService learnerRecordService) {
         this.courseRepository = courseRepository;
+        this.eventDtoFactory = eventDtoFactory;
         this.learnerRecordService = learnerRecordService;
     }
 
@@ -105,5 +106,20 @@ public class EventService {
 
     public CancellationReason getCancellationReason(String eventId) {
         return learnerRecordService.getCancellationReason(eventId);
+
+    public Map<String, EventDto> getEventMap() {
+        Map<String, EventDto> results = new HashMap<>();
+
+        List<Course> courses = courseRepository.findEvents();
+
+        for (Course course : courses) {
+            for (Module module : course.getModules()) {
+                for (Event event : ((FaceToFaceModule) module).getEvents()) {
+                    results.put(event.getId(), eventDtoFactory.create(event, (FaceToFaceModule) module, course));
+                }
+            }
+        }
+
+        return results;
     }
 }

@@ -1,1 +1,1 @@
-{"bool": {"must": [{"match": {"audiences.type": "REQUIRED_LEARNING"}},{"match": {"status": "Published"}},{"term": {"audiences.departments": "co"}}]}}
+{"query": {"bool": {"must": [{"exists": {"field": "modules.events"}},{"match": {"modules.type": "face-to-face"}}]}}}
