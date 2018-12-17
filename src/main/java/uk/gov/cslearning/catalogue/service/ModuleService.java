@@ -58,9 +58,9 @@ public class ModuleService {
         });
 
         Module oldModule = course.getModuleById(newModule.getId());
-//        if (hasFileChanged(newModule, oldModule)) {
-//            deleteFile(oldModule);
-//        }
+        if (hasFileChanged(newModule, oldModule)) {
+            new Thread(() -> deleteFile(oldModule)).start();
+        }
 
         List<Module> updatedModules = course.getModules().stream()
                 .map(m -> m.getId().equals(newModule.getId()) ? newModule : m)
@@ -80,7 +80,7 @@ public class ModuleService {
 
         Module module = course.getModuleById(moduleId);
 
-//        deleteFile(module);
+        new Thread(() -> deleteFile(module)).start();
 
         course.deleteModule(module);
         courseRepository.save(course);

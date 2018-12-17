@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.module.FileModule;
 import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
@@ -133,25 +134,25 @@ public class ModuleServiceTest {
         assertEquals(course.getModuleById(moduleId).getTitle(), updatedTitle);
     }
 
-//    @Test
-//    public void shouldUpdateModuleAndDeleteFile() throws Exception {
-//        String moduleId = "moduleId";
-//        String courseId = "course-id";
-//        String url = "test/path/to/file.pdf";
-//        String newUrl = "test/path/to/file2.pdf";
-//        Course course = new Course();
-//        Module module = new FileModule(url, (long) 1024);
-//        module.setId(moduleId);
-//        List<Module> modules = new ArrayList<>();
-//        modules.add(module);
-//        course.setModules(modules);
-//        Module newModule = new FileModule(newUrl, (long) 1024);
-//        newModule.setId(moduleId);
-//        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-//        moduleService.updateModule(courseId, newModule);
-//        assertEquals(((FileModule) course.getModuleById(moduleId)).getUrl(), newUrl);
-//        verify(fileUploadService).delete(url);
-//    }
+    @Test
+    public void shouldUpdateModuleAndDeleteFile() throws Exception {
+        String moduleId = "moduleId";
+        String courseId = "course-id";
+        String url = "test/path/to/file.pdf";
+        String newUrl = "test/path/to/file2.pdf";
+        Course course = new Course();
+        Module module = new FileModule(url, (long) 1024);
+        module.setId(moduleId);
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+        Module newModule = new FileModule(newUrl, (long) 1024);
+        newModule.setId(moduleId);
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        moduleService.updateModule(courseId, newModule);
+        assertEquals(((FileModule) course.getModuleById(moduleId)).getUrl(), newUrl);
+        verify(fileUploadService).delete(url);
+    }
 
     @Test
     public void shouldDeleteModule() throws Exception {
@@ -169,20 +170,20 @@ public class ModuleServiceTest {
         assertTrue(course.getModules().size() == 0);
     }
 
-//    @Test
-//    public void shouldDeleteModuleAndFile() throws Exception {
-//        String moduleId = "moduleId";
-//        String courseId = "courseId";
-//        String url = "test/path/to/file.pdf";
-//        Course course = new Course();
-//        Module module = new FileModule(url, (long) 1024);
-//        module.setId(moduleId);
-//        List<Module> modules = new ArrayList<>();
-//        modules.add(module);
-//        course.setModules(modules);
-//        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-//        moduleService.deleteModule(courseId, moduleId);
-//        assertTrue(course.getModules().size() == 0);
-//        verify(fileUploadService).delete(url);
-//    }
+    @Test
+    public void shouldDeleteModuleAndFile() throws Exception {
+        String moduleId = "moduleId";
+        String courseId = "courseId";
+        String url = "test/path/to/file.pdf";
+        Course course = new Course();
+        Module module = new FileModule(url, (long) 1024);
+        module.setId(moduleId);
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        moduleService.deleteModule(courseId, moduleId);
+        assertTrue(course.getModules().size() == 0);
+        verify(fileUploadService).delete(url);
+    }
 }
