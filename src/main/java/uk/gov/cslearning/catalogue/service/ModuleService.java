@@ -2,20 +2,28 @@ package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.module.ELearningModule;
+import uk.gov.cslearning.catalogue.domain.module.FileModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.domain.module.VideoModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class ModuleService {
     private final CourseRepository courseRepository;
+    private final FileUploadService fileUploadService;
 
-    public ModuleService(CourseRepository courseRepository) {
+    public ModuleService(CourseRepository courseRepository, FileUploadService fileUploadService) {
         this.courseRepository = courseRepository;
+        this.fileUploadService = fileUploadService;
     }
 
     public Module save(String courseId, Module module) {
@@ -41,5 +49,60 @@ public class ModuleService {
         return course.getModules().stream()
                 .filter(m -> m.getId().equals(moduleId))
                 .findFirst();
+    }
+
+    public Course updateModule(String courseId, Module newModule) {
+        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
+            throw new IllegalStateException(
+                    String.format("Unable to add module. Course does not exist: %s", courseId));
+        });
+
+        Module oldModule = course.getModuleById(newModule.getId());
+        if (hasFileChanged(newModule, oldModule)) {
+            deleteFile(oldModule);
+        }
+
+        List<Module> updatedModules = course.getModules().stream()
+                .map(m -> m.getId().equals(newModule.getId()) ? newModule : m)
+                .collect(toList());
+
+        course.setModules(updatedModules);
+        courseRepository.save(course);
+
+        return course;
+    }
+
+    public void deleteModule(String courseId, String moduleId) {
+        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
+            throw new IllegalStateException(
+                    String.format("Unable to add module. Course does not exist: %s", courseId));
+        });
+
+        Module module = course.getModuleById(moduleId);
+
+        deleteFile(module);
+
+        course.deleteModule(module);
+        courseRepository.save(course);
+    }
+
+    private void deleteFile(Module module) {
+        if (module instanceof FileModule) {
+            String filePath = ((FileModule) module).getUrl();
+            fileUploadService.delete(filePath);
+        } else if (module instanceof VideoModule) {
+            String filePath = ((VideoModule) module).getUrl().getPath();
+            fileUploadService.delete(filePath);
+        } else if (module instanceof ELearningModule) {
+            String filePath = ((ELearningModule) module).getUrl();
+            fileUploadService.deleteDirectory(filePath);
+        }
+    }
+
+    private boolean hasFileChanged(Module newModule, Module oldModule) {
+        return newModule.getClass() != oldModule.getClass()
+                || (newModule instanceof FileModule && !((FileModule) newModule).getUrl().equals(((FileModule) oldModule).getUrl()))
+                || (newModule instanceof VideoModule && !((VideoModule) newModule).getUrl().equals(((VideoModule) oldModule).getUrl()))
+                || (newModule instanceof ELearningModule && !((ELearningModule) newModule).getUrl().equals(((ELearningModule) oldModule).getUrl()));
     }
 }

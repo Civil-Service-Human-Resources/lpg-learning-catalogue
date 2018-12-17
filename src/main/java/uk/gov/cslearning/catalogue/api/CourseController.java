@@ -145,15 +145,24 @@ public class CourseController {
     public ResponseEntity deleteModule(@PathVariable String courseId, @PathVariable String moduleId) {
         LOGGER.debug("Deleting module, course ID {}, module ID {}", courseId, moduleId);
 
-        courseRepository.findById(courseId)
-                .map(course -> moduleService.find(courseId, moduleId)
-                        .map(module -> {
-                            course.deleteModule(module);
-                            return courseRepository.save(course);
-                        })
-                        .orElseThrow(() -> resourceNotFoundException())
-                )
-                .orElseThrow(() -> resourceNotFoundException());
+        moduleService.deleteModule(courseId, moduleId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{courseId}/modules/{moduleId}")
+    public ResponseEntity updateModule(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Module module) {
+        LOGGER.debug("Updating module {} in course {}", moduleId, courseId);
+
+        if (!moduleId.equals(module.getId())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (!courseRepository.existsById(courseId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        moduleService.updateModule(courseId, module);
 
         return ResponseEntity.noContent().build();
     }
