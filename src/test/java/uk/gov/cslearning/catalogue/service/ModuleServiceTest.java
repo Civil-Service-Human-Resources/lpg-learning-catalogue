@@ -17,8 +17,7 @@ import java.net.URL;
 import java.util.*;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModuleServiceTest {
@@ -184,6 +183,6 @@ public class ModuleServiceTest {
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
         moduleService.deleteModule(courseId, moduleId);
         assertTrue(course.getModules().size() == 0);
-        verify(fileUploadService).delete(url);
+        verify(fileUploadService, timeout(0)).delete(url);
     }
 }
