@@ -183,6 +183,6 @@ public class ModuleServiceTest {
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
         moduleService.deleteModule(courseId, moduleId);
         assertTrue(course.getModules().size() == 0);
-        verify(fileUploadService, timeout(0)).delete(url);
+        verify(fileUploadService, timeout(2000)).delete(url);
     }
 }
