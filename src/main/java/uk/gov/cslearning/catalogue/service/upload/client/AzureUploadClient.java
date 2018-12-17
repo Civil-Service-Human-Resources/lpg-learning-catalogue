@@ -72,7 +72,6 @@ public class AzureUploadClient implements UploadClient {
                     String path = filePath + "/" + items[items.length - 1];
                     deleteDirectory(path);
                 } else {
-                    System.out.println("deleting:\t" + filePath + "\t" + blob.getUri());
                     ((CloudBlockBlob) blob).deleteIfExists();
                 }
             }
