@@ -6,12 +6,6 @@ import uk.gov.cslearning.catalogue.dto.CourseDto;
 
 @Component
 public class CourseDtoFactory {
-    private final ModuleDtoFactory moduleDtoFactory;
-
-    public CourseDtoFactory(ModuleDtoFactory moduleDtoFactory) {
-        this.moduleDtoFactory = moduleDtoFactory;
-    }
-
     public CourseDto create(Course course) {
         CourseDto courseDto = new CourseDto();
         courseDto.setId(course.getId());
