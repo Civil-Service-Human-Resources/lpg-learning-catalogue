@@ -3,8 +3,7 @@ package uk.gov.cslearning.catalogue.dto;
 import lombok.Data;
 
 @Data
-public class ModuleDto {
+public class LearningProviderDto {
     private String id;
-    private String title;
-    private boolean required;
+    private String name;
 }

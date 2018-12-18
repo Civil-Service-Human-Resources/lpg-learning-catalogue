@@ -11,6 +11,7 @@ public class ModuleDtoFactory {
         ModuleDto moduleDto = new ModuleDto();
         moduleDto.setId(module.getId());
         moduleDto.setTitle(module.getTitle());
+        moduleDto.setRequired(!module.isOptional());
 
         return moduleDto;
     }
