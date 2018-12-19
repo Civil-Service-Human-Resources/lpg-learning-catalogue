@@ -1,6 +1,7 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
 import org.elasticsearch.common.UUIDs;
+import uk.gov.cslearning.catalogue.domain.LearningProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,9 @@ public class Event {
     private EventStatus status;
 
     private CancellationReason cancellationReason;
+
+    private LearningProvider learningProvider;
+
 
     public Event() {
     }
@@ -69,5 +73,14 @@ public class Event {
 
     public void setCancellationReason(CancellationReason cancellationReason) {
         this.cancellationReason = cancellationReason;
+    }
+
+    public LearningProvider getLearningProvider() {
+        return learningProvider;
+    }
+
+    public void setLearningProvider(LearningProvider learningProvider) {
+        this.learningProvider = learningProvider;
+
     }
 }
