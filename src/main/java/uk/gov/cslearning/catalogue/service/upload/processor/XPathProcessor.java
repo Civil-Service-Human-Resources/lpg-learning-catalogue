@@ -1,9 +1,11 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;

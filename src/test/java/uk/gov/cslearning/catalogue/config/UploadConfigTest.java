@@ -12,13 +12,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.Mp4FileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.ScormFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
-import uk.gov.cslearning.catalogue.service.upload.processor.ScormFileProcessor;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
-
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
