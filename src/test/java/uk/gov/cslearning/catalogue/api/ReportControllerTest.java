@@ -49,12 +49,12 @@ public class ReportControllerTest {
         ModuleDto moduleDto = new ModuleDto();
         moduleDto.setId(moduleId);
         moduleDto.setTitle(moduleTitle);
+        moduleDto.setCourse(courseDto);
 
         String eventId = "event_id";
         EventDto event = new EventDto();
         event.setId(eventId);
         event.setModule(moduleDto);
-        event.setCourse(courseDto);
 
         Map<String, EventDto> events = ImmutableMap.of(eventId, event);
 
@@ -67,8 +67,8 @@ public class ReportControllerTest {
                 .andExpect(jsonPath("$.event_id.id", equalTo(eventId)))
                 .andExpect(jsonPath("$.event_id.module.id", equalTo(moduleId)))
                 .andExpect(jsonPath("$.event_id.module.title", equalTo(moduleTitle)))
-                .andExpect(jsonPath("$.event_id.course.id", equalTo(courseId)))
-                .andExpect(jsonPath("$.event_id.course.title", equalTo(courseTitle)));
+                .andExpect(jsonPath("$.event_id.module.course.id", equalTo(courseId)))
+                .andExpect(jsonPath("$.event_id.module.course.title", equalTo(courseTitle)));
 
     }
 }
