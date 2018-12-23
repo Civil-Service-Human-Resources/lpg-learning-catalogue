@@ -172,11 +172,11 @@ public class EventServiceTest {
         ModuleDto moduleDto = new ModuleDto();
         moduleDto.setId(moduleId);
         moduleDto.setTitle(moduleTitle);
+        moduleDto.setCourse(courseDto);
 
         EventDto eventDto = new EventDto();
         eventDto.setId(eventId);
         eventDto.setModule(moduleDto);
-        eventDto.setCourse(courseDto);
 
         when(courseRepository.findAll()).thenReturn(Collections.singletonList(course));
         when(eventDtoFactory.create(event, faceToFaceModule, course)).thenReturn(eventDto);
