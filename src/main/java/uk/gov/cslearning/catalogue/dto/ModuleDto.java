@@ -7,4 +7,5 @@ public class ModuleDto {
     private String id;
     private String title;
     private boolean required;
+    private CourseDto course;
 }

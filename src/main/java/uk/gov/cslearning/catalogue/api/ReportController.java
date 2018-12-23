@@ -23,5 +23,4 @@ public class ReportController {
     public ResponseEntity<Map<String, EventDto>> getEvents() {
         return ResponseEntity.ok(eventService.getEventMap());
     }
-
 }
