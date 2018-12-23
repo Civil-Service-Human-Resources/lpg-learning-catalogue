@@ -1,14 +1,18 @@
 package uk.gov.cslearning.catalogue.service;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.FileModule;
 import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.dto.ModuleDto;
+import uk.gov.cslearning.catalogue.dto.factory.ModuleDtoFactory;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
 
@@ -27,6 +31,9 @@ public class ModuleServiceTest {
 
     @Mock
     private FileUploadService fileUploadService;
+
+    @Mock
+    private ModuleDtoFactory moduleDtoFactory;
 
     @InjectMocks
     private ModuleService moduleService;
@@ -184,5 +191,37 @@ public class ModuleServiceTest {
         moduleService.deleteModule(courseId, moduleId);
         assertTrue(course.getModules().size() == 0);
         verify(fileUploadService, timeout(2000)).delete(url);
+    }
+
+    @Test
+    public void shouldReturnMapOfIdAndModule() {
+        Module module1 = new FaceToFaceModule("a");
+
+        Course course1 = new Course();
+        course1.setModules(Collections.singletonList(module1));
+
+        Module module2 = new FaceToFaceModule("b");
+        Module module3 = new FaceToFaceModule("c");
+
+        Course course2 = new Course();
+        course2.setModules(Arrays.asList(module2, module3));
+
+        when(courseRepository.findModules()).thenReturn(Arrays.asList(course1, course2));
+
+        ModuleDto moduleDto1 = new ModuleDto();
+        ModuleDto moduleDto2 = new ModuleDto();
+        ModuleDto moduleDto3 = new ModuleDto();
+
+        when(moduleDtoFactory.create(module1, course1)).thenReturn(moduleDto1);
+        when(moduleDtoFactory.create(module2, course2)).thenReturn(moduleDto2);
+        when(moduleDtoFactory.create(module3, course2)).thenReturn(moduleDto3);
+
+        Map<String, ModuleDto> expected = ImmutableMap.of(
+                module1.getId(), moduleDto1,
+                module2.getId(), moduleDto2,
+                module3.getId(), moduleDto3
+        );
+
+        assertEquals(expected, moduleService.getModuleMap());
     }
 }

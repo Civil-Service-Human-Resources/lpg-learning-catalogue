@@ -29,4 +29,7 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
 
     @Query("{\"bool\": {\"must\": [{\"exists\": {\"field\": \"modules.events\"}},{\"match\": {\"modules.type\": \"face-to-face\"}}]}}")
     List<Course> findEvents();
+
+    @Query("{\"bool\": {\"must\": [{\"exists\": {\"field\": \"modules\"}}]}}")
+    List<Course> findModules();
 }
