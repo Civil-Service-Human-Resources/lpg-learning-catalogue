@@ -206,7 +206,7 @@ public class ModuleServiceTest {
         Course course2 = new Course();
         course2.setModules(Arrays.asList(module2, module3));
 
-        when(courseRepository.findModules()).thenReturn(Arrays.asList(course1, course2));
+        when(courseRepository.findAll()).thenReturn(Arrays.asList(course1, course2));
 
         ModuleDto moduleDto1 = new ModuleDto();
         ModuleDto moduleDto2 = new ModuleDto();

@@ -36,6 +36,5 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
 
     Page<Course> findAllBySupplier(String supplier, Pageable pageable);
 
-    @Query("{\"bool\": {\"must\": [{\"exists\": {\"field\": \"modules\"}}]}}")
-    List<Course> findModules();
+    List<Course> findAllByModulesExists();
 }
