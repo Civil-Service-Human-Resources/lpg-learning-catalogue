@@ -66,6 +66,7 @@ public class ModuleDtoFactoryTest {
         assertEquals(title, dto.getTitle());
         assertFalse(dto.isRequired());
         assertEquals(courseDto, dto.getCourse());
+        assertEquals("face-to-face", dto.getType());
 
         verify(courseDtoFactory).create(course);
     }
