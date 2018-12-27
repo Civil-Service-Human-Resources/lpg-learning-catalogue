@@ -111,11 +111,9 @@ public class ModuleService {
     public Map<String, ModuleDto> getModuleMap() {
         Map<String, ModuleDto> results = new HashMap<>();
 
-        List<Course> courses = courseRepository.findModules();
-
-        for (Course course : courses) {
+        for (Course course : courseRepository.findAll()) {
             for (Module module : course.getModules()) {
-                    results.put(module.getId(), moduleDtoFactory.create(module, course));
+                results.put(module.getId(), moduleDtoFactory.create(module, course));
             }
         }
 
