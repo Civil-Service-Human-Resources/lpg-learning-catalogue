@@ -31,7 +31,10 @@ public class CourseService {
     private Course getCourseEventsAvailability(Course course) {
         course.getModules().forEach(module -> {
             if(module instanceof FaceToFaceModule) {
-                ((FaceToFaceModule) module).getEvents().forEach(event -> eventService.getEventAvailability(event));
+                ((FaceToFaceModule) module).getEvents().forEach(event -> {
+                    eventService.getEventAvailability(event);
+                    event.setStatus(eventService.getStatus(event.getId()));
+                });
             }
         });
 
