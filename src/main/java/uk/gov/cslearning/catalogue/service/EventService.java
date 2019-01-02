@@ -3,6 +3,7 @@ package uk.gov.cslearning.catalogue.service;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
@@ -73,6 +74,7 @@ public class EventService {
         if(result.isPresent()){
             Event event = result.get();
             event = getEventAvailability(event);
+            event.setStatus(getStatus(eventId));
         }
 
         return result;
@@ -90,5 +92,9 @@ public class EventService {
         });
 
         return event;
+    }
+
+    public EventStatus getStatus(String eventId){
+        return learnerRecordService.getEventStatus(eventId);
     }
 }

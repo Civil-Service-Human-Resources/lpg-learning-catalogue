@@ -17,6 +17,8 @@ public class Event {
 
     private List<DateRange> dateRanges = new ArrayList<>();
 
+    private EventStatus status;
+
     public Event() {
     }
 
@@ -49,5 +51,13 @@ public class Event {
 
     public void setVenue(Venue venue) {
         this.venue = venue;
+    }
+
+    public EventStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EventStatus status) {
+        this.status = status;
     }
 }
