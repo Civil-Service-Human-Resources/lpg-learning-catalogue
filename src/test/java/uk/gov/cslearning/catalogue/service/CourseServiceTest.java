@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
@@ -31,7 +32,7 @@ public class CourseServiceTest {
     private CourseService courseService;
 
     @Test
-    public void shouldFindCourseAndGetEventAvailabilities() {
+    public void shouldFindCourseAndGetEventAvailabilitiesAndEventStatus() {
         String courseId = "courseId";
 
         Course course = new Course();
@@ -48,11 +49,13 @@ public class CourseServiceTest {
 
         Mockito.when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
         Mockito.when(eventService.getEventAvailability(event)).thenReturn(event);
+        Mockito.when(eventService.getStatus(event.getId())).thenReturn(EventStatus.ACTIVE);
 
         Assert.assertEquals(courseService.findById(courseId), Optional.of(course));
 
         Mockito.verify(courseRepository).findById(courseId);
         Mockito.verify(eventService).getEventAvailability(event);
+        Mockito.verify(eventService).getStatus(event.getId());
     }
 
 }
