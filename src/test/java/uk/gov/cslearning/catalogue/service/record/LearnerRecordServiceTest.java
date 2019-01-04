@@ -17,8 +17,9 @@ public class LearnerRecordServiceTest {
     private RestTemplate restTemplate = Mockito.mock(RestTemplate.class);
     private RequestEntityFactory requestEntityFactory = Mockito.mock(RequestEntityFactory.class);
     private String eventUrlFormat = "testhost:9000/event/%s";
+    private String bookingUrlFormat = "testhost:9000/event/%s/booking";
 
-    private LearnerRecordService learnerRecordService = new LearnerRecordService(restTemplate, requestEntityFactory, eventUrlFormat);
+    private LearnerRecordService learnerRecordService = new LearnerRecordService(restTemplate, requestEntityFactory, eventUrlFormat, bookingUrlFormat);
 
     @Test
     public void shouldReturnEventBookings(){
@@ -38,7 +39,7 @@ public class LearnerRecordServiceTest {
         RequestEntity requestEntity = Mockito.mock(RequestEntity.class);
         ResponseEntity<List<Booking>> responseEntity = Mockito.mock(ResponseEntity.class);
 
-        Mockito.when(requestEntityFactory.createGetRequest(String.format(eventUrlFormat, eventId))).thenReturn(requestEntity);
+        Mockito.when(requestEntityFactory.createGetRequest(String.format(bookingUrlFormat, eventId))).thenReturn(requestEntity);
         Mockito.when(restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<Booking>>(){})).thenReturn(responseEntity);
         Mockito.when(responseEntity.getBody()).thenReturn(bookings);
 

@@ -78,7 +78,7 @@ public class EventService {
             event.setStatus(getStatus(eventId));
 
             if(event.getStatus() == EventStatus.CANCELLED){
-                event.setCancellationReason(getCancellatioReason(eventId));
+                event.setCancellationReason(getCancellationReason(eventId));
             }
         }
 
@@ -103,7 +103,7 @@ public class EventService {
         return learnerRecordService.getEventStatus(eventId);
     }
 
-    public CancellationReason getCancellatioReason(String eventId) {
+    public CancellationReason getCancellationReason(String eventId) {
         return learnerRecordService.getCancellationReason(eventId);
     }
 }

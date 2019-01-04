@@ -5,13 +5,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.Event;
-import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
-import uk.gov.cslearning.catalogue.domain.module.Venue;
+import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
@@ -19,6 +15,7 @@ import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.*;
 
@@ -55,7 +52,7 @@ public class EventServiceTest {
         modules.add(module);
         course.setModules(modules);
 
-        Mockito.when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
 
         Assert.assertEquals(eventService.save(courseId, moduleId, newEvent), newEvent);
 
@@ -92,8 +89,8 @@ public class EventServiceTest {
         List<Booking> bookings = new ArrayList<>();
         bookings.add(booking);
 
-        Mockito.when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-        Mockito.when(learnerRecordService.getEventBookings(savedEvent.getId())).thenReturn(bookings);
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(learnerRecordService.getEventBookings(savedEvent.getId())).thenReturn(bookings);
 
         int availability = (venue.getCapacity() - bookings.size());
 
@@ -104,5 +101,31 @@ public class EventServiceTest {
 
         verify(courseRepository).findById(courseId);
         verify(learnerRecordService).getEventBookings(savedEvent.getId());
+    }
+
+    @Test
+    public void shouldGetEventStatus() {
+        String eventId = "eventId";
+
+        EventStatus eventStatus = EventStatus.ACTIVE;
+
+        when(learnerRecordService.getEventStatus(eventId)).thenReturn(eventStatus);
+
+        Assert.assertEquals(eventService.getStatus(eventId), eventStatus);
+
+        verify(learnerRecordService).getEventStatus(eventId);
+    }
+
+    @Test
+    public void shouldGetCancellationReason() {
+        String eventId = "eventId";
+
+        CancellationReason cancellationReason = CancellationReason.UNAVAILABLE;
+
+        when(learnerRecordService.getCancellationReason(eventId)).thenReturn(cancellationReason);
+
+        Assert.assertEquals(eventService.getCancellationReason(eventId), cancellationReason);
+
+        verify(learnerRecordService).getCancellationReason(eventId);
     }
 }
