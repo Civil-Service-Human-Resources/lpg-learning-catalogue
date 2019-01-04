@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.service.IdentityTokenServices;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
@@ -52,8 +53,21 @@ public class LearnerRecordService {
             RequestEntity requestEntity = requestEntityFactory.createGetRequest(String.format(eventUrlFormat, eventId));
             ResponseEntity<Event> responseEntity = restTemplate.exchange(requestEntity, Event.class);
 
-            Event event = (Event) responseEntity.getBody();
+            Event event = responseEntity.getBody();
             return EventStatus.forValue(event.getStatus());
+        } catch (RequestEntityException | RestClientException e) {
+            LOGGER.error("Could not get event from learner record: ", e.getLocalizedMessage());
+            return null;
+        }
+    }
+
+    public CancellationReason getCancellationReason(String eventId) {
+        try{
+            RequestEntity requestEntity = requestEntityFactory.createGetRequest(String.format(eventUrlFormat, eventId));
+            ResponseEntity<Event> responseEntity = restTemplate.exchange(requestEntity, Event.class);
+
+            Event event = responseEntity.getBody();
+            return CancellationReason.forValue(event.getCancellationReason());
         } catch (RequestEntityException | RestClientException e) {
             LOGGER.error("Could not get event from learner record: ", e.getLocalizedMessage());
             return null;
