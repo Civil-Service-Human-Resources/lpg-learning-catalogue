@@ -19,6 +19,8 @@ public class Event {
 
     private EventStatus status;
 
+    private CancellationReason cancellationReason;
+
     public Event() {
     }
 
@@ -59,5 +61,13 @@ public class Event {
 
     public void setStatus(EventStatus status) {
         this.status = status;
+    }
+
+    public CancellationReason getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(CancellationReason cancellationReason) {
+        this.cancellationReason = cancellationReason;
     }
 }

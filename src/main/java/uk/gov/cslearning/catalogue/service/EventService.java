@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
@@ -75,6 +76,10 @@ public class EventService {
             Event event = result.get();
             event = getEventAvailability(event);
             event.setStatus(getStatus(eventId));
+
+            if(event.getStatus() == EventStatus.CANCELLED){
+                event.setCancellationReason(getCancellatioReason(eventId));
+            }
         }
 
         return result;
@@ -96,5 +101,9 @@ public class EventService {
 
     public EventStatus getStatus(String eventId){
         return learnerRecordService.getEventStatus(eventId);
+    }
+
+    public CancellationReason getCancellatioReason(String eventId) {
+        return learnerRecordService.getCancellationReason(eventId);
     }
 }
