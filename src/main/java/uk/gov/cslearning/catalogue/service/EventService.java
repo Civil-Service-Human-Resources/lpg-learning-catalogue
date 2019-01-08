@@ -2,11 +2,7 @@ package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
-import uk.gov.cslearning.catalogue.domain.module.Event;
-import uk.gov.cslearning.catalogue.domain.module.EventStatus;
-import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.factory.EventDtoFactory;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
@@ -106,6 +102,7 @@ public class EventService {
 
     public CancellationReason getCancellationReason(String eventId) {
         return learnerRecordService.getCancellationReason(eventId);
+    }
 
     public Map<String, EventDto> getEventMap() {
         Map<String, EventDto> results = new HashMap<>();
