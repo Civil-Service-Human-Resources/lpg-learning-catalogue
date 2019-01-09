@@ -13,12 +13,11 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import java.util.Collection;
 
 @Repository
-public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository, CustomCourseRepository {
+public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository, CourseSuggestionsRepository {
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?1\"}},{\"match\": {\"audiences.departments\": \"?0\"}}]}}")
     Page<Course> findMandatory(String department, String status, Pageable pageable);
 
-//    @Query(value = "{\"bool\": {\"should\": [{\"match\": {\"audiences.departments\": {\"query\": \"?0\", \"zero_terms_query\": \"none\"}}}, {\"match\": {\"audiences.areasOfWork\": {\"query\": \"?1\", \"zero_terms_query\": \"none\"}}}, {\"match\": {\"audiences.interests\": {\"query\": \"?2\", \"zero_terms_query\": \"none\"}}}], \"must\": [{\"match\": {\"status\": {\"query\": \"?3\"}}}, {\"match\": {\"audiences.type\": \"OPEN\"}}], \"must_not\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}}]}}")
     Page<Course> findSuggested(String department, String areaOfWork, String interest, String status, Pageable pageable);
 
     SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> status);
