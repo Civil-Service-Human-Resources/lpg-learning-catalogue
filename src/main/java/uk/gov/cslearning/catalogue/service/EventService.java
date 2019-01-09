@@ -88,18 +88,20 @@ public class EventService {
     public Event getEventAvailability(Event event) {
         List<Booking> bookings = learnerRecordService.getEventBookings(event.getId());
 
-        event.getVenue().setAvailability(event.getVenue().getCapacity());
+        if(event.getVenue() != null) {
+            event.getVenue().setAvailability(event.getVenue().getCapacity());
 
-        bookings.forEach(b -> {
-            if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.REQUESTED) {
-                event.getVenue().setAvailability(event.getVenue().getAvailability() - 1);
-            }
-        });
+            bookings.forEach(b -> {
+                if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.REQUESTED) {
+                    event.getVenue().setAvailability(event.getVenue().getAvailability() - 1);
+                }
+            });
+        }
 
         return event;
     }
 
-    public EventStatus getStatus(String eventId){
+    public EventStatus getStatus(String eventId) {
         return learnerRecordService.getEventStatus(eventId);
     }
 
