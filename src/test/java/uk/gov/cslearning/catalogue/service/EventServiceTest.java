@@ -141,6 +141,7 @@ public class EventServiceTest {
         verify(learnerRecordService).getCancellationReason(eventId);
     }
 
+    @Test
     public void shouldReturnMapOfEvents() throws MalformedURLException {
         String eventId = "event-id";
         Event event = new Event();
@@ -177,11 +178,10 @@ public class EventServiceTest {
         eventDto.setModule(moduleDto);
         eventDto.setCourse(courseDto);
 
-        when(courseRepository.findEvents()).thenReturn(Collections.singletonList(course));
+        when(courseRepository.findAll()).thenReturn(Collections.singletonList(course));
         when(eventDtoFactory.create(event, faceToFaceModule, course)).thenReturn(eventDto);
 
         Map<String, EventDto> eventDtoMap = ImmutableMap.of(eventId, eventDto);
-
         assertEquals(eventDtoMap, eventService.getEventMap());
     }
 }

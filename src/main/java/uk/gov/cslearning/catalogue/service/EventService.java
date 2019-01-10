@@ -111,7 +111,7 @@ public class EventService {
     public Map<String, EventDto> getEventMap() {
         Map<String, EventDto> results = new HashMap<>();
 
-        List<Course> courses = courseRepository.findEvents();
+        Iterable<Course> courses = courseRepository.findAll();
 
         for (Course course : courses) {
             List<FaceToFaceModule> modules = course.getModules().stream()
