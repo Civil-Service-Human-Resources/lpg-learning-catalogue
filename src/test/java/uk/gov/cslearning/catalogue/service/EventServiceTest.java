@@ -5,17 +5,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.*;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.Event;
-import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
-import uk.gov.cslearning.catalogue.domain.module.Venue;
 import uk.gov.cslearning.catalogue.dto.CourseDto;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
@@ -25,6 +18,8 @@ import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
 import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -146,7 +141,7 @@ public class EventServiceTest {
         verify(learnerRecordService).getCancellationReason(eventId);
     }
 
-    public void shouldReturnMapOfEvents() {
+    public void shouldReturnMapOfEvents() throws MalformedURLException {
         String eventId = "event-id";
         Event event = new Event();
         event.setId(eventId);
@@ -154,17 +149,20 @@ public class EventServiceTest {
         String moduleId = "module-id";
         String moduleTitle = "module-title";
         String productCode = "product-code";
-        FaceToFaceModule module = new FaceToFaceModule(productCode);
-        module.setId(moduleId);
-        module.setTitle(moduleTitle);
-        module.setEvents(Collections.singletonList(event));
+
+        FaceToFaceModule faceToFaceModule = new FaceToFaceModule(productCode);
+        faceToFaceModule.setId(moduleId);
+        faceToFaceModule.setTitle(moduleTitle);
+        faceToFaceModule.setEvents(Collections.singletonList(event));
+
+        LinkModule linkModule = new LinkModule(URI.create("http://example.org").toURL());
 
         String courseTitle = "course-title";
         String courseId = "course-id";
         Course course = new Course();
         course.setTitle(courseTitle);
         course.setId(courseId);
-        course.setModules(Collections.singletonList(module));
+        course.setModules(Arrays.asList(faceToFaceModule, linkModule));
 
         CourseDto courseDto = new CourseDto();
         courseDto.setTitle(courseTitle);
@@ -180,7 +178,7 @@ public class EventServiceTest {
         eventDto.setCourse(courseDto);
 
         when(courseRepository.findEvents()).thenReturn(Collections.singletonList(course));
-        when(eventDtoFactory.create(event, module, course)).thenReturn(eventDto);
+        when(eventDtoFactory.create(event, faceToFaceModule, course)).thenReturn(eventDto);
 
         Map<String, EventDto> eventDtoMap = ImmutableMap.of(eventId, eventDto);
 
