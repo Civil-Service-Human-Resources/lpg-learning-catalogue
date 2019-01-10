@@ -2,7 +2,10 @@ package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.*;
+import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
+import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.domain.module.EventStatus;
+import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.factory.EventDtoFactory;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
@@ -12,6 +15,7 @@ import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -110,9 +114,14 @@ public class EventService {
         List<Course> courses = courseRepository.findEvents();
 
         for (Course course : courses) {
-            for (Module module : course.getModules()) {
-                for (Event event : ((FaceToFaceModule) module).getEvents()) {
-                    results.put(event.getId(), eventDtoFactory.create(event, (FaceToFaceModule) module, course));
+            List<FaceToFaceModule> modules = course.getModules().stream()
+                    .filter(m -> m.getModuleType().equals("face-to-face"))
+                    .map(m -> (FaceToFaceModule) m)
+                    .collect(Collectors.toList());
+
+            for (FaceToFaceModule module : modules) {
+                for (Event event : module.getEvents()) {
+                    results.put(event.getId(), eventDtoFactory.create(event, module, course));
                 }
             }
         }
