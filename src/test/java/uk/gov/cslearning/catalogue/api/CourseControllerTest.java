@@ -1,9 +1,11 @@
 package uk.gov.cslearning.catalogue.api;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableMap;
+import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,8 +18,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
+import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
+import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
@@ -26,6 +32,7 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
+import uk.gov.cslearning.catalogue.service.RegistryService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.net.URL;
@@ -45,9 +52,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(CourseController.class)
 @WithMockUser(username = "user")
+@ContextConfiguration(classes = {RequestMappingConfig.class, WebConfig.class, CourseController.class})
 @EnableSpringDataWebSupport
 public class CourseControllerTest {
 
@@ -69,24 +78,225 @@ public class CourseControllerTest {
     @MockBean
     private AudienceService audienceService;
 
+    @MockBean
+    private RegistryService registryService;
+
     private ObjectMapper objectMapper;
 
-
     @Before
-    public void setUp() throws Exception {
-
+    public void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @Test
+    public void shouldCreateCourseAndRedirectToNewResource() throws Exception {
+        final String newId = "newId";
+
+        Course course = createCourse();
+
+        when(courseService.createCourse(any(), any()))
+                .thenAnswer((Answer<Course>) invocation -> {
+                    course.setId(newId);
+                    return course;
+                });
+
+        mockMvc.perform(
+                post("/courses").with(csrf())
+                        .content(objectMapper.writeValueAsString(course))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("location", "http://localhost/courses/" + newId));
+    }
+
+    @Test
+    public void shouldFindSuggestedCourses() throws Exception {
+        String areaOfWork = "area-of-work";
+        String department = "department";
+        String interest = "_interest";
+        String status = "status";
+
+        Course course = new Course();
+
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("areaOfWork", areaOfWork)
+                        .param("department", department)
+                        .param("interest", interest)
+                        .param("status", status)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldDefaultToShowingAllPublicCourses() throws Exception {
+        Course course = new Course();
+
+        when(courseRepository.findAllByStatusIn(eq(Collections.singletonList(Status.PUBLISHED)), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldFindMultipleStatuses() throws Exception {
+        Course course = new Course();
+
+        when(courseRepository.findAllByStatusIn(eq(Arrays.asList(Status.DRAFT, Status.PUBLISHED, Status.ARCHIVED)), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("status", "Draft", "Published", "Archived")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldDefaultMissingParametersToNone() throws Exception {
+        String areaOfWork = "none";
+        String department = "none";
+        String interest = "_interest";
+        String status = "Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("interest", interest)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldDefaultMissingInterestParameterToNone() throws Exception {
+        String areaOfWork = "area-of-work";
+        String department = "none";
+        String interest = "none";
+        String status = "Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("areaOfWork", areaOfWork)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldConcatenateMultipleParameters() throws Exception {
+        String areaOfWork = "area-of-work1,area-of-work2";
+        String department = "department1,department2";
+        String interest = "interest1,interest2";
+        String status = "Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("areaOfWork", "area-of-work1", "area-of-work2")
+                        .param("department", "department1", "department2")
+                        .param("interest", "interest1", "interest2")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+
+    @Test
+    public void shouldListMandatoryCourses() throws Exception {
+        String department = "department1";
+        String status = "Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("department", "department1")
+                        .param("mandatory", "true")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldListMandatoryCoursesWithMultipleParameters() throws Exception {
+        String department = "department1,department2";
+        String status = "Draft,Published";
+
+        Course course = new Course();
+
+        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/")
+                        .param("department", "department1", "department2")
+                        .param("status", "Draft", "Published")
+                        .param("mandatory", "true")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+
+    }
+
+    @Test
+    public void shouldListForManagement() throws Exception {
+        Course course = new Course();
+
+        CivilServant civilServant = new CivilServant();
+        OrganisationalUnit organisationalUnit = new OrganisationalUnit();
+        String code = "code";
+        organisationalUnit.setCode(code);
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
+        when(courseService.findCoursesByOrganisationalUnit(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/management")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void shouldReturnNotFoundForUnknownCourse() throws Exception {
+        when(courseService.findById("1"))
+                .thenReturn(Optional.empty());
+
         mockMvc.perform(
                 get("/courses/abc")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
 
     @Test
     public void shouldReturnCourse() throws Exception {
@@ -103,32 +313,12 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.title", equalTo("title")));
     }
 
-    @Test
-    public void shouldCreateCourseAndRedirectToNewResource() throws Exception {
-        final String newId = "newId";
-
-        Course course = createCourse();
-
-        when(courseRepository.save(any()))
-                .thenAnswer((Answer<Course>) invocation -> {
-                    course.setId(newId);
-                    return course;
-                });
-
-        mockMvc.perform(
-                post("/courses").with(csrf())
-                        .content(objectMapper.writeValueAsString(course))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("location", "http://localhost/courses/" + newId));
-    }
 
     @Test
     public void shouldUpdateExistingCourse() throws Exception {
         Course course = createCourse();
-        when(courseRepository.existsById(course.getId())).thenReturn(true);
-        when(courseRepository.save(any())).thenReturn(course);
+        when(courseService.findById(course.getId())).thenReturn(Optional.of(course));
+        when(courseService.updateCourse(any(), any())).thenReturn(course);
 
         mockMvc.perform(
                 put("/courses/" + course.getId()).with(csrf())
@@ -141,10 +331,67 @@ public class CourseControllerTest {
     @Test
     public void shouldReturnBadRequestIfUpdatedCourseDoesntExist() throws Exception {
         Course course = createCourse();
-        when(courseRepository.existsById(course.getId())).thenReturn(false);
+
+        when(courseService.findById(course.getId())).thenReturn(Optional.empty());
 
         mockMvc.perform(
                 put("/courses/" + course.getId()).with(csrf())
+                        .content(objectMapper.writeValueAsString(course))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldPublishExistingCourse() throws Exception {
+        Course course = createCourse();
+        when(courseService.findById(course.getId())).thenReturn(Optional.of(course));
+        when(courseService.updateCourse(any(), any())).thenReturn(course);
+
+        mockMvc.perform(
+                put("/courses/" + course.getId() + "/publish").with(csrf())
+                        .content(objectMapper.writeValueAsString(course))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldReturnBadRequestIfPublishedCourseDoesntExist() throws Exception {
+        Course course = createCourse();
+
+        when(courseService.findById(course.getId())).thenReturn(Optional.empty());
+
+        mockMvc.perform(
+                put("/courses/" + course.getId() + "/publish").with(csrf())
+                        .content(objectMapper.writeValueAsString(course))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldArchivedExistingCourse() throws Exception {
+        Course course = createCourse();
+        when(courseService.findById(course.getId())).thenReturn(Optional.of(course));
+        when(courseService.updateCourse(any(), any())).thenReturn(course);
+
+        mockMvc.perform(
+                put("/courses/" + course.getId() + "/archive").with(csrf())
+                        .content(objectMapper.writeValueAsString(course))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldReturnBadRequestIfArchivedCourseDoesntExist() throws Exception {
+        Course course = createCourse();
+
+        when(courseService.findById(course.getId())).thenReturn(Optional.empty());
+
+        mockMvc.perform(
+                put("/courses/" + course.getId() + "/archive").with(csrf())
                         .content(objectMapper.writeValueAsString(course))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -172,28 +419,6 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void shouldReturnBadRequestIfCourseNotFoundWhenSavingModule() throws Exception {
-        String moduleId = "module-id";
-        Module module = mock(LinkModule.class);
-        when(module.getId()).thenReturn(moduleId);
-
-        String courseId = "course-id";
-
-        String json = objectMapper.writeValueAsString(ImmutableMap.of("type", "link", "location", "http://localhost"));
-
-        IllegalStateException exception = mock(IllegalStateException.class);
-
-        doThrow(exception).when(moduleService).save(eq(courseId), any(Module.class));
-
-        mockMvc.perform(
-                post(String.format("/courses/%s/modules/", courseId)).with(csrf())
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void shouldFindModule() throws Exception {
         String courseId = "course-id";
         String moduleId = "module-id";
@@ -201,7 +426,6 @@ public class CourseControllerTest {
 
         Module module = new LinkModule(new URL(url));
 
-        when(courseRepository.existsById(courseId)).thenReturn(true);
         when(moduleService.find(courseId, moduleId)).thenReturn(Optional.of(module));
 
         mockMvc.perform(
@@ -209,104 +433,6 @@ public class CourseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.url", equalTo(url)));
-    }
-
-    @Test
-    public void shouldCreateAudience() throws Exception {
-        String audienceId = "audience-id";
-        Audience audience = mock(Audience.class);
-        when(audience.getId()).thenReturn(audienceId);
-
-        String courseId = UUID.randomUUID().toString();
-
-        mockMvc.perform(
-                post(String.format("/courses/%s/audiences/", courseId)).with(csrf())
-                        .content(objectMapper.writeValueAsString(ImmutableMap.of("id", audienceId, "name", "Audience name")))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("Location", String.format("http://localhost/courses/%s/audiences/%s", courseId, audienceId)));
-    }
-
-    @Test
-    public void shouldFindAudience() throws Exception {
-        String courseId = "course-id";
-        String audienceId = "audience-id";
-
-        Audience audience = new Audience();
-        audience.setId(audienceId);
-
-        when(courseRepository.existsById(courseId)).thenReturn(true);
-        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.of(audience));
-
-        mockMvc.perform(
-                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", equalTo(audienceId)));
-    }
-
-    @Test
-    public void shouldReturnNotFoundIfAudienceNotFound() throws Exception {
-        String courseId = "course-id";
-        String audienceId = "audience-id";
-
-        when(courseRepository.existsById(courseId)).thenReturn(true);
-        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.empty());
-
-        mockMvc.perform(
-                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void shouldReturnNotFoundIfCourseNotFoundWhenFindingAudience() throws Exception {
-        String courseId = "course-id";
-        String audienceId = "audience-id";
-
-        doThrow(resourceNotFoundException()).when(audienceService).find(courseId, audienceId);
-
-        mockMvc.perform(
-                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void shouldDeleteAudience() throws Exception {
-        Course course = new Course();
-        Audience audience = new Audience();
-        Set<Audience> audiences = new HashSet<>();
-        audiences.add(audience);
-        course.setAudiences(audiences);
-
-        when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
-        when(audienceService.find(course, audience.getId())).thenReturn(Optional.of(audience));
-        when(courseRepository.save(course)).thenReturn(course);
-
-        assertThat(course.getAudiences().isEmpty(), is(not(true)));
-
-        mockMvc.perform(
-                delete(String.format("/courses/%s/audiences/%s", course.getId(), audience.getId())).with(csrf()))
-                .andExpect(status().isNoContent());
-
-        assertThat(course.getAudiences().isEmpty(), is(true));
-    }
-
-    @Test
-    public void shouldReturnBadRequestIfCourseNotFoundWhenFindingModule() throws Exception {
-        String courseId = "course-id";
-        String moduleId = "module-id";
-
-        IllegalStateException exception = mock(IllegalStateException.class);
-
-        doThrow(exception).when(moduleService).find(courseId, moduleId);
-
-        mockMvc.perform(
-                get(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf())
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -322,6 +448,62 @@ public class CourseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void shouldDeleteModule() throws Exception {
+        String courseId = "course-id";
+        String moduleId = "module-id";
+
+        doNothing().when(moduleService).deleteModule(courseId, moduleId);
+
+        mockMvc.perform(
+                delete(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldUpdateModule() throws Exception {
+        String courseId = "course-id";
+        String moduleId = "id-123";
+        String title = "old-title";
+        String updatedTitle = "updated-title";
+        String url = "https://www.example.org";
+
+        Course course = new Course();
+        Course updatedCourse = new Course();
+
+        Module module = new LinkModule(new URL(url));
+        module.setId(moduleId);
+        module.setTitle(title);
+
+        Module updatedModule = new LinkModule(new URL(url));
+        updatedModule.setId(moduleId);
+        updatedModule.setTitle(updatedTitle);
+
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+
+        List<Module> updatedModules = new ArrayList<>();
+        updatedModules.add(updatedModule);
+        updatedCourse.setModules(updatedModules);
+
+        when(moduleService.find(any(), any())).thenReturn(Optional.of(module));
+        when(moduleService.updateModule(courseId, updatedModule)).thenReturn(updatedCourse);
+
+        mockMvc.perform(
+                put(String.format("/courses/%s/modules/%s", courseId, module.getId())).with(csrf())
+                        .content(objectMapper.writeValueAsString(updatedModule))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        assertThat(updatedCourse.getModules().isEmpty(), is(false));
+        assertThat(updatedCourse.getModules().size(), is(1));
+        assertThat(updatedCourse.getModules().get(0).getTitle(), is(updatedTitle));
+    }
+
 
     @Test
     public void shouldAddEventToModule() throws Exception {
@@ -470,221 +652,95 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void shouldFindSuggestedCourses() throws Exception {
-        String areaOfWork = "area-of-work";
-        String department = "department";
-        String interest = "_interest";
-        String status = "status";
+    public void shouldCreateAudience() throws Exception {
+        String audienceId = "audience-id";
+        Audience audience = mock(Audience.class);
+        when(audience.getId()).thenReturn(audienceId);
 
-        Course course = new Course();
+        String courseId = UUID.randomUUID().toString();
 
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("areaOfWork", areaOfWork)
-                        .param("department", department)
-                        .param("interest", interest)
-                        .param("status", status)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
-
-    @Test
-    public void shouldDefaultToShowingAllPublicCourses() throws Exception {
-        Course course = new Course();
-
-        when(courseRepository.findAllByStatusIn(eq(Collections.singletonList(Status.PUBLISHED)), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+        when(audienceService.isPermitted(any(), any())).thenReturn(true);
+        when(audienceService.setDefaults(any(), any())).thenReturn(audience);
+        when(audienceService.save(any(), any())).thenReturn(new Course());
 
         mockMvc.perform(
-                get("/courses/")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
-
-    @Test
-    public void shouldFindMultipleStatuses() throws Exception {
-        Course course = new Course();
-
-        when(courseRepository.findAllByStatusIn(eq(Arrays.asList(Status.DRAFT, Status.PUBLISHED, Status.ARCHIVED)), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("status", "Draft", "Published", "Archived")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
-
-    @Test
-    public void shouldDefaultMissingParametersToNone() throws Exception {
-        String areaOfWork = "none";
-        String department = "none";
-        String interest = "_interest";
-        String status = "Published";
-
-        Course course = new Course();
-
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("interest", interest)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
-
-    @Test
-    public void shouldDefaultMissingInterestParameterToNone() throws Exception {
-        String areaOfWork = "area-of-work";
-        String department = "none";
-        String interest = "none";
-        String status = "Published";
-
-        Course course = new Course();
-
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("areaOfWork", areaOfWork)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
-
-
-    @Test
-    public void shouldConcatenateMultipleParameters() throws Exception {
-        String areaOfWork = "area-of-work1,area-of-work2";
-        String department = "department1,department2";
-        String interest = "interest1,interest2";
-        String status = "Published";
-
-        Course course = new Course();
-
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("areaOfWork", "area-of-work1", "area-of-work2")
-                        .param("department", "department1", "department2")
-                        .param("interest", "interest1", "interest2")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
-
-    @Test
-    public void shouldListMandatoryCourses() throws Exception {
-        String department = "department1";
-        String status = "Published";
-
-        Course course = new Course();
-
-        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("department", "department1")
-                        .param("mandatory", "true")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
-
-    @Test
-    public void shouldListMandatoryCoursesWithMultipleParameters() throws Exception {
-        String department = "department1,department2";
-        String status = "Draft,Published";
-
-        Course course = new Course();
-
-        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("department", "department1", "department2")
-                        .param("status", "Draft", "Published")
-                        .param("mandatory", "true")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-
-    }
-
-    @Test
-    public void shouldDeleteModule() throws Exception {
-        Course course = new Course();
-        String courseId = "course-id";
-        String moduleId = "module-id";
-        String url = "http://example.org";
-
-        Module module1 = new LinkModule(new URL(url));
-        Module module2 = new LinkModule(new URL(url));
-
-        List<Module> modules = new ArrayList<>();
-        modules.add(module1);
-        modules.add(module2);
-        course.setModules(modules);
-
-        mockMvc.perform(
-                delete(String.format("/courses/%s/modules/%s", courseId, moduleId)).with(csrf()))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    public void shouldUpdateModule() throws Exception {
-        String courseId = "course-id";
-        String moduleId = "id-123";
-        String title = "old-title";
-        String updatedTitle = "updated-title";
-        String url = "https://www.example.org";
-
-        Course course = new Course();
-        Course updatedCourse = new Course();
-
-        Module module = new LinkModule(new URL(url));
-        module.setId(moduleId);
-        module.setTitle(title);
-
-        Module updatedModule = new LinkModule(new URL(url));
-        updatedModule.setId(moduleId);
-        updatedModule.setTitle(updatedTitle);
-
-        List<Module> modules = new ArrayList<>();
-        modules.add(module);
-        course.setModules(modules);
-
-        List<Module> updatedModules = new ArrayList<>();
-        updatedModules.add(updatedModule);
-        updatedCourse.setModules(updatedModules);
-
-        when(courseRepository.existsById(courseId)).thenReturn(true);
-        when(courseRepository.save(course)).thenReturn(course);
-        when(moduleService.updateModule(courseId, updatedModule)).thenReturn(updatedCourse);
-
-        mockMvc.perform(
-                put(String.format("/courses/%s/modules/%s", courseId, module.getId())).with(csrf())
-                        .content(objectMapper.writeValueAsString(updatedModule))
+                post(String.format("/courses/%s/audiences/", courseId)).with(csrf())
+                        .content(objectMapper.writeValueAsString(ImmutableMap.of("id", audienceId, "name", "Audience name")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", String.format("http://localhost/courses/%s/audiences/%s", courseId, audienceId)));
+    }
+
+    @Test
+    public void shouldFindAudience() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        Audience audience = new Audience();
+        audience.setId(audienceId);
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.of(audience));
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", equalTo(audienceId)));
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfAudienceNotFound() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        when(audienceService.find(courseId, audienceId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfCourseNotFoundWhenFindingAudience() throws Exception {
+        String courseId = "course-id";
+        String audienceId = "audience-id";
+
+        when(audienceService.isPermitted(any(), any())).thenReturn(true);
+        Audience audience = new Audience();
+        when(audienceService.setDefaults(any(), any())).thenReturn(audience);
+
+        doThrow(resourceNotFoundException()).when(audienceService).save(courseId, audience);
+
+        mockMvc.perform(
+                get(String.format("/courses/%s/audiences/%s", courseId, audienceId)).with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldDeleteAudience() throws Exception {
+        Course course = new Course();
+        Audience audience = new Audience();
+        Set<Audience> audiences = new HashSet<>();
+        audiences.add(audience);
+        course.setAudiences(audiences);
+
+        when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
+        when(audienceService.find(course, audience.getId())).thenReturn(Optional.of(audience));
+        when(audienceService.isPermitted(any(), any())).thenReturn(true);
+        when(courseRepository.save(course)).thenReturn(course);
+
+        assertThat(course.getAudiences().isEmpty(), is(not(true)));
+
+        mockMvc.perform(
+                delete(String.format("/courses/%s/audiences/%s", course.getId(), audience.getId())).with(csrf()))
                 .andExpect(status().isNoContent());
 
-        assertThat(updatedCourse.getModules().isEmpty(), is(false));
-        assertThat(updatedCourse.getModules().size(), is(1));
-        assertThat(updatedCourse.getModules().get(0).getTitle(), is(updatedTitle));
+        assertThat(course.getAudiences().isEmpty(), is(true));
     }
 
     private Course createCourse() {
