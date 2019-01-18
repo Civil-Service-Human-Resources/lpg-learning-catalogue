@@ -97,6 +97,35 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return operations.queryForPage(searchQuery, Course.class);
     }
 
+    @Override
+    public Page<Course> findAllByOrganisationCode(String organisationalUnitCode, Pageable pageable) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", organisationalUnitCode));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .withPageable(pageable)
+                .build();
+
+        return operations.queryForPage(searchQuery, Course.class);
+    }
+
+    @Override
+    public Page<Course> findAllByProfessionId(String professionId, Pageable pageable) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("owner.profession", professionId));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .withPageable(pageable)
+                .build();
+
+        return operations.queryForPage(searchQuery, Course.class);
+    }
+
+
     private BoolQueryBuilder addFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
         if (values != null && !values.isEmpty()) {
             BoolQueryBuilder filterQuery = QueryBuilders.boolQuery();

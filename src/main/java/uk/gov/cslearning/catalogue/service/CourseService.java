@@ -1,36 +1,87 @@
 package uk.gov.cslearning.catalogue.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Service
 public class CourseService {
+
     private final CourseRepository courseRepository;
 
     private final EventService eventService;
 
-    public CourseService(CourseRepository courseRepository, EventService eventService) {
+    private final RegistryService registryService;
+
+    private final OwnerFactory ownerFactory;
+
+    private final AuthoritiesService authoritiesService;
+
+    public CourseService(CourseRepository courseRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService) {
         this.courseRepository = courseRepository;
         this.eventService = eventService;
+        this.registryService = registryService;
+        this.ownerFactory = ownerFactory;
+        this.authoritiesService = authoritiesService;
+    }
+
+    public Course save(Course course) {
+        return courseRepository.save(course);
+    }
+
+    public Course createCourse(Course course, Authentication authentication) {
+        CivilServant civilServant = registryService.getCurrentCivilServant();
+
+        civilServant.setScope(authoritiesService.getScope(authentication));
+        course.setOwner(ownerFactory.create(civilServant, course));
+
+        courseRepository.save(course);
+
+        return course;
+    }
+
+    public Course updateCourse(Course course, Course newCourse) {
+        course.setTitle(newCourse.getTitle());
+        course.setShortDescription(newCourse.getShortDescription());
+        course.setLearningOutcomes(newCourse.getLearningOutcomes());
+        course.setModules(newCourse.getModules());
+        course.setAudiences(newCourse.getAudiences());
+        course.setPreparation(newCourse.getPreparation());
+        course.setVisibility(newCourse.getVisibility());
+        course.setStatus(newCourse.getStatus());
+        course.setDescription(newCourse.getDescription());
+        Optional.ofNullable(newCourse.getLearningProvider()).ifPresent(course::setLearningProvider);
+
+        courseRepository.save(course);
+
+        return course;
     }
 
     public Optional<Course> findById(String courseId) {
-        Optional<Course> result = courseRepository.findById(courseId);
+        return courseRepository.findById(courseId)
+                .map(this::getCourseEventsAvailability);
+    }
 
-        if(result.isPresent()){
-            getCourseEventsAvailability(result.get());
-        }
-
-        return result;
+    public Course getCourseById(String courseId) {
+        return findById(courseId)
+                .orElseThrow((Supplier<IllegalStateException>) () -> {
+                    throw new IllegalStateException(
+                            String.format("Unable to find course. Course does not exist: %s", courseId));
+                });
     }
 
     private Course getCourseEventsAvailability(Course course) {
         course.getModules().forEach(module -> {
-            if(module instanceof FaceToFaceModule) {
+            if (module instanceof FaceToFaceModule) {
                 ((FaceToFaceModule) module).getEvents().forEach(event -> {
                     eventService.getEventAvailability(event);
                     event.setStatus(eventService.getStatus(event.getId()));
@@ -39,5 +90,17 @@ public class CourseService {
         });
 
         return course;
+    }
+
+    public Page<Course> findCoursesByOrganisationalUnit(String organisationalUnitCode, Pageable pageable) {
+        return courseRepository.findAllByOrganisationCode(organisationalUnitCode, pageable);
+    }
+
+    public Page<Course> findCoursesByProfession(String professionId, Pageable pageable) {
+        return courseRepository.findAllByProfessionId(professionId, pageable);
+    }
+
+    public Page<Course> findAllCourses(Pageable pageable) {
+        return courseRepository.findAll(pageable);
     }
 }
