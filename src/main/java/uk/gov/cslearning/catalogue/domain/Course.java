@@ -37,6 +37,10 @@ public class Course {
 
     private LearningProvider learningProvider;
 
+    private String cancellationPolicyId;
+
+    private String termsAndConditionsId;
+
     private Set<Audience> audiences = new HashSet<>();
 
     private String preparation;
@@ -167,6 +171,22 @@ public class Course {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getCancellationPolicyId() {
+        return cancellationPolicyId;
+    }
+
+    public void setCancellationPolicyId(String cancellationPolicyId) {
+        this.cancellationPolicyId = cancellationPolicyId;
+    }
+
+    public String getTermsAndConditionsId() {
+        return termsAndConditionsId;
+    }
+
+    public void setTermsAndConditionsId(String termsAndConditionsId) {
+        this.termsAndConditionsId = termsAndConditionsId;
     }
 
     @Override
