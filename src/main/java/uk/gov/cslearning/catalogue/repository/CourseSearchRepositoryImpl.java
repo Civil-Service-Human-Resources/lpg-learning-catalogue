@@ -88,8 +88,12 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         boolQuery = addFilter(boolQuery, statusList, "status");
 
+        BoolQueryBuilder filterQuery = boolQuery();
+        filterQuery.mustNot(QueryBuilders.matchQuery("course.visibility", "PRIVATE"));
+
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
+                .withFilter(filterQuery)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
