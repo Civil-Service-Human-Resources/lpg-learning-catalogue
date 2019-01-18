@@ -1,7 +1,14 @@
 
 spring:
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
   resources:
     add-mappings: false
+  servlet:
+    multipart:
+      max-file-size: 5120MB
+      max-request-size: 5120MB
 
 server:
   port: 9001
@@ -14,16 +21,37 @@ logging:
     com.zaxxer.hikari: ERROR
 
 elasticsearch:
-  uri: http://127.0.0.1:9200
-  username: elastic
-  password: changeme
-  host: 127.0.0.1
-  port: 9999
+  uri: ${ELASTICSEARCH_URI:http://127.0.0.1:9200}
+  username: ${ELASTICSEARCH_USERNAME:elastic}
+  password: ${ELASTICSEARCH_PASSWORD:changeme}
 
 azure:
   account:
     name: ${AZURE_ACCOUNT_NAME:lpgdev}
-    key: ${AZURE_ACCOUNT_KEY}
+    key: ${AZURE_ACCOUNT_KEY:changeme}
   storage:
-    container: lpgdevcontent
+    container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
     connection-string: "DefaultEndpointsProtocol=https;AccountName=${azure.account.name};AccountKey=${azure.account.key}"
+
+management:
+  endpoints:
+    web:
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "GET, PUT, POST, DELETE, OPTIONS"
+
+record:
+  serviceUrl: ${LEARNER_RECORD_URL:http://localhost:9000}
+  bookingUrlFormat: "${record.serviceUrl}/event/%s/booking"
+  eventUrlFormat: "${record.serviceUrl}/event/%s"
+
+registry:
+  serviceUrl: ${REGISTRY_SERVICE_URL:http://localhost:9002}
+  getCurrentUrl: "${registry.serviceUrl}/civilServants/me"
+
+oauth:
+  serviceUrl: ${OAUTH_SERVICE_URL:http://localhost:8080}
+  clientId: ${CLIENT_ID:9fbd4ae2-2db3-44c7-9544-88e80255b56e}
+  clientSecret: ${CLIENT_SECRET:test}
+  checkTokenUrl: "${oauth.serviceUrl}/oauth/check_token"
+  tokenUrl: "${oauth.serviceUrl}/oauth/token"
