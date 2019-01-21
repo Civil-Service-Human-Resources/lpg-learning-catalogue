@@ -3,7 +3,6 @@ package uk.gov.cslearning.catalogue.repository;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
-import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -93,16 +92,10 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         BoolQueryBuilder filterQuery = boolQuery();
         filterQuery.should(QueryBuilders.matchQuery("visibility", "PUBLIC"));
 
-
-
-        if (profileParameters.getProfileDepartment() != null) {
-            filterQuery.should(QueryBuilders.matchQuery("audiences.departments", profileParameters.getProfileDepartment()));
-        }
-        if (profileParameters.getProfileGrade() != null) {
-            filterQuery.should(QueryBuilders.matchQuery("audiences.grades", profileParameters.getProfileGrade()));
-        }
-        addFilter(filterQuery, profileParameters.getProfileAreasOfWork(), "audiences.areasOfWork");
-        addFilter(filterQuery, profileParameters.getProfileInterests(), "audiences.interests");
+        addOrFilter(filterQuery, profileParameters.getProfileDepartments(), "audiences.departments");
+        addOrFilter(filterQuery, profileParameters.getProfileGrades(), "audiences.grades");
+        addOrFilter(filterQuery, profileParameters.getProfileAreasOfWork(), "audiences.areasOfWork");
+        addOrFilter(filterQuery, profileParameters.getProfileInterests(), "audiences.interests");
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
@@ -125,6 +118,16 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             filterQuery.minimumShouldMatch(1);
             return boolQuery.must(filterQuery);
         }
+        return boolQuery;
+    }
+
+    private BoolQueryBuilder addOrFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
+        if (values != null && !values.isEmpty()) {
+            for(String value : values) {
+                boolQuery.should(QueryBuilders.matchQuery(key, value));
+            }
+        }
+
         return boolQuery;
     }
 }

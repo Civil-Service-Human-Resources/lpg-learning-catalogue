@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class ProfileParameters {
 
-    private String profileDepartment;
+    private ArrayList<String> profileDepartments;
 
-    private String profileGrade;
+    private ArrayList<String> profileGrades;
 
     private ArrayList<String> profileAreasOfWork = new ArrayList<>();
 
@@ -14,20 +14,20 @@ public class ProfileParameters {
 
     public ProfileParameters() {}
 
-    public String getProfileDepartment() {
-        return profileDepartment;
+    public ArrayList<String> getProfileDepartments() {
+        return profileDepartments;
     }
 
-    public void setProfileDepartment(String profileDepartment) {
-        this.profileDepartment = profileDepartment;
+    public void setProfileDepartments(ArrayList<String> profileDepartments) {
+        this.profileDepartments = profileDepartments;
     }
 
-    public String getProfileGrade() {
-        return profileGrade;
+    public ArrayList<String> getProfileGrades() {
+        return profileGrades;
     }
 
-    public void setProfileGrade(String profileGrade) {
-        this.profileGrade = profileGrade;
+    public void setProfileGrades(ArrayList<String> profileGrades) {
+        this.profileGrades = profileGrades;
     }
 
     public ArrayList<String> getProfileAreasOfWork() {
@@ -44,14 +44,6 @@ public class ProfileParameters {
 
     public void setProfileInterests(ArrayList<String> interests) {
         this.profileInterests = interests;
-    }
-
-    public boolean hasInterests() {
-        return profileInterests != null && profileInterests.size() != 0;
-    }
-
-    public boolean hasAreasOfWork() {
-        return profileAreasOfWork != null && profileAreasOfWork.size() != 0;
     }
 }
 
