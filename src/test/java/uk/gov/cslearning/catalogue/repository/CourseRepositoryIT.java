@@ -190,7 +190,7 @@
 //            audience.setDepartments(ImmutableSet.of(department));
 //        }
 //        if (areaOfWork != null) {
-//            audience.setAreasOfWork(ImmutableSet.of(areaOfWork));
+//            audience.setProfileAreasOfWork(ImmutableSet.of(areaOfWork));
 //        }
 //        audience.setMandatory(mandatory);
 //

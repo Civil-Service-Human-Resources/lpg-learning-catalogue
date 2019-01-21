@@ -3,6 +3,7 @@ package uk.gov.cslearning.catalogue.repository;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -13,6 +14,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
+import uk.gov.cslearning.catalogue.api.ProfileParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -36,9 +38,9 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     @Override
-    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection) {
+    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> statusCollection) {
 
-        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, statusCollection);
+        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, profileParameters, statusCollection);
 
         SearchPage searchPage = new SearchPage();
         searchPage.setCourses(coursePage);
@@ -46,7 +48,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return searchPage;
     }
 
-    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection) {
+    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> statusCollection) {
 
         BoolQueryBuilder boolQuery = boolQuery();
 
@@ -89,7 +91,18 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         boolQuery = addFilter(boolQuery, statusList, "status");
 
         BoolQueryBuilder filterQuery = boolQuery();
-        filterQuery.mustNot(QueryBuilders.matchQuery("course.visibility", "PRIVATE"));
+        filterQuery.should(QueryBuilders.matchQuery("visibility", "PUBLIC"));
+
+
+
+        if (profileParameters.getProfileDepartment() != null) {
+            filterQuery.should(QueryBuilders.matchQuery("audiences.departments", profileParameters.getProfileDepartment()));
+        }
+        if (profileParameters.getProfileGrade() != null) {
+            filterQuery.should(QueryBuilders.matchQuery("audiences.grades", profileParameters.getProfileGrade()));
+        }
+        addFilter(filterQuery, profileParameters.getProfileAreasOfWork(), "audiences.areasOfWork");
+        addFilter(filterQuery, profileParameters.getProfileInterests(), "audiences.interests");
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
