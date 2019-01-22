@@ -9,5 +9,5 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import java.util.Collection;
 
 public interface CourseSearchRepository {
-    SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> status);
+    SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> status, String visibility);
 }

@@ -30,11 +30,11 @@ public class SearchController {
     }
 
     @GetMapping("/courses")
-    public ResponseEntity<SearchResults> search(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
+    public ResponseEntity<SearchResults> search(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
         LOGGER.debug("Searching courses with query {}", query);
 
         Pageable pageable = pageParameters.getPageRequest();
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, profileParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()));
+        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, profileParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), visibility);
 
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }

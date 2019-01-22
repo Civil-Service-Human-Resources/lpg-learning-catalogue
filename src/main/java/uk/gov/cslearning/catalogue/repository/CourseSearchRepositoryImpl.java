@@ -37,9 +37,9 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     @Override
-    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> statusCollection) {
+    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> statusCollection, String visibility) {
 
-        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, profileParameters, statusCollection);
+        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, profileParameters, statusCollection, visibility);
 
         SearchPage searchPage = new SearchPage();
         searchPage.setCourses(coursePage);
@@ -47,7 +47,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return searchPage;
     }
 
-    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> statusCollection) {
+    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> statusCollection, String visibility) {
 
         BoolQueryBuilder boolQuery = boolQuery();
 
@@ -90,7 +90,10 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         boolQuery = addFilter(boolQuery, statusList, "status");
 
         BoolQueryBuilder filterQuery = boolQuery();
-        filterQuery.should(QueryBuilders.matchQuery("visibility", "PUBLIC"));
+
+        if(visibility.equals("PUBLIC")) {
+            filterQuery.should(QueryBuilders.matchQuery("visibility", "PUBLIC"));
+        }
 
         addOrFilter(filterQuery, profileParameters.getProfileDepartments(), "audiences.departments");
         addOrFilter(filterQuery, profileParameters.getProfileGrades(), "audiences.grades");
