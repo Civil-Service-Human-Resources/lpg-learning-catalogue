@@ -43,7 +43,7 @@ public class CourseSearchRepositoryIT {
         Collection<Status> statusCollection = new ArrayList();
         statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable, filterParameters, profileParameters, statusCollection);
+        SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable, filterParameters, profileParameters, statusCollection, "PUBLIC");
 
         String actualSuggestionText = actualSearchPage.getTopScoringSuggestion().getText().toString();
         Page<Course> resourcePage = actualSearchPage.getCourses();
@@ -63,7 +63,7 @@ public class CourseSearchRepositoryIT {
         Collection<Status> statusCollection = new ArrayList();
         statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("Budgets", pageable, filterParameters, profileParameters, statusCollection);
+        SearchPage actualSearchPage = repository.search("Budgets", pageable, filterParameters, profileParameters, statusCollection, "PUBLIC");
         List<Course> actualResources = actualSearchPage.getCourses().getContent();
 
         assertThat(actualResources.size(), is(2));
@@ -80,7 +80,7 @@ public class CourseSearchRepositoryIT {
         Collection<Status> statusCollection = new ArrayList();
         statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable, filterParameters, profileParameters, statusCollection);
+        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable, filterParameters, profileParameters, statusCollection, "PUBLIC");
         List<Course> actualResources = actualSearchPage.getCourses().getContent();
 
         assertThat(actualResources.get(0).getTitle(), is("Spotify engineering culture: part 1"));
@@ -97,7 +97,7 @@ public class CourseSearchRepositoryIT {
         Collection<Status> statusCollection = new ArrayList();
         statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("why", pageable, filterParameters, profileParameters, statusCollection);
+        SearchPage actualSearchPage = repository.search("why", pageable, filterParameters, profileParameters, statusCollection, "PUBLIC");
         List<Course> actualResources = actualSearchPage.getCourses().getContent();
 
         assertThat(actualResources.get(0).getTitle(), is("Understanding and using business cases"));
