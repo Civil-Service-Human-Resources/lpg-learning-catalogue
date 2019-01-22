@@ -92,11 +92,13 @@ public class EventService {
 
         event.getVenue().setAvailability(event.getVenue().getCapacity());
 
-        bookings.forEach(b -> {
-            if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.REQUESTED) {
-                event.getVenue().setAvailability(event.getVenue().getAvailability() - 1);
-            }
-        });
+        if(bookings != null && !bookings.isEmpty()) {
+            bookings.forEach(b -> {
+                if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.REQUESTED) {
+                    event.getVenue().setAvailability(event.getVenue().getAvailability() - 1);
+                }
+            });
+        }
 
         return event;
     }
