@@ -51,7 +51,7 @@ public class SearchControllerTest {
         searchPage.setTopScoringSuggestion(suggestion);
         searchPage.setCourses(coursePage);
 
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class)))
+        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class)))
                 .thenReturn(searchPage);
 
         mockMvc.perform(
