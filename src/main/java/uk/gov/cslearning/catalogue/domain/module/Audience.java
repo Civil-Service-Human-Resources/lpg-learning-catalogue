@@ -1,7 +1,6 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
 import org.elasticsearch.common.UUIDs;
-import uk.gov.cslearning.catalogue.domain.Frequency;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -10,8 +9,6 @@ import java.util.Set;
 public class Audience {
     public enum Type {
         OPEN,
-        CLOSED_COURSE,
-        PRIVATE_COURSE,
         REQUIRED_LEARNING
     }
 
@@ -29,7 +26,7 @@ public class Audience {
 
     private Instant requiredBy;
 
-    private Frequency frequency;
+    private int frequency;
 
     private Type type;
 
@@ -94,11 +91,11 @@ public class Audience {
         this.requiredBy = requiredBy;
     }
 
-    public Frequency getFrequency() {
+    public int getFrequency() {
         return frequency;
     }
 
-    public void setFrequency(Frequency frequency) {
+    public void setFrequency(int frequency) {
         this.frequency = frequency;
     }
 

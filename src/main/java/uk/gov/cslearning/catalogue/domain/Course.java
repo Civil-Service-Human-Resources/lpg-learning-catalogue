@@ -42,7 +42,7 @@ public class Course {
     private String preparation;
 
     @NotNull
-    private Visibility visibility;
+    private Visibility visibility = Visibility.PUBLIC;
 
     private Status status = Status.DRAFT;
 
