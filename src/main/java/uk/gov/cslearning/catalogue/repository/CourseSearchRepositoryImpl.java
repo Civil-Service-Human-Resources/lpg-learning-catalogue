@@ -13,6 +13,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
+import uk.gov.cslearning.catalogue.api.OwnerParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -36,9 +37,9 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     @Override
-    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection) {
+    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters) {
 
-        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, statusCollection);
+        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, statusCollection, ownerParameters);
 
         SearchPage searchPage = new SearchPage();
         searchPage.setCourses(coursePage);
@@ -46,9 +47,17 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return searchPage;
     }
 
-    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection) {
+    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters) {
 
         BoolQueryBuilder boolQuery = boolQuery();
+
+        if (ownerParameters.hasOrganisationalUnitCode()) {
+            boolQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", ownerParameters.getOrganisationalUnitCode()));
+        }
+
+        if (ownerParameters.hasProfession()) {
+            boolQuery.must(QueryBuilders.matchQuery("owner.profession", ownerParameters.getProfession()));
+        }
 
         if (isNotBlank(query)) {
             boolQuery = boolQuery.must(QueryBuilders.multiMatchQuery(query)
