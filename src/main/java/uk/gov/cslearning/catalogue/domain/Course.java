@@ -46,6 +46,8 @@ public class Course {
 
     private Status status = Status.DRAFT;
 
+    private String topicId;
+
     public Course() {
     }
 
@@ -167,6 +169,14 @@ public class Course {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
     }
 
     @Override
