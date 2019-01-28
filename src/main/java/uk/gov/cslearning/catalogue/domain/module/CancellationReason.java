@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 
 public enum CancellationReason {
-    UNAVAILABLE("Unavailable"),VENUE("Venue");
+    UNAVAILABLE("the event is no longer available"),VENUE("short notice unavailability of the venue");
 
     private final String value;
 

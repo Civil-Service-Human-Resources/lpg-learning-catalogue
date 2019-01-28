@@ -11,6 +11,7 @@ import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository, CourseSuggestionsRepository {
@@ -23,4 +24,8 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
     SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> status);
 
     Page<Course> findAllByStatusIn(Collection<Status> status, Pageable pageable);
+
+
+    @Query("{\"bool\": {\"must\": [{\"exists\": {\"field\": \"modules.events\"}},{\"match\": {\"modules.type\": \"face-to-face\"}}]}}")
+    List<Course> findEvents();
 }
