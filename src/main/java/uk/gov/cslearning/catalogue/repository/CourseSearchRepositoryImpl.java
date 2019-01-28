@@ -59,6 +59,10 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             boolQuery.must(QueryBuilders.matchQuery("owner.profession", ownerParameters.getProfession()));
         }
 
+        if (ownerParameters.hasLearningProviderId()) {
+            boolQuery.must(QueryBuilders.matchQuery("owner.learningProvider", ownerParameters.getLearningProviderId()));
+        }
+
         if (isNotBlank(query)) {
             boolQuery = boolQuery.must(QueryBuilders.multiMatchQuery(query)
                     .field("title", 8)
@@ -125,6 +129,20 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         BoolQueryBuilder boolQuery = boolQuery();
 
         boolQuery.must(QueryBuilders.matchQuery("owner.profession", professionId));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .withPageable(pageable)
+                .build();
+
+        return operations.queryForPage(searchQuery, Course.class);
+    }
+
+    @Override
+    public Page<Course> findAllByLearningProviderId(String learningProviderId, Pageable pageable) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("owner.learningProvider", learningProviderId));
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)

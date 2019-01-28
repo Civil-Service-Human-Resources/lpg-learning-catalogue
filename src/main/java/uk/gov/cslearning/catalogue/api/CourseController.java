@@ -122,6 +122,18 @@ public class CourseController {
                 }).orElseGet(() -> new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK));
     }
 
+    @RoleMapping("SUPPLIER_AUTHOR")
+    @GetMapping(value = "/management")
+    public ResponseEntity<PageResults<Course>> listForSupplier(Pageable pageable) {
+        CivilServant civilServant = registryService.getCurrentCivilServant();
+
+        return civilServant.getLearningProviderId()
+                .map(learningProviderId -> {
+                    Page<Course> results = courseService.findCoursesByLearningProvider(learningProviderId, pageable);
+                    return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
+                }).orElseGet(() -> new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK));
+    }
+
     @RoleMapping({"CSL_AUTHOR", "LEARNING_MANAGER"})
     @GetMapping(value = "/management")
     public ResponseEntity<PageResults<Course>> listForCslAuthorOrLearningManager(Pageable pageable) {

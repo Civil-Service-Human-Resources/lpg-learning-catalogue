@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,7 +49,8 @@ public class SearchControllerTest {
     private RegistryService registryService;
 
     @Test
-    public void shouldReturnSearchPageOfCourses() throws Exception {
+    @WithMockUser(username = "user", authorities = {"ORGANISATION_AUTHOR"})
+    public void shouldReturnSearchPageOfCoursesForOrganisationAuthor() throws Exception {
         ArrayList<Course> courseArrayList = new ArrayList<>();
         Course course = new Course();
         courseArrayList.add(course);
@@ -60,7 +61,7 @@ public class SearchControllerTest {
         searchPage.setTopScoringSuggestion(suggestion);
         searchPage.setCourses(coursePage);
 
-        CivilServant civilServant = new CivilServant();
+        CivilServant civilServant = mock(CivilServant.class);
 
         when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
 
@@ -72,6 +73,98 @@ public class SearchControllerTest {
                         .param("query", "test")
                         .with(csrf()))
                 .andExpect(status().isOk());
+
+        verify(civilServant).getOrganisationalUnitCode();
     }
 
+    @Test
+    @WithMockUser(username = "user", authorities = {"PROFESSION_AUTHOR"})
+    public void shouldReturnSearchPageOfCoursesForProfessionAuthor() throws Exception {
+        ArrayList<Course> courseArrayList = new ArrayList<>();
+        Course course = new Course();
+        courseArrayList.add(course);
+        Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
+
+        SearchPage searchPage = new SearchPage();
+        Option suggestion = new Option(new Text("test-suggestion"), 0.1f);
+        searchPage.setTopScoringSuggestion(suggestion);
+        searchPage.setCourses(coursePage);
+
+        CivilServant civilServant = mock(CivilServant.class);
+
+        when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
+
+        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class)))
+                .thenReturn(searchPage);
+
+        mockMvc.perform(
+                get("/search/courses")
+                        .param("query", "test")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+
+        verify(civilServant).getProfessionId();
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"SUPPLIER_AUTHOR"})
+    public void shouldReturnSearchPageOfCoursesForSupplierAuthor() throws Exception {
+        ArrayList<Course> courseArrayList = new ArrayList<>();
+        Course course = new Course();
+        courseArrayList.add(course);
+        Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
+
+        SearchPage searchPage = new SearchPage();
+        Option suggestion = new Option(new Text("test-suggestion"), 0.1f);
+        searchPage.setTopScoringSuggestion(suggestion);
+        searchPage.setCourses(coursePage);
+
+        CivilServant civilServant = mock(CivilServant.class);
+
+        when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
+
+        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class)))
+                .thenReturn(searchPage);
+
+        mockMvc.perform(
+                get("/search/courses")
+                        .param("query", "test")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+
+        verify(civilServant).getLearningProviderId();
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
+    public void shouldReturnSearchPageOfCoursesForCslAuthor() throws Exception {
+        ArrayList<Course> courseArrayList = new ArrayList<>();
+        Course course = new Course();
+        courseArrayList.add(course);
+        Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
+
+        SearchPage searchPage = new SearchPage();
+        Option suggestion = new Option(new Text("test-suggestion"), 0.1f);
+        searchPage.setTopScoringSuggestion(suggestion);
+        searchPage.setCourses(coursePage);
+
+        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class)))
+                .thenReturn(searchPage);
+
+        mockMvc.perform(
+                get("/search/courses")
+                        .param("query", "test")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"INVALID_ROLE"})
+    public void shouldReturnSearchPageOfCoursesForInvalidRole() throws Exception {
+        mockMvc.perform(
+                get("/search/courses")
+                        .param("query", "test")
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
 }
