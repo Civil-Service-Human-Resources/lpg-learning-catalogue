@@ -16,4 +16,6 @@ public interface CourseSearchRepository {
     Page<Course> findAllByOrganisationCode(String organisationalUnitCode, Pageable pageable);
 
     Page<Course> findAllByProfessionId(String professionId, Pageable pageable);
+
+    Page<Course> findAllByLearningProviderId(String learningProviderId, Pageable pageable);
 }

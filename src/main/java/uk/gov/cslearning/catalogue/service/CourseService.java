@@ -100,6 +100,10 @@ public class CourseService {
         return courseRepository.findAllByProfessionId(professionId, pageable);
     }
 
+    public Page<Course> findCoursesByLearningProvider(String professionId, Pageable pageable) {
+        return courseRepository.findAllByLearningProviderId(professionId, pageable);
+    }
+
     public Page<Course> findAllCourses(Pageable pageable) {
         return courseRepository.findAll(pageable);
     }

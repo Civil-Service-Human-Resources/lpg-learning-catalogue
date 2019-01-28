@@ -267,7 +267,8 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void shouldListForManagement() throws Exception {
+    @WithMockUser(username = "user", authorities = {"ORGANISATION_AUTHOR"})
+    public void shouldListForOrganisation() throws Exception {
         Course course = new Course();
 
         CivilServant civilServant = new CivilServant();
@@ -280,6 +281,70 @@ public class CourseControllerTest {
                 .thenReturn(civilServant);
         when(courseService.findCoursesByOrganisationalUnit(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
+        mockMvc.perform(
+                get("/courses/management")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"PROFESSION_AUTHOR"})
+    public void shouldListForProfession() throws Exception {
+        Course course = new Course();
+
+        CivilServant civilServant = new CivilServant();
+        OrganisationalUnit organisationalUnit = new OrganisationalUnit();
+        String code = "code";
+        organisationalUnit.setCode(code);
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
+        when(courseService.findCoursesByProfession(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/management")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"SUPPLIER_AUTHOR"})
+    public void shouldListForSupplier() throws Exception {
+        Course course = new Course();
+
+        CivilServant civilServant = new CivilServant();
+        OrganisationalUnit organisationalUnit = new OrganisationalUnit();
+        String code = "code";
+        organisationalUnit.setCode(code);
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
+        when(courseService.findCoursesByLearningProvider(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/management")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
+    public void shouldListForCslAuthor() throws Exception {
+        Course course = new Course();
+
+        when(courseService.findAllCourses(any(Pageable.class))).thenReturn(new PageImpl<>(Collections.singletonList(course)));
+
+        mockMvc.perform(
+                get("/courses/management")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"INVALID_ROLE"})
+    public void shouldReturnForbiddenForCslAuthor() throws Exception {
         mockMvc.perform(
                 get("/courses/management")
                         .with(csrf()))

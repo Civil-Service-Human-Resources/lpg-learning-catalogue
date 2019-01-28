@@ -147,6 +147,20 @@ public class CourseServiceTest {
     }
 
     @Test
+    public void shouldFindCoursesBySupplier() {
+        List<Course> courses = new ArrayList<>();
+        courses.add(new Course());
+        courses.add(new Course());
+
+        Page<Course> coursesPage = new PageImpl<>(courses);
+
+        when(courseRepository.findAllByLearningProviderId(LEARNING_PROVIDER_ID, PAGEABLE)).thenReturn(coursesPage);
+
+        assertEquals(courseService.findCoursesByLearningProvider(LEARNING_PROVIDER_ID, PAGEABLE), coursesPage);
+    }
+
+
+    @Test
     public void shouldFindAllCourses() {
         List<Course> courses = new ArrayList<>();
         courses.add(new Course());

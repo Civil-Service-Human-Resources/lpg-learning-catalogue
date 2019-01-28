@@ -3,8 +3,8 @@ package uk.gov.cslearning.catalogue.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,6 +67,21 @@ public class SearchController {
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }
 
+    @RoleMapping("SUPPLIER_AUTHOR")
+    @GetMapping("/courses")
+    public ResponseEntity<SearchResults> searchForSupplier(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, PageParameters pageParameters) {
+        CivilServant civilServant = registryService.getCurrentCivilServant();
+
+        OwnerParameters ownerParameters = new OwnerParameters();
+
+        civilServant.getLearningProviderId().ifPresent(ownerParameters::setLearningProviderId);
+
+        Pageable pageable = pageParameters.getPageRequest();
+        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters);
+
+        return ResponseEntity.ok(new SearchResults(searchPage, pageable));
+    }
+
     @RoleMapping({"CSL_AUTHOR", "LEARNING_MANAGER", "LEARNER"})
     @GetMapping("/courses")
     public ResponseEntity<SearchResults> searchForCslAuthorOrLearningManager(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, PageParameters pageParameters) {
@@ -80,8 +95,8 @@ public class SearchController {
     }
 
     @GetMapping("/courses")
-    public ResponseEntity<PageResults<Course>> unauth(Pageable pageable) {
-        return ResponseEntity.ok(new PageResults<>(Page.empty(), pageable));
+    public ResponseEntity<PageResults<Course>> unauth() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
 }
