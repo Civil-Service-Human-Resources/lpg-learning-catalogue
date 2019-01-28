@@ -119,4 +119,16 @@ public class ModuleService {
 
         return results;
     }
+
+    public Map<String, ModuleDto> getModuleMap(String professionId) {
+        Map<String, ModuleDto> results = new HashMap<>();
+
+        for (Course course : courseRepository.findAllByProfessionId(professionId)) {
+            for (Module module : course.getModules()) {
+                results.put(module.getId(), moduleDtoFactory.create(module, course));
+            }
+        }
+
+        return results;
+    }
 }

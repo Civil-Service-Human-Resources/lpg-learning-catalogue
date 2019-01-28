@@ -224,4 +224,38 @@ public class ModuleServiceTest {
 
         assertEquals(expected, moduleService.getModuleMap());
     }
+
+    @Test
+    public void shouldReturnMapOfIdAndModuleByProfession() {
+        String profesionId = "profession-id";
+        Module module1 = new FaceToFaceModule("a");
+
+        Course course1 = new Course();
+        course1.setModules(Collections.singletonList(module1));
+
+        Module module2 = new FaceToFaceModule("b");
+        Module module3 = new FaceToFaceModule("c");
+
+        Course course2 = new Course();
+        course2.setModules(Arrays.asList(module2, module3));
+
+        when(courseRepository.findAllByProfessionId(profesionId)).thenReturn(Arrays.asList(course1, course2));
+
+        ModuleDto moduleDto1 = new ModuleDto();
+        ModuleDto moduleDto2 = new ModuleDto();
+        ModuleDto moduleDto3 = new ModuleDto();
+
+        when(moduleDtoFactory.create(module1, course1)).thenReturn(moduleDto1);
+        when(moduleDtoFactory.create(module2, course2)).thenReturn(moduleDto2);
+        when(moduleDtoFactory.create(module3, course2)).thenReturn(moduleDto3);
+
+        Map<String, ModuleDto> expected = ImmutableMap.of(
+                module1.getId(), moduleDto1,
+                module2.getId(), moduleDto2,
+                module3.getId(), moduleDto3
+        );
+
+        assertEquals(expected, moduleService.getModuleMap(profesionId));
+    }
+
 }

@@ -29,4 +29,6 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
     Page<Course> findAllByOrganisationCode(String organisationalUnitCode, Pageable pageable);
 
     Page<Course> findAllByProfessionId(String professionId, Pageable pageable);
+
+    List<Course> findAllByProfessionId(String professionId);
 }

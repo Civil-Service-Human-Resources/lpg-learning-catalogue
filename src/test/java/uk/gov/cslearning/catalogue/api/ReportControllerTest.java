@@ -105,4 +105,35 @@ public class ReportControllerTest {
                 .andExpect(jsonPath("$.module_id.course.title", equalTo(courseTitle)));
     }
 
+    @Test
+    public void shouldReturnMapOfModulesByProfession() throws Exception {
+        String professionId = "profession-id";
+        String courseId = "course-id";
+        String courseTitle = "course-title";
+        CourseDto courseDto = new CourseDto();
+        courseDto.setId(courseId);
+        courseDto.setTitle(courseTitle);
+
+        String moduleId = "module_id";
+        String moduleTitle = "module-title";
+        ModuleDto moduleDto = new ModuleDto();
+        moduleDto.setId(moduleId);
+        moduleDto.setTitle(moduleTitle);
+        moduleDto.setCourse(courseDto);
+
+        Map<String, ModuleDto> modules = ImmutableMap.of(moduleId, moduleDto);
+
+        when(moduleService.getModuleMap(professionId)).thenReturn(modules);
+
+        mockMvc.perform(
+                get("/reporting/modules")
+                        .accept(MediaType.APPLICATION_JSON)
+        .param("professionId", professionId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.module_id.id", equalTo(moduleId)))
+                .andExpect(jsonPath("$.module_id.title", equalTo(moduleTitle)))
+                .andExpect(jsonPath("$.module_id.course.id", equalTo(courseId)))
+                .andExpect(jsonPath("$.module_id.course.title", equalTo(courseTitle)));
+    }
+
 }
