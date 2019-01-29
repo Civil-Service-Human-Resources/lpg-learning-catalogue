@@ -348,7 +348,7 @@ public class CourseControllerTest {
         mockMvc.perform(
                 get("/courses/management")
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isForbidden());
     }
 
     @Test

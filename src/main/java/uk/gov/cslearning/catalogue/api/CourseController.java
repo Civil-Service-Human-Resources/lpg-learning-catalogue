@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -143,8 +145,9 @@ public class CourseController {
     }
 
     @GetMapping(value = "/management")
-    public ResponseEntity<PageResults<Course>> unauth(Pageable pageable) {
-        return ResponseEntity.ok(new PageResults<>(Page.empty(), pageable));
+    public ResponseEntity<PageResults<Course>> unauth(Principal principal) {
+        LOGGER.debug(String.format("Unauthorised. Required role not found in %s", principal));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping(params = "courseId")
