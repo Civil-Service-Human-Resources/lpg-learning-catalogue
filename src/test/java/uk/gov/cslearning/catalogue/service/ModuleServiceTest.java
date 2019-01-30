@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.FileModule;
 import uk.gov.cslearning.catalogue.domain.module.LinkModule;
@@ -34,6 +35,9 @@ public class ModuleServiceTest {
 
     @Mock
     private ModuleDtoFactory moduleDtoFactory;
+
+    @Mock
+    private LearningProviderService learningProviderService;
 
     @InjectMocks
     private ModuleService moduleService;
@@ -258,4 +262,47 @@ public class ModuleServiceTest {
         assertEquals(expected, moduleService.getModuleMap(profesionId));
     }
 
+    @Test
+    public void shouldReturnModuleMapOfSupplier() {
+        LearningProvider learningProviderA = new LearningProvider();
+        learningProviderA.setId("a");
+        String learningProviderName = "Learning Provider A";
+        learningProviderA.setName(learningProviderName);
+
+        LearningProvider learningProviderB = new LearningProvider();
+        learningProviderB.setId("b");
+        learningProviderB.setName("Learning Provider B");
+
+        Module module1 = new FaceToFaceModule("a");
+
+        Course course1 = new Course();
+        course1.setLearningProvider(learningProviderA);
+        course1.setModules(Collections.singletonList(module1));
+
+        Module module2 = new FaceToFaceModule("b");
+        Module module3 = new FaceToFaceModule("c");
+
+        Course course2 = new Course();
+        course2.setLearningProvider(learningProviderB);
+        course2.setModules(Arrays.asList(module2, module3));
+
+        when(learningProviderService.findByName(learningProviderName)).thenReturn(learningProviderA);
+
+        when(courseRepository.findAllByLearningProvider(learningProviderA))
+                .thenReturn(Collections.singletonList(course1));
+
+        ModuleDto moduleDto1 = new ModuleDto();
+
+        when(moduleDtoFactory.create(module1, course1)).thenReturn(moduleDto1);
+
+        Map<String, ModuleDto> expected = ImmutableMap.of(
+                module1.getId(), moduleDto1
+        );
+
+        assertEquals(expected, moduleService.getModuleMapForSupplier(learningProviderName));
+
+
+
+
+    }
 }

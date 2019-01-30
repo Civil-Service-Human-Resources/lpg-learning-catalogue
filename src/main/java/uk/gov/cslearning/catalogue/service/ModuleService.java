@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.domain.module.ELearningModule;
 import uk.gov.cslearning.catalogue.domain.module.FileModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
@@ -19,11 +20,13 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class ModuleService {
     private final CourseRepository courseRepository;
+    private final LearningProviderService learningProviderService;
     private final FileUploadService fileUploadService;
     private final ModuleDtoFactory moduleDtoFactory;
 
-    public ModuleService(CourseRepository courseRepository, FileUploadService fileUploadService, ModuleDtoFactory moduleDtoFactory) {
+    public ModuleService(CourseRepository courseRepository, LearningProviderService learningProviderService, FileUploadService fileUploadService, ModuleDtoFactory moduleDtoFactory) {
         this.courseRepository = courseRepository;
+        this.learningProviderService = learningProviderService;
         this.fileUploadService = fileUploadService;
         this.moduleDtoFactory = moduleDtoFactory;
     }
@@ -124,6 +127,20 @@ public class ModuleService {
         Map<String, ModuleDto> results = new HashMap<>();
 
         for (Course course : courseRepository.findAllByProfessionId(professionId)) {
+            for (Module module : course.getModules()) {
+                results.put(module.getId(), moduleDtoFactory.create(module, course));
+            }
+        }
+
+        return results;
+    }
+
+    public Map<String, ModuleDto> getModuleMapForSupplier(String learningProviderName) {
+        Map<String, ModuleDto> results = new HashMap<>();
+
+        LearningProvider learningProvider = learningProviderService.findByName(learningProviderName);
+
+        for (Course course : courseRepository.findAllByLearningProvider(learningProvider)) {
             for (Module module : course.getModules()) {
                 results.put(module.getId(), moduleDtoFactory.create(module, course));
             }

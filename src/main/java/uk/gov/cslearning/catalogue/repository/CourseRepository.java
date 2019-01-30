@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 
@@ -31,4 +32,6 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
     Page<Course> findAllByProfessionId(String professionId, Pageable pageable);
 
     List<Course> findAllByProfessionId(String professionId);
+
+    List<Course> findAllByLearningProvider(LearningProvider learningProvider);
 }

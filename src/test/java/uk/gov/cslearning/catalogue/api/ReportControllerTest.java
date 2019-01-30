@@ -8,24 +8,28 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
 import uk.gov.cslearning.catalogue.dto.CourseDto;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.service.EventService;
+import uk.gov.cslearning.catalogue.service.LearningProviderService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ReportController.class)
+@WebMvcTest({ReportController.class, RequestMappingConfig.class})
 @RunWith(SpringRunner.class)
 @WithMockUser(username = "user")
 @EnableSpringDataWebSupport
@@ -38,6 +42,9 @@ public class ReportControllerTest {
 
     @MockBean
     private ModuleService moduleService;
+
+    @MockBean
+    private LearningProviderService learningProviderService;
 
     @Test
     public void shouldReturnMapOfEvents() throws Exception {
@@ -135,5 +142,41 @@ public class ReportControllerTest {
                 .andExpect(jsonPath("$.module_id.course.id", equalTo(courseId)))
                 .andExpect(jsonPath("$.module_id.course.title", equalTo(courseTitle)));
     }
+
+    @Test
+    @WithMockUser(authorities = "KPMG_SUPPLIER_REPORTER")
+    public void shouldReturnMapOfModulesForSupplier() throws Exception {
+        String learningProviderName = "KPMG";
+        String professionId = "profession-id";
+        String courseId = "course-id";
+        String courseTitle = "course-title";
+        CourseDto courseDto = new CourseDto();
+        courseDto.setId(courseId);
+        courseDto.setTitle(courseTitle);
+
+        String moduleId = "module_id";
+        String moduleTitle = "module-title";
+        ModuleDto moduleDto = new ModuleDto();
+        moduleDto.setId(moduleId);
+        moduleDto.setTitle(moduleTitle);
+        moduleDto.setCourse(courseDto);
+
+        when(learningProviderService.getLearningProviderNameFromAuthentication(any(Authentication.class)))
+                .thenReturn(learningProviderName);
+
+        Map<String, ModuleDto> modules = ImmutableMap.of(moduleId, moduleDto);
+
+        when(moduleService.getModuleMapForSupplier(learningProviderName)).thenReturn(modules);
+
+        mockMvc.perform(
+                get("/reporting/modules")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.module_id.id", equalTo(moduleId)))
+                .andExpect(jsonPath("$.module_id.title", equalTo(moduleTitle)))
+                .andExpect(jsonPath("$.module_id.course.id", equalTo(courseId)))
+                .andExpect(jsonPath("$.module_id.course.title", equalTo(courseTitle)));
+    }
+
 
 }

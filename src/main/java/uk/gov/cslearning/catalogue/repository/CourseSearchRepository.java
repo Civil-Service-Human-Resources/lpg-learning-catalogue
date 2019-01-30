@@ -8,6 +8,7 @@ import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface CourseSearchRepository {
     SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> status);
@@ -15,4 +16,6 @@ public interface CourseSearchRepository {
     Page<Course> findAllByOrganisationCode(String organisationalUnitCode, Pageable pageable);
 
     Page<Course> findAllByProfessionId(String professionId, Pageable pageable);
+
+    List<Course> findAllByProfessionId(String professionId);
 }
