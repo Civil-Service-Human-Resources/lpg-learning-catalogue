@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
-import sun.java2d.cmm.Profile;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.api.PageParameters;
 import uk.gov.cslearning.catalogue.api.ProfileParameters;
