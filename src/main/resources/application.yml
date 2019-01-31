@@ -55,3 +55,9 @@ oauth:
   clientSecret: ${CLIENT_SECRET:test}
   checkTokenUrl: "${oauth.serviceUrl}/oauth/check_token"
   tokenUrl: "${oauth.serviceUrl}/oauth/token"
+
+suppliers:
+  reporting-authorities:
+    KPMG_SUPPLIER_REPORTER: "kpmg"
+    KORNFERRY_SUPPLIER_REPORTER: "kornferry"
+    KNOWLEDGEPOOL_SUPPLIER_REPORTER: "knowledgepool"

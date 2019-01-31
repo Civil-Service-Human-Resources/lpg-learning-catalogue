@@ -14,6 +14,7 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 
@@ -137,6 +138,20 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         return operations.queryForList(searchQuery, Course.class);
     }
+
+    @Override
+    public List<Course> findAllByLearningProvider(LearningProvider learningProvider) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("learningProvider.id", learningProvider.getId()));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .build();
+
+        return operations.queryForList(searchQuery, Course.class);
+    }
+
 
     private BoolQueryBuilder addFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
         if (values != null && !values.isEmpty()) {

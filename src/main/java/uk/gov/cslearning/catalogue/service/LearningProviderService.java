@@ -1,9 +1,9 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+import uk.gov.cslearning.catalogue.config.SupplierConfig;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.exception.InvalidSupplierException;
 import uk.gov.cslearning.catalogue.exception.LearningProviderNotFoundException;
@@ -14,16 +14,17 @@ import java.util.Set;
 
 @Service
 public class LearningProviderService {
-    private final Map<String, String> authoritySupplierNameMap;
+    private final SupplierConfig supplierConfig;
     private final LearningProviderRepository learningProviderRepository;
 
-    public LearningProviderService(@Qualifier("authoritySupplierNameMap") Map<String, String> authoritySupplierNameMap,
-                                   LearningProviderRepository learningProviderRepository) {
-        this.authoritySupplierNameMap = authoritySupplierNameMap;
+    public LearningProviderService(SupplierConfig supplierConfig, LearningProviderRepository learningProviderRepository) {
+        this.supplierConfig = supplierConfig;
         this.learningProviderRepository = learningProviderRepository;
     }
 
     public String getLearningProviderNameFromAuthentication(Authentication authentication) {
+        Map<String, String> authoritySupplierNameMap = supplierConfig.getReportingAuthorities();
+
         Set<String> authorities = authoritySupplierNameMap.keySet();
 
         String authority = authentication.getAuthorities().stream()

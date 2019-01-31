@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 
@@ -18,4 +19,6 @@ public interface CourseSearchRepository {
     Page<Course> findAllByProfessionId(String professionId, Pageable pageable);
 
     List<Course> findAllByProfessionId(String professionId);
+
+    List<Course> findAllByLearningProvider(LearningProvider learningProvider);
 }
