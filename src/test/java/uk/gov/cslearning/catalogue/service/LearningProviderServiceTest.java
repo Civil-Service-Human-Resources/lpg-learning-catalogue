@@ -9,6 +9,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import uk.gov.cslearning.catalogue.config.SupplierConfig;
 import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.exception.InvalidSupplierException;
 import uk.gov.cslearning.catalogue.exception.LearningProviderNotFoundException;
@@ -29,22 +30,26 @@ public class LearningProviderServiceTest {
     @Mock
     private LearningProviderRepository learningProviderRepository;
 
-    private final Map<String, String> authoritySupplierNameMap = ImmutableMap.of(
-            "KPMG_SUPPLIER_REPORTER", "KPMG",
-            "KORNFERRY_SUPPLIER_REPORTER", "Kornferry",
-            "KNOWLEDGEPOOL_SUPPLIER_REPORTER", "Knowledgepool"
-    );
+    @Mock
+    private SupplierConfig supplierConfig;
 
     private LearningProviderService learningProviderService;
 
     @Before
     public void setUp() {
-        learningProviderService = new LearningProviderService(authoritySupplierNameMap, learningProviderRepository);
+        Map<String, String> reportingAuthorities = ImmutableMap.of(
+                "KPMG_SUPPLIER_REPORTER", "KPMG",
+                "KORNFERRY_SUPPLIER_REPORTER", "KORNFERRY",
+                "KNOWLEDGEPOOL_SUPPLIER_REPORTER", "KNOWLEDGEPOOL"
+        );
+
+        when(supplierConfig.getReportingAuthorities()).thenReturn(reportingAuthorities);
+
+        learningProviderService = new LearningProviderService(supplierConfig, learningProviderRepository);
     }
 
     @Test
     public void shouldReturnLearningProviderName() {
-
         SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority("KPMG_SUPPLIER_REPORTER");
 
         Collection<? extends GrantedAuthority> authorities = Collections.singletonList(grantedAuthority);
