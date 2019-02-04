@@ -124,16 +124,11 @@ public class CourseController {
                 }).orElseGet(() -> new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK));
     }
 
-    @RoleMapping("SUPPLIER_AUTHOR")
+    @RoleMapping({"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})
     @GetMapping(value = "/management")
-    public ResponseEntity<PageResults<Course>> listForSupplier(Pageable pageable) {
-        CivilServant civilServant = registryService.getCurrentCivilServant();
-
-        return civilServant.getLearningProviderId()
-                .map(learningProviderId -> {
-                    Page<Course> results = courseService.findCoursesByLearningProvider(learningProviderId, pageable);
-                    return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
-                }).orElseGet(() -> new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK));
+    public ResponseEntity<PageResults<Course>> listForSupplier(Pageable pageable, Authentication authentication) {
+        Page<Course> results = courseService.findCoursesBySupplier(authentication, pageable);
+        return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
     }
 
     @RoleMapping({"CSL_AUTHOR", "LEARNING_MANAGER"})
@@ -375,7 +370,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseId}/audiences/{audienceId}")
-    @PreAuthorize("(hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_DELETE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_DELETE, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_DELETE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity deleteAudience(@PathVariable String courseId, @PathVariable String audienceId, Authentication authentication) {
         LOGGER.debug("Deleting audience, course ID {}, audience ID {}", courseId, audienceId);
 

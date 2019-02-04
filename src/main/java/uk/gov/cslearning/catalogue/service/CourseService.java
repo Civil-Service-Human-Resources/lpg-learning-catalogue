@@ -42,6 +42,9 @@ public class CourseService {
         CivilServant civilServant = registryService.getCurrentCivilServant();
 
         civilServant.setScope(authoritiesService.getScope(authentication));
+
+        civilServant.setSupplier(authoritiesService.getSupplier(authentication));
+
         course.setOwner(ownerFactory.create(civilServant, course));
 
         courseRepository.save(course);
@@ -100,8 +103,8 @@ public class CourseService {
         return courseRepository.findAllByProfessionId(professionId, pageable);
     }
 
-    public Page<Course> findCoursesByLearningProvider(String professionId, Pageable pageable) {
-        return courseRepository.findAllByLearningProviderId(professionId, pageable);
+    public Page<Course> findCoursesBySupplier(Authentication authentication, Pageable pageable) {
+        return courseRepository.findAllBySupplier(authoritiesService.getSupplier(authentication), pageable);
     }
 
     public Page<Course> findAllCourses(Pageable pageable) {

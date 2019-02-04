@@ -6,7 +6,7 @@ import lombok.Data;
 public class OwnerParameters {
     String profession;
     String organisationalUnitCode;
-    String learningProviderId;
+    String supplier;
 
     public boolean hasProfession() {
         return this.profession != null && !this.profession.isEmpty();
@@ -16,7 +16,7 @@ public class OwnerParameters {
         return this.organisationalUnitCode != null && !this.organisationalUnitCode.isEmpty();
     }
 
-    public boolean hasLearningProviderId() {
-        return this.learningProviderId != null && !this.learningProviderId.isEmpty();
+    public boolean hasSupplier() {
+        return this.supplier != null && !this.supplier.isEmpty();
     }
 }
