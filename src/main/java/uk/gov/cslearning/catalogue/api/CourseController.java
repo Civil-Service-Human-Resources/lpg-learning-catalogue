@@ -146,7 +146,7 @@ public class CourseController {
 
     @GetMapping(value = "/management")
     public ResponseEntity<PageResults<Course>> unauth(Principal principal) {
-        LOGGER.debug(String.format("Unauthorised. Required role not found in %s", principal));
+        LOGGER.debug("Unauthorised. Required role not found in %s", principal);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
