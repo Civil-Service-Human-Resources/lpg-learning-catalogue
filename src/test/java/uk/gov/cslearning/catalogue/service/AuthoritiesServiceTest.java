@@ -12,7 +12,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
 import uk.gov.cslearning.catalogue.domain.CivilServant.Profession;
-import uk.gov.cslearning.catalogue.domain.LearningProvider;
 import uk.gov.cslearning.catalogue.domain.Owner.Owner;
 import uk.gov.cslearning.catalogue.domain.Roles;
 import uk.gov.cslearning.catalogue.domain.Scope;
@@ -214,56 +213,5 @@ public class AuthoritiesServiceTest {
         Owner owner = new Owner();
 
         assertFalse(authoritiesService.isProfessionIdEqual(civilServant, owner));
-    }
-
-    @Test
-    public void shouldReturnTrueIfLearningProviderIdEqual() {
-        CivilServant civilServant = new CivilServant();
-
-        LearningProvider learningProvider = new LearningProvider();
-        learningProvider.setId(LEARNING_PROVIDER_ID);
-        civilServant.setLearningProvider(learningProvider);
-
-        Owner owner = new Owner();
-        owner.setLearningProvider(LEARNING_PROVIDER_ID);
-
-        assertTrue(authoritiesService.isLearningProviderIdEqual(civilServant, owner));
-    }
-
-    @Test
-    public void shouldReturnFalseIfLearningProviderNotEqual() {
-        CivilServant civilServant = new CivilServant();
-
-        LearningProvider learningProvider = new LearningProvider();
-        learningProvider.setId(LEARNING_PROVIDER_ID);
-        civilServant.setLearningProvider(learningProvider);
-
-        Owner owner = new Owner();
-        owner.setLearningProvider("nouuid");
-
-        assertFalse(authoritiesService.isLearningProviderIdEqual(civilServant, owner));
-    }
-
-    @Test
-    public void shouldReturnFalseIfCivilServantHasNoLearningProvider() {
-        CivilServant civilServant = new CivilServant();
-
-        Owner owner = new Owner();
-        owner.setLearningProvider(LEARNING_PROVIDER_ID);
-
-        assertFalse(authoritiesService.isLearningProviderIdEqual(civilServant, owner));
-    }
-
-    @Test
-    public void shouldReturnFalseIfOwnerHasNoLearningProvider() {
-        CivilServant civilServant = new CivilServant();
-
-        LearningProvider learningProvider = new LearningProvider();
-        learningProvider.setId(LEARNING_PROVIDER_ID);
-        civilServant.setLearningProvider(learningProvider);
-
-        Owner owner = new Owner();
-
-        assertFalse(authoritiesService.isLearningProviderIdEqual(civilServant, owner));
     }
 }

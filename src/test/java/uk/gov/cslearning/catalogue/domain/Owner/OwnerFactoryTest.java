@@ -42,6 +42,5 @@ public class OwnerFactoryTest {
         assertEquals(owner.getScope(), GLOBAL_SCOPE.name());
         assertEquals(owner.getOrganisationalUnit(), ORGANISATIONAL_UNIT_CODE);
         assertEquals(owner.getProfession(), PROFESSION_ID);
-        assertEquals(owner.getLearningProvider(), LEARNING_PROVIDER_ID);
     }
 }

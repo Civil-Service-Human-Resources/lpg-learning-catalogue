@@ -21,6 +21,7 @@ import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
 import java.util.ArrayList;
@@ -47,6 +48,9 @@ public class SearchControllerTest {
 
     @MockBean
     private RegistryService registryService;
+
+    @MockBean
+    private AuthoritiesService authoritiesService;
 
     @Test
     @WithMockUser(username = "user", authorities = {"ORGANISATION_AUTHOR"})
@@ -107,7 +111,7 @@ public class SearchControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"SUPPLIER_AUTHOR"})
+    @WithMockUser(username = "user", authorities = {"KPMG_SUPPLIER_AUTHOR"})
     public void shouldReturnSearchPageOfCoursesForSupplierAuthor() throws Exception {
         ArrayList<Course> courseArrayList = new ArrayList<>();
         Course course = new Course();
@@ -131,8 +135,6 @@ public class SearchControllerTest {
                         .param("query", "test")
                         .with(csrf()))
                 .andExpect(status().isOk());
-
-        verify(civilServant).getLearningProviderId();
     }
 
     @Test

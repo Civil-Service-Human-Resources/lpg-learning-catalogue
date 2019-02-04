@@ -147,20 +147,6 @@ public class CourseServiceTest {
     }
 
     @Test
-    public void shouldFindCoursesBySupplier() {
-        List<Course> courses = new ArrayList<>();
-        courses.add(new Course());
-        courses.add(new Course());
-
-        Page<Course> coursesPage = new PageImpl<>(courses);
-
-        when(courseRepository.findAllByLearningProviderId(LEARNING_PROVIDER_ID, PAGEABLE)).thenReturn(coursesPage);
-
-        assertEquals(courseService.findCoursesByLearningProvider(LEARNING_PROVIDER_ID, PAGEABLE), coursesPage);
-    }
-
-
-    @Test
     public void shouldFindAllCourses() {
         List<Course> courses = new ArrayList<>();
         courses.add(new Course());
@@ -180,7 +166,6 @@ public class CourseServiceTest {
         Owner owner = new Owner();
         owner.setOrganisationalUnit(ORGANISATIONAL_UNIT_CODE);
         owner.setProfession(PROFESSION_ID);
-        owner.setLearningProvider(LEARNING_PROVIDER_ID);
 
         CivilServant civilServant = new CivilServant();
         OrganisationalUnit organisationalUnit = new OrganisationalUnit();
@@ -206,7 +191,6 @@ public class CourseServiceTest {
         verify(courseRepository).save(course);
         assertEquals(createdOwner.getOrganisationalUnit(), ORGANISATIONAL_UNIT_CODE);
         assertEquals(createdOwner.getProfession(), PROFESSION_ID);
-        assertEquals(createdOwner.getLearningProvider(), LEARNING_PROVIDER_ID);
     }
 
     @Test

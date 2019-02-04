@@ -309,7 +309,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"SUPPLIER_AUTHOR"})
+    @WithMockUser(username = "user", authorities = {"KPMG_SUPPLIER_AUTHOR"})
     public void shouldListForSupplier() throws Exception {
         Course course = new Course();
 
@@ -321,7 +321,7 @@ public class CourseControllerTest {
 
         when(registryService.getCurrentCivilServant())
                 .thenReturn(civilServant);
-        when(courseService.findCoursesByLearningProvider(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(course)));
+        when(courseService.findCoursesBySupplier(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/management")
