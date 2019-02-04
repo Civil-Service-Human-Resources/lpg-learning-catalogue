@@ -54,22 +54,22 @@ public class OwnerParametersTest {
     @Test
     public void shouldReturnFalseIfNoLearningProvider() {
         OwnerParameters ownerParameters = new OwnerParameters();
-        assertFalse(ownerParameters.hasLearningProviderId());
+        assertFalse(ownerParameters.hasSupplier());
     }
 
     @Test
     public void shouldReturnFalseIfLearningProviderIsEmpty() {
         OwnerParameters ownerParameters = new OwnerParameters();
-        ownerParameters.setLearningProviderId("");
+        ownerParameters.setSupplier("");
 
-        assertFalse(ownerParameters.hasLearningProviderId());
+        assertFalse(ownerParameters.hasSupplier());
     }
 
     @Test
     public void shouldReturnTrueIfLearningProvider() {
         OwnerParameters ownerParameters = new OwnerParameters();
-        ownerParameters.setLearningProviderId("lp");
+        ownerParameters.setSupplier("lp");
 
-        assertTrue(ownerParameters.hasLearningProviderId());
+        assertTrue(ownerParameters.hasSupplier());
     }
 }
