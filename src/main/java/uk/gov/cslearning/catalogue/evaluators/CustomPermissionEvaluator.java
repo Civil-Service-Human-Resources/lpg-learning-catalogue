@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Roles;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
@@ -19,11 +20,6 @@ import java.util.function.Supplier;
 @Component
 public class CustomPermissionEvaluator implements PermissionEvaluator {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomPermissionEvaluator.class);
-    private static final String ROLE_CSL_AUTHOR = "CSL_AUTHOR";
-    private static final String ROLE_ORGANISATION_AUTHOR = "ORGANISATION_AUTHOR";
-    private static final String ROLE_PROFESSION_AUTHOR = "PROFESSION_AUTHOR";
-    private static final String ROLE_SUPPLIER_AUTHOR = "SUPPLIER_AUTHOR";
-    private static final String ROLE_LEARNING_MANAGER = "LEARNING_MANAGER";
 
     private RegistryService registryService;
 
@@ -69,19 +65,21 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
             LOGGER.info("User has authority: {}", grantedAuth.getAuthority());
 
-            if (grantedAuth.getAuthority().equals(ROLE_CSL_AUTHOR)) {
+            if (grantedAuth.getAuthority().equals(Roles.CSL_AUTHOR)) {
                 return true;
             }
-            if (grantedAuth.getAuthority().equals(ROLE_LEARNING_MANAGER)) {
+            if (grantedAuth.getAuthority().equals(Roles.LEARNING_MANAGER)) {
                 return true;
             }
-            if (grantedAuth.getAuthority().equals(ROLE_ORGANISATION_AUTHOR) && authoritiesService.isOrganisationalUnitCodeEqual(civilServant, course.getOwner())) {
+            if (grantedAuth.getAuthority().equals(Roles.ORGANISATION_AUTHOR) && authoritiesService.isOrganisationalUnitCodeEqual(civilServant, course.getOwner())) {
                 return true;
             }
-            if (grantedAuth.getAuthority().equals(ROLE_PROFESSION_AUTHOR) && authoritiesService.isProfessionIdEqual(civilServant, course.getOwner())) {
+            if (grantedAuth.getAuthority().equals(Roles.PROFESSION_AUTHOR) && authoritiesService.isProfessionIdEqual(civilServant, course.getOwner())) {
                 return true;
             }
-            if (grantedAuth.getAuthority().equals(ROLE_SUPPLIER_AUTHOR)) {
+            if ((grantedAuth.getAuthority().equals(Roles.KPMG_SUPPLIER_AUTHOR)
+                    || grantedAuth.getAuthority().equals(Roles.KORNFERRY_SUPPLIER_AUTHOR)
+                    || grantedAuth.getAuthority().equals(Roles.KNOWLEDGEPOOL_SUPPLIER_AUTHOR)) && authoritiesService.isSupplierEqual(auth, course.getOwner())) {
                 return true;
             }
         }

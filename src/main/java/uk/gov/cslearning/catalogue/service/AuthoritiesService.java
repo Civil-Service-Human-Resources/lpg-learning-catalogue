@@ -49,8 +49,8 @@ public class AuthoritiesService {
         return civilServant.getProfessionId().map(professionId -> professionId.equals(owner.getProfession())).orElse(false);
     }
 
-    public boolean isSupplierEqual(CivilServant civilServant, Owner owner) {
-        return civilServant.getProfessionId().map(professionId -> professionId.equals(owner.getProfession())).orElse(false);
+    public boolean isSupplierEqual(Authentication authentication, Owner owner) {
+        return (getSupplier(authentication).equals(owner.getSupplier()));
     }
 
     public String getSupplier(Authentication authentication) {
