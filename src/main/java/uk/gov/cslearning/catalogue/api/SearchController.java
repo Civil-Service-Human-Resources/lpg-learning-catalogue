@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.mapping.RoleMapping;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
 import java.util.Arrays;
@@ -31,10 +33,13 @@ public class SearchController {
 
     private RegistryService registryService;
 
+    private AuthoritiesService authoritiesService;
+
     @Autowired
-    public SearchController(CourseRepository courseRepository, RegistryService registryService) {
+    public SearchController(CourseRepository courseRepository, RegistryService registryService, AuthoritiesService authoritiesService) {
         this.courseRepository = courseRepository;
         this.registryService = registryService;
+        this.authoritiesService = authoritiesService;
     }
 
     @RoleMapping("ORGANISATION_AUTHOR")
@@ -67,14 +72,12 @@ public class SearchController {
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }
 
-    @RoleMapping("SUPPLIER_AUTHOR")
+    @RoleMapping({"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})
     @GetMapping("/courses")
-    public ResponseEntity<SearchResults> searchForSupplier(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, PageParameters pageParameters) {
-        CivilServant civilServant = registryService.getCurrentCivilServant();
-
+    public ResponseEntity<SearchResults> searchForSupplier(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, PageParameters pageParameters, Authentication authentication) {
         OwnerParameters ownerParameters = new OwnerParameters();
 
-        civilServant.getLearningProviderId().ifPresent(ownerParameters::setLearningProviderId);
+        ownerParameters.setSupplier(authoritiesService.getSupplier(authentication));
 
         Pageable pageable = pageParameters.getPageRequest();
         SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters);

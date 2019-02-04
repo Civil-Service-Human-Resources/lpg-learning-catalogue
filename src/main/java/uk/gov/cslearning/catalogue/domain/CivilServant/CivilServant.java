@@ -17,6 +17,7 @@ public class CivilServant {
     private OrganisationalUnit organisationalUnit;
     private Profession profession;
     private LearningProvider learningProvider;
+    private String supplier;
     private List<Profession> otherAreasOfWork = new ArrayList<>();
     private List<Interest> interests = new ArrayList<>();
     private Scope scope;
@@ -48,4 +49,5 @@ public class CivilServant {
     public Optional<String> getLearningProviderId() {
         return getLearningProvider().map(LearningProvider::getId);
     }
+
 }

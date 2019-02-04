@@ -55,6 +55,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
     private boolean hasScope(Authentication auth, String id) {
         CivilServant civilServant = registryService.getCurrentCivilServant();
+        civilServant.setSupplier(authoritiesService.getSupplier(auth));
 
         Course course = courseService.findById(id).orElseThrow((Supplier<IllegalStateException>) () -> {
             throw new IllegalStateException(
@@ -80,7 +81,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
             if (grantedAuth.getAuthority().equals(ROLE_PROFESSION_AUTHOR) && authoritiesService.isProfessionIdEqual(civilServant, course.getOwner())) {
                 return true;
             }
-            if (grantedAuth.getAuthority().equals(ROLE_SUPPLIER_AUTHOR) && authoritiesService.isLearningProviderIdEqual(civilServant, course.getOwner())) {
+            if (grantedAuth.getAuthority().equals(ROLE_SUPPLIER_AUTHOR)) {
                 return true;
             }
         }

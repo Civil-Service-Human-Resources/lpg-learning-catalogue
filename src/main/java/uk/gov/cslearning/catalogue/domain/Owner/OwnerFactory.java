@@ -15,7 +15,7 @@ public class OwnerFactory {
         owner.setScope(civilServant.getScope().name());
         civilServant.getProfessionId().ifPresent(owner::setProfession);
         civilServant.getOrganisationalUnitCode().ifPresent(owner::setOrganisationalUnit);
-        Optional.ofNullable(course.getLearningProvider()).ifPresent(learningProvider -> owner.setLearningProvider(learningProvider.getId()));
+        Optional.ofNullable(civilServant.getSupplier()).ifPresent(owner::setSupplier);
 
         return owner;
     }
