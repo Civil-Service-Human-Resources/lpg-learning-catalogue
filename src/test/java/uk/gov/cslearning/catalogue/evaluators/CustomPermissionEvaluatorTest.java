@@ -252,24 +252,4 @@ public class CustomPermissionEvaluatorTest {
 
         assertTrue(hasPermission);
     }
-
-    @Test
-    public void shouldReturnTrueIfUserHasSupplierAuthorAndMatches() {
-        CivilServant civilServant = new CivilServant();
-
-        Course course = new Course();
-        Owner owner = new Owner();
-        course.setOwner(owner);
-
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(Roles.SUPPLIER_AUTHOR));
-
-        doReturn(authorities).when(authentication).getAuthorities();
-        when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
-        when(courseService.findById(any())).thenReturn(Optional.of(course));
-
-        boolean hasPermission = customPermissionEvaluator.hasPermission(authentication, COURSE_ID, WRITE_PERMISSION);
-
-        assertTrue(hasPermission);
-    }
 }
