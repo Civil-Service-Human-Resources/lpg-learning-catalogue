@@ -51,17 +51,6 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         BoolQueryBuilder boolQuery = boolQuery();
 
-        if (ownerParameters.hasOrganisationalUnitCode()) {
-            boolQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", ownerParameters.getOrganisationalUnitCode()));
-        }
-
-        if (ownerParameters.hasProfession()) {
-            boolQuery.must(QueryBuilders.matchQuery("owner.profession", ownerParameters.getProfession()));
-        }
-
-        if (ownerParameters.hasSupplier()) {
-            boolQuery.must(QueryBuilders.matchQuery("owner.supplier", ownerParameters.getSupplier()));
-        }
 
         if (isNotBlank(query)) {
             boolQuery = boolQuery.must(QueryBuilders.multiMatchQuery(query)
@@ -75,7 +64,6 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         if (filterParameters.hasTypes()) {
             BoolQueryBuilder filterQuery = QueryBuilders.boolQuery();
-
             for (String type : filterParameters.getTypes()) {
                 filterQuery = filterQuery
                         .should(QueryBuilders.matchQuery("modules.type", type))
@@ -83,6 +71,20 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             }
             filterQuery.minimumShouldMatch(1);
             boolQuery = boolQuery.must(filterQuery);
+        }
+
+        BoolQueryBuilder filterQuery = boolQuery();
+
+        if (ownerParameters.hasOrganisationalUnitCode()) {
+            filterQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", ownerParameters.getOrganisationalUnitCode()));
+        }
+
+        if (ownerParameters.hasProfession()) {
+            filterQuery.must(QueryBuilders.matchQuery("owner.profession", ownerParameters.getProfession()));
+        }
+
+        if (ownerParameters.hasSupplier()) {
+            filterQuery.must(QueryBuilders.matchQuery("owner.supplier", ownerParameters.getSupplier()));
         }
 
         boolQuery = addFilter(boolQuery, filterParameters.getAreasOfWork(), "audiences.areasOfWork");
@@ -103,6 +105,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
+                .withFilter(filterQuery)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
