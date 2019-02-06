@@ -73,7 +73,7 @@ public class SearchControllerTest {
                 .thenReturn(searchPage);
 
         mockMvc.perform(
-                get("/search/courses")
+                get("/search/management/courses")
                         .param("query", "test")
                         .with(csrf()))
                 .andExpect(status().isOk());
@@ -102,7 +102,7 @@ public class SearchControllerTest {
                 .thenReturn(searchPage);
 
         mockMvc.perform(
-                get("/search/courses")
+                get("/search/management/courses")
                         .param("query", "test")
                         .with(csrf()))
                 .andExpect(status().isOk());
@@ -131,7 +131,7 @@ public class SearchControllerTest {
                 .thenReturn(searchPage);
 
         mockMvc.perform(
-                get("/search/courses")
+                get("/search/management/courses")
                         .param("query", "test")
                         .with(csrf()))
                 .andExpect(status().isOk());
@@ -154,7 +154,7 @@ public class SearchControllerTest {
                 .thenReturn(searchPage);
 
         mockMvc.perform(
-                get("/search/courses")
+                get("/search/management/courses")
                         .param("query", "test")
                         .with(csrf()))
                 .andExpect(status().isOk());
@@ -164,7 +164,7 @@ public class SearchControllerTest {
     @WithMockUser(username = "user", authorities = {"INVALID_ROLE"})
     public void shouldReturnSearchPageOfCoursesForInvalidRole() throws Exception {
         mockMvc.perform(
-                get("/search/courses")
+                get("/search/management/courses")
                         .param("query", "test")
                         .with(csrf()))
                 .andExpect(status().isForbidden());
