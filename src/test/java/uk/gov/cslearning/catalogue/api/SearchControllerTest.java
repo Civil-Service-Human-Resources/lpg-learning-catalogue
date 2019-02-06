@@ -162,7 +162,7 @@ public class SearchControllerTest {
 
     @Test
     @WithMockUser(username = "user", authorities = {"INVALID_ROLE"})
-    public void shouldReturnSearchPageOfCoursesForInvalidRole() throws Exception {
+    public void shouldReturnSearchPageOfCoursesForInvalidRoles() throws Exception {
         mockMvc.perform(
                 get("/search/management/courses")
                         .param("query", "test")
