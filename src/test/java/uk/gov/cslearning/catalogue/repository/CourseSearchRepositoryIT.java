@@ -7,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
-import sun.java2d.cmm.Profile;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
+import uk.gov.cslearning.catalogue.api.OwnerParameters;
 import uk.gov.cslearning.catalogue.api.PageParameters;
 import uk.gov.cslearning.catalogue.api.ProfileParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
@@ -41,9 +41,11 @@ public class CourseSearchRepositoryIT {
         ProfileParameters profileParameters = new ProfileParameters();
         Pageable pageable = pageParameters.getPageRequest();
         Collection<Status> statusCollection = new ArrayList();
+        OwnerParameters ownerParameters = new OwnerParameters();
+
         statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable, filterParameters, profileParameters, statusCollection, "PUBLIC");
+        SearchPage actualSearchPage = repository.search("Wirking with Budgets", pageable, filterParameters, statusCollection, ownerParameters, profileParameters, "PUBLIC");
 
         String actualSuggestionText = actualSearchPage.getTopScoringSuggestion().getText().toString();
         Page<Course> resourcePage = actualSearchPage.getCourses();
@@ -61,9 +63,11 @@ public class CourseSearchRepositoryIT {
         FilterParameters filterParameters = new FilterParameters();
         ProfileParameters profileParameters = new ProfileParameters();
         Collection<Status> statusCollection = new ArrayList();
+        OwnerParameters ownerParameters = new OwnerParameters();
+
         statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("Budgets", pageable, filterParameters, profileParameters, statusCollection, "PUBLIC");
+        SearchPage actualSearchPage = repository.search("Budgets", pageable, filterParameters, statusCollection, ownerParameters, profileParameters, "PUBLIC");
         List<Course> actualResources = actualSearchPage.getCourses().getContent();
 
         assertThat(actualResources.size(), is(2));
@@ -78,9 +82,11 @@ public class CourseSearchRepositoryIT {
         FilterParameters filterParameters = new FilterParameters();
         ProfileParameters profileParameters = new ProfileParameters();
         Collection<Status> statusCollection = new ArrayList();
+        OwnerParameters ownerParameters = new OwnerParameters();
+
         statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable, filterParameters, profileParameters, statusCollection, "PUBLIC");
+        SearchPage actualSearchPage = repository.search("Spotify engineering culture: part 1", pageable, filterParameters, statusCollection, ownerParameters, profileParameters, "PUBLIC");
         List<Course> actualResources = actualSearchPage.getCourses().getContent();
 
         assertThat(actualResources.get(0).getTitle(), is("Spotify engineering culture: part 1"));
@@ -95,9 +101,10 @@ public class CourseSearchRepositoryIT {
         ProfileParameters profileParameters = new ProfileParameters();
         filterParameters.setTypes(asList("face to face"));
         Collection<Status> statusCollection = new ArrayList();
+        OwnerParameters ownerParameters = new OwnerParameters();
         statusCollection.add(Status.PUBLISHED);
 
-        SearchPage actualSearchPage = repository.search("why", pageable, filterParameters, profileParameters, statusCollection, "PUBLIC");
+        SearchPage actualSearchPage = repository.search("why", pageable, filterParameters, statusCollection, ownerParameters, profileParameters, "PUBLIC");
         List<Course> actualResources = actualSearchPage.getCourses().getContent();
 
         assertThat(actualResources.get(0).getTitle(), is("Understanding and using business cases"));

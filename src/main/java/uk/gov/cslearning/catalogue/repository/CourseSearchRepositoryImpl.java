@@ -13,6 +13,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
+import uk.gov.cslearning.catalogue.api.OwnerParameters;
 import uk.gov.cslearning.catalogue.api.ProfileParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
@@ -37,9 +38,9 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     @Override
-    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> statusCollection, String visibility) {
+    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters, ProfileParameters profileParameters, String visibility) {
 
-        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, profileParameters, statusCollection, visibility);
+        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, statusCollection, ownerParameters, profileParameters, visibility);
 
         SearchPage searchPage = new SearchPage();
         searchPage.setCourses(coursePage);
@@ -47,9 +48,10 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return searchPage;
     }
 
-    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, ProfileParameters profileParameters, Collection<Status> statusCollection, String visibility) {
+    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters, ProfileParameters profileParameters, String visibility) {
 
         BoolQueryBuilder boolQuery = boolQuery();
+
 
         if (isNotBlank(query)) {
             boolQuery = boolQuery.must(QueryBuilders.multiMatchQuery(query)
@@ -63,7 +65,6 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         if (filterParameters.hasTypes()) {
             BoolQueryBuilder filterQuery = QueryBuilders.boolQuery();
-
             for (String type : filterParameters.getTypes()) {
                 filterQuery = filterQuery
                         .should(QueryBuilders.matchQuery("modules.type", type))
@@ -91,6 +92,18 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         BoolQueryBuilder filterQuery = boolQuery();
 
+        if (ownerParameters.hasOrganisationalUnitCode()) {
+            filterQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", ownerParameters.getOrganisationalUnitCode()));
+        }
+
+        if (ownerParameters.hasProfession()) {
+            filterQuery.must(QueryBuilders.matchQuery("owner.profession", ownerParameters.getProfession()));
+        }
+
+        if (ownerParameters.hasSupplier()) {
+            filterQuery.must(QueryBuilders.matchQuery("owner.supplier", ownerParameters.getSupplier()));
+        }
+
         if(visibility.equals("PUBLIC")) {
             filterQuery.should(QueryBuilders.matchQuery("visibility", "PUBLIC"));
         }
@@ -109,6 +122,49 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         return operations.queryForPage(searchQuery, Course.class);
     }
+
+    @Override
+    public Page<Course> findAllByOrganisationCode(String organisationalUnitCode, Pageable pageable) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", organisationalUnitCode));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .withPageable(pageable)
+                .build();
+
+        return operations.queryForPage(searchQuery, Course.class);
+    }
+
+    @Override
+    public Page<Course> findAllByProfessionId(String professionId, Pageable pageable) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("owner.profession", professionId));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .withPageable(pageable)
+                .build();
+
+        return operations.queryForPage(searchQuery, Course.class);
+    }
+
+    @Override
+    public Page<Course> findAllBySupplier(String supplier, Pageable pageable) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("owner.supplier", supplier));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .withPageable(pageable)
+                .build();
+
+        return operations.queryForPage(searchQuery, Course.class);
+    }
+
 
     private BoolQueryBuilder addFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
         if (values != null && !values.isEmpty()) {
