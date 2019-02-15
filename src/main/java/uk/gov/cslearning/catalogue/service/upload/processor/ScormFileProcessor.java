@@ -1,4 +1,5 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
+
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -8,6 +9,7 @@ import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.ProcessedFileFactory;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;

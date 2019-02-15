@@ -1,4 +1,5 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
+
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.ProcessedFileFactory;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.eq;

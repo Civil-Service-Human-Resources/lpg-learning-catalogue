@@ -5,28 +5,34 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.mapping.RoleMapping;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
+import uk.gov.cslearning.catalogue.service.RegistryService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
 @RestController
@@ -45,22 +51,43 @@ public class CourseController {
 
     private final AudienceService audienceService;
 
+    private final RegistryService registryService;
+
     @Autowired
     public CourseController(CourseRepository courseRepository, CourseService courseService, ModuleService moduleService,
-                            EventService eventService, AudienceService audienceService) {
+                            EventService eventService, AudienceService audienceService, RegistryService registryService) {
         this.courseRepository = courseRepository;
         this.courseService = courseService;
         this.moduleService = moduleService;
         this.eventService = eventService;
         this.audienceService = audienceService;
+        this.registryService = registryService;
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody Course course, UriComponentsBuilder builder) {
+    @PreAuthorize("(hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_CREATE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    public ResponseEntity<Void> create(@RequestBody Course course, UriComponentsBuilder builder, Authentication authentication) {
         LOGGER.debug("Creating course {}", course);
-        Course newCourse = courseRepository.save(course);
+
+        Course newCourse = courseService.createCourse(course, authentication);
 
         return ResponseEntity.created(builder.path("/courses/{courseId}").build(newCourse.getId())).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "none") String areasOfWork,
+                                                    @RequestParam(name = "department", defaultValue = "none") String departments,
+                                                    @RequestParam(name = "interest", defaultValue = "none") String interests,
+                                                    @RequestParam(name = "status", defaultValue = "Published") String status,
+                                                    Pageable pageable) {
+        Page<Course> results;
+        if (areasOfWork.equals("none") && departments.equals("none") && interests.equals("none")) {
+            results = courseRepository.findAllByStatusIn(
+                    Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
+        } else {
+            results = courseRepository.findSuggested(departments, areasOfWork, interests, status, pageable);
+        }
+        return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
 
     @GetMapping(params = {"mandatory", "department"})
@@ -73,6 +100,51 @@ public class CourseController {
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
+    @RoleMapping("ORGANISATION_AUTHOR")
+    @GetMapping(value = "/management")
+    public ResponseEntity<PageResults<Course>> listForOrganisation(Pageable pageable) {
+        CivilServant civilServant = registryService.getCurrentCivilServant();
+
+        return civilServant.getOrganisationalUnitCode()
+                .map(organisationalUnitCode -> {
+                    Page<Course> results = courseService.findCoursesByOrganisationalUnit(organisationalUnitCode, pageable);
+                    return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
+                }).orElseGet(() -> new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK));
+    }
+
+    @RoleMapping("PROFESSION_AUTHOR")
+    @GetMapping(value = "/management")
+    public ResponseEntity<PageResults<Course>> listForProfession(Pageable pageable) {
+        CivilServant civilServant = registryService.getCurrentCivilServant();
+
+        return civilServant.getProfessionId()
+                .map(professionId -> {
+                    Page<Course> results = courseService.findCoursesByProfession(professionId.toString(), pageable);
+                    return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
+                }).orElseGet(() -> new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK));
+    }
+
+    @RoleMapping({"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})
+    @GetMapping(value = "/management")
+    public ResponseEntity<PageResults<Course>> listForSupplier(Pageable pageable, Authentication authentication) {
+        Page<Course> results = courseService.findCoursesBySupplier(authentication, pageable);
+        return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
+    }
+
+    @RoleMapping({"CSL_AUTHOR", "LEARNING_MANAGER"})
+    @GetMapping(value = "/management")
+    public ResponseEntity<PageResults<Course>> listForCslAuthorOrLearningManager(Pageable pageable) {
+        Page<Course> results = courseService.findAllCourses(pageable);
+
+        return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
+    }
+
+    @GetMapping(value = "/management")
+    public ResponseEntity<PageResults<Course>> unauth(Principal principal) {
+        LOGGER.debug("Unauthorised. Required role not found in %s", principal);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
     @GetMapping(params = "courseId")
     public ResponseEntity<Iterable<Course>> get(@RequestParam("courseId") List<String> courseIds) {
         LOGGER.debug("Getting courses with IDs {}", courseIds);
@@ -80,47 +152,48 @@ public class CourseController {
         return new ResponseEntity<>(result, OK);
     }
 
-    @GetMapping()
-    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "none") String areasOfWork,
-                                                    @RequestParam(name = "department", defaultValue = "none") String departments,
-                                                    @RequestParam(name = "interest", defaultValue = "none") String interests,
-                                                    @RequestParam(name = "status", defaultValue = "Published") String status,
-                                                    Pageable pageable) {
-        Page<Course> results;
-
-        if (areasOfWork.equals("none") && departments.equals("none") && interests.equals("none")) {
-            results = courseRepository.findAllByStatusIn(
-                    Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
-        } else {
-            results = courseRepository.findSuggested(departments, areasOfWork, interests, status, pageable);
-        }
-        return ResponseEntity.ok(new PageResults<>(results, pageable));
-    }
-
-    @PutMapping(path = "/{courseId}")
-    public ResponseEntity<Void> update(@PathVariable("courseId") String courseId, @RequestBody Course course) {
-        LOGGER.debug("Updating course {}", course);
-        if (!courseId.equals(course.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
-        if (!courseRepository.existsById(courseId)) {
-            return ResponseEntity.badRequest().build();
-        }
-        courseRepository.save(course);
-
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/{courseId}")
     public ResponseEntity<Course> get(@PathVariable("courseId") String courseId) {
         LOGGER.debug("Getting course with ID {}", courseId);
+
         Optional<Course> result = courseService.findById(courseId);
+
         return result
                 .map(course -> new ResponseEntity<>(course, OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
+    /**
+     * Adding individual endpoints for edit, publish and archive to ensure we can preauthorise publish, archive and edit separately.
+     * This edit endpoint will be used for updating course title and details.
+     */
+    @PutMapping(path = "/{courseId}")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_EDIT, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    public ResponseEntity update(@PathVariable("courseId") String courseId, @RequestBody Course newCourse) {
+        return updateCourse(courseId, newCourse);
+    }
+
+    /**
+     * This endpoint will be used for publishing courses.
+     */
+    @PutMapping(path = "/{courseId}/publish")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_PUBLISH, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    public ResponseEntity publishCourse(@PathVariable("courseId") String courseId, @RequestBody Course newCourse) {
+        return updateCourse(courseId, newCourse);
+    }
+
+    /**
+     * This endpoint will be used for archiving courses.
+     */
+    @PutMapping(path = "/{courseId}/archive")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_ARCHIVE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    public ResponseEntity archiveCourse(@PathVariable("courseId") String courseId, @RequestBody Course newCourse) {
+        return updateCourse(courseId, newCourse);
+    }
+
+
     @PostMapping("/{courseId}/modules")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_CREATE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity<Void> createModule(@PathVariable String courseId, @RequestBody Module module, UriComponentsBuilder builder) {
         LOGGER.debug("Adding module to course with ID {}", courseId);
 
@@ -142,6 +215,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseId}/modules/{moduleId}")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_DELETE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity deleteModule(@PathVariable String courseId, @PathVariable String moduleId) {
         LOGGER.debug("Deleting module, course ID {}, module ID {}", courseId, moduleId);
 
@@ -151,23 +225,21 @@ public class CourseController {
     }
 
     @PutMapping("/{courseId}/modules/{moduleId}")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_EDIT, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity updateModule(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Module module) {
         LOGGER.debug("Updating module {} in course {}", moduleId, courseId);
 
-        if (!moduleId.equals(module.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
+        Optional<Module> optionalModule = moduleService.find(courseId, moduleId);
 
-        if (!courseRepository.existsById(courseId)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        moduleService.updateModule(courseId, module);
-
-        return ResponseEntity.noContent().build();
+        return optionalModule
+                .map(m -> {
+                    moduleService.updateModule(courseId, module);
+                    return ResponseEntity.noContent().build();
+                }).orElseGet(() -> new ResponseEntity<>(BAD_REQUEST));
     }
 
     @PostMapping("/{courseId}/modules/{moduleId}/events")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_CREATE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity createEvent(@PathVariable String courseId, @PathVariable String moduleId, @RequestBody Event event, UriComponentsBuilder builder) {
         LOGGER.debug("Adding event to module with ID {}", moduleId);
 
@@ -188,6 +260,7 @@ public class CourseController {
     }
 
     @PutMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_EDIT, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity<Event> updateEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId, @RequestBody Event newEvent) {
         LOGGER.debug("Updating event with ID {}", eventId);
 
@@ -210,7 +283,8 @@ public class CourseController {
 
                 event.setDateRanges(newEvent.getDateRanges());
                 event.setJoiningInstructions(newEvent.getJoiningInstructions());
-                event.setVenue(newEvent.getVenue());
+
+                Optional.ofNullable(newEvent.getVenue()).ifPresent(event::setVenue);
 
                 courseRepository.save(course);
 
@@ -222,6 +296,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseId}/modules/{moduleId}/events/{eventId}")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_DELETE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity deleteEvent(@PathVariable String courseId, @PathVariable String moduleId, @PathVariable String eventId) {
         LOGGER.debug("Deleting event with id {}", eventId);
         if (!courseRepository.existsById(courseId)) {
@@ -253,8 +328,15 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/audiences")
-    public ResponseEntity<Void> createAudience(@PathVariable String courseId, @RequestBody Audience audience, UriComponentsBuilder builder) {
+    @PreAuthorize("(hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_CREATE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    public ResponseEntity<Void> createAudience(@PathVariable String courseId, @RequestBody Audience audience, UriComponentsBuilder builder, Authentication authentication) {
         LOGGER.debug("Adding audience to course with ID {}", courseId);
+
+        if (!audienceService.isPermitted(courseId, authentication)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        audience = audienceService.setDefaults(authentication, audience);
 
         audienceService.save(courseId, audience);
 
@@ -273,13 +355,31 @@ public class CourseController {
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
+    @PutMapping("/{courseId}/audiences/{audienceId}")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_EDIT, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    public ResponseEntity updateAudience(@PathVariable String courseId, @PathVariable String audienceId, @RequestBody Audience newAudience) {
+        LOGGER.debug("Updating audience {} in course {}", audienceId, courseId);
+
+        return courseService.findById(courseId)
+                .map(course -> audienceService.find(course.getId(), audienceId)
+                        .map(audience -> {
+                            audienceService.updateAudience(course, newAudience, audience);
+                            return new ResponseEntity<>(NO_CONTENT);
+                        }).orElseGet(() -> new ResponseEntity<>(BAD_REQUEST)))
+                .orElseGet(() -> new ResponseEntity<>(BAD_REQUEST));
+    }
+
     @DeleteMapping("/{courseId}/audiences/{audienceId}")
-    public ResponseEntity deleteAudience(@PathVariable String courseId, @PathVariable String audienceId) {
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_DELETE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    public ResponseEntity deleteAudience(@PathVariable String courseId, @PathVariable String audienceId, Authentication authentication) {
         LOGGER.debug("Deleting audience, course ID {}, audience ID {}", courseId, audienceId);
 
         courseRepository.findById(courseId)
                 .map(course -> audienceService.find(course, audienceId)
                         .map(audience -> {
+                            if (!audienceService.isPermitted(courseId, authentication)) {
+                                return ResponseEntity.badRequest().build();
+                            }
                             course.deleteAudience(audience);
                             return courseRepository.save(course);
                         })
@@ -288,5 +388,16 @@ public class CourseController {
                 .orElseThrow(() -> resourceNotFoundException());
 
         return ResponseEntity.noContent().build();
+    }
+
+    private ResponseEntity updateCourse(@PathVariable("courseId") String courseId, @RequestBody Course newCourse) {
+        LOGGER.debug("Updating course {}", newCourse);
+
+        return courseService.findById(courseId)
+                .map(course -> {
+                    courseService.updateCourse(course, newCourse);
+                    return new ResponseEntity<>(NO_CONTENT);
+                })
+                .orElseGet(() -> new ResponseEntity<>(BAD_REQUEST));
     }
 }
