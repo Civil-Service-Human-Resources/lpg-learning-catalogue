@@ -40,6 +40,14 @@ public class LearningProvider {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void addCancellationPolicy(CancellationPolicy cancellationPolicy) {
         this.cancellationPolicies.add(cancellationPolicy);
     }

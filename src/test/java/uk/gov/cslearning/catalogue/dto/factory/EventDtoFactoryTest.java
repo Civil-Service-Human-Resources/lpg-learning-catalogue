@@ -22,9 +22,6 @@ import static org.mockito.Mockito.when;
 public class EventDtoFactoryTest {
 
     @Mock
-    private CourseDtoFactory courseDtoFactory;
-
-    @Mock
     private ModuleDtoFactory moduleDtoFactory;
 
     @Mock
@@ -46,13 +43,11 @@ public class EventDtoFactoryTest {
 
         course.setLearningProvider(learningProvider);
 
-        when(moduleDtoFactory.create(module)).thenReturn(moduleDto);
-        when(courseDtoFactory.create(course)).thenReturn(courseDto);
+        when(moduleDtoFactory.create(module, course)).thenReturn(moduleDto);
         when(learningProviderDtoFactory.create(learningProvider)).thenReturn(learningProviderDto);
 
         EventDto eventDto = eventDtoFactory.create(event, module, course);
 
-        assertEquals(courseDto, eventDto.getCourse());
         assertEquals(moduleDto, eventDto.getModule());
         assertEquals(learningProviderDto, eventDto.getLearningProvider());
         assertNotNull(eventDto.getId());
@@ -66,14 +61,11 @@ public class EventDtoFactoryTest {
         Course course = new Course();
 
         ModuleDto moduleDto = new ModuleDto();
-        CourseDto courseDto = new CourseDto();
 
-        when(moduleDtoFactory.create(module)).thenReturn(moduleDto);
-        when(courseDtoFactory.create(course)).thenReturn(courseDto);
+        when(moduleDtoFactory.create(module,course)).thenReturn(moduleDto);
 
         EventDto eventDto = eventDtoFactory.create(event, module, course);
 
-        assertEquals(courseDto, eventDto.getCourse());
         assertEquals(moduleDto, eventDto.getModule());
         assertNull(eventDto.getLearningProvider());
         assertNotNull(eventDto.getId());

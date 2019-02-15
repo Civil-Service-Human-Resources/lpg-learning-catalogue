@@ -15,6 +15,7 @@ import uk.gov.cslearning.catalogue.dto.CourseDto;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.service.EventService;
+import uk.gov.cslearning.catalogue.service.ModuleService;
 
 import java.util.Map;
 
@@ -35,6 +36,9 @@ public class ReportControllerTest {
     @MockBean
     private EventService eventService;
 
+    @MockBean
+    private ModuleService moduleService;
+
     @Test
     public void shouldReturnMapOfEvents() throws Exception {
 
@@ -49,12 +53,12 @@ public class ReportControllerTest {
         ModuleDto moduleDto = new ModuleDto();
         moduleDto.setId(moduleId);
         moduleDto.setTitle(moduleTitle);
+        moduleDto.setCourse(courseDto);
 
         String eventId = "event_id";
         EventDto event = new EventDto();
         event.setId(eventId);
         event.setModule(moduleDto);
-        event.setCourse(courseDto);
 
         Map<String, EventDto> events = ImmutableMap.of(eventId, event);
 
@@ -67,8 +71,38 @@ public class ReportControllerTest {
                 .andExpect(jsonPath("$.event_id.id", equalTo(eventId)))
                 .andExpect(jsonPath("$.event_id.module.id", equalTo(moduleId)))
                 .andExpect(jsonPath("$.event_id.module.title", equalTo(moduleTitle)))
-                .andExpect(jsonPath("$.event_id.course.id", equalTo(courseId)))
-                .andExpect(jsonPath("$.event_id.course.title", equalTo(courseTitle)));
+                .andExpect(jsonPath("$.event_id.module.course.id", equalTo(courseId)))
+                .andExpect(jsonPath("$.event_id.module.course.title", equalTo(courseTitle)));
 
     }
+
+    @Test
+    public void shouldReturnMapOfModules() throws Exception {
+        String courseId = "course-id";
+        String courseTitle = "course-title";
+        CourseDto courseDto = new CourseDto();
+        courseDto.setId(courseId);
+        courseDto.setTitle(courseTitle);
+
+        String moduleId = "module_id";
+        String moduleTitle = "module-title";
+        ModuleDto moduleDto = new ModuleDto();
+        moduleDto.setId(moduleId);
+        moduleDto.setTitle(moduleTitle);
+        moduleDto.setCourse(courseDto);
+
+        Map<String, ModuleDto> modules = ImmutableMap.of(moduleId, moduleDto);
+
+        when(moduleService.getModuleMap()).thenReturn(modules);
+
+        mockMvc.perform(
+                get("/reporting/modules")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.module_id.id", equalTo(moduleId)))
+                .andExpect(jsonPath("$.module_id.title", equalTo(moduleTitle)))
+                .andExpect(jsonPath("$.module_id.course.id", equalTo(courseId)))
+                .andExpect(jsonPath("$.module_id.course.title", equalTo(courseTitle)));
+    }
+
 }

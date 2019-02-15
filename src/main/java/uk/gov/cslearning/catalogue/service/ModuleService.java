@@ -6,12 +6,12 @@ import uk.gov.cslearning.catalogue.domain.module.ELearningModule;
 import uk.gov.cslearning.catalogue.domain.module.FileModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.domain.module.VideoModule;
+import uk.gov.cslearning.catalogue.dto.ModuleDto;
+import uk.gov.cslearning.catalogue.dto.factory.ModuleDtoFactory;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.toList;
@@ -20,10 +20,12 @@ import static java.util.stream.Collectors.toList;
 public class ModuleService {
     private final CourseRepository courseRepository;
     private final FileUploadService fileUploadService;
+    private final ModuleDtoFactory moduleDtoFactory;
 
-    public ModuleService(CourseRepository courseRepository, FileUploadService fileUploadService) {
+    public ModuleService(CourseRepository courseRepository, FileUploadService fileUploadService, ModuleDtoFactory moduleDtoFactory) {
         this.courseRepository = courseRepository;
         this.fileUploadService = fileUploadService;
+        this.moduleDtoFactory = moduleDtoFactory;
     }
 
     public Module save(String courseId, Module module) {
@@ -104,5 +106,17 @@ public class ModuleService {
                 || (newModule instanceof FileModule && !((FileModule) newModule).getUrl().equals(((FileModule) oldModule).getUrl()))
                 || (newModule instanceof VideoModule && !((VideoModule) newModule).getUrl().equals(((VideoModule) oldModule).getUrl()))
                 || (newModule instanceof ELearningModule && !((ELearningModule) newModule).getUrl().equals(((ELearningModule) oldModule).getUrl()));
+    }
+
+    public Map<String, ModuleDto> getModuleMap() {
+        Map<String, ModuleDto> results = new HashMap<>();
+
+        for (Course course : courseRepository.findAll()) {
+            for (Module module : course.getModules()) {
+                results.put(module.getId(), moduleDtoFactory.create(module, course));
+            }
+        }
+
+        return results;
     }
 }
