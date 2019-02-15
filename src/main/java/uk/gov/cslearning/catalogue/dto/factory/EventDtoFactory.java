@@ -11,21 +11,17 @@ import java.util.Optional;
 @Component
 public class EventDtoFactory {
     private final ModuleDtoFactory moduleDtoFactory;
-    private final CourseDtoFactory courseDtoFactory;
     private final LearningProviderDtoFactory learningProviderDtoFactory;
 
-    public EventDtoFactory(ModuleDtoFactory moduleDtoFactory, CourseDtoFactory courseDtoFactory,
-                           LearningProviderDtoFactory learningProviderDtoFactory) {
+    public EventDtoFactory(ModuleDtoFactory moduleDtoFactory, LearningProviderDtoFactory learningProviderDtoFactory) {
         this.moduleDtoFactory = moduleDtoFactory;
-        this.courseDtoFactory = courseDtoFactory;
         this.learningProviderDtoFactory = learningProviderDtoFactory;
     }
 
     public EventDto create(Event event, FaceToFaceModule module, Course course) {
         EventDto eventDto = new EventDto();
         eventDto.setId(event.getId());
-        eventDto.setModule(moduleDtoFactory.create(module));
-        eventDto.setCourse(courseDtoFactory.create(course));
+        eventDto.setModule(moduleDtoFactory.create(module, course));
 
         Optional.ofNullable(course.getLearningProvider())
                 .ifPresent(learningProvider ->

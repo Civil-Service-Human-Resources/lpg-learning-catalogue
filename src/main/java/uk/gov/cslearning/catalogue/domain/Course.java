@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import uk.gov.cslearning.catalogue.domain.Owner.Owner;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
@@ -40,6 +41,8 @@ public class Course {
     private Set<Audience> audiences = new HashSet<>();
 
     private String preparation;
+
+    private Owner owner;
 
     @NotNull
     private Visibility visibility;
@@ -124,10 +127,6 @@ public class Course {
         this.learningOutcomes = learningOutcomes;
     }
 
-    public LearningProvider getLearningProvider() {
-        return learningProvider;
-    }
-
     public void setLearningProvider(LearningProvider learningProvider) {
         this.learningProvider = learningProvider;
     }
@@ -177,6 +176,18 @@ public class Course {
 
     public void setTopicId(String topicId) {
         this.topicId = topicId;
+    }
+  
+    public LearningProvider getLearningProvider() {
+        return learningProvider;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 
     @Override
