@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.service;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
@@ -29,7 +30,7 @@ public class EventService {
         this.learnerRecordService = learnerRecordService;
     }
 
-    public Event save(String courseId, String moduleId, Event event){
+    public Event save(String courseId, String moduleId, Event event) {
         Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
             throw new IllegalStateException(
                     String.format("Unable to add event. Course does not exist: %s", courseId));
@@ -37,7 +38,7 @@ public class EventService {
 
         FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
 
-        if(module == null){
+        if (module == null) {
             throw new IllegalStateException(
                     String.format("Unable to add event. Module does not exist: %s", moduleId));
         }
@@ -46,7 +47,7 @@ public class EventService {
 
         HashSet<Event> newEvents = new HashSet<>();
 
-        for(Event e : events){
+        for (Event e : events) {
             newEvents.add(e);
         }
 
@@ -58,7 +59,7 @@ public class EventService {
         return event;
     }
 
-    public Optional<Event> find(String courseId, String moduleId, String eventId){
+    public Optional<Event> find(String courseId, String moduleId, String eventId) {
         Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
             throw new IllegalStateException(
                     String.format("Unable to find event: %s. Course does not exist: %s", eventId, courseId));
@@ -66,19 +67,19 @@ public class EventService {
 
         FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
 
-        if(module == null){
+        if (module == null) {
             throw new IllegalStateException(
                     String.format("Unable to find event: %s. Module does not exist: %s", eventId, moduleId));
         }
 
         Optional<Event> result = module.getEvents().stream().filter(e -> e.getId().equals(eventId)).findFirst();
 
-        if(result.isPresent()){
+        if (result.isPresent()) {
             Event event = result.get();
             event = getEventAvailability(event);
             event.setStatus(getStatus(eventId));
 
-            if(event.getStatus() == EventStatus.CANCELLED){
+            if (event.getStatus() == EventStatus.CANCELLED) {
                 event.setCancellationReason(getCancellationReason(eventId));
             }
         }
@@ -100,7 +101,7 @@ public class EventService {
         return event;
     }
 
-    public EventStatus getStatus(String eventId){
+    public EventStatus getStatus(String eventId) {
         return learnerRecordService.getEventStatus(eventId);
     }
 
@@ -109,9 +110,19 @@ public class EventService {
     }
 
     public Map<String, EventDto> getEventMap() {
-        Map<String, EventDto> results = new HashMap<>();
-
         Iterable<Course> courses = courseRepository.findAll();
+
+        return getStringEventDtoMap(courses);
+    }
+
+    public Map<String, EventDto> getEventMapBySupplier(String supplier, Pageable pageable) {
+        Iterable<Course> courses = courseRepository.findAllBySupplier(supplier, pageable);
+
+        return getStringEventDtoMap(courses);
+    }
+
+    private Map<String, EventDto> getStringEventDtoMap(Iterable<Course> courses) {
+        Map<String, EventDto> results = new HashMap<>();
 
         for (Course course : courses) {
             List<FaceToFaceModule> modules = course.getModules().stream()
@@ -125,7 +136,6 @@ public class EventService {
                 }
             }
         }
-
         return results;
     }
 }
