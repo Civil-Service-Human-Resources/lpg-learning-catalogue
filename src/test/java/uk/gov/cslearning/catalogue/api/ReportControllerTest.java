@@ -1,6 +1,7 @@
 package uk.gov.cslearning.catalogue.api;
 
 import com.google.common.collect.ImmutableMap;
+import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
 import uk.gov.cslearning.catalogue.dto.CourseDto;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
@@ -29,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WithMockUser(username = "user")
 @EnableSpringDataWebSupport
+@ContextConfiguration(classes = {RequestMappingConfig.class, WebConfig.class, ReportController.class})
 public class ReportControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -40,6 +44,7 @@ public class ReportControllerTest {
     private ModuleService moduleService;
 
     @Test
+    @WithMockUser(username = "user")
     public void shouldReturnMapOfEvents() throws Exception {
 
         String courseId = "course-id";
