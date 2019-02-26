@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.cslearning.catalogue.domain.Roles;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.mapping.RoleMapping;
@@ -34,7 +33,7 @@ public class ReportController {
     @RoleMapping("KPMG_SUPPLIER_REPORTER")
     @GetMapping("/events")
     public ResponseEntity<Map<String, EventDto>> getEventsForSupplier(Pageable pageable) {
-        return ResponseEntity.ok(eventService.getEventMapBySupplier(Roles.KPMG_SUPPLIER_REPORTER, pageable));
+        return ResponseEntity.ok(eventService.getEventMapBySupplier("KPMG", pageable));
     }
 
     @GetMapping("/events")
