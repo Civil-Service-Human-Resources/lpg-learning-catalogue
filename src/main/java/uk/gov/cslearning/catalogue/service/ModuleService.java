@@ -102,10 +102,10 @@ public class ModuleService {
     }
 
     private boolean hasFileChanged(Module newModule, Module oldModule) {
-        return newModule.getClass() != oldModule.getClass()
-                || (newModule instanceof FileModule && !((FileModule) newModule).getUrl().equals(((FileModule) oldModule).getUrl()))
-                || (newModule instanceof VideoModule && !((VideoModule) newModule).getUrl().equals(((VideoModule) oldModule).getUrl()))
-                || (newModule instanceof ELearningModule && !((ELearningModule) newModule).getUrl().equals(((ELearningModule) oldModule).getUrl()));
+          return newModule.getClass() != oldModule.getClass()
+                  || (newModule instanceof FileModule && ((FileModule) newModule).getMediaId() != null && !((FileModule) newModule).getUrl().equals(((FileModule) oldModule).getUrl()))
+                  || (newModule instanceof VideoModule && ((VideoModule) newModule).getUrl() != null && !((VideoModule) newModule).getUrl().equals(((VideoModule) oldModule).getUrl()))
+                  || (newModule instanceof ELearningModule && ((ELearningModule) newModule).getUrl() != null && !((ELearningModule) newModule).getUrl().equals(((ELearningModule) oldModule).getUrl()));
     }
 
     public Map<String, ModuleDto> getModuleMap() {

@@ -149,11 +149,13 @@ public class ModuleServiceTest {
         Course course = new Course();
         Module module = new FileModule(url, (long) 1024);
         module.setId(moduleId);
+        ((FileModule) module).setMediaId("media-id");
         List<Module> modules = new ArrayList<>();
         modules.add(module);
         course.setModules(modules);
         Module newModule = new FileModule(newUrl, (long) 1024);
         newModule.setId(moduleId);
+        ((FileModule) newModule).setMediaId("new-media-id");
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
         moduleService.updateModule(courseId, newModule);
         assertEquals(((FileModule) course.getModuleById(moduleId)).getUrl(), newUrl);
