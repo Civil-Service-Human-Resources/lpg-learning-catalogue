@@ -3,47 +3,50 @@
 // HMRC support
 
 if (typeof XMLHttpRequest !== 'undefined') {
-  window._xhr = XMLHttpRequest;
-  window.XMLHttpRequest = function () {
-    var x = new window._xhr();
-    x.withCredentials = true;
-    return x;
-  }
+    window._xhr = XMLHttpRequest;
+    window.XMLHttpRequest = function () {
+        var x = new window._xhr();
+        x.withCredentials = true;
+        return x;
+    }
 }
 
 
 function getParameterByName(name, url) {
-  if (!url) url = window.location.href;
-  name = name.replace(/[\[\]]/g, "\\$&");
-  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-    results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 
 // Native js method to run on document ready thats crossbrowser and also will not override any existing on ready code
-function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
-r(function(){
-  var title = getParameterByName('title');
-  document.title = title;
+function r(f) {
+    /in/.test(document.readyState) ? setTimeout('r(' + f + ')', 9) : f()
+}
+
+r(function () {
+    var title = getParameterByName('title');
+    document.title = title;
 });
 
-var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
 if (!match) {
-  throw new Error('Content being accessed on invalid domain');
+    throw new Error('Content being accessed on invalid domain');
 }
 var moduleId = getParameterByName('module');
 
 var scheme = match[1];
 var env = !!match[2] ? match[2] + '-' : '';
-var host = env + 'lpg.' +'cshr.digital/';
+var host = env + 'learn.' + 'civilservice.gov.uk/';
 var path = 'learning-record/' + match[3] + '/' + moduleId;
 
 if (match[2] === 'local') {
-  scheme = 'http';
-  host = 'lpg.local.cshr.digital:3001/';
+    scheme = 'http';
+    host = 'lpg.local.cshr.digital:3001/';
 }
 
 //Configuration Parameters
@@ -90,8 +93,6 @@ var DO_NOT_REPORT_INTERACTIONS = false;		//set this to true to disable reporting
 var SCORE_CAN_ONLY_IMPROVE = false;			//set this to true to ensure that on subsequent attempts, a learner's score can only go up
 
 var REVIEW_MODE_IS_READ_ONLY = false;		//set this to true if no new data should be saved when a course is launched in review mode (normally this is the LMS's responsibility)
-
-
 
 
 /*
