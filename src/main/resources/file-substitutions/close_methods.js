@@ -2,8 +2,8 @@
 
 var CLOSE_METHODS = {
 
-    csl: function() {
-        var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+    csl: function () {
+        var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
         if (!match) {
             throw new Error('Content being accessed on invalid domain');
         }
@@ -12,7 +12,7 @@ var CLOSE_METHODS = {
 
         var scheme = match[1];
         var env = !!match[2] ? match[2] + '-' : '';
-        var host = env + 'lpg.' +'cshr.digital/';
+        var host = env + 'learn.' + 'civilservice.gov.uk/';
         var path = 'learning-record/' + match[3] + '/' + moduleId;
 
         if (match[2] === 'local') {
@@ -38,8 +38,11 @@ function getParameterByName(name, url) {
 
 
 // Native js method to run on document ready thats crossbrowser and also will not override any existing on ready code
-function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
-r(function(){
-	var title = getParameterByName('title');
-	document.title = title;
+function r(f) {
+    /in/.test(document.readyState) ? setTimeout('r(' + f + ')', 9) : f()
+}
+
+r(function () {
+    var title = getParameterByName('title');
+    document.title = title;
 });
