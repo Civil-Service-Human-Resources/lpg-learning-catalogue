@@ -62,6 +62,7 @@ public class CourseService {
         course.setVisibility(newCourse.getVisibility());
         course.setStatus(newCourse.getStatus());
         course.setDescription(newCourse.getDescription());
+        course.setTopicId(newCourse.getTopicId());
         Optional.ofNullable(newCourse.getLearningProvider()).ifPresent(course::setLearningProvider);
 
         courseRepository.save(course);
