@@ -10,6 +10,7 @@ public class CourseDtoFactory {
         CourseDto courseDto = new CourseDto();
         courseDto.setId(course.getId());
         courseDto.setTitle(course.getTitle());
+        courseDto.setTopicId(course.getTopicId());
 
         return courseDto;
     }
