@@ -44,7 +44,7 @@ public class SearchController {
 
     @RoleMapping("ORGANISATION_AUTHOR")
     @GetMapping("/management/courses")
-    public ResponseEntity<SearchResults> searchForOrganisation(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, PageParameters pageParameters) {
+    public ResponseEntity<SearchResults> searchForOrganisation(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
         CivilServant civilServant = registryService.getCurrentCivilServant();
 
         OwnerParameters ownerParameters = new OwnerParameters();
@@ -52,14 +52,14 @@ public class SearchController {
         civilServant.getOrganisationalUnitCode().ifPresent(ownerParameters::setOrganisationalUnitCode);
 
         Pageable pageable = pageParameters.getPageRequest();
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters);
+        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
 
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }
 
     @RoleMapping("PROFESSION_AUTHOR")
     @GetMapping("/management/courses")
-    public ResponseEntity<SearchResults> searchForProfession(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, PageParameters pageParameters) {
+    public ResponseEntity<SearchResults> searchForProfession(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
         CivilServant civilServant = registryService.getCurrentCivilServant();
 
         OwnerParameters ownerParameters = new OwnerParameters();
@@ -67,32 +67,32 @@ public class SearchController {
         civilServant.getProfessionId().ifPresent(organisationalUnitCode -> ownerParameters.setProfession(organisationalUnitCode.toString()));
 
         Pageable pageable = pageParameters.getPageRequest();
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters);
+        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
 
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }
 
     @RoleMapping({"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})
     @GetMapping("/management/courses")
-    public ResponseEntity<SearchResults> searchForSupplier(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, PageParameters pageParameters, Authentication authentication) {
+    public ResponseEntity<SearchResults> searchForSupplier(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, PageParameters pageParameters, ProfileParameters profileParameters, Authentication authentication) {
         OwnerParameters ownerParameters = new OwnerParameters();
 
         ownerParameters.setSupplier(authoritiesService.getSupplier(authentication));
 
         Pageable pageable = pageParameters.getPageRequest();
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters);
+        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
 
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }
 
     @RoleMapping({"CSL_AUTHOR", "LEARNING_MANAGER"})
     @GetMapping("/management/courses")
-    public ResponseEntity<SearchResults> searchForCslAuthorOrLearningManager(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, PageParameters pageParameters) {
+    public ResponseEntity<SearchResults> searchForCslAuthorOrLearningManager(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
         Pageable pageable = pageParameters.getPageRequest();
 
         OwnerParameters ownerParameters = new OwnerParameters();
 
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters);
+        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
 
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }
@@ -103,12 +103,12 @@ public class SearchController {
     }
 
     @GetMapping("/courses")
-    public ResponseEntity<SearchResults> coursesSearch(@RequestParam(name = "status", defaultValue = "Published") String status, String query, FilterParameters filterParameters, PageParameters pageParameters) {
-        Pageable pageable = pageParameters.getPageRequest();
-
+    public ResponseEntity<SearchResults> search(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
         OwnerParameters ownerParameters = new OwnerParameters();
 
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters);
+        Pageable pageable = pageParameters.getPageRequest();
+
+        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
 
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
     }

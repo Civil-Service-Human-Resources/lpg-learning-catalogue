@@ -69,7 +69,7 @@ public class SearchControllerTest {
 
         when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
 
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class)))
+        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class), any(ProfileParameters.class), any(String.class)))
                 .thenReturn(searchPage);
 
         mockMvc.perform(
@@ -98,7 +98,7 @@ public class SearchControllerTest {
 
         when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
 
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class)))
+        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class), any(ProfileParameters.class), any(String.class)))
                 .thenReturn(searchPage);
 
         mockMvc.perform(
@@ -127,7 +127,7 @@ public class SearchControllerTest {
 
         when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
 
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class)))
+        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class), any(ProfileParameters.class), any(String.class)))
                 .thenReturn(searchPage);
 
         mockMvc.perform(
@@ -150,7 +150,7 @@ public class SearchControllerTest {
         searchPage.setTopScoringSuggestion(suggestion);
         searchPage.setCourses(coursePage);
 
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class)))
+        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class), any(ProfileParameters.class), any(String.class)))
                 .thenReturn(searchPage);
 
         mockMvc.perform(
