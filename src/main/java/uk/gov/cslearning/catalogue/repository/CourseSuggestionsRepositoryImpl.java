@@ -4,12 +4,12 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import uk.gov.cslearning.catalogue.domain.Course;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -25,7 +25,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
     }
 
     @Override
-    public Page<Course> findSuggested(String department, String areaOfWork, String interest, String status, Pageable pageable){
+    public Page<Course> findSuggested(String department, String areaOfWork, String interest, String status, Pageable pageable) {
         BoolQueryBuilder boolQuery = boolQuery();
 
         boolQuery.should(QueryBuilders.matchQuery("audiences.departments", department));

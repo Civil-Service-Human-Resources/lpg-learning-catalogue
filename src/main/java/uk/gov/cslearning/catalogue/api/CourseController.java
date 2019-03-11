@@ -74,16 +74,6 @@ public class CourseController {
         return ResponseEntity.created(builder.path("/courses/{courseId}").build(newCourse.getId())).build();
     }
 
-<<<<<<< HEAD
-    @GetMapping
-    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "none") String areasOfWork,
-                                                    @RequestParam(name = "department", defaultValue = "none") String departments,
-                                                    @RequestParam(name = "interest", defaultValue = "none") String interests,
-                                                    @RequestParam(name = "status", defaultValue = "Published") String status,
-                                                    Pageable pageable) {
-        Page<Course> results;
-        if (areasOfWork.equals("none") && departments.equals("none") && interests.equals("none")) {
-=======
     @GetMapping()
     public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "NONE") String areasOfWork,
                                                     @RequestParam(name = "department", defaultValue = "NONE") String departments,
@@ -93,7 +83,6 @@ public class CourseController {
         Page<Course> results;
 
         if (areasOfWork.equals("NONE") && departments.equals("NONE") && interests.equals("NONE")) {
->>>>>>> LPFG-1048: Added CourseRepositoryImpl
             results = courseRepository.findAllByStatusIn(
                     Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
