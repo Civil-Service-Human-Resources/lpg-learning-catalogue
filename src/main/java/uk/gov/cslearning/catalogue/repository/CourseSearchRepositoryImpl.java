@@ -14,6 +14,7 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.api.OwnerParameters;
+import uk.gov.cslearning.catalogue.api.ProfileParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -37,9 +38,9 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     @Override
-    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters) {
+    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters, ProfileParameters profileParameters, String visbility) {
 
-        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, statusCollection, ownerParameters);
+        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, statusCollection, ownerParameters, profileParameters, visbility);
 
         SearchPage searchPage = new SearchPage();
         searchPage.setCourses(coursePage);
@@ -47,10 +48,8 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return searchPage;
     }
 
-    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters) {
-
+    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters, ProfileParameters profileParameters, String visibility) {
         BoolQueryBuilder boolQuery = boolQuery();
-
 
         if (isNotBlank(query)) {
             boolQuery = boolQuery.must(QueryBuilders.multiMatchQuery(query)
@@ -73,20 +72,6 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             boolQuery = boolQuery.must(filterQuery);
         }
 
-        BoolQueryBuilder filterQuery = boolQuery();
-
-        if (ownerParameters.hasOrganisationalUnitCode()) {
-            filterQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", ownerParameters.getOrganisationalUnitCode()));
-        }
-
-        if (ownerParameters.hasProfession()) {
-            filterQuery.must(QueryBuilders.matchQuery("owner.profession", ownerParameters.getProfession()));
-        }
-
-        if (ownerParameters.hasSupplier()) {
-            filterQuery.must(QueryBuilders.matchQuery("owner.supplier", ownerParameters.getSupplier()));
-        }
-
         boolQuery = addFilter(boolQuery, filterParameters.getAreasOfWork(), "audiences.areasOfWork");
         boolQuery = addFilter(boolQuery, filterParameters.getDepartments(), "audiences.departments");
         boolQuery = addFilter(boolQuery, filterParameters.getInterests(), "audiences.interests");
@@ -102,6 +87,29 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         statusCollection.forEach(s -> statusList.add(s.getValue()));
 
         boolQuery = addFilter(boolQuery, statusList, "status");
+
+        BoolQueryBuilder filterQuery = boolQuery();
+
+        if (ownerParameters.hasOrganisationalUnitCode()) {
+            filterQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", ownerParameters.getOrganisationalUnitCode()));
+        }
+
+        if (ownerParameters.hasProfession()) {
+            filterQuery.must(QueryBuilders.matchQuery("owner.profession", ownerParameters.getProfession()));
+        }
+
+        if (ownerParameters.hasSupplier()) {
+            filterQuery.must(QueryBuilders.matchQuery("owner.supplier", ownerParameters.getSupplier()));
+        }
+
+        if (visibility.equals("PUBLIC")) {
+            filterQuery.should(QueryBuilders.matchQuery("visibility", "PUBLIC"));
+        }
+
+        addOrFilter(filterQuery, profileParameters.getProfileDepartments(), "audiences.departments");
+        addOrFilter(filterQuery, profileParameters.getProfileGrades(), "audiences.grades");
+        addOrFilter(filterQuery, profileParameters.getProfileAreasOfWork(), "audiences.areasOfWork");
+        addOrFilter(filterQuery, profileParameters.getProfileInterests(), "audiences.interests");
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
@@ -167,6 +175,16 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             filterQuery.minimumShouldMatch(1);
             return boolQuery.must(filterQuery);
         }
+        return boolQuery;
+    }
+
+    private BoolQueryBuilder addOrFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
+        if (values != null && !values.isEmpty()) {
+            for (String value : values) {
+                boolQuery.should(QueryBuilders.matchQuery(key, value));
+            }
+        }
+
         return boolQuery;
     }
 }
