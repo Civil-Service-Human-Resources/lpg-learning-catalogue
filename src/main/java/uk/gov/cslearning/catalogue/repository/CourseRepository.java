@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.api.OwnerParameters;
+import uk.gov.cslearning.catalogue.api.ProfileParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -23,7 +24,7 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
     @Query("{\"bool\": {\"should\": [{\"match\": {\"audiences.departments\": {\"query\": \"?0\",\"zero_terms_query\": \"none\"}}},{\"match\": {\"audiences.areasOfWork\": {\"query\": \"?1\",\"zero_terms_query\": \"none\"}}},{\"match\": {\"audiences.interests\": {\"query\": \"?2\",\"zero_terms_query\": \"none\"}}}],\"must\": [{\"match\": {\"status\": {\"query\": \"?3\"}}}],\"must_not\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}}]}}")
     Page<Course> findSuggested(String department, String areaOfWork, String interest, String status, Pageable pageable);
 
-    SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> status, OwnerParameters ownerParameters);
+    SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> status, OwnerParameters ownerParameters, ProfileParameters profileParameters, String visbility);
 
     Page<Course> findAllByStatusIn(Collection<Status> status, Pageable pageable);
 
