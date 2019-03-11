@@ -2,7 +2,6 @@ package uk.gov.cslearning.catalogue.domain.module;
 
 import lombok.Data;
 import org.elasticsearch.common.UUIDs;
-import uk.gov.cslearning.catalogue.domain.Frequency;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -12,8 +11,6 @@ import java.util.Set;
 public class Audience {
     public enum Type {
         OPEN,
-        CLOSED_COURSE,
-        PRIVATE_COURSE,
         REQUIRED_LEARNING
     }
 
@@ -31,7 +28,7 @@ public class Audience {
 
     private Instant requiredBy;
 
-    private Frequency frequency;
+    private String frequency;
 
     private Type type;
 
