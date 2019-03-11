@@ -11,6 +11,8 @@ import java.util.Set;
 public class Audience {
     public enum Type {
         OPEN,
+        CLOSED_COURSE,
+        PRIVATE_COURSE,
         REQUIRED_LEARNING
     }
 
