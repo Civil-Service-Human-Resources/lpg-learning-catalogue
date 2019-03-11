@@ -74,7 +74,7 @@ public class CourseController {
         return ResponseEntity.created(builder.path("/courses/{courseId}").build(newCourse.getId())).build();
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "NONE") String areasOfWork,
                                                     @RequestParam(name = "department", defaultValue = "NONE") String departments,
                                                     @RequestParam(name = "interest", defaultValue = "NONE") String interests,
