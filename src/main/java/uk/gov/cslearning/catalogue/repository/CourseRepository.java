@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository {
+public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository, CourseSuggestionsRepository {
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?1\"}},{\"match\": {\"audiences.departments\": \"?0\"}}]}}")
     Page<Course> findMandatory(String department, String status, Pageable pageable);
