@@ -165,8 +165,8 @@ public class CourseControllerTest {
 
     @Test
     public void shouldDefaultMissingParametersToNone() throws Exception {
-        String areaOfWork = "none";
-        String department = "none";
+        String areaOfWork = "NONE";
+        String department = "NONE";
         String interest = "_interest";
         String status = "Published";
 
@@ -186,8 +186,8 @@ public class CourseControllerTest {
     @Test
     public void shouldDefaultMissingInterestParameterToNone() throws Exception {
         String areaOfWork = "area-of-work";
-        String department = "none";
-        String interest = "none";
+        String department = "NONE";
+        String interest = "NONE";
         String status = "Published";
 
         Course course = new Course();
