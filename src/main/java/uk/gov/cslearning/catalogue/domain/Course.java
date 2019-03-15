@@ -45,7 +45,7 @@ public class Course {
     private Owner owner;
 
     @NotNull
-    private Visibility visibility;
+    private Visibility visibility = Visibility.PUBLIC;
 
     private Status status = Status.DRAFT;
 
