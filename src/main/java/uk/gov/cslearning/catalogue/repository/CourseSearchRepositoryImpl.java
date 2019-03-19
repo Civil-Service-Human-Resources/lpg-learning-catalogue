@@ -170,7 +170,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
             for (String department : values) {
                 filterQuery = filterQuery
-                        .should(QueryBuilders.matchQuery(key, department));
+                        .should(QueryBuilders.matchPhraseQuery(key, department));
             }
             filterQuery.minimumShouldMatch(1);
             return boolQuery.must(filterQuery);
@@ -181,7 +181,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     private BoolQueryBuilder addOrFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
         if (values != null && !values.isEmpty()) {
             for (String value : values) {
-                boolQuery.should(QueryBuilders.matchQuery(key, value));
+                boolQuery.should(QueryBuilders.matchPhraseQuery(key, value));
             }
         }
 
