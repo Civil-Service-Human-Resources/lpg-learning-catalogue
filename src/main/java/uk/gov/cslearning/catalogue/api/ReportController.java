@@ -36,6 +36,12 @@ public class ReportController {
         return ResponseEntity.ok(eventService.getEventMapBySupplier("KPMG", pageable));
     }
 
+    @RoleMapping("KORNFERRY_SUPPLIER_REPORTER")
+    @GetMapping("/events")
+    public ResponseEntity<Map<String, EventDto>> getEventsForKornferrySupplier(Pageable pageable) {
+        return ResponseEntity.ok(eventService.getEventMapBySupplier("KORNFERRY", pageable));
+    }
+
     @GetMapping("/events")
     public ResponseEntity<Map<String, EventDto>> getEvents() {
         return ResponseEntity.ok(eventService.getEventMap());
