@@ -25,7 +25,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
     }
 
     @Override
-    public Page<Course> findSuggested(String department, String areaOfWork, String interest, String status, Pageable pageable) {
+    public Page<Course> findSuggested(String department, String areaOfWork, String interest, String status, String grade, Pageable pageable) {
         BoolQueryBuilder boolQuery = boolQuery();
 
         boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", department));
@@ -36,9 +36,14 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
         filterQuery.minimumShouldMatch(1);
 
+        BoolQueryBuilder gradesFilter = boolQuery();
+        gradesFilter.must(QueryBuilders.matchQuery("audiences.grades", grade));
+        filterQuery.minimumShouldMatch(1);
+
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withFilter(filterQuery)
+                .withFilter(gradesFilter)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
