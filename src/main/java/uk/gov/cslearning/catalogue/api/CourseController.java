@@ -79,6 +79,7 @@ public class CourseController {
                                                     @RequestParam(name = "department", defaultValue = "NONE") String departments,
                                                     @RequestParam(name = "interest", defaultValue = "NONE") String interests,
                                                     @RequestParam(name = "status", defaultValue = "Published") String status,
+                                                    @RequestParam(name = "grade", defaultValue = "Published") String grade,
                                                     Pageable pageable) {
         Page<Course> results;
 
@@ -86,7 +87,7 @@ public class CourseController {
             results = courseRepository.findAllByStatusIn(
                     Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
-            results = courseRepository.findSuggested(departments, areasOfWork, interests, status, pageable);
+            results = courseRepository.findSuggested(departments, areasOfWork, interests, status, grade, pageable);
         }
         return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
