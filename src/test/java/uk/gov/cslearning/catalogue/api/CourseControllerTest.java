@@ -117,10 +117,11 @@ public class CourseControllerTest {
         String department = "department";
         String interest = "_interest";
         String status = "status";
+        String grade = "G6";
 
         Course course = new Course();
 
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
@@ -129,6 +130,7 @@ public class CourseControllerTest {
                         .param("department", department)
                         .param("interest", interest)
                         .param("status", status)
+                        .param("grade", grade)
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
@@ -169,15 +171,17 @@ public class CourseControllerTest {
         String department = "NONE";
         String interest = "_interest";
         String status = "Published";
+        String grade = "G6";
 
         Course course = new Course();
 
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
                         .param("interest", interest)
+                        .param("grade", grade)
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
@@ -189,15 +193,17 @@ public class CourseControllerTest {
         String department = "NONE";
         String interest = "NONE";
         String status = "Published";
+        String grade = "G6";
 
         Course course = new Course();
 
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
                         .param("areaOfWork", areaOfWork)
+                        .param("grade", grade)
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
@@ -209,10 +215,11 @@ public class CourseControllerTest {
         String department = "department1,department2";
         String interest = "interest1,interest2";
         String status = "Published";
+        String grade = "G6";
 
         Course course = new Course();
 
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), any(Pageable.class)))
+        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
@@ -220,6 +227,7 @@ public class CourseControllerTest {
                         .param("areaOfWork", "area-of-work1", "area-of-work2")
                         .param("department", "department1", "department2")
                         .param("interest", "interest1", "interest2")
+                        .param("grade", grade)
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));

@@ -79,7 +79,7 @@ public class CourseController {
                                                     @RequestParam(name = "department", defaultValue = "NONE") String departments,
                                                     @RequestParam(name = "interest", defaultValue = "NONE") String interests,
                                                     @RequestParam(name = "status", defaultValue = "Published") String status,
-                                                    @RequestParam(name = "grade", defaultValue = "Published") String grade,
+                                                    @RequestParam(name = "grade", defaultValue = "NONE") String grade,
                                                     Pageable pageable) {
         Page<Course> results;
 
