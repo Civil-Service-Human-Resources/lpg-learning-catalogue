@@ -32,19 +32,13 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", areaOfWork));
         boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.interests", interest));
 
-        BoolQueryBuilder gradesFilter = boolQuery();
-        gradesFilter.must(QueryBuilders.matchQuery("audiences.grades", grade));
-        gradesFilter.minimumShouldMatch(1);
-
         BoolQueryBuilder filterQuery = boolQuery();
+        filterQuery.must(QueryBuilders.matchQuery("audiences.grades", grade));
         filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
-        filterQuery.minimumShouldMatch(1);
-
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withFilter(filterQuery)
-                .withFilter(gradesFilter)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
