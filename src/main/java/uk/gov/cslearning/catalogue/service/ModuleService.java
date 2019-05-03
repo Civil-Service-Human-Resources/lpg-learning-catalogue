@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.service;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.ELearningModule;
@@ -102,16 +103,28 @@ public class ModuleService {
     }
 
     private boolean hasFileChanged(Module newModule, Module oldModule) {
-          return newModule.getClass() != oldModule.getClass()
-                  || (newModule instanceof FileModule && ((FileModule) newModule).getMediaId() != null && !((FileModule) newModule).getUrl().equals(((FileModule) oldModule).getUrl()))
-                  || (newModule instanceof VideoModule && ((VideoModule) newModule).getUrl() != null && !((VideoModule) newModule).getUrl().equals(((VideoModule) oldModule).getUrl()))
-                  || (newModule instanceof ELearningModule && ((ELearningModule) newModule).getUrl() != null && !((ELearningModule) newModule).getUrl().equals(((ELearningModule) oldModule).getUrl()));
+        return newModule.getClass() != oldModule.getClass()
+                || (newModule instanceof FileModule && ((FileModule) newModule).getMediaId() != null && !((FileModule) newModule).getUrl().equals(((FileModule) oldModule).getUrl()))
+                || (newModule instanceof VideoModule && ((VideoModule) newModule).getUrl() != null && !((VideoModule) newModule).getUrl().equals(((VideoModule) oldModule).getUrl()))
+                || (newModule instanceof ELearningModule && ((ELearningModule) newModule).getUrl() != null && !((ELearningModule) newModule).getUrl().equals(((ELearningModule) oldModule).getUrl()));
     }
 
     public Map<String, ModuleDto> getModuleMap() {
         Map<String, ModuleDto> results = new HashMap<>();
 
         for (Course course : courseRepository.findAll()) {
+            for (Module module : course.getModules()) {
+                results.put(module.getId(), moduleDtoFactory.create(module, course));
+            }
+        }
+
+        return results;
+    }
+
+    public Map<String, ModuleDto> getModuleMapForSupplier(String supplier, Pageable pageable) {
+        Map<String, ModuleDto> results = new HashMap<>();
+
+        for (Course course : courseRepository.findAllBySupplier(supplier, pageable)) {
             for (Module module : course.getModules()) {
                 results.put(module.getId(), moduleDtoFactory.create(module, course));
             }

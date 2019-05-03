@@ -31,6 +31,18 @@ public class ReportController {
     }
 
     @RoleMapping("KPMG_SUPPLIER_REPORTER")
+    @GetMapping("/modules")
+    public ResponseEntity<Map<String, ModuleDto>> getModulesForKPMG(Pageable pageable) {
+        return ResponseEntity.ok(moduleService.getModuleMapForSupplier("KPMG", pageable));
+    }
+
+    @RoleMapping("KORNFERRY_SUPPLIER_REPORTER")
+    @GetMapping("/modules")
+    public ResponseEntity<Map<String, ModuleDto>> getModulesForKornferry(Pageable pageable) {
+        return ResponseEntity.ok(moduleService.getModuleMapForSupplier("KORNFERRY", pageable));
+    }
+
+    @RoleMapping("KPMG_SUPPLIER_REPORTER")
     @GetMapping("/events")
     public ResponseEntity<Map<String, EventDto>> getEventsForSupplier(Pageable pageable) {
         return ResponseEntity.ok(eventService.getEventMapBySupplier("KPMG", pageable));
