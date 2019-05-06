@@ -34,6 +34,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
         BoolQueryBuilder filterQuery = boolQuery();
         filterQuery.must(QueryBuilders.matchQuery("audiences.grades", grade));
+        filterQuery.must(QueryBuilders.matchQuery("status", status));
         filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()

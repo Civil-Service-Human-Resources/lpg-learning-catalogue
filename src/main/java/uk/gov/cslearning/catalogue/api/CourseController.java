@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import uk.gov.cslearning.catalogue.service.RegistryService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +91,22 @@ public class CourseController {
         } else {
             results = courseRepository.findSuggested(departments, areasOfWork, interests, status, grade, pageable);
         }
-        return ResponseEntity.ok(new PageResults<>(results, pageable));
+
+        ArrayList<Course> filteredCourses = new ArrayList<>();
+        results.forEach(course -> course.getAudiences().forEach(audience -> {
+            if (audience.getDepartments().contains(departments) && audience.getGrades().contains(grade)) {
+                filteredCourses.add(course);
+            }
+            if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)) {
+                filteredCourses.add(course);
+            }
+            if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)) {
+                filteredCourses.add(course);
+            }
+        }));
+        Page<Course> filteredResults = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
+
+        return ResponseEntity.ok(new PageResults<>(filteredResults, pageable));
     }
 
     @GetMapping(params = {"mandatory", "department"})
