@@ -90,23 +90,22 @@ public class CourseController {
                     Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
             results = courseRepository.findSuggested(departments, areasOfWork, interests, status, grade, pageable);
+            ArrayList<Course> filteredCourses = new ArrayList<>();
+            results.forEach(course -> course.getAudiences().forEach(audience -> {
+                if (audience.getDepartments().contains(departments) && audience.getGrades().contains(grade)) {
+                    filteredCourses.add(course);
+                }
+                if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)) {
+                    filteredCourses.add(course);
+                }
+                if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)) {
+                    filteredCourses.add(course);
+                }
+            }));
+            results = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
         }
 
-        ArrayList<Course> filteredCourses = new ArrayList<>();
-        results.forEach(course -> course.getAudiences().forEach(audience -> {
-            if (audience.getDepartments().contains(departments) && audience.getGrades().contains(grade)) {
-                filteredCourses.add(course);
-            }
-            if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)) {
-                filteredCourses.add(course);
-            }
-            if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)) {
-                filteredCourses.add(course);
-            }
-        }));
-        Page<Course> filteredResults = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
-
-        return ResponseEntity.ok(new PageResults<>(filteredResults, pageable));
+        return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
 
     @GetMapping(params = {"mandatory", "department"})

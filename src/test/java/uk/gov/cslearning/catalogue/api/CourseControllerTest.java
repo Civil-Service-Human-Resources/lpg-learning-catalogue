@@ -119,7 +119,21 @@ public class CourseControllerTest {
         String status = "status";
         String grade = "G6";
 
+        Set<String> grades = new HashSet();
+        grades.add(grade);
+
+        Set<String> organisationalUnits = new HashSet<>();
+        organisationalUnits.add(department);
+
+        Audience audience = new Audience();
+        audience.setGrades(grades);
+        audience.setDepartments(organisationalUnits);
+
+        Set<Audience> audiences = new HashSet<>();
+        audiences.add(audience);
+
         Course course = new Course();
+        course.setAudiences(audiences);
 
         when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
@@ -173,7 +187,21 @@ public class CourseControllerTest {
         String status = "Published";
         String grade = "G6";
 
+        Set<String> grades = new HashSet();
+        grades.add(grade);
+
+        Set<String> organisationalUnits = new HashSet<>();
+        organisationalUnits.add(department);
+
+        Audience audience = new Audience();
+        audience.setGrades(grades);
+        audience.setDepartments(organisationalUnits);
+
+        Set<Audience> audiences = new HashSet<>();
+        audiences.add(audience);
+
         Course course = new Course();
+        course.setAudiences(audiences);
 
         when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
@@ -195,7 +223,21 @@ public class CourseControllerTest {
         String status = "Published";
         String grade = "G6";
 
+        Set<String> grades = new HashSet();
+        grades.add(grade);
+
+        Set<String> organisationalUnits = new HashSet<>();
+        organisationalUnits.add(department);
+
+        Audience audience = new Audience();
+        audience.setGrades(grades);
+        audience.setDepartments(organisationalUnits);
+
+        Set<Audience> audiences = new HashSet<>();
+        audiences.add(audience);
+
         Course course = new Course();
+        course.setAudiences(audiences);
 
         when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
@@ -217,7 +259,21 @@ public class CourseControllerTest {
         String status = "Published";
         String grade = "G6";
 
+        Set<String> grades = new HashSet();
+        grades.add(grade);
+
+        Set<String> organisationalUnits = new HashSet<>();
+        organisationalUnits.add(department);
+
+        Audience audience = new Audience();
+        audience.setGrades(grades);
+        audience.setDepartments(organisationalUnits);
+
+        Set<Audience> audiences = new HashSet<>();
+        audiences.add(audience);
+
         Course course = new Course();
+        course.setAudiences(audiences);
 
         when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
