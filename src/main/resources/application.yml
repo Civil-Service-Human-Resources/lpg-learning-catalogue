@@ -24,6 +24,7 @@ elasticsearch:
   uri: ${ELASTICSEARCH_URI:http://127.0.0.1:9200}
   username: ${ELASTICSEARCH_USERNAME:elastic}
   password: ${ELASTICSEARCH_PASSWORD:changeme}
+  readTimeout: ${ELASTICSEARCH_READ_TIMEOUT:10000}
 
 azure:
   account:
