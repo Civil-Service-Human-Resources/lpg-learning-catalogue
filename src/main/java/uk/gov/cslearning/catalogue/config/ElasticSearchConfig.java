@@ -39,6 +39,7 @@ public class ElasticSearchConfig {
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder(properties.getUri().toString()).defaultCredentials(properties.getUsername(), properties.getPassword())
                 .multiThreaded(true)
+                .readTimeout(properties.getReadTimeout())
                 .build());
         return factory.getObject();
     }
@@ -75,7 +76,7 @@ public class ElasticSearchConfig {
 
         private final ObjectMapper objectMapper;
 
-        CustomEntityMapper(){
+        CustomEntityMapper() {
             super();
 
             final ObjectMapper mapper = new ObjectMapper();
