@@ -5,11 +5,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
+import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -110,5 +113,18 @@ public class CourseService {
 
     public Page<Course> findAllCourses(Pageable pageable) {
         return courseRepository.findAll(pageable);
+    }
+
+    public List<String> getOrganisationParents(String departments) {
+        List<String> list = new ArrayList<>();
+        if (departments != null && !departments.equals("NONE")) {
+            for (OrganisationalUnit organisationalUnit : registryService.getOrganisationalUnit(departments)) {
+                if (organisationalUnit != null) {
+                    String code = organisationalUnit.getCode();
+                    list.add(code);
+                }
+            }
+        }
+        return list;
     }
 }
