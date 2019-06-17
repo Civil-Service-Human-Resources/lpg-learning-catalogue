@@ -135,7 +135,12 @@ public class CourseControllerTest {
         Course course = new Course();
         course.setAudiences(audiences);
 
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
+        List<String> organisationParents = new ArrayList<>();
+        organisationParents.add("department");
+
+        when(courseService.getOrganisationParents(any(String.class))).thenReturn(organisationParents);
+
+        when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
@@ -180,42 +185,6 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void shouldDefaultMissingParametersToNone() throws Exception {
-        String areaOfWork = "NONE";
-        String department = "NONE";
-        String interest = "_interest";
-        String status = "Published";
-        String grade = "G6";
-
-        Set<String> grades = new HashSet();
-        grades.add(grade);
-
-        Set<String> organisationalUnits = new HashSet<>();
-        organisationalUnits.add(department);
-
-        Audience audience = new Audience();
-        audience.setGrades(grades);
-        audience.setDepartments(organisationalUnits);
-
-        Set<Audience> audiences = new HashSet<>();
-        audiences.add(audience);
-
-        Course course = new Course();
-        course.setAudiences(audiences);
-
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("interest", interest)
-                        .param("grade", grade)
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
-
-    @Test
     public void shouldDefaultMissingInterestParameterToNone() throws Exception {
         String areaOfWork = "area-of-work";
         String department = "NONE";
@@ -227,11 +196,11 @@ public class CourseControllerTest {
         grades.add(grade);
 
         Set<String> organisationalUnits = new HashSet<>();
-        organisationalUnits.add(department);
+        organisationalUnits.add(areaOfWork);
 
         Audience audience = new Audience();
         audience.setGrades(grades);
-        audience.setDepartments(organisationalUnits);
+        audience.setAreasOfWork(organisationalUnits);
 
         Set<Audience> audiences = new HashSet<>();
         audiences.add(audience);
@@ -239,7 +208,7 @@ public class CourseControllerTest {
         Course course = new Course();
         course.setAudiences(audiences);
 
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
+        when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
@@ -263,7 +232,7 @@ public class CourseControllerTest {
         grades.add(grade);
 
         Set<String> organisationalUnits = new HashSet<>();
-        organisationalUnits.add(department);
+        organisationalUnits.add("department1");
 
         Audience audience = new Audience();
         audience.setGrades(grades);
@@ -275,7 +244,13 @@ public class CourseControllerTest {
         Course course = new Course();
         course.setAudiences(audiences);
 
-        when(courseRepository.findSuggested(eq(department), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
+        List<String> organisationParents = new ArrayList<>();
+        organisationParents.add("department1");
+        organisationParents.add("department2");
+
+        when(courseService.getOrganisationParents(any(String.class))).thenReturn(organisationParents);
+
+        when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
