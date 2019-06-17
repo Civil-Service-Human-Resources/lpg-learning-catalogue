@@ -84,24 +84,31 @@ public class CourseController {
                                                     @RequestParam(name = "grade", defaultValue = "NONE") String grade,
                                                     Pageable pageable) {
         Page<Course> results;
-
         if (areasOfWork.equals("NONE") && departments.equals("NONE") && interests.equals("NONE")) {
             results = courseRepository.findAllByStatusIn(
                     Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
-            results = courseRepository.findSuggested(departments, areasOfWork, interests, status, grade, pageable);
+            List<String> organisationParents = courseService.getOrganisationParents(departments);
+
+            results = courseRepository.findSuggested(organisationParents, areasOfWork, interests, status, grade, pageable);
+
             ArrayList<Course> filteredCourses = new ArrayList<>();
-            results.forEach(course -> course.getAudiences().forEach(audience -> {
-                if (audience.getDepartments().contains(departments) && audience.getGrades().contains(grade)) {
-                    filteredCourses.add(course);
+
+            for (Course course : results) {
+                for (Audience audience : course.getAudiences()) {
+                    for (String organisation : organisationParents) {
+                        if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)) {
+                            filteredCourses.add(course);
+                        }
+                    }
+                    if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)) {
+                        filteredCourses.add(course);
+                    }
+                    if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)) {
+                        filteredCourses.add(course);
+                    }
                 }
-                if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)) {
-                    filteredCourses.add(course);
-                }
-                if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)) {
-                    filteredCourses.add(course);
-                }
-            }));
+            }
             results = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
         }
 

@@ -12,4 +12,5 @@ public class OrganisationalUnit {
     private String code;
     private String name;
     private List<String> paymentMethods = new ArrayList<>();
+    private List<OrganisationalUnit> children = new ArrayList<>();
 }
