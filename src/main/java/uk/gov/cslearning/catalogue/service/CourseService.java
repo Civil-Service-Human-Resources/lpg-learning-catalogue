@@ -12,9 +12,11 @@ import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
@@ -118,12 +120,15 @@ public class CourseService {
     public List<String> getOrganisationParents(String departments) {
         List<String> list = new ArrayList<>();
         if (departments != null && !departments.equals("NONE")) {
-            for (OrganisationalUnit organisationalUnit : registryService.getOrganisationalUnit(departments)) {
-                if (organisationalUnit != null) {
-                    String code = organisationalUnit.getCode();
-                    list.add(code);
+            List<String> collect = Arrays.stream(departments.split(",")).collect(Collectors.toList());
+            collect.forEach(s -> {
+                for (OrganisationalUnit organisationalUnit : registryService.getOrganisationalUnit(s)) {
+                    if (organisationalUnit != null) {
+                        String code = organisationalUnit.getCode();
+                        list.add(code);
+                    }
                 }
-            }
+            });
         }
         return list;
     }
