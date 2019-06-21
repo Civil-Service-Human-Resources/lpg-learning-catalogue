@@ -89,7 +89,6 @@ public class CourseController {
                     Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
             List<String> organisationParents = courseService.getOrganisationParents(departments);
-
             results = courseRepository.findSuggested(organisationParents, areasOfWork, interests, status, grade, pageable);
 
             ArrayList<Course> filteredCourses = new ArrayList<>();

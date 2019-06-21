@@ -21,7 +21,7 @@ public class AuthoritiesService {
 
 
     public Scope getScope(Authentication authentication) {
-        return isCslAuthor(authentication) ? Scope.GLOBAL : Scope.LOCAL;
+        return isCslAuthor(authentication) || isLearningManager(authentication) ? Scope.GLOBAL : Scope.LOCAL;
     }
 
 
