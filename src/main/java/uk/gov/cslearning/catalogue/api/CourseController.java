@@ -28,10 +28,7 @@ import uk.gov.cslearning.catalogue.service.RegistryService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -108,6 +105,12 @@ public class CourseController {
                     }
                 }
             }
+
+            Set<Course> set = new LinkedHashSet<>();
+            set.addAll(filteredCourses);
+            filteredCourses.clear();
+            filteredCourses.addAll(set);
+            
             results = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
         }
 
