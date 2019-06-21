@@ -22,6 +22,7 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
+import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
 import java.util.ArrayList;
@@ -48,6 +49,9 @@ public class SearchControllerTest {
 
     @MockBean
     private RegistryService registryService;
+
+    @MockBean
+    private CourseService courseService;
 
     @MockBean
     private AuthoritiesService authoritiesService;

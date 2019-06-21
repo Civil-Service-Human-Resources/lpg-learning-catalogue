@@ -2,7 +2,6 @@ package uk.gov.cslearning.catalogue.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +17,12 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.mapping.RoleMapping;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
+import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,11 +37,13 @@ public class SearchController {
 
     private AuthoritiesService authoritiesService;
 
-    @Autowired
-    public SearchController(CourseRepository courseRepository, RegistryService registryService, AuthoritiesService authoritiesService) {
+    private final CourseService courseService;
+
+    public SearchController(CourseRepository courseRepository, RegistryService registryService, AuthoritiesService authoritiesService, CourseService courseService) {
         this.courseRepository = courseRepository;
         this.registryService = registryService;
         this.authoritiesService = authoritiesService;
+        this.courseService = courseService;
     }
 
     @RoleMapping("ORGANISATION_AUTHOR")
@@ -106,10 +110,20 @@ public class SearchController {
     public ResponseEntity<SearchResults> search(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
         OwnerParameters ownerParameters = new OwnerParameters();
 
+        updateDepartmentFiltersToIncludeParents(filterParameters);
+
         Pageable pageable = pageParameters.getPageRequest();
 
         SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
 
         return ResponseEntity.ok(new SearchResults(searchPage, pageable));
+    }
+
+    private void updateDepartmentFiltersToIncludeParents(FilterParameters filterParameters) {
+        List<String> parentDepartments = new ArrayList<>();
+        filterParameters.getDepartments().forEach(s -> {
+            parentDepartments.addAll(courseService.getOrganisationParents(s));
+        });
+        filterParameters.setDepartments(parentDepartments);
     }
 }
