@@ -110,7 +110,7 @@ public class CourseController {
             set.addAll(filteredCourses);
             filteredCourses.clear();
             filteredCourses.addAll(set);
-            
+
             results = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
         }
 
@@ -122,8 +122,20 @@ public class CourseController {
                                                              @RequestParam(value = "status", defaultValue = "Published") String status,
                                                              Pageable pageable) {
         LOGGER.debug("Listing mandatory courses for department {}", department);
+        List<String> organisationParents = courseService.getOrganisationParents(department);
 
-        Page<Course> page = courseRepository.findMandatory(department, status, pageable);
+        List<Course> courses = new ArrayList<>();
+        for (String d : organisationParents) {
+            courses.addAll(courseRepository.findMandatory(d, status, pageable));
+        }
+
+        Set<String> courseSet = new HashSet<>();
+        List<Course> filteredCourses = courses.stream()
+                .filter(e -> courseSet.add(e.getId()))
+                .collect(Collectors.toList());
+
+        Page<Course> page = new PageImpl<>(filteredCourses, pageable, courses.size());
+
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 

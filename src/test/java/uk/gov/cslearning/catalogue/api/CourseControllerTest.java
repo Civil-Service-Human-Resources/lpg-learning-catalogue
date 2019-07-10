@@ -273,8 +273,8 @@ public class CourseControllerTest {
         Course course = new Course();
 
         when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
-
+                .thenReturn(new ArrayList<>(Collections.singletonList(course)));
+        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
         mockMvc.perform(
                 get("/courses/")
                         .param("department", "department1")
@@ -292,7 +292,9 @@ public class CourseControllerTest {
         Course course = new Course();
 
         when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+                .thenReturn(new ArrayList<>(Collections.singletonList(course)));
+
+        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
 
         mockMvc.perform(
                 get("/courses/")
