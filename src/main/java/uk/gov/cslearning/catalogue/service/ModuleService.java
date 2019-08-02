@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.ELearningModule;
@@ -121,10 +120,10 @@ public class ModuleService {
         return results;
     }
 
-    public Map<String, ModuleDto> getModuleMapForSupplier(String supplier, Pageable pageable) {
+    public Map<String, ModuleDto> getModuleMapForSupplier(String supplier) {
         Map<String, ModuleDto> results = new HashMap<>();
 
-        for (Course course : courseRepository.findAllBySupplier(supplier, pageable)) {
+        for (Course course : courseRepository.findAllBySupplierAsList(supplier)) {
             for (Module module : course.getModules()) {
                 results.put(module.getId(), moduleDtoFactory.create(module, course));
             }

@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
@@ -92,7 +91,7 @@ public class EventService {
 
         event.getVenue().setAvailability(event.getVenue().getCapacity());
 
-        if(bookings != null && !bookings.isEmpty()) {
+        if (bookings != null && !bookings.isEmpty()) {
             bookings.forEach(b -> {
                 if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.REQUESTED) {
                     event.getVenue().setAvailability(event.getVenue().getAvailability() - 1);
@@ -117,8 +116,8 @@ public class EventService {
         return getStringEventDtoMap(courses);
     }
 
-    public Map<String, EventDto> getEventMapBySupplier(String supplier, Pageable pageable) {
-        Iterable<Course> courses = courseRepository.findAllBySupplier(supplier, pageable);
+    public Map<String, EventDto> getEventMapBySupplier(String supplier) {
+        Iterable<Course> courses = courseRepository.findAllBySupplierAsList(supplier);
 
         return getStringEventDtoMap(courses);
     }

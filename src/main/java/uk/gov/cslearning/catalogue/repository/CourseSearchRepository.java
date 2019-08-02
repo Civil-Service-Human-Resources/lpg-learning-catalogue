@@ -10,6 +10,7 @@ import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface CourseSearchRepository {
     SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> status, OwnerParameters ownerParameters, ProfileParameters profileParameters, String visbility);
@@ -19,4 +20,10 @@ public interface CourseSearchRepository {
     Page<Course> findAllByProfessionId(String professionId, Pageable pageable);
 
     Page<Course> findAllBySupplier(String supplier, Pageable pageable);
+
+    List<Course> findAllByOrganisationCodeAsList(String organisationalUnitCode);
+
+    List<Course> findAllByProfessionIdAsList(String professionId);
+
+    List<Course> findAllBySupplierAsList(String supplier);
 }

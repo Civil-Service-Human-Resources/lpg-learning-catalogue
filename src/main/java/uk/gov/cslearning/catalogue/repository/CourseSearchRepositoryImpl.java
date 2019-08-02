@@ -163,6 +163,45 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return operations.queryForPage(searchQuery, Course.class);
     }
 
+    @Override
+    public List<Course> findAllByOrganisationCodeAsList(String organisationalUnitCode) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", organisationalUnitCode));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .build();
+
+        return operations.queryForList(searchQuery, Course.class);
+    }
+
+    @Override
+    public List<Course> findAllByProfessionIdAsList(String professionId) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("owner.profession", professionId));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .build();
+
+        return operations.queryForList(searchQuery, Course.class);
+    }
+
+    @Override
+    public List<Course> findAllBySupplierAsList(String supplier) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("owner.supplier", supplier));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .build();
+
+        return operations.queryForList(searchQuery, Course.class);
+    }
+
 
     private BoolQueryBuilder addFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
         if (values != null && !values.isEmpty()) {
