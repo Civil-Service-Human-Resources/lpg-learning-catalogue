@@ -1,6 +1,6 @@
 package uk.gov.cslearning.catalogue.api;
 
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +17,7 @@ import java.util.Map;
 @RequestMapping("/reporting")
 public class ReportController {
 
+    private static final PageRequest MAX_PAGEABLE = PageRequest.of(0, 10000);
     private final EventService eventService;
     private final ModuleService moduleService;
 
@@ -32,26 +33,26 @@ public class ReportController {
 
     @RoleMapping("KPMG_SUPPLIER_REPORTER")
     @GetMapping("/modules")
-    public ResponseEntity<Map<String, ModuleDto>> getModulesForKPMG(Pageable pageable) {
-        return ResponseEntity.ok(moduleService.getModuleMapForSupplier("KPMG", pageable));
+    public ResponseEntity<Map<String, ModuleDto>> getModulesForKPMG() {
+        return ResponseEntity.ok(moduleService.getModuleMapForSupplier("KPMG", MAX_PAGEABLE));
     }
 
     @RoleMapping("KORNFERRY_SUPPLIER_REPORTER")
     @GetMapping("/modules")
-    public ResponseEntity<Map<String, ModuleDto>> getModulesForKornferry(Pageable pageable) {
-        return ResponseEntity.ok(moduleService.getModuleMapForSupplier("KORNFERRY", pageable));
+    public ResponseEntity<Map<String, ModuleDto>> getModulesForKornferry() {
+        return ResponseEntity.ok(moduleService.getModuleMapForSupplier("KORNFERRY", MAX_PAGEABLE));
     }
 
     @RoleMapping("KPMG_SUPPLIER_REPORTER")
     @GetMapping("/events")
-    public ResponseEntity<Map<String, EventDto>> getEventsForSupplier(Pageable pageable) {
-        return ResponseEntity.ok(eventService.getEventMapBySupplier("KPMG", pageable));
+    public ResponseEntity<Map<String, EventDto>> getEventsForSupplier() {
+        return ResponseEntity.ok(eventService.getEventMapBySupplier("KPMG", MAX_PAGEABLE));
     }
 
     @RoleMapping("KORNFERRY_SUPPLIER_REPORTER")
     @GetMapping("/events")
-    public ResponseEntity<Map<String, EventDto>> getEventsForKornferrySupplier(Pageable pageable) {
-        return ResponseEntity.ok(eventService.getEventMapBySupplier("KORNFERRY", pageable));
+    public ResponseEntity<Map<String, EventDto>> getEventsForKornferrySupplier() {
+        return ResponseEntity.ok(eventService.getEventMapBySupplier("KORNFERRY", MAX_PAGEABLE));
     }
 
     @GetMapping("/events")
