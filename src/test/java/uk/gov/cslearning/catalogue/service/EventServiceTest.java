@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.service;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,20 +8,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.*;
-import uk.gov.cslearning.catalogue.dto.CourseDto;
-import uk.gov.cslearning.catalogue.dto.EventDto;
-import uk.gov.cslearning.catalogue.dto.ModuleDto;
-import uk.gov.cslearning.catalogue.dto.factory.EventDtoFactory;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
 import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,14 +28,11 @@ public class EventServiceTest {
     @Mock
     private LearnerRecordService learnerRecordService;
 
-    @Mock
-    private EventDtoFactory eventDtoFactory;
-
     @InjectMocks
     private EventService eventService;
 
     @Test
-    public void shouldSaveEvent(){
+    public void shouldSaveEvent() {
         String courseId = "courseId";
         String moduleId = "moduleId";
 
@@ -73,7 +62,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void shouldFindEvent(){
+    public void shouldFindEvent() {
         String courseId = "courseId";
         String moduleId = "moduleId";
 
@@ -139,49 +128,5 @@ public class EventServiceTest {
         Assert.assertEquals(eventService.getCancellationReason(eventId), cancellationReason);
 
         verify(learnerRecordService).getCancellationReason(eventId);
-    }
-
-    @Test
-    public void shouldReturnMapOfEvents() throws MalformedURLException {
-        String eventId = "event-id";
-        Event event = new Event();
-        event.setId(eventId);
-
-        String moduleId = "module-id";
-        String moduleTitle = "module-title";
-        String productCode = "product-code";
-
-        FaceToFaceModule faceToFaceModule = new FaceToFaceModule(productCode);
-        faceToFaceModule.setId(moduleId);
-        faceToFaceModule.setTitle(moduleTitle);
-        faceToFaceModule.setEvents(Collections.singletonList(event));
-
-        LinkModule linkModule = new LinkModule(URI.create("http://example.org").toURL());
-
-        String courseTitle = "course-title";
-        String courseId = "course-id";
-        Course course = new Course();
-        course.setTitle(courseTitle);
-        course.setId(courseId);
-        course.setModules(Arrays.asList(faceToFaceModule, linkModule));
-
-        CourseDto courseDto = new CourseDto();
-        courseDto.setTitle(courseTitle);
-        courseDto.setId(courseId);
-
-        ModuleDto moduleDto = new ModuleDto();
-        moduleDto.setId(moduleId);
-        moduleDto.setTitle(moduleTitle);
-        moduleDto.setCourse(courseDto);
-
-        EventDto eventDto = new EventDto();
-        eventDto.setId(eventId);
-        eventDto.setModule(moduleDto);
-
-        when(courseRepository.findAll()).thenReturn(Collections.singletonList(course));
-        when(eventDtoFactory.create(event, faceToFaceModule, course)).thenReturn(eventDto);
-
-        Map<String, EventDto> eventDtoMap = ImmutableMap.of(eventId, eventDto);
-        assertEquals(eventDtoMap, eventService.getEventMap());
     }
 }

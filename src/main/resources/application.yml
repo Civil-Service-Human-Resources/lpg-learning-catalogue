@@ -57,3 +57,6 @@ oauth:
   clientSecret: ${CLIENT_SECRET:test}
   checkTokenUrl: "${oauth.serviceUrl}/oauth/check_token"
   tokenUrl: "${oauth.serviceUrl}/oauth/token"
+
+retention:
+  timeInDays: ${RETENTION_TIME_IN_DAYS:90}
