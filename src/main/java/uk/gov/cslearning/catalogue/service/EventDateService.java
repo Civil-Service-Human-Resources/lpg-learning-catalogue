@@ -5,19 +5,15 @@ import uk.gov.cslearning.catalogue.domain.module.DateRange;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class EventDateService {
 
     public Optional<DateRange> getFirstDateChronologically(Event event) {
-        List<DateRange> sortedList = event.getDateRanges()
+        return event.getDateRanges()
                 .stream()
-                .sorted(Comparator.comparing(DateRange::getDate))
-                .collect(Collectors.toList());
+                .min(Comparator.comparing(DateRange::getDate));
 
-        return Optional.of(sortedList.get(0));
     }
 }
