@@ -8,7 +8,6 @@ import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.dto.EventDto;
-import uk.gov.cslearning.catalogue.dto.factory.EventDtoFactory;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
@@ -16,18 +15,17 @@ import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Service
 public class EventService {
     private final CourseRepository courseRepository;
-    private final EventDtoFactory eventDtoFactory;
     private final LearnerRecordService learnerRecordService;
+    private final EventDtoMapService eventDtoMapService;
 
-    public EventService(CourseRepository courseRepository, EventDtoFactory eventDtoFactory, LearnerRecordService learnerRecordService) {
+    public EventService(CourseRepository courseRepository, LearnerRecordService learnerRecordService, EventDtoMapService eventDtoMapService) {
         this.courseRepository = courseRepository;
-        this.eventDtoFactory = eventDtoFactory;
         this.learnerRecordService = learnerRecordService;
+        this.eventDtoMapService = eventDtoMapService;
     }
 
     public Event save(String courseId, String moduleId, Event event) {
@@ -92,7 +90,7 @@ public class EventService {
 
         event.getVenue().setAvailability(event.getVenue().getCapacity());
 
-        if(bookings != null && !bookings.isEmpty()) {
+        if (bookings != null && !bookings.isEmpty()) {
             bookings.forEach(b -> {
                 if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.REQUESTED) {
                     event.getVenue().setAvailability(event.getVenue().getAvailability() - 1);
@@ -114,30 +112,12 @@ public class EventService {
     public Map<String, EventDto> getEventMap() {
         Iterable<Course> courses = courseRepository.findAll();
 
-        return getStringEventDtoMap(courses);
+        return eventDtoMapService.getStringEventDtoMap(courses);
     }
 
     public Map<String, EventDto> getEventMapBySupplier(String supplier, Pageable pageable) {
         Iterable<Course> courses = courseRepository.findAllBySupplier(supplier, pageable);
 
-        return getStringEventDtoMap(courses);
-    }
-
-    private Map<String, EventDto> getStringEventDtoMap(Iterable<Course> courses) {
-        Map<String, EventDto> results = new HashMap<>();
-
-        for (Course course : courses) {
-            List<FaceToFaceModule> modules = course.getModules().stream()
-                    .filter(m -> m.getModuleType().equals("face-to-face"))
-                    .map(m -> (FaceToFaceModule) m)
-                    .collect(Collectors.toList());
-
-            for (FaceToFaceModule module : modules) {
-                for (Event event : module.getEvents()) {
-                    results.put(event.getId(), eventDtoFactory.create(event, module, course));
-                }
-            }
-        }
-        return results;
+        return eventDtoMapService.getStringEventDtoMapForSupplier(courses);
     }
 }
