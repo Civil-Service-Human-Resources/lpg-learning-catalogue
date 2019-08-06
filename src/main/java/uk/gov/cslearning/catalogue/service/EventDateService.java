@@ -14,6 +14,5 @@ public class EventDateService {
         return event.getDateRanges()
                 .stream()
                 .min(Comparator.comparing(DateRange::getDate));
-
     }
 }
