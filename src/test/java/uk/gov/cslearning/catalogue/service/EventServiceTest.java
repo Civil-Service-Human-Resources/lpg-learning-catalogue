@@ -6,8 +6,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.*;
+import uk.gov.cslearning.catalogue.dto.CourseDto;
+import uk.gov.cslearning.catalogue.dto.EventDto;
+import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
@@ -24,6 +29,9 @@ public class EventServiceTest {
 
     @Mock
     private CourseRepository courseRepository;
+
+    @Mock
+    private EventDtoMapService eventDtoMapService;
 
     @Mock
     private LearnerRecordService learnerRecordService;
@@ -128,5 +136,80 @@ public class EventServiceTest {
         Assert.assertEquals(eventService.getCancellationReason(eventId), cancellationReason);
 
         verify(learnerRecordService).getCancellationReason(eventId);
+    }
+
+    @Test
+    public void shouldGetEventMap() {
+        String courseTitle = "course-title";
+        String courseId = "course-id";
+        String moduleId = "module-id";
+        String moduleTitle = "module-title";
+        String eventId = "event-id";
+
+        Course course = new Course();
+        course.setTitle(courseTitle);
+        course.setId(courseId);
+
+        CourseDto courseDto = new CourseDto();
+        courseDto.setTitle(courseTitle);
+        courseDto.setId(courseId);
+
+        ModuleDto moduleDto = new ModuleDto();
+        moduleDto.setId(moduleId);
+        moduleDto.setTitle(moduleTitle);
+        moduleDto.setCourse(courseDto);
+
+        EventDto eventDto = new EventDto();
+        eventDto.setId(eventId);
+        eventDto.setModule(moduleDto);
+
+        List<Course> courses = Collections.singletonList(course);
+        when(courseRepository.findAll()).thenReturn(courses);
+
+        Map<String, EventDto> stringEventDtoMap = new HashMap<>();
+        stringEventDtoMap.put(eventId, eventDto);
+
+        when(eventDtoMapService.getStringEventDtoMap(courses)).thenReturn(stringEventDtoMap);
+        Assert.assertEquals(eventService.getEventMap(), stringEventDtoMap);
+    }
+
+    @Test
+    public void shouldGetEventMapBySupplier() {
+        String supplier = "SUPPLIER";
+        Pageable unpaged = Pageable.unpaged();
+
+        String courseTitle = "course-title";
+        String courseId = "course-id";
+        String moduleId = "module-id";
+        String moduleTitle = "module-title";
+        String eventId = "event-id";
+
+        Course course = new Course();
+        course.setTitle(courseTitle);
+        course.setId(courseId);
+
+        CourseDto courseDto = new CourseDto();
+        courseDto.setTitle(courseTitle);
+        courseDto.setId(courseId);
+
+        ModuleDto moduleDto = new ModuleDto();
+        moduleDto.setId(moduleId);
+        moduleDto.setTitle(moduleTitle);
+        moduleDto.setCourse(courseDto);
+
+        EventDto eventDto = new EventDto();
+        eventDto.setId(eventId);
+        eventDto.setModule(moduleDto);
+
+        Page<Course> courses = Page.empty();
+        when(courseRepository.findAllBySupplier(supplier, unpaged)).thenReturn(courses);
+
+        Map<String, EventDto> stringEventDtoMap = new HashMap<>();
+        stringEventDtoMap.put(eventId, eventDto);
+
+        when(eventDtoMapService.getStringEventDtoMapForSupplier(courses)).thenReturn(stringEventDtoMap);
+
+
+        Assert.assertEquals(eventService.getEventMapBySupplier(supplier, unpaged), stringEventDtoMap);
     }
 }
