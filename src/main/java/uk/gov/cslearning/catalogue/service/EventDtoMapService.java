@@ -32,10 +32,7 @@ public class EventDtoMapService {
         Map<String, EventDto> results = new HashMap<>();
 
         for (Course course : courses) {
-            List<FaceToFaceModule> modules = course.getModules().stream()
-                    .filter(m -> m.getModuleType().equals("face-to-face"))
-                    .map(m -> (FaceToFaceModule) m)
-                    .collect(Collectors.toList());
+            List<FaceToFaceModule> modules = getFaceToFaceModules(course);
 
             for (FaceToFaceModule module : modules) {
                 for (Event event : module.getEvents()) {
@@ -51,10 +48,7 @@ public class EventDtoMapService {
         ChronoLocalDate retentionDate = LocalDate.now().minusDays(retentionTimeInDays);
 
         for (Course course : courses) {
-            List<FaceToFaceModule> modules = course.getModules().stream()
-                    .filter(m -> m.getModuleType().equals("face-to-face"))
-                    .map(m -> (FaceToFaceModule) m)
-                    .collect(Collectors.toList());
+            List<FaceToFaceModule> modules = getFaceToFaceModules(course);
 
             for (FaceToFaceModule module : modules) {
                 for (Event event : module.getEvents()) {
@@ -67,5 +61,12 @@ public class EventDtoMapService {
             }
         }
         return results;
+    }
+
+    private List<FaceToFaceModule> getFaceToFaceModules(Course course) {
+        return course.getModules().stream()
+                .filter(m -> m.getModuleType().equals("face-to-face"))
+                .map(m -> (FaceToFaceModule) m)
+                .collect(Collectors.toList());
     }
 }
