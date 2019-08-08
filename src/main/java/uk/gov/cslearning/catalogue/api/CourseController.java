@@ -191,6 +191,15 @@ public class CourseController {
         return new ResponseEntity<>(result, OK);
     }
 
+
+    @PostMapping(value = "/getIds")
+    public ResponseEntity<Iterable<Course>> getId(@RequestBody List<String> courseIds) {
+        LOGGER.debug("Getting courses with IDs {}", courseIds);
+        Iterable<Course> result = courseRepository.findAllById(courseIds);
+        return new ResponseEntity<>(result, OK);
+    }
+
+
     @GetMapping("/{courseId}")
     public ResponseEntity<Course> get(@PathVariable("courseId") String courseId) {
         LOGGER.debug("Getting course with ID {}", courseId);

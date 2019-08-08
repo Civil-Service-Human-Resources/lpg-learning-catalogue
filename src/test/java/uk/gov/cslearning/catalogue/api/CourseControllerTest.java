@@ -419,6 +419,22 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.title", equalTo("title")));
     }
 
+    @Test
+    public void shouldReturnCoursesByIds() throws Exception {
+        List<String> courses = Arrays.asList("1");
+        Iterable<Course> result = new ArrayList<>();
+
+        when(courseRepository.findAllById(courses))
+                .thenReturn(result);
+
+        mockMvc.perform(
+                post("/courses/getIds").with(csrf())
+                        .content(objectMapper.writeValueAsString(courses))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
 
     @Test
     public void shouldUpdateExistingCourse() throws Exception {
