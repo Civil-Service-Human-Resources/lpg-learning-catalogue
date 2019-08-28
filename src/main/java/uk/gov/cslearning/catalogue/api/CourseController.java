@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -139,6 +140,28 @@ public class CourseController {
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }
 
+    @GetMapping(value = "/required")
+    public ResponseEntity<Map<String, List<Course>>> getRequiredLearningByOrgCodeMap() {
+        Map<String, List<Course>> requiredCoursesByOrgCode = new HashMap<>();
+
+        Map<String, List<String>> organisationParentsMap = courseService.getOrganisationParentsMap();
+        organisationParentsMap.forEach((s, organisationalUnitList) -> {
+            LOGGER.info("Getting required courses for {}", s);
+
+            List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationalUnitList, "Published", PageRequest.of(0, 10000));
+
+            Set<String> courseSet = new HashSet<>();
+            List<Course> filteredCourses = courses
+                    .stream()
+                    .filter(e -> courseSet.add(e.getId()))
+                    .collect(Collectors.toList());
+
+            requiredCoursesByOrgCode.put(s, filteredCourses);
+        });
+        return ResponseEntity.ok(requiredCoursesByOrgCode);
+    }
+
+
     @RoleMapping("ORGANISATION_AUTHOR")
     @GetMapping(value = "/management")
     public ResponseEntity<PageResults<Course>> listForOrganisation(Pageable pageable) {
@@ -193,7 +216,7 @@ public class CourseController {
 
 
     @PostMapping(value = "/getIds")
-    public ResponseEntity<Iterable<Course>> getId(@RequestBody List<String> courseIds) {
+    public ResponseEntity<Iterable<Course>> getIds(@RequestBody List<String> courseIds) {
         LOGGER.debug("Getting courses with IDs {}", courseIds);
         Iterable<Course> result = courseRepository.findAllById(courseIds);
         return new ResponseEntity<>(result, OK);

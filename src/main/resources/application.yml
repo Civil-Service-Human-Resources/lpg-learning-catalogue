@@ -50,6 +50,7 @@ registry:
   serviceUrl: ${REGISTRY_SERVICE_URL:http://localhost:9002}
   getCurrentUrl: "${registry.serviceUrl}/civilServants/me"
   getOrganisationalUnit: "${registry.serviceUrl}/organisationalUnits/parent/%s"
+  getAllCodes: "${registry.serviceUrl}/organisationalUnits/allCodesMap"
 
 oauth:
   serviceUrl: ${OAUTH_SERVICE_URL:http://localhost:8080}

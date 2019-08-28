@@ -15,7 +15,9 @@ import uk.gov.cslearning.catalogue.service.record.RequestEntityFactory;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RegistryService {
@@ -24,6 +26,7 @@ public class RegistryService {
     private OAuth2RestOperations restOperations;
 
     private URI getCurrentUrl;
+    private String getAllCodes;
 
     private String getOrganisationalUnit;
 
@@ -35,12 +38,14 @@ public class RegistryService {
                            RequestEntityFactory requestEntityFactory,
                            @Value("${registry.getCurrentUrl}") URI getCurrentUrl,
                            @Value("${registry.getOrganisationalUnit}") String getOrganisationalUnit,
+                           @Value("${registry.getAllCodes}") String getAllCodes,
                            ParameterizedTypeReferenceFactory parameterizedTypeReferenceFactory) {
         this.restOperations = restOperations;
         this.requestEntityFactory = requestEntityFactory;
         this.getCurrentUrl = getCurrentUrl;
         this.getOrganisationalUnit = getOrganisationalUnit;
         this.parameterizedTypeReferenceFactory = parameterizedTypeReferenceFactory;
+        this.getAllCodes = getAllCodes;
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -69,5 +74,21 @@ public class RegistryService {
             return response.getBody();
         }
         return new ArrayList<>();
+    }
+
+    public Map<String, List<String>> getOrganisationalUnitParentsMap() {
+        LOGGER.debug("Getting profile details for authenticated user");
+        RequestEntity requestEntity = requestEntityFactory.createGetRequest(getAllCodes);
+
+        ResponseEntity<Map<String, List<String>>> response = null;
+        try {
+            response = restOperations.exchange(requestEntity, parameterizedTypeReferenceFactory.createMapReference(String.class));
+        } catch (IllegalTypeException e) {
+            e.printStackTrace();
+        }
+        if (response.getBody() != null) {
+            return response.getBody();
+        }
+        return new HashMap<>();
     }
 }

@@ -11,10 +11,7 @@ import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -131,5 +128,9 @@ public class CourseService {
             });
         }
         return list;
+    }
+
+    public Map<String, List<String>> getOrganisationParentsMap() {
+        return registryService.getOrganisationalUnitParentsMap();
     }
 }

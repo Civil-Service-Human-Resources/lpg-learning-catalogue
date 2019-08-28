@@ -284,4 +284,13 @@ public class CourseServiceTest {
         assertEquals(course.getTitle(), "newtitle");
         assertEquals(course.getLearningProvider(), null);
     }
+
+    @Test
+    public void shouldReturnOrganisationalUnitParentsMap() {
+        Map<String, List<String>> organisationalUnitParentsMap = new HashMap<>();
+
+        when(registryService.getOrganisationalUnitParentsMap()).thenReturn(organisationalUnitParentsMap);
+
+        assertEquals(organisationalUnitParentsMap, courseService.getOrganisationParentsMap());
+    }
 }
