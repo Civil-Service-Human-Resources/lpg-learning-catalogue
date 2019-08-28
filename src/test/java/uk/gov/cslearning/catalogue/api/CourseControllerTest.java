@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
@@ -282,6 +283,20 @@ public class CourseControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldGetRequiredLearningByOrgCodeMap() throws Exception {
+        Map<String, List<String>> organisationalUnitsParentMap = new HashMap<>();
+        List<String> departmentsList = Arrays.asList("dept1", "dept2");
+        List<Course> courseList = Arrays.asList(new Course(), new Course());
+
+        when(courseService.getOrganisationParentsMap()).thenReturn(organisationalUnitsParentMap);
+        when(courseRepository.findMandatoryOfMultipleDepts(departmentsList, "Published", PageRequest.of(0, 10000))).thenReturn(courseList);
+        mockMvc.perform(
+                get("/courses/required")
+                        .with(csrf()))
+                .andExpect(status().isOk());
     }
 
     @Test

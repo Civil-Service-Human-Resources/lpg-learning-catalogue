@@ -21,9 +21,23 @@ public class ParameterizedTypeReferenceFactory {
             }
     );
 
+    private final Map<String, ParameterizedTypeReference> mapParameterizedTypeReferenceMap = ImmutableMap.of(
+            "java.lang.String",
+            new ParameterizedTypeReference<Map<String, List<String>>>() {
+            }
+    );
+
     <T> ParameterizedTypeReference<List<T>> createListReference(Class<T> type) throws IllegalTypeException {
         if (listParameterizedTypeReferenceMap.containsKey(type.getName())) {
             return listParameterizedTypeReferenceMap.get(type.getName());
+        }
+
+        throw new IllegalTypeException(type);
+    }
+
+    <T> ParameterizedTypeReference<Map<String, List<T>>> createMapReference(Class<T> type) throws IllegalTypeException {
+        if (mapParameterizedTypeReferenceMap.containsKey(type.getName())) {
+            return mapParameterizedTypeReferenceMap.get(type.getName());
         }
 
         throw new IllegalTypeException(type);
