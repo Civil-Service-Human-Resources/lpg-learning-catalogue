@@ -161,6 +161,30 @@ public class CourseController {
         return ResponseEntity.ok(requiredCoursesByOrgCode);
     }
 
+    @GetMapping(value = "/required", params = {"days"})
+    public ResponseEntity<Map<String, List<Course>>> getRequiredLearningByOrgCodeMapDueWithinPeriod(@RequestParam("days") long days) {
+        Map<String, List<Course>> requiredCoursesByOrgCode = new HashMap<>();
+
+        Map<String, List<String>> organisationParentsMap = courseService.getOrganisationParentsMap();
+        organisationParentsMap.forEach((s, organisationalUnitList) -> {
+            LOGGER.info("Getting required courses for {}", s);
+
+            List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationalUnitList, "Published", PageRequest.of(0, 10000));
+
+            Set<String> courseSet = new HashSet<>();
+            List<Course> filteredCourses = courses
+                    .stream()
+                    .filter(e -> courseSet.add(e.getId()))
+                    .filter(course -> courseService.isCourseRequiredWithinDaysForOrg(course, organisationalUnitList, days))
+                    .collect(Collectors.toList());
+
+            if (!filteredCourses.isEmpty()) {
+                requiredCoursesByOrgCode.put(s, filteredCourses);
+            }
+        });
+        return ResponseEntity.ok(requiredCoursesByOrgCode);
+    }
+
 
     @RoleMapping("ORGANISATION_AUTHOR")
     @GetMapping(value = "/management")

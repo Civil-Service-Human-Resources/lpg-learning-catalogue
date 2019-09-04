@@ -20,9 +20,10 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -53,6 +54,9 @@ public class CourseServiceTest {
 
     @Mock
     private OwnerFactory ownerFactory;
+
+    @Mock
+    private RequiredByService requiredByService;
 
     @InjectMocks
     private CourseService courseService;
@@ -292,5 +296,61 @@ public class CourseServiceTest {
         when(registryService.getOrganisationalUnitParentsMap()).thenReturn(organisationalUnitParentsMap);
 
         assertEquals(organisationalUnitParentsMap, courseService.getOrganisationParentsMap());
+    }
+
+    @Test
+    public void shouldReturnTrueIfAudienceRequiredWithinDays() {
+        String co = "co";
+        String hmrc = "hmrc";
+        Set<String> departments1 = new HashSet<>(Arrays.asList(co, hmrc));
+
+        String moj = "moj";
+        String defra = "defra";
+        Set<String> departments2 = new HashSet<>(Arrays.asList(moj, defra));
+
+        Audience audience1 = new Audience();
+        audience1.setDepartments(departments1);
+
+        Audience audience2 = new Audience();
+        audience2.setDepartments(departments2);
+
+        Set<Audience> audiences = new HashSet<>(Arrays.asList(audience1, audience2));
+
+        Course course = new Course();
+        course.setAudiences(audiences);
+
+        List<String> codeList = Arrays.asList(co, hmrc);
+
+        when(requiredByService.isAudienceRequiredWithinDays(any(Audience.class), any(Instant.class), any(long.class))).thenReturn(true);
+
+        assertTrue(courseService.isCourseRequiredWithinDaysForOrg(course, codeList, 7l));
+    }
+
+    @Test
+    public void shouldReturnFalseIfAudienceNotRequiredWithinDays() {
+        String co = "co";
+        String hmrc = "hmrc";
+        Set<String> departments1 = new HashSet<>(Arrays.asList(co, hmrc));
+
+        String moj = "moj";
+        String defra = "defra";
+        Set<String> departments2 = new HashSet<>(Arrays.asList(moj, defra));
+
+        Audience audience1 = new Audience();
+        audience1.setDepartments(departments1);
+
+        Audience audience2 = new Audience();
+        audience2.setDepartments(departments2);
+
+        Set<Audience> audiences = new HashSet<>(Arrays.asList(audience1, audience2));
+
+        Course course = new Course();
+        course.setAudiences(audiences);
+
+        List<String> codeList = Arrays.asList(co, hmrc);
+
+        when(requiredByService.isAudienceRequiredWithinDays(any(Audience.class), any(Instant.class), any(long.class))).thenReturn(false);
+
+        assertFalse(courseService.isCourseRequiredWithinDaysForOrg(course, codeList, 7l));
     }
 }

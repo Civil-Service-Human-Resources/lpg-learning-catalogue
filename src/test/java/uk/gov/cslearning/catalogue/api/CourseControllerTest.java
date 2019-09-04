@@ -300,6 +300,21 @@ public class CourseControllerTest {
     }
 
     @Test
+    public void shouldGetRequiredLearningByOrgCodeMapWithParams() throws Exception {
+        Map<String, List<String>> organisationalUnitsParentMap = new HashMap<>();
+        List<String> departmentsList = Arrays.asList("dept1", "dept2");
+        List<Course> courseList = Arrays.asList(new Course(), new Course());
+
+        when(courseService.getOrganisationParentsMap()).thenReturn(organisationalUnitsParentMap);
+        when(courseRepository.findMandatoryOfMultipleDepts(departmentsList, "Published", PageRequest.of(0, 10000))).thenReturn(courseList);
+        mockMvc.perform(
+                get("/courses/required")
+                        .param("days", "7")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void shouldListMandatoryCoursesWithMultipleParameters() throws Exception {
         String department = "department1,department2";
         String status = "Draft,Published";

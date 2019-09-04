@@ -8,9 +8,11 @@ import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
+import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -28,12 +30,15 @@ public class CourseService {
 
     private final AuthoritiesService authoritiesService;
 
-    public CourseService(CourseRepository courseRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService) {
+    private RequiredByService requiredByService;
+
+    public CourseService(CourseRepository courseRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService, RequiredByService requiredByService) {
         this.courseRepository = courseRepository;
         this.eventService = eventService;
         this.registryService = registryService;
         this.ownerFactory = ownerFactory;
         this.authoritiesService = authoritiesService;
+        this.requiredByService = requiredByService;
     }
 
     public Course save(Course course) {
@@ -133,4 +138,16 @@ public class CourseService {
     public Map<String, List<String>> getOrganisationParentsMap() {
         return registryService.getOrganisationalUnitParentsMap();
     }
+
+    public boolean isCourseRequiredWithinDaysForOrg(Course course, List<String> organisationalUnitList, long days) {
+        List<Audience> orgAudiences = course.getAudiences()
+                .stream()
+                .filter(audience -> organisationalUnitList.stream().anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
+                .collect(Collectors.toList());
+
+        return orgAudiences
+                .stream()
+                .anyMatch(audience -> requiredByService.isAudienceRequiredWithinDays(audience, Instant.now(), days));
+    }
+
 }
