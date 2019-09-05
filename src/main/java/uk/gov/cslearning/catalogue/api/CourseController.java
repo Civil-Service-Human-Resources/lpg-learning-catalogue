@@ -161,7 +161,7 @@ public class CourseController {
         return ResponseEntity.ok(requiredCoursesByOrgCode);
     }
 
-    @GetMapping(value = "/required", params = {"from, to"})
+    @GetMapping(value = "/required", params = {"from", "to"})
     public ResponseEntity<Map<String, List<Course>>> getRequiredLearningByOrgCodeMapDueWithinRange(@RequestParam("from") long from, @RequestParam("to") long to) {
         Map<String, List<Course>> requiredCoursesByOrgCode = new HashMap<>();
 
