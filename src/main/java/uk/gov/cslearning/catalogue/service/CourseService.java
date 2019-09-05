@@ -139,7 +139,7 @@ public class CourseService {
         return registryService.getOrganisationalUnitParentsMap();
     }
 
-    public boolean isCourseRequiredWithinDaysForOrg(Course course, List<String> organisationalUnitList, long days) {
+    public boolean isCourseRequiredWithinRangeForOrg(Course course, List<String> organisationalUnitList, long from, long to) {
         List<Audience> orgAudiences = course.getAudiences()
                 .stream()
                 .filter(audience -> organisationalUnitList.stream().anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
@@ -147,7 +147,6 @@ public class CourseService {
 
         return orgAudiences
                 .stream()
-                .anyMatch(audience -> requiredByService.isAudienceRequiredWithinDays(audience, Instant.now(), days));
+                .anyMatch(audience -> requiredByService.isAudienceRequiredWithinRange(audience, Instant.now(), from, to));
     }
-
 }

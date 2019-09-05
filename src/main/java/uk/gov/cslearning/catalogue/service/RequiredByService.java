@@ -11,7 +11,7 @@ import java.time.ZoneOffset;
 @Service
 public class RequiredByService {
 
-    public boolean isAudienceRequiredWithinDays(Audience audience, Instant now, long days) {
+    public boolean isAudienceRequiredWithinRange(Audience audience, Instant now, long from, long to) {
         if (audience.getRequiredBy() == null) {
             return false;
         }
@@ -19,20 +19,22 @@ public class RequiredByService {
         LocalDate requiredByLocalDate = requiredBy.atOffset(ZoneOffset.UTC).toLocalDate();
 
         LocalDate nowLocalDate = now.atOffset(ZoneOffset.UTC).toLocalDate();
-        LocalDate nowPlusDays = now.atOffset(ZoneOffset.UTC).toLocalDate().plusDays(days);
+
+        LocalDate nowPlusFrom = now.atOffset(ZoneOffset.UTC).toLocalDate().plusDays(from);
+        LocalDate nowPlusTo = now.atOffset(ZoneOffset.UTC).toLocalDate().plusDays(to);
 
         if (audience.getFrequency() == null) {
             if (requiredByLocalDate.isBefore(nowLocalDate)) {
                 return false;
             } else {
-                return isWithinRange(requiredByLocalDate, nowPlusDays);
+                return isWithinRange(requiredByLocalDate, nowPlusFrom, nowPlusTo);
             }
         } else {
             Period period = Period.parse(audience.getFrequency());
             while (requiredByLocalDate.isBefore(nowLocalDate)) {
                 requiredByLocalDate = increment(requiredByLocalDate, period);
             }
-            return isWithinRange(requiredByLocalDate, nowPlusDays);
+            return isWithinRange(requiredByLocalDate, nowPlusFrom, nowPlusTo);
         }
     }
 
@@ -40,7 +42,7 @@ public class RequiredByService {
         return localDate.plus(period);
     }
 
-    private boolean isWithinRange(LocalDate requiredByLocalDate, LocalDate nowPlusDays) {
-        return requiredByLocalDate.isBefore(nowPlusDays) || requiredByLocalDate.isEqual(nowPlusDays);
+    private boolean isWithinRange(LocalDate requiredByLocalDate, LocalDate nowPlusFrom, LocalDate nowPlusTo) {
+        return requiredByLocalDate.isAfter(nowPlusFrom) && (requiredByLocalDate.isBefore(nowPlusTo) || requiredByLocalDate.isEqual(nowPlusTo));
     }
 }

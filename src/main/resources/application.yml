@@ -37,6 +37,8 @@ azure:
 management:
   endpoints:
     web:
+      exposure:
+        include: '*'
       cors:
         allowed-origins: "*"
         allowed-methods: "GET, PUT, POST, DELETE, OPTIONS"

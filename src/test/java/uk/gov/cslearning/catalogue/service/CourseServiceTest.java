@@ -321,9 +321,9 @@ public class CourseServiceTest {
 
         List<String> codeList = Arrays.asList(co, hmrc);
 
-        when(requiredByService.isAudienceRequiredWithinDays(any(Audience.class), any(Instant.class), any(long.class))).thenReturn(true);
+        when(requiredByService.isAudienceRequiredWithinRange(any(Audience.class), any(Instant.class), any(long.class), any(long.class))).thenReturn(true);
 
-        assertTrue(courseService.isCourseRequiredWithinDaysForOrg(course, codeList, 7l));
+        assertTrue(courseService.isCourseRequiredWithinRangeForOrg(course, codeList, 1L, 7L));
     }
 
     @Test
@@ -349,8 +349,8 @@ public class CourseServiceTest {
 
         List<String> codeList = Arrays.asList(co, hmrc);
 
-        when(requiredByService.isAudienceRequiredWithinDays(any(Audience.class), any(Instant.class), any(long.class))).thenReturn(false);
+        when(requiredByService.isAudienceRequiredWithinRange(any(Audience.class), any(Instant.class), any(long.class), any(long.class))).thenReturn(false);
 
-        assertFalse(courseService.isCourseRequiredWithinDaysForOrg(course, codeList, 7l));
+        assertFalse(courseService.isCourseRequiredWithinRangeForOrg(course, codeList, 1L, 7L));
     }
 }

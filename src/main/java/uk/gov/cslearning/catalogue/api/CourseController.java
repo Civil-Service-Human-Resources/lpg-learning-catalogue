@@ -161,8 +161,8 @@ public class CourseController {
         return ResponseEntity.ok(requiredCoursesByOrgCode);
     }
 
-    @GetMapping(value = "/required", params = {"days"})
-    public ResponseEntity<Map<String, List<Course>>> getRequiredLearningByOrgCodeMapDueWithinPeriod(@RequestParam("days") long days) {
+    @GetMapping(value = "/required", params = {"from, to"})
+    public ResponseEntity<Map<String, List<Course>>> getRequiredLearningByOrgCodeMapDueWithinRange(@RequestParam("from") long from, @RequestParam("to") long to) {
         Map<String, List<Course>> requiredCoursesByOrgCode = new HashMap<>();
 
         Map<String, List<String>> organisationParentsMap = courseService.getOrganisationParentsMap();
@@ -175,7 +175,7 @@ public class CourseController {
             List<Course> filteredCourses = courses
                     .stream()
                     .filter(e -> courseSet.add(e.getId()))
-                    .filter(course -> courseService.isCourseRequiredWithinDaysForOrg(course, organisationalUnitList, days))
+                    .filter(course -> courseService.isCourseRequiredWithinRangeForOrg(course, organisationalUnitList, from, to))
                     .collect(Collectors.toList());
 
             if (!filteredCourses.isEmpty()) {
