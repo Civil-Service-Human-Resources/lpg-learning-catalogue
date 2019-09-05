@@ -24,7 +24,7 @@ public class RequiredByServiceTest {
 
         Audience audience = new Audience();
 
-        assertFalse(requiredByService.isAudienceRequiredWithinDays(audience, now, 7));
+        assertFalse(requiredByService.isAudienceRequiredWithinRange(audience, now, 1, 7));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class RequiredByServiceTest {
         Audience audience = new Audience();
         audience.setRequiredBy(requiredBy);
 
-        assertTrue(requiredByService.isAudienceRequiredWithinDays(audience, now, 7));
+        assertTrue(requiredByService.isAudienceRequiredWithinRange(audience, now, 1, 7));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class RequiredByServiceTest {
         Audience audience = new Audience();
         audience.setRequiredBy(requiredBy);
 
-        assertFalse(requiredByService.isAudienceRequiredWithinDays(audience, now, 7));
+        assertFalse(requiredByService.isAudienceRequiredWithinRange(audience, now, 1, 7));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class RequiredByServiceTest {
         Audience audience = new Audience();
         audience.setRequiredBy(requiredBy);
 
-        assertFalse(requiredByService.isAudienceRequiredWithinDays(audience, now, 7));
+        assertFalse(requiredByService.isAudienceRequiredWithinRange(audience, now, 1, 7));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class RequiredByServiceTest {
         audience.setRequiredBy(requiredBy);
         audience.setFrequency("P1Y");
 
-        assertTrue(requiredByService.isAudienceRequiredWithinDays(audience, now, 7));
+        assertTrue(requiredByService.isAudienceRequiredWithinRange(audience, now, 1, 7));
     }
 
     @Test
@@ -96,6 +96,6 @@ public class RequiredByServiceTest {
         audience.setRequiredBy(requiredBy);
         audience.setFrequency("P1Y");
 
-        assertFalse(requiredByService.isAudienceRequiredWithinDays(audience, now, 7));
+        assertFalse(requiredByService.isAudienceRequiredWithinRange(audience, now, 1, 7));
     }
 }
