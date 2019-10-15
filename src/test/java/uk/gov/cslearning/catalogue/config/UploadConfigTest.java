@@ -47,6 +47,8 @@ public class UploadConfigTest {
                 .put("xlsx", defaultUploader)
                 .put("mp4", defaultUploader)
                 .put("zip", scormUploader)
+                .put("jpg", defaultUploader)
+                .put("png", defaultUploader)
                 .build();
 
         assertEquals(uploaderMap.keySet(), config.uploaderMap(defaultUploader, scormUploader).keySet());
@@ -98,6 +100,8 @@ public class UploadConfigTest {
                 .put("xlsx", defaultFileProcessor) // MS Excel
                 .put("zip",  scormFileProcessor) // Scorm
                 .put("mp4",  mp4FileProcessor)     // Video
+                .put("jpg", defaultFileProcessor) // Image
+                .put("png", defaultFileProcessor) // Image
                 .build();
 
         assertEquals(fileProcessorMap.keySet(),

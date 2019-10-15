@@ -41,6 +41,8 @@ public class UploadConfig {
                 .put("xlsx", defaultUploader) // MS Excel
                 .put("mp4",  defaultUploader) // Video
                 .put("zip",  scormUploader)   // Scorm
+                .put("jpg", defaultUploader) // Image
+                .put("png", defaultUploader) // Image
                 .build();
 
     }
@@ -74,6 +76,8 @@ public class UploadConfig {
                 .put("xlsx", defaultFileProcessor) // MS Excel
                 .put("zip", scormFileProcessor) // Scorm
                 .put("mp4",  mp4FileProcessor)     // Video
+                .put("jpg", defaultFileProcessor) // Image
+                .put("png", defaultFileProcessor) // Image
                 .build();
     }
 
