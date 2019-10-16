@@ -126,16 +126,13 @@ public class CourseController {
         List<String> organisationParents = courseService.getOrganisationParents(department);
 
         List<Course> courses = new ArrayList<>();
-        for (String d : organisationParents) {
-            courses.addAll(courseRepository.findMandatory(d, status, pageable));
-        }
+//        for (String d : organisationParents) {
+//            courses.addAll(courseService.getMandatoryCourses(d, status, pageable));
+//        }
 
-        Set<String> courseSet = new HashSet<>();
-        List<Course> filteredCourses = courses.stream()
-                .filter(e -> courseSet.add(e.getId()))
-                .collect(Collectors.toList());
+        List<Course> filteredCourses = courseService.getMandatoryCourses(organisationParents, status, pageable);
 
-        Page<Course> page = new PageImpl<>(filteredCourses, pageable, courses.size());
+        Page<Course> page = new PageImpl<>(filteredCourses, pageable, courseService.getSizeOfmandatoryCoursesForRightDepartment());
 
         return ResponseEntity.ok(new PageResults<>(page, pageable));
     }

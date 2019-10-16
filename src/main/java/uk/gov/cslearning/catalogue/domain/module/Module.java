@@ -33,7 +33,17 @@ public abstract class Module {
 
     private boolean optional;
 
+    private boolean associatedLearning; 
+
     private Status status;
+
+    public boolean isAssociatedLearning() {
+        return associatedLearning;
+    }
+
+    public void setAssociatedLearning(boolean associatedLearning) {
+        this.associatedLearning = associatedLearning;
+    }
 
     public Module() {
     }

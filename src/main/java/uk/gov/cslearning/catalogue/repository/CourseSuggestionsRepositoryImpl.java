@@ -48,4 +48,23 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
         return operations.queryForPage(searchQuery, Course.class);
     }
+    @Override
+    public List<Course> findMandatory(String status, Pageable pageable) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        BoolQueryBuilder filterQuery = boolQuery();
+        filterQuery.must(QueryBuilders.matchQuery("status", status));
+        filterQuery.must(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .withFilter(filterQuery)
+                .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
+                .withPageable(pageable)
+                .build();
+
+        return operations.queryForList(searchQuery, Course.class);
+    }
+
+
 }

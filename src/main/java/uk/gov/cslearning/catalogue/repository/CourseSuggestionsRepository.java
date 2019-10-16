@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface CourseSuggestionsRepository {
     Page<Course> findSuggested(List<String> department, String areaOfWork, String interest, String status, String grade, Pageable pageable);
+
+    List<Course> findMandatory(String status, Pageable pageable);
 }

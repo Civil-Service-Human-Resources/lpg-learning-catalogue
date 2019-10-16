@@ -327,6 +327,89 @@ public class CourseServiceTest {
     }
 
     @Test
+    public void shouldReturnlistWithMatchedItems() {
+
+        String dh = "dh";
+        String hmrc = "hmrc";
+        Set<String> dh_hmrc_departments = new HashSet<>(Arrays.asList(dh, hmrc));
+
+        String moj = "moj";
+        String defra = "defra";
+        Set<String> moj_defra_departments = new HashSet<>(Arrays.asList(moj, defra));
+
+        Set<String> dhDepartment = new HashSet<>(Arrays.asList(dh));
+
+        Audience dh_hmrc_audiences = new Audience();
+        dh_hmrc_audiences.setDepartments(dh_hmrc_departments);
+        dh_hmrc_audiences.setType(Audience.Type.REQUIRED_LEARNING);
+
+        Audience moj_defra_audiences = new Audience();
+        moj_defra_audiences.setDepartments(moj_defra_departments);
+        moj_defra_audiences.setType(Audience.Type.OPEN);
+
+        Audience dhAudienceRequired = new Audience();
+        dhAudienceRequired.setDepartments(dhDepartment);
+        dhAudienceRequired.setType(Audience.Type.REQUIRED_LEARNING);
+
+        Audience dhAudienceOpen = new Audience();
+        dhAudienceOpen.setDepartments(dhDepartment);
+        dhAudienceOpen.setType(Audience.Type.OPEN);
+
+
+        Set<Audience> audiences1 = new HashSet<>(Arrays.asList(dh_hmrc_audiences, dhAudienceRequired));
+        Set<Audience> audiences2 = new HashSet<>(Arrays.asList(moj_defra_audiences));
+        Set<Audience> audiences3 = new HashSet<>(Arrays.asList(dhAudienceOpen));
+        Set<Audience> audiences4 = new HashSet<>(Arrays.asList(dhAudienceRequired, moj_defra_audiences));
+
+
+        Course course1 = new Course();
+        course1.setAudiences(audiences1);
+
+        Course course2 = new Course();
+        course2.setAudiences(audiences2);
+
+        Course course3 = new Course();
+        course3.setAudiences(audiences3);
+
+        Course course4 = new Course();
+        course4.setAudiences(audiences4);
+
+        List<String> organisationParents1 = new ArrayList<>();
+        organisationParents1.add("dh");
+
+        List<String> organisationParents2 = new ArrayList<>();
+        organisationParents2.add("dh");
+        organisationParents2.add("dfra");
+
+        List<String> organisationParents3 = new ArrayList<>();
+        organisationParents3.add("hmrc");
+
+        List<String> organisationParents4 = new ArrayList<>();
+        organisationParents4.add("defra");
+
+        String status = "Published";
+
+        List<Course> expected = new ArrayList<>();
+        expected.add(course1);
+        expected.add(course2);
+        expected.add(course3);
+        expected.add(course4);
+
+        when(courseRepository.findMandatory(status, PAGEABLE)).thenReturn(expected);
+
+        List<Course> mandatoryCourses1 = courseService.getMandatoryCourses(organisationParents1, status, PAGEABLE);
+        List<Course> mandatoryCourses2 = courseService.getMandatoryCourses(organisationParents2, status, PAGEABLE);
+        List<Course> mandatoryCourses3 = courseService.getMandatoryCourses(organisationParents3, status, PAGEABLE);
+        List<Course> mandatoryCourses4 = courseService.getMandatoryCourses(organisationParents4, status, PAGEABLE);
+
+        assertEquals(2, mandatoryCourses1.size());
+        assertEquals(2, mandatoryCourses2.size());
+        assertEquals(1, mandatoryCourses3.size());
+        assertEquals(0, mandatoryCourses4.size());
+
+    }
+
+    @Test
     public void shouldReturnFalseIfAudienceNotRequiredWithinDays() {
         String co = "co";
         String hmrc = "hmrc";
