@@ -1,7 +1,6 @@
 package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,6 @@ import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
-import uk.gov.cslearning.catalogue.repository.CourseSuggestionsRepository;
 
 import java.time.Instant;
 import java.util.*;
@@ -36,12 +34,13 @@ public class CourseService {
 
     private int sizeOfmandatoryCoursesForRightDepartment;
 
-    public CourseService(CourseRepository courseRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService) {
+    public CourseService(CourseRepository courseRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService, RequiredByService requiredByService) {
         this.courseRepository = courseRepository;
         this.eventService = eventService;
         this.registryService = registryService;
         this.ownerFactory = ownerFactory;
         this.authoritiesService = authoritiesService;
+        this.requiredByService = requiredByService;
     }
 
     public Course save(Course course) {
@@ -154,19 +153,14 @@ public class CourseService {
     }
 
 
-    public List<Course> getMandatoryCourses(List<String> organisationParents, String status, Pageable pageable)
-    {
+    public List<Course> getMandatoryCourses(List<String> organisationParents, String status, Pageable pageable) {
         List<Course> mandatoryCourses = courseRepository.findMandatory(status, pageable);
         List<Course> mandatoryCoursesForRightDepartment = new ArrayList<Course>();
 
-        for(Course c : mandatoryCourses)
-        {
-            for(Audience a : c.getAudiences() )
-            {
-                for(String d : a.getDepartments())
-                {
-                    if(organisationParents.stream().anyMatch( part -> part.equals(d)) && a.getType().equals(Audience.Type.REQUIRED_LEARNING))
-                    {
+        for (Course c : mandatoryCourses) {
+            for (Audience a : c.getAudiences()) {
+                for (String d : a.getDepartments()) {
+                    if (organisationParents.stream().anyMatch(part -> part.equals(d)) && a.getType().equals(Audience.Type.REQUIRED_LEARNING)) {
                         mandatoryCoursesForRightDepartment.add(c);
                     }
                 }
