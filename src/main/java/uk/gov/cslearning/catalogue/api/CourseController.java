@@ -126,9 +126,6 @@ public class CourseController {
         List<String> organisationParents = courseService.getOrganisationParents(department);
 
         List<Course> courses = new ArrayList<>();
-//        for (String d : organisationParents) {
-//            courses.addAll(courseService.getMandatoryCourses(d, status, pageable));
-//        }
 
         List<Course> filteredCourses = courseService.getMandatoryCourses(organisationParents, status, pageable);
 
