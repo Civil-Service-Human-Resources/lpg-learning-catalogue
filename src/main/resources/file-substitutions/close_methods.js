@@ -3,16 +3,16 @@
 var CLOSE_METHODS = {
 
     csl: function () {
-        var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+        // https://integration-cdn.cshr.digital
+        var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
         if (!match) {
             throw new Error('Content being accessed on invalid domain');
         }
-
         var moduleId = getParameterByName('module');
 
         var scheme = match[1];
         var env = !!match[2] ? match[2] + '-' : '';
-        var host = env + 'learn.' + 'civilservice.gov.uk/';
+        var host = env + 'cshr.' + 'digital/';
         var path = 'learning-record/' + match[3] + '/' + moduleId;
 
         if (match[2] === 'local') {

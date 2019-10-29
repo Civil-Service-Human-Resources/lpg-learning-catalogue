@@ -8,7 +8,8 @@ if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-settings"] && OBJ_NAV_BUTTONS["ext
 if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-search"] && OBJ_NAV_BUTTONS["extra-search"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-search"].booDefaultDisplayButton = false;
 if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-jlr-menu"] && OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton = false;
 
-var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+// https://integration-cdn.cshr.digital
+var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
 if (!match) {
     throw new Error('Content being accessed on invalid domain');
 }
@@ -16,7 +17,8 @@ var moduleId = getParameterByName('module');
 
 var scheme = match[1];
 var env = !!match[2] ? match[2] + '-' : '';
-var host = env + 'learn.' + 'civilservice.gov.uk/';
+var host = env + 'cshr.' + 'digital/';
+
 var path = 'learning-record/' + match[3] + '/' + moduleId + '/xapi';
 
 if (match[2] === 'local') {
