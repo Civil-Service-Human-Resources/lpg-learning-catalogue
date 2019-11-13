@@ -8,22 +8,32 @@ if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-settings"] && OBJ_NAV_BUTTONS["ext
 if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-search"] && OBJ_NAV_BUTTONS["extra-search"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-search"].booDefaultDisplayButton = false;
 if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-jlr-menu"] && OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton = false;
 
-var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+var url = window.location.toString();
+var env = !!url[2] ? url[2] + '-' : '';
+
+var match;
+var host;
+if (env === '') {
+    match = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+    host = env + 'cdn.' + 'cshr.digital/';
+} else {
+    match = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+    host = env + 'learn.' + 'civilservice.gov.uk/';
+}
+
 if (!match) {
     throw new Error('Content being accessed on invalid domain');
 }
 var moduleId = getParameterByName('module');
 
 var scheme = match[1];
-var env = !!match[2] ? match[2] + '-' : '';
-var host = env + 'learn.' + 'civilservice.gov.uk/';
 var path = 'learning-record/' + match[3] + '/' + moduleId + '/xapi';
 
 if (match[2] === 'local') {
     scheme = 'http';
     host = 'lpg.local.cshr.digital:3001/';
 }
-
+console.log('Matt portal: url: ' + url + "env: " + env + "path: " + path + "host: " + host);
 BOO_INCLUDE_EXIT_ON_NAV = false;
 BOO_INCLUDE_ACCESSIBLE_ON_NAV = false;
 CLOSE_METHOD = 'csl';

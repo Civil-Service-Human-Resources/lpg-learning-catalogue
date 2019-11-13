@@ -15,25 +15,35 @@ if (typeof XMLHttpRequest !== 'undefined') {
 var CLOSE_METHODS = {
 
   csl: function() {
-    var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+    var url = window.location.toString();
+    var env = !!url[2] ? url[2] + '-' : '';
+
+    var match;
+    var host;
+    if (env === '') {
+      match = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+      host = env + 'cdn.' + 'cshr.digital/';
+    } else {
+      match = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+      host = env + 'learn.' + 'civilservice.gov.uk/';
+    }
+
     if (!match) {
       throw new Error('Content being accessed on invalid domain');
     }
     var moduleId = getParameterByName('module');
 
     var scheme = match[1];
-    var env = !!match[2] ? match[2] + '-' : '';
-    var host = env + 'learn.' +'civilservice.gov.uk/';
     var path = 'learning-record/' + match[3] + '/' + moduleId;
 
     if (match[2] === 'local') {
       scheme = 'http';
       host = 'lpg.local.cshr.digital:3001/';
     }
-
+    console.log('Matt user: url: ' + url + "env: " + env + "path: " + path + "host: " + host);
     window.location = scheme + '://' + host + path;
     return true;
-  }
+    }
 };
 
 top.window.close = CLOSE_METHODS['csl'];
