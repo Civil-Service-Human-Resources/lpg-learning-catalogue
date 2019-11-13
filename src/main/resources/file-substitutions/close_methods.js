@@ -10,10 +10,10 @@ var CLOSE_METHODS = {
         var host;
         if (env === '') {
             match = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
-            host = env + 'cdn.' + 'cshr.digital/';
+            host = 'learn.civilservice.gov.uk/';
         } else {
             match = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
-            host = env + 'learn.' + 'civilservice.gov.uk/';
+            host = env + 'cdn.cshr.digital/';
         }
 
         if (!match) {
