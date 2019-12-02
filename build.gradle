@@ -54,6 +54,10 @@ dependencies {
     compile 'org.apache.tika:tika-core:1.18'
     compile 'org.apache.tika:tika-parsers:1.18'
 
+    compile group: 'com.microsoft.azure', name: 'applicationinsights-web-auto', version: '2.5.0'
+    compile group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: '2.5.0'
+    compile group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.5.0'
+
     testCompile 'com.google.code.gson:gson:2.8.2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.security:spring-security-test'
