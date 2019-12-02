@@ -8,5 +8,6 @@ public class ModuleDto {
     private String title;
     private String type;
     private boolean required;
+    private boolean associatedLearning;
     private CourseDto course;
 }
