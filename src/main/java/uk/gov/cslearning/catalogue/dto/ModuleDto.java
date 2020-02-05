@@ -9,4 +9,5 @@ public class ModuleDto {
     private String type;
     private boolean required;
     private CourseDto course;
+    private boolean associatedLearning;
 }

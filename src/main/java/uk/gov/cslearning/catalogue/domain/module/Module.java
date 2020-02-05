@@ -35,6 +35,8 @@ public abstract class Module {
 
     private Status status;
 
+    private boolean associatedLearning;
+
     public Module() {
     }
 
@@ -98,6 +100,14 @@ public abstract class Module {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isAssociatedLearning() {
+        return associatedLearning;
+    }
+
+    public void setAssociatedLearning(boolean associatedLearning) {
+        this.associatedLearning = associatedLearning;
     }
 
     public String getModuleType() {

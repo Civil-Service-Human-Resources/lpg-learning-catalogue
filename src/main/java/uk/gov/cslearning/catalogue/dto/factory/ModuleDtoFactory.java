@@ -21,6 +21,7 @@ public class ModuleDtoFactory {
         moduleDto.setType(module.getModuleType());
         moduleDto.setRequired(!module.isOptional());
         moduleDto.setCourse(courseDtoFactory.create(course));
+        moduleDto.setAssociatedLearning(module.isAssociatedLearning());
 
         return moduleDto;
     }
