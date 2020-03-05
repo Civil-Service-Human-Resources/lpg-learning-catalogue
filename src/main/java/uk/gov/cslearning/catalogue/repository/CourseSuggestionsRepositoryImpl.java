@@ -30,12 +30,12 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
     public Page<Course> findSuggested(List<String> departmentList, String areaOfWork, String interest, String status, String grade, Pageable pageable) {
         BoolQueryBuilder boolQuery = boolQuery();
 
-        departmentList.forEach(s -> boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
-        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", areaOfWork));
-        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.interests", interest));
+        departmentList.forEach(s -> boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments.keyword", s)));
+        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork.keyword", areaOfWork));
+        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.interests.keyword", interest));
 
         BoolQueryBuilder filterQuery = boolQuery();
-        filterQuery.must(QueryBuilders.matchQuery("audiences.grades", grade));
+        filterQuery.must(QueryBuilders.matchQuery("audiences.grades.keyword", grade));
         filterQuery.must(QueryBuilders.matchQuery("status", status));
         filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
 
