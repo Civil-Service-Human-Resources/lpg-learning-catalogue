@@ -17,6 +17,7 @@ import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
 import uk.gov.cslearning.catalogue.dto.CourseDto;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
+import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
@@ -42,6 +43,9 @@ public class ReportControllerTest {
 
     @MockBean
     private ModuleService moduleService;
+    
+    @MockBean
+    private CourseService courseService;
 
     @Test
     @WithMockUser(username = "user")
