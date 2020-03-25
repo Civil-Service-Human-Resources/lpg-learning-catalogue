@@ -29,7 +29,7 @@ public class ReportController {
         this.moduleService = moduleService;
         this.courseService = courseService;
     }
-    
+
     @GetMapping("/mandatoryCourses")
     public ResponseEntity<Map<String, CourseDto>> getAllRequiredPublished() {
         return ResponseEntity.ok(courseService.getPublishedRequiredCourses());
