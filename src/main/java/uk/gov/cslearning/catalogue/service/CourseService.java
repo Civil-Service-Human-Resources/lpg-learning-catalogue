@@ -10,6 +10,10 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
+import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.dto.CourseDto;
+import uk.gov.cslearning.catalogue.dto.ModuleDto;
+import uk.gov.cslearning.catalogue.dto.factory.CourseDtoFactory;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.time.Instant;
@@ -32,13 +36,16 @@ public class CourseService {
 
     private RequiredByService requiredByService;
 
-    public CourseService(CourseRepository courseRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService, RequiredByService requiredByService) {
+    private final CourseDtoFactory courseDtoFactory;
+
+    public CourseService(CourseRepository courseRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService, RequiredByService requiredByService, CourseDtoFactory courseDtoFactory) {
         this.courseRepository = courseRepository;
         this.eventService = eventService;
         this.registryService = registryService;
         this.ownerFactory = ownerFactory;
         this.authoritiesService = authoritiesService;
         this.requiredByService = requiredByService;
+        this.courseDtoFactory = courseDtoFactory;
     }
 
     public Course save(Course course) {
@@ -117,6 +124,14 @@ public class CourseService {
 
     public Page<Course> findAllCourses(Pageable pageable) {
         return courseRepository.findAll(pageable);
+    }
+
+    public Map<String, CourseDto> getPublishedRequiredCourses() {
+        Map<String, CourseDto> results = new HashMap<>();
+        for (Course course : courseRepository.findAllRequiredNoPagination("Published")) {
+            results.put(course.getId(), courseDtoFactory.create(course));
+        }
+        return results;
     }
 
     public List<String> getOrganisationParents(String departments) {
