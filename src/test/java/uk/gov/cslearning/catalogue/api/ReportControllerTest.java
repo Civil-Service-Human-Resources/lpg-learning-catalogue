@@ -43,7 +43,7 @@ public class ReportControllerTest {
 
     @MockBean
     private ModuleService moduleService;
-    
+
     @MockBean
     private CourseService courseService;
 
