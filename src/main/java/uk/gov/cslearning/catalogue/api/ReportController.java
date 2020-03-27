@@ -32,7 +32,7 @@ public class ReportController {
 
     @GetMapping("/mandatory-courses")
     public ResponseEntity<Map<String, CourseDto>> getAllRequiredPublished() {
-        return ResponseEntity.ok(courseService.getPublishedRequiredCourses());
+        return ResponseEntity.ok(courseService.getPublishedAndArchivedMandatoryCourses());
     }
 
     @GetMapping("/modules")

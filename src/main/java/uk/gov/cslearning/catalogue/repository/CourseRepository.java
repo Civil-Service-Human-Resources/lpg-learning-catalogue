@@ -44,7 +44,4 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?0\"}}]}}")
     List<Course> findAllRequired(String status, Pageable pageable);
-
-    @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?0\"}}]}}")
-    List<Course> findAllRequiredNoPagination(String status);
 }
