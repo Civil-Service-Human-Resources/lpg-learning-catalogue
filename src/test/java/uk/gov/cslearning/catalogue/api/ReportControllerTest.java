@@ -114,4 +114,27 @@ public class ReportControllerTest {
                 .andExpect(jsonPath("$.module_id.course.title", equalTo(courseTitle)));
     }
 
+    @Test
+    public void shouldReturnMapOfRequiredPublished() throws Exception {
+        String courseId = "course-id";
+        String courseTitle = "course-title";
+        String courseTopicId = "topic-id";
+
+        CourseDto courseDto = new CourseDto();
+        courseDto.setId(courseId);
+        courseDto.setTitle(courseTitle);
+        courseDto.setTopicId("topic-id");
+
+        Map<String, CourseDto> courseDtoMap = ImmutableMap.of(courseId, courseDto);
+
+        when(courseService.getPublishedAndArchivedMandatoryCourses()).thenReturn(courseDtoMap);
+
+        mockMvc.perform(
+                get("/reporting/mandatory-courses")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.course-id.id", equalTo(courseId)))
+                .andExpect(jsonPath("$.course-id.title", equalTo(courseTitle)))
+                .andExpect(jsonPath("$.course-id.topicId", equalTo(courseTopicId)));
+    }
 }
