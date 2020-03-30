@@ -31,7 +31,7 @@ public class ReportController {
     }
 
     @GetMapping("/mandatory-courses")
-    public ResponseEntity<Map<String, CourseDto>> getAllRequiredPublished() {
+    public ResponseEntity<Map<String, CourseDto>> getPublishedAndArchivedMandatoryCourses() {
         return ResponseEntity.ok(courseService.getPublishedAndArchivedMandatoryCourses());
     }
 
