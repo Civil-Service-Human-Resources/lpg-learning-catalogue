@@ -129,11 +129,10 @@ public class CourseService {
     }
 
     public Map<String, CourseDto> getPublishedAndArchivedMandatoryCourses() {
-        Map<String, CourseDto> results = new HashMap<>();
-        for (Course course : courseRepositoryImpl.findPublishedAndArchivedMandatoryCourses()) {
-            results.put(course.getId(), courseDtoFactory.create(course));
-        }
-        return results;
+        return courseRepositoryImpl
+                .findPublishedAndArchivedMandatoryCourses()
+                .stream()
+                .collect(Collectors.toMap(Course::getId, courseDtoFactory::create));
     }
 
     public List<String> getOrganisationParents(String departments) {
