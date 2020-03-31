@@ -2,8 +2,6 @@ package uk.gov.cslearning.catalogue.repository;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
@@ -35,7 +33,6 @@ public class CourseRepositoryImpl {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withFilter(filterQuery)
-                .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .build();
 
         return operations.queryForList(searchQuery, Course.class);
