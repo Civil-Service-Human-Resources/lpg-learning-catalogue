@@ -116,7 +116,7 @@ public class ReportControllerTest {
 
     @Test
     public void shouldReturnPublishedAndArchivedMandatoryCourses() throws Exception {
-        
+
         String courseId = "course-id";
         String courseTitle = "course-title";
         String courseTopicId = "topic-id";
