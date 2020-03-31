@@ -89,6 +89,7 @@ public class ReportControllerTest {
     public void shouldReturnMapOfModules() throws Exception {
 
         String courseId = "course-id";
+        
         String courseTitle = "course-title";
         CourseDto courseDto = new CourseDto();
         courseDto.setId(courseId);
