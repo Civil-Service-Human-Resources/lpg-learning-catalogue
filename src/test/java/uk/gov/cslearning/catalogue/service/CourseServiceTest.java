@@ -366,13 +366,12 @@ public class CourseServiceTest {
 
     @Test
     public void shouldGetPublishedAndArchivedMandatoryCourses() {
-        Map<String, CourseDto> courseDtoMap = new HashMap<>();
         List<Course> courses = new ArrayList<>();
         Course course  = new Course();
         course.setId("courseId");
         course.setTitle("courseTitle");
         courses.add(course);
-        Page<Course> coursePage = new PageImpl<>(courses);
+        List<Course> coursePage = new ArrayList<>(courses);
 
         CourseDto dto = new CourseDto();
         dto.setId("courseDtoId");
@@ -380,7 +379,7 @@ public class CourseServiceTest {
 
         when(courseRepositoryImpl.findPublishedAndArchivedMandatoryCourses()).thenReturn(coursePage);
         when(courseDtoFactory.create(courses.get(0))).thenReturn(dto);
-        courseDtoMap = courseService.getPublishedAndArchivedMandatoryCourses();
+        Map<String, CourseDto> courseDtoMap = courseService.getPublishedAndArchivedMandatoryCourses();
 
         assertEquals(dto.getTitle(), courseDtoMap.get("courseId").getTitle());
     }

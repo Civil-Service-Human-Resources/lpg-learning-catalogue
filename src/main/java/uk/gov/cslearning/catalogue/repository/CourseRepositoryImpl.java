@@ -4,12 +4,13 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.data.domain.Page;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.Course;
+
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
@@ -23,7 +24,7 @@ public class CourseRepositoryImpl {
         this.operations = operations;
     }
 
-    public Page<Course> findPublishedAndArchivedMandatoryCourses() {
+    public List<Course> findPublishedAndArchivedMandatoryCourses() {
         BoolQueryBuilder boolQuery = boolQuery();
         boolQuery.should(QueryBuilders.matchQuery("status", "Published"));
         boolQuery.should(QueryBuilders.matchQuery("status", "Archived"));
@@ -37,6 +38,6 @@ public class CourseRepositoryImpl {
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .build();
 
-        return operations.queryForPage(searchQuery, Course.class);
+        return operations.queryForList(searchQuery, Course.class);
     }
 }
