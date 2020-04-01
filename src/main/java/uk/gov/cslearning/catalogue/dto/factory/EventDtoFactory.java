@@ -9,6 +9,7 @@ import uk.gov.cslearning.catalogue.dto.EventDto;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class EventDtoFactory {
@@ -35,14 +36,10 @@ public class EventDtoFactory {
     }
 
     public String getEventDatesFromDateRanges(List<DateRange> dateRangesList) {
-        String eventDate = "";
-        for (int i = 0; i < dateRangesList.size(); i++) {
-            eventDate += dateRangesList.get(i).getDate().toString();
-            if (i != dateRangesList.size() - 1) {
-                eventDate += ", ";
-            }
-        }
-
-        return eventDate;
+        return dateRangesList
+                .stream()
+                .map(date -> date.getDate().toString())
+                .collect(Collectors.joining(","));
     }
+
 }
