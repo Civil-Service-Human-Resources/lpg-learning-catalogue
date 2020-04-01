@@ -12,6 +12,9 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static uk.gov.cslearning.catalogue.domain.CourseType.REQUIRED_LEARNING;
+import static uk.gov.cslearning.catalogue.domain.Status.ARCHIVED;
+import static uk.gov.cslearning.catalogue.domain.Status.PUBLISHED;
 
 @Repository
 public class CourseRepositoryImpl {
@@ -23,13 +26,12 @@ public class CourseRepositoryImpl {
     }
 
     public List<Course> findPublishedAndArchivedMandatoryCourses() {
-        
         BoolQueryBuilder boolQuery = boolQuery();
-        boolQuery.should(QueryBuilders.matchQuery("status", "Published"));
-        boolQuery.should(QueryBuilders.matchQuery("status", "Archived"));
+        boolQuery.should(QueryBuilders.matchQuery("status", PUBLISHED));
+        boolQuery.should(QueryBuilders.matchQuery("status", ARCHIVED));
 
         BoolQueryBuilder filterQuery = boolQuery();
-        filterQuery.must(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
+        filterQuery.must(QueryBuilders.matchQuery("audiences.type", REQUIRED_LEARNING));
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
