@@ -26,6 +26,7 @@ public class CourseRepositoryImpl {
     }
 
     public List<Course> findPublishedAndArchivedMandatoryCourses() {
+        
         BoolQueryBuilder boolQuery = boolQuery();
         boolQuery.should(QueryBuilders.matchQuery("status", PUBLISHED));
         boolQuery.should(QueryBuilders.matchQuery("status", ARCHIVED));
