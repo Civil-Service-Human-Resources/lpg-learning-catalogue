@@ -377,9 +377,9 @@ public class CourseServiceTest {
         dto.setId("courseDtoId");
         dto.setTitle("courseDtoTitle"); ;
 
-        when(courseRepositoryImpl.findPublishedAndArchivedMandatoryCourses()).thenReturn(coursePage);
+        when(courseRepositoryImpl.findPublishedAndArchivedMandatoryCourses(PAGEABLE)).thenReturn(coursePage);
         when(courseDtoFactory.create(courses.get(0))).thenReturn(dto);
-        Map<String, CourseDto> courseDtoMap = courseService.getPublishedAndArchivedMandatoryCourses();
+        Map<String, CourseDto> courseDtoMap = courseService.getPublishedAndArchivedMandatoryCourses(PAGEABLE);
 
         assertEquals(dto.getTitle(), courseDtoMap.get("courseId").getTitle());
     }

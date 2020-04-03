@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.repository;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
@@ -18,6 +19,7 @@ import static uk.gov.cslearning.catalogue.domain.Status.PUBLISHED;
 
 @Repository
 public class CourseRepositoryImpl {
+
     private ElasticsearchOperations operations;
 
     public CourseRepositoryImpl(ElasticsearchOperations operations) {
@@ -25,8 +27,8 @@ public class CourseRepositoryImpl {
         this.operations = operations;
     }
 
-    public List<Course> findPublishedAndArchivedMandatoryCourses() {
-        
+    public List<Course> findPublishedAndArchivedMandatoryCourses(Pageable pageable) {
+
         BoolQueryBuilder boolQuery = boolQuery();
         boolQuery.should(QueryBuilders.matchQuery("status", PUBLISHED));
         boolQuery.should(QueryBuilders.matchQuery("status", ARCHIVED));
@@ -37,6 +39,7 @@ public class CourseRepositoryImpl {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withFilter(filterQuery)
+                .withPageable(pageable)
                 .build();
 
         return operations.queryForList(searchQuery, Course.class);
