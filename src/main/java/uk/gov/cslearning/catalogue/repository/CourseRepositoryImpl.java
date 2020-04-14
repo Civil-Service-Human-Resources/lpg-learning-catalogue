@@ -13,6 +13,8 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.search.sort.SortBuilders.fieldSort;
+import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static uk.gov.cslearning.catalogue.domain.CourseType.REQUIRED_LEARNING;
 import static uk.gov.cslearning.catalogue.domain.Status.ARCHIVED;
 import static uk.gov.cslearning.catalogue.domain.Status.PUBLISHED;
@@ -40,6 +42,7 @@ public class CourseRepositoryImpl {
                 .withQuery(boolQuery)
                 .withFilter(filterQuery)
                 .withPageable(pageable)
+                .withSort(fieldSort("_id").order(ASC))
                 .build();
 
         return operations.queryForList(searchQuery, Course.class);
