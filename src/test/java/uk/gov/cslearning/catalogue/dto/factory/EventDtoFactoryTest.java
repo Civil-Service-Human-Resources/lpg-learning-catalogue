@@ -16,6 +16,8 @@ import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.LearningProviderDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +73,7 @@ public class EventDtoFactoryTest {
         FaceToFaceModule module = new FaceToFaceModule("product-code");
         Course course = new Course();
         Venue venue = new Venue();
-        List<DateRange> dateRanges = new ArrayList<>();
+        List<DateRange> dateRanges = populateEventDates();
 
         event.setDateRanges(dateRanges);
         event.setVenue(venue);
@@ -91,6 +93,28 @@ public class EventDtoFactoryTest {
         assertEquals(eventDtoFactory.getEventDatesFromDateRanges(event.getDateRanges()), eventDto.getEventDate());
 
         verifyZeroInteractions(learningProviderDtoFactory);
+    }
+
+    private List<DateRange> populateEventDates() {
+        LocalDate date = LocalDate.now();
+        LocalTime start = LocalTime.NOON;
+        LocalTime end = LocalTime.MIDNIGHT;
+
+        DateRange dateRange1 = new DateRange();
+        dateRange1.setDate(date);
+        dateRange1.setStartTime(start);
+        dateRange1.setEndTime(end);
+
+        DateRange dateRange2 = new DateRange();
+        dateRange2.setDate(date.plusDays(5));
+        dateRange2.setStartTime(start);
+        dateRange2.setEndTime(end);
+
+        List<DateRange> dates = new ArrayList<>();
+        dates.add(dateRange1);
+        dates.add(dateRange2);
+
+        return dates;
     }
 
 }

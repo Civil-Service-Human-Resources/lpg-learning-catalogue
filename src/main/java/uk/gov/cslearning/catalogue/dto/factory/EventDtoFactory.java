@@ -6,7 +6,9 @@ import uk.gov.cslearning.catalogue.domain.module.DateRange;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.dto.EventDto;
-
+import uk.gov.cslearning.catalogue.service.util.DateRangeComparator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,10 +38,12 @@ public class EventDtoFactory {
     }
 
     public String getEventDatesFromDateRanges(List<DateRange> dateRangesList) {
-        return dateRangesList
-                .stream()
-                .map(date -> date.getDate().toString())
-                .collect(Collectors.joining(","));
+        List<DateRange> dateRanges = new ArrayList<>(dateRangesList);
+        Collections.sort(dateRanges, new DateRangeComparator());
+        return dateRanges
+            .stream()
+            .map(date -> date.getDate().toString())
+            .collect(Collectors.joining(","));
     }
 
 }

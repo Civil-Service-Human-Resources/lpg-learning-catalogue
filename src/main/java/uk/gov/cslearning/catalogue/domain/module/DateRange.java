@@ -8,27 +8,26 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import javax.validation.constraints.NotNull;
 
 public class DateRange {
 
     @NotNull
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    LocalDate date;
+    private LocalDate date;
 
     @NotNull
     @JsonSerialize(using = LocalTimeSerializer.class)
     @JsonDeserialize(using = LocalTimeDeserializer.class)
-    LocalTime startTime;
+    private LocalTime startTime;
 
     @NotNull
     @JsonSerialize(using = LocalTimeSerializer.class)
     @JsonDeserialize(using = LocalTimeDeserializer.class)
-    LocalTime endTime;
+    private LocalTime endTime;
 
     public DateRange() {
     }
@@ -86,5 +85,4 @@ public class DateRange {
                 .append(endTime)
                 .toHashCode();
     }
-
 }
