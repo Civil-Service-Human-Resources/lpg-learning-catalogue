@@ -35,9 +35,11 @@ public class EventDtoFactory {
         LOGGER.info("Rewaz ==========> Event " + event);
 
         eventDto.setId(event.getId());
-        eventDto.setId(event.getId());
         eventDto.setModule(moduleDtoFactory.create(module, course));
-        eventDto.setLocation(event.getVenue().getLocation());
+        if (event.getVenue() != null) {
+            eventDto.setLocation(event.getVenue().getLocation());
+        }
+
         Optional.ofNullable(event.getDateRanges())
                 .ifPresent(eventDateRanges ->
                         eventDto.setEventDate(getEventDatesFromDateRanges(event.getDateRanges())));
