@@ -7,6 +7,7 @@ import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.service.util.DateRangeComparator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,10 @@ public class EventDtoFactory {
         eventDto.setId(event.getId());
         eventDto.setModule(moduleDtoFactory.create(module, course));
         eventDto.setLocation(event.getVenue().getLocation());
-        eventDto.setEventDate(getEventDatesFromDateRanges(event.getDateRanges()));
+        if (event.getDateRanges().size() > 0) {
+            eventDto.setEventDate(getEventDatesFromDateRanges(event.getDateRanges()));
+
+        }
 
         Optional.ofNullable(course.getLearningProvider())
                 .ifPresent(learningProvider ->
@@ -41,9 +45,9 @@ public class EventDtoFactory {
         List<DateRange> dateRanges = new ArrayList<>(dateRangesList);
         Collections.sort(dateRanges, new DateRangeComparator());
         return dateRanges
-            .stream()
-            .map(date -> date.getDate().toString())
-            .collect(Collectors.joining(","));
+                .stream()
+                .map(date -> date.getDate().toString())
+                .collect(Collectors.joining(","));
     }
 
 }
