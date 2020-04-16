@@ -64,7 +64,9 @@ public class EventDtoFactoryTest {
         assertNotNull(eventDto.getId());
         assertEquals(event.getId(), eventDto.getId());
         assertEquals(event.getVenue().getLocation(), eventDto.getLocation());
-        assertEquals(eventDtoFactory.getEventDatesFromDateRanges(event.getDateRanges()), eventDto.getEventDate());
+        if (event.getDateRanges().size() > 0) {
+            assertEquals(eventDtoFactory.getEventDatesFromDateRanges(event.getDateRanges()), eventDto.getEventDate());
+        }
     }
 
     @Test
