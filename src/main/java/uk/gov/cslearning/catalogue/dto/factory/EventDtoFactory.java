@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class EventDtoFactory {
     private final ModuleDtoFactory moduleDtoFactory;
     private final LearningProviderDtoFactory learningProviderDtoFactory;
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventDtoFactory.class);
 
     public EventDtoFactory(ModuleDtoFactory moduleDtoFactory, LearningProviderDtoFactory learningProviderDtoFactory) {
         this.moduleDtoFactory = moduleDtoFactory;
@@ -28,23 +29,18 @@ public class EventDtoFactory {
 
     public EventDto create(Event event, FaceToFaceModule module, Course course) {
         EventDto eventDto = new EventDto();
-        eventDto.setModule(moduleDtoFactory.create(module, course));
-
-        private static final Logger LOGGER = LoggerFactory.getLogger(EventDtoFactory.class);
-
 
         LOGGER.info("Rewaz ==========> Course " + course.getTitle());
         LOGGER.info("Rewaz ==========> Module " + module.getTitle());
         LOGGER.info("Rewaz ==========> Event " + event);
 
-
-        if (event != null) {
-            eventDto.setId(event.getId());
-            eventDto.setLocation(event.getVenue().getLocation());
-            if (event.getDateRanges().size() > 0) {
-                eventDto.setEventDate(getEventDatesFromDateRanges(event.getDateRanges()));
-            }
-        }
+        eventDto.setId(event.getId());
+        eventDto.setId(event.getId());
+        eventDto.setModule(moduleDtoFactory.create(module, course));
+        eventDto.setLocation(event.getVenue().getLocation());
+        Optional.ofNullable(event.getDateRanges())
+                .ifPresent(eventDateRanges ->
+                        eventDto.setEventDate(getEventDatesFromDateRanges(event.getDateRanges())));
 
         Optional.ofNullable(course.getLearningProvider())
                 .ifPresent(learningProvider ->

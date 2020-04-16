@@ -47,7 +47,6 @@ public class EventDtoFactoryTest {
         List<DateRange> dateRanges = new ArrayList<>();
 
         ModuleDto moduleDto = new ModuleDto();
-        CourseDto courseDto = new CourseDto();
         LearningProviderDto learningProviderDto = new LearningProviderDto();
 
         course.setLearningProvider(learningProvider);
