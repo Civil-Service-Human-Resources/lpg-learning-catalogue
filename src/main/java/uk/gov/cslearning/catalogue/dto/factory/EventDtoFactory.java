@@ -1,5 +1,7 @@
 package uk.gov.cslearning.catalogue.dto.factory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.DateRange;
@@ -27,6 +29,14 @@ public class EventDtoFactory {
     public EventDto create(Event event, FaceToFaceModule module, Course course) {
         EventDto eventDto = new EventDto();
         eventDto.setModule(moduleDtoFactory.create(module, course));
+
+        private static final Logger LOGGER = LoggerFactory.getLogger(EventDtoFactory.class);
+
+
+        LOGGER.info("Rewaz ==========> Course " + course.getTitle());
+        LOGGER.info("Rewaz ==========> Module " + module.getTitle());
+        LOGGER.info("Rewaz ==========> Event " + event);
+
 
         if (event != null) {
             eventDto.setId(event.getId());
