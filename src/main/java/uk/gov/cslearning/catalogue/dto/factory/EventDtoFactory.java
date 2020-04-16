@@ -25,6 +25,9 @@ public class EventDtoFactory {
     }
 
     public EventDto create(Event event, FaceToFaceModule module, Course course) {
+        System.out.println("***************");
+        System.out.println(event);
+        System.out.println("***************");
         EventDto eventDto = new EventDto();
         eventDto.setId(event.getId());
         eventDto.setModule(moduleDtoFactory.create(module, course));
