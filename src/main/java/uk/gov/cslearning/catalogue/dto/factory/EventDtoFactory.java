@@ -25,16 +25,15 @@ public class EventDtoFactory {
     }
 
     public EventDto create(Event event, FaceToFaceModule module, Course course) {
-        System.out.println("***************");
-        System.out.println(event);
-        System.out.println("***************");
         EventDto eventDto = new EventDto();
-        eventDto.setId(event.getId());
         eventDto.setModule(moduleDtoFactory.create(module, course));
-        eventDto.setLocation(event.getVenue().getLocation());
-        if (event.getDateRanges().size() > 0) {
-            eventDto.setEventDate(getEventDatesFromDateRanges(event.getDateRanges()));
 
+        if (event != null) {
+            eventDto.setId(event.getId());
+            eventDto.setLocation(event.getVenue().getLocation());
+            if (event.getDateRanges().size() > 0) {
+                eventDto.setEventDate(getEventDatesFromDateRanges(event.getDateRanges()));
+            }
         }
 
         Optional.ofNullable(course.getLearningProvider())
