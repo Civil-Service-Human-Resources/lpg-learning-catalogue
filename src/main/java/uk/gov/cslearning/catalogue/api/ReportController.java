@@ -18,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/reporting")
 public class ReportController {
+
     private static final PageRequest MAX_PAGEABLE = PageRequest.of(0, 10000);
     private final EventService eventService;
     private final ModuleService moduleService;
