@@ -18,10 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/reporting")
 public class ReportController {
-
-    // Do not change MAX_PAGEABLE size.
-    // This is used for report download functionality which need all records fetching from Elasticsearch.
-    static final PageRequest MAX_PAGEABLE = PageRequest.of(0, 10000);
+    private static final PageRequest MAX_PAGEABLE = PageRequest.of(0, 10000);
     private final EventService eventService;
     private final ModuleService moduleService;
     private final CourseService courseService;
@@ -34,7 +31,7 @@ public class ReportController {
 
     @GetMapping("/mandatory-courses")
     public ResponseEntity<Map<String, CourseDto>> getPublishedAndArchivedMandatoryCourses() {
-        return ResponseEntity.ok(courseService.getPublishedAndArchivedMandatoryCourses(MAX_PAGEABLE));
+        return ResponseEntity.ok(courseService.getPublishedAndArchivedMandatoryCourses());
     }
 
     @GetMapping("/modules")

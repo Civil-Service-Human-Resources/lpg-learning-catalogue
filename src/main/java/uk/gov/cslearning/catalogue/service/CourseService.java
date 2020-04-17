@@ -128,9 +128,9 @@ public class CourseService {
         return courseRepository.findAll(pageable);
     }
 
-    public Map<String, CourseDto> getPublishedAndArchivedMandatoryCourses(Pageable pageable) {
+    public Map<String, CourseDto> getPublishedAndArchivedMandatoryCourses() {
         return courseRepositoryImpl
-                .findPublishedAndArchivedMandatoryCourses(pageable)
+                .findPublishedAndArchivedMandatoryCourses()
                 .stream()
                 .collect(Collectors.toMap(Course::getId, courseDtoFactory::create));
     }

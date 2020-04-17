@@ -28,7 +28,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.cslearning.catalogue.api.ReportController.MAX_PAGEABLE;
 
 @WebMvcTest(ReportController.class)
 @RunWith(SpringRunner.class)
@@ -130,7 +129,7 @@ public class ReportControllerTest {
 
         Map<String, CourseDto> courseDtoMap = ImmutableMap.of(courseId, courseDto);
 
-        when(courseService.getPublishedAndArchivedMandatoryCourses(MAX_PAGEABLE)).thenReturn(courseDtoMap);
+        when(courseService.getPublishedAndArchivedMandatoryCourses()).thenReturn(courseDtoMap);
 
         mockMvc.perform(
                 get("/reporting/mandatory-courses")
