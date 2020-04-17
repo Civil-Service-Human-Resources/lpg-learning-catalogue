@@ -9,6 +9,10 @@ if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-search"] && OBJ_NAV_BUTTONS["extra
 if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-jlr-menu"] && OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton = false;
 
 var url = window.location.toString();
+var scheme_1 = window.location.protocol;
+var host_1 = window.location.host;
+var path_1 = window.location.pathname;
+
 var env = !!url[2] ? url[2] + '-' : '';
 var match;
 var host;
@@ -19,6 +23,10 @@ if (env === '') {
     match = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
     host = env + 'cdn.cshr.digital/';
 }
+
+//if (!match) {
+//    throw new Error('Content being accessed on invalid domain');
+//}
 
 var moduleId = getParameterByName('module');
 var scheme = match[1];
@@ -31,22 +39,25 @@ if (match[2] === 'local') {
 
 console.log('portal_overrides.js');
 console.log('url: ' + url);
-var urlLength = url.length - 1;
-console.log('urlLength: ' + urlLength);
-for (var i = 0; i <= urlLength; i++){
-  console.log( "The value of element url[" + i + "] is: " + url[i]);
-}
+console.log('scheme_1: ' + scheme_1);
+console.log('scheme: ' + scheme);
+console.log('host_1: ' + host_1);
+console.log('host: ' + host);
+console.log('path_1: ' + path_1);
+console.log('path: ' + path);
 console.log('env: ' + env);
+console.log('moduleId: ' + moduleId);
 console.log('match: ' + match);
 var matchLength = url.length - 1;
 console.log('matchLength: ' + matchLength);
 for (var i = 0; i <= matchLength; i++){
   console.log( "The value of element match[" + i + "] is: " + match[i]);
 }
-console.log('host: ' + host);
-console.log('moduleId: ' + moduleId);
-console.log('scheme: ' + scheme);
-console.log('path: ' + path);
+var urlLength = url.length - 1;
+console.log('urlLength: ' + urlLength);
+for (var i = 0; i <= urlLength; i++){
+  console.log( "The value of element url[" + i + "] is: " + url[i]);
+}
 
 BOO_INCLUDE_EXIT_ON_NAV = false;
 BOO_INCLUDE_ACCESSIBLE_ON_NAV = false;
