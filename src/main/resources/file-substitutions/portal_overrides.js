@@ -8,54 +8,57 @@ if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-settings"] && OBJ_NAV_BUTTONS["ext
 if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-search"] && OBJ_NAV_BUTTONS["extra-search"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-search"].booDefaultDisplayButton = false;
 if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-jlr-menu"] && OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton = false;
 
+console.log('portal_overrides.js');
 var url = window.location.toString();
-var scheme_1 = window.location.protocol;
-var host_1 = window.location.host;
-var path_1 = window.location.pathname;
-
+console.log('url: ' + url);
+console.log('url[2]: ' + url[2]);
 var env = !!url[2] ? url[2] + '-' : '';
+console.log('env: ' + env);
+
 var match;
 var host;
 if (env === '') {
     match = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+    console.log('match:1: ' + match);
     host = 'learn.civilservice.gov.uk/';
+    console.log('host:1: ' + host);
 } else {
     match = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+    console.log('match:2: ' + match);
     host = env + 'cdn.cshr.digital/';
+    console.log('host:2: ' + host);
 }
 
-//if (!match) {
-//    throw new Error('Content being accessed on invalid domain');
-//}
-
 var moduleId = getParameterByName('module');
+console.log('moduleId: ' + moduleId);
 var scheme = match[1];
+console.log('scheme:1: ' + scheme);
 var path = 'learning-record/' + match[3] + '/' + moduleId + '/xapi';
+console.log('path: ' + path);
+console.log('match[2]: ' + match[2]);
 
 if (match[2] === 'local') {
     scheme = 'http';
+    console.log('scheme:2: ' + scheme);
     host = 'lpg.local.cshr.digital:3001/';
+    console.log('host:3: ' + host);
 }
 
-console.log('portal_overrides.js');
-console.log('url: ' + url);
+var scheme_1 = window.location.protocol;
 console.log('scheme_1: ' + scheme_1);
-console.log('scheme: ' + scheme);
+var host_1 = window.location.host;
 console.log('host_1: ' + host_1);
-console.log('host: ' + host);
+var path_1 = window.location.pathname;
 console.log('path_1: ' + path_1);
-console.log('path: ' + path);
-console.log('env: ' + env);
-console.log('moduleId: ' + moduleId);
-console.log('match: ' + match);
+
 var matchLength = url.length - 1;
 console.log('matchLength: ' + matchLength);
-for (var i = 0; i <= matchLength; i++){
+for (var i = 0; i <= 10; i++){
   console.log( "The value of element match[" + i + "] is: " + match[i]);
 }
 var urlLength = url.length - 1;
 console.log('urlLength: ' + urlLength);
-for (var i = 0; i <= urlLength; i++){
+for (var i = 0; i <= 50; i++){
   console.log( "The value of element url[" + i + "] is: " + url[i]);
 }
 
