@@ -25,7 +25,7 @@ if (env === '') {
 } else {
     match = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
     console.log('match:2: ' + match);
-    host = env + 'cdn.cshr.digital/';
+    host = 'staging-lpg.cshr.digital/';
     console.log('host:2: ' + host);
 }
 
