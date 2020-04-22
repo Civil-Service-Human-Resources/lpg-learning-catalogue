@@ -49,8 +49,7 @@ console.log('host: ' + host);
 console.log('scheme: ' + scheme);
 console.log('moduleId: ' + courseId);
 console.log('path: ' + path);
-console.log('window.location = scheme + :// + host + path: ' + scheme + '://' + host + path);
-console.log('window.location: ' + window.location);
+console.log('endpoint = scheme + // + host + path: ' + scheme + '//' + host + path);
 
 BOO_INCLUDE_EXIT_ON_NAV = false;
 BOO_INCLUDE_ACCESSIBLE_ON_NAV = false;
@@ -63,7 +62,7 @@ var CONTENT_TRACKING_CONFIG = {
         {
             adapter: 'tincan',
             version: '1.0',
-            endpoint: scheme + '://' + host + path
+            endpoint: scheme + '//' + host + path
         }
     ]
 }
