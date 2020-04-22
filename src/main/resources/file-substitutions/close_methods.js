@@ -3,48 +3,53 @@
 var CLOSE_METHODS = {
 
     csl: function () {
-    		var url = window.location.toString();
-    		var env = !!url[2] ? url[2] + '-' : '';
-    		var match;
-    		var host;
-    		if (env === '') {
-    		  match = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
-    		  host = 'learn.civilservice.gov.uk/';
-    		} else {
-    		  match = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
-    		  host = env + 'cdn.cshr.digital/';
-    		}
-
-    		var moduleId = getParameterByName('module');
-    		var scheme = match[1];
-    		var path = 'learning-record/' + match[3] + '/' + moduleId;
-
-    		if (match[2] === 'local') {
-    		scheme = 'http';
-    		host = 'lpg.local.cshr.digital:3001/';
-    		}
-
             console.log('close_methods.js: csl close');
-    		console.log('url: ' + url);
-            var urlLength = url.length - 1;
-            console.log('urlLength: ' + urlLength);
-            for (var i = 0; i <= urlLength; i++){
-              console.log( "The value of element url[" + i + "] is: " + url[i]);
-            }
-            console.log('env: ' + env);
-            console.log('match: ' + match);
-            var matchLength = url.length - 1;
-            console.log('matchLength: ' + matchLength);
-            for (var i = 0; i <= matchLength; i++){
-              console.log( "The value of element match[" + i + "] is: " + match[i]);
-            }
-            console.log('host: ' + host);
-            console.log('moduleId: ' + moduleId);
-            console.log('scheme: ' + scheme);
-            console.log('path: ' + path);
 
-    		window.location = scheme + '://' + host + path;
-    		return true;
+            var url = window.location.toString();
+            var prodMatch = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+            var nonProdMatch = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+
+            console.log('url: ' + url);
+            console.log('prodMatch: ' + prodMatch);
+            console.log('nonProdMatch: ' + nonProdMatch);
+
+            if (!prodMatch && !nonProdMatch) {
+                console.log('Content being accessed on invalid domain');
+                throw new Error('Content being accessed on invalid domain');
+            }
+
+            var courseId;
+            var host;
+            if (prodMatch) {
+                console.log('prodMatch[3]: ' + prodMatch[3]);
+                courseId = prodMatch[3];
+                host = 'learn.civilservice.gov.uk/';
+            } else {
+                console.log('nonProdMatch[3]: ' + nonProdMatch[3]);
+                courseId = nonProdMatch[3];
+                console.log('nonProdMatch[2]: ' + nonProdMatch[2]);
+                if (nonProdMatch[2] === 'local') {
+                    host = 'lpg.local.cshr.digital:3001/';
+                } else {
+                    host = nonProdMatch[2] + '-lpg.cshr.digital/';
+                }
+            }
+
+            var scheme = window.location.protocol;
+            var moduleId = getParameterByName('module');
+            var path = 'learning-record/' + courseId + '/' + moduleId;
+
+            window.location = scheme + '//' + host + path;
+
+            console.log('courseId: ' + courseId);
+            console.log('host: ' + host);
+            console.log('scheme: ' + scheme);
+            console.log('moduleId: ' + courseId);
+            console.log('path: ' + path);
+            console.log('window.location = scheme + // + host + path: ' + scheme + '//' + host + path);
+            console.log('window.location: ' + window.location);
+
+            return true;
     	}
 };
 
