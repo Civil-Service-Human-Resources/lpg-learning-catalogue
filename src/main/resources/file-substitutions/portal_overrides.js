@@ -9,58 +9,48 @@ if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-search"] && OBJ_NAV_BUTTONS["extra
 if (OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-jlr-menu"] && OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton = false;
 
 console.log('portal_overrides.js');
+
 var url = window.location.toString();
+var prodMatch = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+var nonProdMatch = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+
 console.log('url: ' + url);
-console.log('url[2]: ' + url[2]);
-var env = !!url[2] ? url[2] + '-' : '';
-console.log('env: ' + env);
+console.log('prodMatch: ' + prodMatch);
+console.log('nonProdMatch: ' + nonProdMatch);
 
-var match;
+if (!prodMatch && !nonProdMatch) {
+    console.log('Content being accessed on invalid domain');
+    throw new Error('Content being accessed on invalid domain');
+}
+
+var courseId;
 var host;
-if (env === '') {
-    match = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
-    console.log('match:1: ' + match);
+if (prodMatch) {
+    console.log('prodMatch[3]: ' + prodMatch[3]);
+    courseId = prodMatch[3];
     host = 'learn.civilservice.gov.uk/';
-    console.log('host:1: ' + host);
 } else {
-    match = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
-    console.log('match:2: ' + match);
-    host = 'staging-lpg.cshr.digital/';
-    console.log('host:2: ' + host);
+    console.log('nonProdMatch[3]: ' + nonProdMatch[3]);
+    courseId = nonProdMatch[3];
+    console.log('nonProdMatch[2]: ' + nonProdMatch[2]);
+    if (nonProdMatch[2] === 'local') {
+        host = 'lpg.local.cshr.digital:3001/';
+    } else {
+        host = nonProdMatch[2] + '-lpg.cshr.digital/';
+    }
 }
 
+var scheme = window.location.protocol;
 var moduleId = getParameterByName('module');
-console.log('moduleId: ' + moduleId);
-var scheme = match[1];
-console.log('scheme:1: ' + scheme);
-var path = 'learning-record/' + match[3] + '/' + moduleId + '/xapi';
+var path = 'learning-record/' + courseId + '/' + moduleId + '/xapi';
+
+console.log('courseId: ' + courseId);
+console.log('host: ' + host);
+console.log('scheme: ' + scheme);
+console.log('moduleId: ' + courseId);
 console.log('path: ' + path);
-console.log('match[2]: ' + match[2]);
-
-if (match[2] === 'local') {
-    scheme = 'http';
-    console.log('scheme:2: ' + scheme);
-    host = 'lpg.local.cshr.digital:3001/';
-    console.log('host:3: ' + host);
-}
-
-var scheme_1 = window.location.protocol;
-console.log('scheme_1: ' + scheme_1);
-var host_1 = window.location.host;
-console.log('host_1: ' + host_1);
-var path_1 = window.location.pathname;
-console.log('path_1: ' + path_1);
-
-var matchLength = url.length - 1;
-console.log('matchLength: ' + matchLength);
-for (var i = 0; i <= 10; i++){
-  console.log( "The value of element match[" + i + "] is: " + match[i]);
-}
-var urlLength = url.length - 1;
-console.log('urlLength: ' + urlLength);
-for (var i = 0; i <= 50; i++){
-  console.log( "The value of element url[" + i + "] is: " + url[i]);
-}
+console.log('window.location = scheme + :// + host + path: ' + scheme + '://' + host + path);
+console.log('window.location: ' + window.location);
 
 BOO_INCLUDE_EXIT_ON_NAV = false;
 BOO_INCLUDE_ACCESSIBLE_ON_NAV = false;
