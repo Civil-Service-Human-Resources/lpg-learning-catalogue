@@ -50,6 +50,7 @@ console.log('scheme: ' + scheme);
 console.log('moduleId: ' + courseId);
 console.log('path: ' + path);
 console.log('endpoint = scheme + // + host + path: ' + scheme + '//' + host + path);
+alert('portal_overrides.js');
 
 BOO_INCLUDE_EXIT_ON_NAV = false;
 BOO_INCLUDE_ACCESSIBLE_ON_NAV = false;

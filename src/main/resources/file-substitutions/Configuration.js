@@ -33,21 +33,49 @@ r(function () {
     document.title = title;
 });
 
-var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
-if (!match) {
+console.log('Configuration.js');
+
+var url = window.location.toString();
+var prodMatch = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+var nonProdMatch = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+
+console.log('url: ' + url);
+console.log('prodMatch: ' + prodMatch);
+console.log('nonProdMatch: ' + nonProdMatch);
+
+if (!prodMatch && !nonProdMatch) {
+    console.log('Content being accessed on invalid domain');
     throw new Error('Content being accessed on invalid domain');
 }
-var moduleId = getParameterByName('module');
 
-var scheme = match[1];
-var env = !!match[2] ? match[2] + '-' : '';
-var host = env + 'learn.' + 'civilservice.gov.uk/';
-var path = 'learning-record/' + match[3] + '/' + moduleId;
-
-if (match[2] === 'local') {
-    scheme = 'http';
-    host = 'lpg.local.cshr.digital:3001/';
+var courseId;
+var host;
+if (prodMatch) {
+    console.log('prodMatch[3]: ' + prodMatch[3]);
+    courseId = prodMatch[3];
+    host = 'learn.civilservice.gov.uk/';
+} else {
+    console.log('nonProdMatch[3]: ' + nonProdMatch[3]);
+    courseId = nonProdMatch[3];
+    console.log('nonProdMatch[2]: ' + nonProdMatch[2]);
+    if (nonProdMatch[2] === 'local') {
+        host = 'lpg.local.cshr.digital:3001/';
+    } else {
+        host = nonProdMatch[2] + '-lpg.cshr.digital/';
+    }
 }
+
+var scheme = window.location.protocol;
+var moduleId = getParameterByName('module');
+var path = 'learning-record/' + courseId + '/' + moduleId;
+
+console.log('courseId: ' + courseId);
+console.log('host: ' + host);
+console.log('scheme: ' + scheme);
+console.log('moduleId: ' + courseId);
+console.log('path: ' + path);
+console.log('EXIT_TARGET = scheme + // + host + path: ' + scheme + '//' + host + path);
+alert('Configuration.js');
 
 //Configuration Parameters
 var blnDebug = false;						//set this to false if you don't want the overhead of recording debug information
@@ -69,7 +97,7 @@ var AICC_LESSON_ID = "1";					//if recording question answers in AICC in an LMS 
 var EXIT_BEHAVIOR = "REDIR_CONTENT_FRAME";		//used to control window closing behavior on call of ConcedeControl
 //Possible Values: SCORM_RECOMMENDED, ALWAYS_CLOSE, ALWAYS_CLOSE_TOP, NOTHING, REDIR_CONTENT_FRAME, LMS_SPECIFIED_REDIRECT
 
-var EXIT_TARGET = scheme + '://' + host + path;			//Used in conjunction with EXIT_BEHAVIOR, only with REDIR_CONTENT_FRAME. This should be a neutral page that is displayed
+var EXIT_TARGET = scheme + '//' + host + path;			//Used in conjunction with EXIT_BEHAVIOR, only with REDIR_CONTENT_FRAME. This should be a neutral page that is displayed
 //after the course has exited, but before it has been taked away by the LMS
 
 var LMS_SPECIFIED_REDIRECT_EVAL_STATEMENT = "";	//JS to be eval'ed during exit ONLY with EXIT_BEHAVIOR of LMS_SPECIFIED_REDIRECT
