@@ -48,6 +48,7 @@ var CLOSE_METHODS = {
             console.log('path: ' + path);
             console.log('window.location = scheme + // + host + path: ' + scheme + '//' + host + path);
             console.log('window.location: ' + window.location);
+            alert('close_methods.js');
 
             return true;
     	}
