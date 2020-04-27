@@ -34,14 +34,9 @@ r(function () {
 });
 
 console.log('Configuration.js');
-
 var url = window.location.toString();
 var prodMatch = url.match(/(https?):\/\/([^-]*)-?cdn\.learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
 var nonProdMatch = url.match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
-
-console.log('url: ' + url);
-console.log('prodMatch: ' + prodMatch);
-console.log('nonProdMatch: ' + nonProdMatch);
 
 if (!prodMatch && !nonProdMatch) {
     console.log('Content being accessed on invalid domain');
@@ -51,13 +46,10 @@ if (!prodMatch && !nonProdMatch) {
 var courseId;
 var host;
 if (prodMatch) {
-    console.log('prodMatch[3]: ' + prodMatch[3]);
     courseId = prodMatch[3];
     host = 'learn.civilservice.gov.uk/';
 } else {
-    console.log('nonProdMatch[3]: ' + nonProdMatch[3]);
     courseId = nonProdMatch[3];
-    console.log('nonProdMatch[2]: ' + nonProdMatch[2]);
     if (nonProdMatch[2] === 'local') {
         host = 'lpg.local.cshr.digital:3001/';
     } else {
@@ -68,14 +60,6 @@ if (prodMatch) {
 var scheme = window.location.protocol;
 var moduleId = getParameterByName('module');
 var path = 'learning-record/' + courseId + '/' + moduleId;
-
-console.log('courseId: ' + courseId);
-console.log('host: ' + host);
-console.log('scheme: ' + scheme);
-console.log('moduleId: ' + courseId);
-console.log('path: ' + path);
-console.log('EXIT_TARGET = scheme + // + host + path: ' + scheme + '//' + host + path);
-alert('Configuration.js');
 
 //Configuration Parameters
 var blnDebug = false;						//set this to false if you don't want the overhead of recording debug information
