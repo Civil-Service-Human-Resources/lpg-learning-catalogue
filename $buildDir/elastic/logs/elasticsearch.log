@@ -1,0 +1,36 @@
+[2020-04-28T14:34:02,704][INFO ][o.e.n.Node               ] [] initializing ...
+[2020-04-28T14:34:03,046][INFO ][o.e.e.NodeEnvironment    ] [p6MUDWD] using [1] data paths, mounts [[/ (/dev/sda5)]], net usable_space [69.7gb], net total_space [94.5gb], types [ext4]
+[2020-04-28T14:34:03,046][INFO ][o.e.e.NodeEnvironment    ] [p6MUDWD] heap size [503.6mb], compressed ordinary object pointers [true]
+[2020-04-28T14:34:03,048][INFO ][o.e.n.Node               ] node name [p6MUDWD] derived from node ID [p6MUDWDaS8GLjTR1kQs2uA]; set [node.name] to override
+[2020-04-28T14:34:03,050][INFO ][o.e.n.Node               ] version[6.2.4], pid[11798], build[ccec39f/2018-04-12T20:37:28.497551Z], OS[Linux/5.3.0-45-generic/amd64], JVM[Oracle Corporation/Java HotSpot(TM) 64-Bit Server VM/1.8.0_241/25.241-b07]
+[2020-04-28T14:34:03,051][INFO ][o.e.n.Node               ] JVM arguments [-Xms1g, -Xmx1g, -XX:+UseConcMarkSweepGC, -XX:CMSInitiatingOccupancyFraction=75, -XX:+UseCMSInitiatingOccupancyOnly, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Djava.io.tmpdir=/tmp/elasticsearch.zRZFO3Wf, -XX:+HeapDumpOnOutOfMemoryError, -XX:+PrintGCDetails, -XX:+PrintGCDateStamps, -XX:+PrintTenuringDistribution, -XX:+PrintGCApplicationStoppedTime, -Xloggc:logs/gc.log, -XX:+UseGCLogFileRotation, -XX:NumberOfGCLogFiles=32, -XX:GCLogFileSize=64m, -Xms128m, -Xmx512m, -Des.path.home=/home/vince/dev/lpg/lpg-learning-catalogue/gradle/tools/elastic, -Des.path.conf=/home/vince/dev/lpg/lpg-learning-catalogue/gradle/tools/elastic/config]
+[2020-04-28T14:34:04,948][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [aggs-matrix-stats]
+[2020-04-28T14:34:04,949][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [analysis-common]
+[2020-04-28T14:34:04,951][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [ingest-common]
+[2020-04-28T14:34:04,951][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [lang-expression]
+[2020-04-28T14:34:04,952][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [lang-mustache]
+[2020-04-28T14:34:04,952][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [lang-painless]
+[2020-04-28T14:34:04,952][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [mapper-extras]
+[2020-04-28T14:34:04,952][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [parent-join]
+[2020-04-28T14:34:04,952][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [percolator]
+[2020-04-28T14:34:04,952][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [rank-eval]
+[2020-04-28T14:34:04,953][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [reindex]
+[2020-04-28T14:34:04,953][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [repository-url]
+[2020-04-28T14:34:04,953][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [transport-netty4]
+[2020-04-28T14:34:04,953][INFO ][o.e.p.PluginsService     ] [p6MUDWD] loaded module [tribe]
+[2020-04-28T14:34:04,953][INFO ][o.e.p.PluginsService     ] [p6MUDWD] no plugins loaded
+[2020-04-28T14:34:11,588][INFO ][o.e.d.DiscoveryModule    ] [p6MUDWD] using discovery type [zen]
+[2020-04-28T14:34:13,132][INFO ][o.e.n.Node               ] initialized
+[2020-04-28T14:34:13,136][INFO ][o.e.n.Node               ] [p6MUDWD] starting ...
+[2020-04-28T14:34:13,771][INFO ][o.e.t.TransportService   ] [p6MUDWD] publish_address {127.0.0.1:9999}, bound_addresses {[::1]:9999}, {127.0.0.1:9999}
+[2020-04-28T14:34:13,815][WARN ][o.e.b.BootstrapChecks    ] [p6MUDWD] initial heap size [134217728] not equal to maximum heap size [536870912]; this can cause resize pauses and prevents mlockall from locking the entire heap
+[2020-04-28T14:34:13,815][WARN ][o.e.b.BootstrapChecks    ] [p6MUDWD] max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+[2020-04-28T14:34:16,985][INFO ][o.e.c.s.MasterService    ] [p6MUDWD] zen-disco-elected-as-master ([0] nodes joined), reason: new_master {p6MUDWD}{p6MUDWDaS8GLjTR1kQs2uA}{UUEfZhQNR_KfMTZsy5IXHQ}{127.0.0.1}{127.0.0.1:9999}
+[2020-04-28T14:34:17,035][INFO ][o.e.c.s.ClusterApplierService] [p6MUDWD] new_master {p6MUDWD}{p6MUDWDaS8GLjTR1kQs2uA}{UUEfZhQNR_KfMTZsy5IXHQ}{127.0.0.1}{127.0.0.1:9999}, reason: apply cluster state (from master [master {p6MUDWD}{p6MUDWDaS8GLjTR1kQs2uA}{UUEfZhQNR_KfMTZsy5IXHQ}{127.0.0.1}{127.0.0.1:9999} committed version [1] source [zen-disco-elected-as-master ([0] nodes joined)]])
+[2020-04-28T14:34:17,127][INFO ][o.e.h.n.Netty4HttpServerTransport] [p6MUDWD] publish_address {127.0.0.1:9998}, bound_addresses {[::1]:9998}, {127.0.0.1:9998}
+[2020-04-28T14:34:17,128][INFO ][o.e.n.Node               ] [p6MUDWD] started
+[2020-04-28T14:34:17,230][INFO ][o.e.g.GatewayService     ] [p6MUDWD] recovered [0] indices into cluster_state
+[2020-04-28T14:34:31,320][INFO ][o.e.n.Node               ] [p6MUDWD] stopping ...
+[2020-04-28T14:34:31,439][INFO ][o.e.n.Node               ] [p6MUDWD] stopped
+[2020-04-28T14:34:31,439][INFO ][o.e.n.Node               ] [p6MUDWD] closing ...
+[2020-04-28T14:34:31,489][INFO ][o.e.n.Node               ] [p6MUDWD] closed
