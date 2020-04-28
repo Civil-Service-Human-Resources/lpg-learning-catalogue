@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableMap;
+import com.microsoft.applicationinsights.core.dependencies.google.protobuf.Internal;
 import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,13 +25,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
-import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
-import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
+import uk.gov.cslearning.catalogue.domain.CivilServant.*;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.repository.CourseRequiredRepository;
 import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
@@ -40,7 +42,11 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static java.util.Collections.*;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -51,6 +57,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
 
@@ -142,7 +149,7 @@ public class CourseControllerTest {
         when(courseService.getOrganisationParents(any(String.class))).thenReturn(organisationParents);
 
         when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+                .thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
@@ -160,8 +167,8 @@ public class CourseControllerTest {
     public void shouldDefaultToShowingAllPublicCourses() throws Exception {
         Course course = new Course();
 
-        when(courseRepository.findAllByStatusIn(eq(Collections.singletonList(Status.PUBLISHED)), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+        when(courseRepository.findAllByStatusIn(eq(singletonList(Status.PUBLISHED)), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
@@ -175,7 +182,7 @@ public class CourseControllerTest {
         Course course = new Course();
 
         when(courseRepository.findAllByStatusIn(eq(Arrays.asList(Status.DRAFT, Status.PUBLISHED, Status.ARCHIVED)), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+                .thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
@@ -210,7 +217,7 @@ public class CourseControllerTest {
         course.setAudiences(audiences);
 
         when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+                .thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
@@ -252,7 +259,7 @@ public class CourseControllerTest {
         when(courseService.getOrganisationParents(any(String.class))).thenReturn(organisationParents);
 
         when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+                .thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
@@ -265,6 +272,114 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
 
+
+
+    @Test
+    public void shouldListRequiredCourses() throws Exception {
+
+        // Set user profile
+        String userProfession = "Finance";
+        String userGrade = "G7";
+        String UserDepartment = "co";
+
+        CivilServant civilServant = new CivilServant();
+
+        Profession profession = new Profession();
+        profession.setId(1L);
+        profession.setName("Finance");
+
+        civilServant.setProfession(profession);
+
+        Profession otherAreaOfWork = new Profession();
+        otherAreaOfWork.setId(2L);
+        otherAreaOfWork.setName("Digital");
+
+        List<Profession> userOtherAreasOfWork = new ArrayList<>();
+        userOtherAreasOfWork.add(otherAreaOfWork);
+
+        civilServant.setOtherAreasOfWork(userOtherAreasOfWork);
+
+        OrganisationalUnit organisationalUnit= new OrganisationalUnit();
+        organisationalUnit.setCode("co");
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        Grade grade = new Grade();
+        grade.setCode("G7");
+        grade.setName("poor");
+        civilServant.setGrade(grade);
+
+        List<String> otherAreasOfWorkNames = userOtherAreasOfWork.stream()
+                .map(Profession::getName)
+                .collect(Collectors.toList());
+
+        Interest userInterest = new Interest();
+        userInterest.setName("Leadership");
+
+        List<Interest> interests = new ArrayList<>();
+        interests.add(userInterest);
+
+        List<String> userInterests = interests.stream()
+                .map(Interest::getName)
+                .collect(Collectors.toList());
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
+
+
+        // Set audience
+        String courseStatus = "Published";
+        String courseType = "REQUIRED_LEARNING";
+
+        String requiredCourseAudienceDept1 = "co";
+        String requiredCourseAudienceDept2 = "hmrc";
+        String requiredCourseAudienceDept3 = "dh";
+
+
+        List<String> organisationParentAndChild = new ArrayList<>();
+        organisationParentAndChild.add("co");
+      //  organisationParentAndChild.add("department2");
+
+        // Audience Dept List
+        Set<String> co_hmrc_dh_departments = new HashSet<>(Arrays.asList(requiredCourseAudienceDept1, requiredCourseAudienceDept2, requiredCourseAudienceDept3));
+        Set<String> aow = new HashSet<>(Arrays.asList("Finance"));
+        Set<String> aGrade = new HashSet<>(Arrays.asList("G7"));
+
+
+        // Create Required Audience
+        Audience audience = new Audience();
+        audience.setDepartments(co_hmrc_dh_departments);
+        audience.setType(Audience.Type.REQUIRED_LEARNING);
+        audience.setAreasOfWork(aow);
+        audience.setGrades(aGrade);
+        Set<Audience> audiences1 = new HashSet<>(singletonList(audience));
+
+        // Create Course
+        Course course1 = new Course();
+        course1.setAudiences(audiences1);
+
+        // Create the Courses List
+        List<Course> expectedCourses = new ArrayList<>();
+        expectedCourses.add(course1);
+
+        when(courseService.getOrganisationParents(any(String.class)))
+                .thenReturn(organisationParentAndChild);
+
+        PageImpl<Course> courses = new PageImpl<>(expectedCourses);
+
+        when(courseService.getRequiredCourses(userProfession, userGrade, organisationParentAndChild, otherAreasOfWorkNames,  userInterests, courseStatus,  PageRequest.of(0, 200)))
+                .thenReturn(courses);
+
+//        when(courseService.getRequiredCourses(userProfession, userGrade, organisationParentAndChild, otherAreasOfWorkNames,  userInterests, courseStatus,  PageRequest.of(0, 200)))
+//                .thenReturn(new PageImpl<>(new ArrayList<>(expectedCourses)));
+
+        mockMvc.perform(
+                get("/courses/getrequiredlearning")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].audiences[0].departments[0]",
+                        equalTo(course1.getAudiences().iterator().next().getDepartments().iterator().next())))
+                .andExpect(jsonPath("$.results[0].audiences[0].type[0]", equalTo(courseType)));
+        }
 
     @Test
     public void shouldListMandatoryCourses() throws Exception {
@@ -322,9 +437,9 @@ public class CourseControllerTest {
         Course course = new Course();
 
         when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
-                .thenReturn(new ArrayList<>(Collections.singletonList(course)));
+                .thenReturn(new ArrayList<>(singletonList(course)));
 
-        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
+        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(singletonList(department)));
 
         mockMvc.perform(
                 get("/courses/")
@@ -350,7 +465,7 @@ public class CourseControllerTest {
 
         when(registryService.getCurrentCivilServant())
                 .thenReturn(civilServant);
-        when(courseService.findCoursesByOrganisationalUnit(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(course)));
+        when(courseService.findCoursesByOrganisationalUnit(any(), any())).thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/management")
@@ -371,7 +486,7 @@ public class CourseControllerTest {
 
         when(registryService.getCurrentCivilServant())
                 .thenReturn(civilServant);
-        when(courseService.findCoursesByProfession(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(course)));
+        when(courseService.findCoursesByProfession(any(), any())).thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/management")
@@ -392,7 +507,7 @@ public class CourseControllerTest {
 
         when(registryService.getCurrentCivilServant())
                 .thenReturn(civilServant);
-        when(courseService.findCoursesBySupplier(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(course)));
+        when(courseService.findCoursesBySupplier(any(), any())).thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/management")
@@ -405,7 +520,7 @@ public class CourseControllerTest {
     public void shouldListForCslAuthor() throws Exception {
         Course course = new Course();
 
-        when(courseService.findAllCourses(any(Pageable.class))).thenReturn(new PageImpl<>(Collections.singletonList(course)));
+        when(courseService.findAllCourses(any(Pageable.class))).thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/management")
@@ -724,7 +839,7 @@ public class CourseControllerTest {
         dateRange.setStartTime(start);
         dateRange.setEndTime(end);
 
-        List<DateRange> dateRanges = Collections.singletonList(dateRange);
+        List<DateRange> dateRanges = singletonList(dateRange);
         Venue venue = new Venue();
         venue.setLocation("venue-location");
         venue.setAddress("venue-address");
