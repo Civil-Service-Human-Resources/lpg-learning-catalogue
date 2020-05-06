@@ -11,7 +11,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.Course;
-
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;

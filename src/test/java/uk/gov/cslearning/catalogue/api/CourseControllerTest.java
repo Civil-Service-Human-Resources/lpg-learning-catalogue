@@ -5,17 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableMap;
-import com.microsoft.applicationinsights.core.dependencies.google.protobuf.Internal;
 import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +29,6 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
-import uk.gov.cslearning.catalogue.repository.CourseRequiredRepository;
 import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
@@ -43,11 +39,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static java.util.Collections.*;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -58,7 +51,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
 
@@ -120,7 +112,7 @@ public class CourseControllerTest {
                 .andExpect(header().string("location", "http://localhost/courses/" + newId));
     }
 
-    @Ignore
+
     @Test
     public void shouldFindSuggestedCourses() throws Exception {
         String areaOfWork = "area-of-work";
@@ -128,6 +120,42 @@ public class CourseControllerTest {
         String interest = "_interest";
         String status = "status";
         String grade = "G6";
+
+        //-- Set user profile
+        CivilServant civilServant = new CivilServant();
+
+        Profession profession = new Profession();
+        profession.setId(1L);
+        profession.setName("Finance");
+
+        civilServant.setProfession(profession);
+
+        Profession otherAreaOfWork = new Profession();
+        otherAreaOfWork.setId(2L);
+        otherAreaOfWork.setName("Digital");
+
+        List<Profession> userOtherAreasOfWork = new ArrayList<>();
+        userOtherAreasOfWork.add(otherAreaOfWork);
+        civilServant.setOtherAreasOfWork(userOtherAreasOfWork);
+
+        OrganisationalUnit organisationalUnit= new OrganisationalUnit();
+        organisationalUnit.setCode("co");
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        Grade grade_cs = new Grade();
+        grade_cs.setCode("G7");
+        grade_cs.setName("poor");
+        civilServant.setGrade(grade_cs);
+
+        Interest userInterest = new Interest();
+        userInterest.setName("Leadership");
+
+        List<Interest> interests = new ArrayList<>();
+        interests.add(userInterest);
+        civilServant.setInterests(interests);
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
 
         Set<String> grades = new HashSet();
         grades.add(grade);
@@ -138,6 +166,7 @@ public class CourseControllerTest {
         Audience audience = new Audience();
         audience.setGrades(grades);
         audience.setDepartments(organisationalUnits);
+        audience.setType(Audience.Type.OPEN);
 
         Set<Audience> audiences = new HashSet<>();
         audiences.add(audience);
@@ -165,9 +194,100 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
 
-    @Ignore
+
+
+    @Test
+    public void shouldListRequiredCoursesTest() throws Exception {
+
+        //-- Set user profile
+        CivilServant civilServant = new CivilServant();
+
+        Profession profession = new Profession();
+        profession.setId(1L);
+        profession.setName("Finance");
+
+        civilServant.setProfession(profession);
+
+        Profession otherAreaOfWork = new Profession();
+        otherAreaOfWork.setId(2L);
+        otherAreaOfWork.setName("Digital");
+
+        List<Profession> userOtherAreasOfWork = new ArrayList<>();
+        userOtherAreasOfWork.add(otherAreaOfWork);
+        civilServant.setOtherAreasOfWork(userOtherAreasOfWork);
+
+        OrganisationalUnit organisationalUnit= new OrganisationalUnit();
+        organisationalUnit.setCode("co");
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        Grade grade = new Grade();
+        grade.setCode("G7");
+        grade.setName("poor");
+        civilServant.setGrade(grade);
+
+        Interest userInterest = new Interest();
+        userInterest.setName("Leadership");
+
+        List<Interest> interests = new ArrayList<>();
+        interests.add(userInterest);
+        civilServant.setInterests(interests);
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
+
+        //-- Set audience
+        String courseStatus = "Published";
+        String courseType = "REQUIRED_LEARNING";
+
+        String requiredCourseAudienceDept1 = "co";
+        String requiredCourseAudienceDept2 = "hmrc";
+        String requiredCourseAudienceDept3 = "dh";
+
+        List<String> organisationParentAndChild = new ArrayList<>();
+        organisationParentAndChild.add("co");
+
+        //-- Audience Dept List
+        Set<String> co_hmrc_dh_departments = new HashSet<>(Arrays.asList(requiredCourseAudienceDept1, requiredCourseAudienceDept2, requiredCourseAudienceDept3));
+        Set<String> aow = new HashSet<>(Arrays.asList("Finance"));
+        Set<String> aGrade = new HashSet<>(Arrays.asList("G7"));
+
+        //-- Create Required Audience
+        Audience audience = new Audience();
+        audience.setDepartments(co_hmrc_dh_departments);
+        audience.setType(Audience.Type.REQUIRED_LEARNING);
+        audience.setAreasOfWork(aow);
+        audience.setGrades(aGrade);
+        Set<Audience> audiences1 = new HashSet<>(singletonList(audience));
+
+        //-- Create Course
+        Course course1 = new Course();
+        course1.setAudiences(audiences1);
+
+        //-- Create the Courses List
+        List<Course> expectedCourses = new ArrayList<>();
+        expectedCourses.add(course1);
+
+        when(courseService.getOrganisationParents(any(String.class)))
+                .thenReturn(organisationParentAndChild);
+
+        PageImpl<Course> courses = new PageImpl<>(expectedCourses);
+
+        when(courseService.getRequiredCourses(any(String.class), any(String.class), any(List.class), any(List.class), any(List.class),  any(String.class), any(Pageable.class)))
+                .thenReturn(courses);
+
+        mockMvc.perform(
+                get("/courses/getrequiredlearning")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results[0].audiences[0].departments[0]",
+                        equalTo(course1.getAudiences().iterator().next().getDepartments().iterator().next())))
+                .andExpect(jsonPath("$.results[0].audiences[0].type", equalTo(courseType)));
+    }
+
+
     @Test
     public void shouldDefaultToShowingAllPublicCourses() throws Exception {
+
         Course course = new Course();
 
         when(courseRepository.findAllByStatusIn(eq(singletonList(Status.PUBLISHED)), any(Pageable.class)))
@@ -194,7 +314,7 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
-@Ignore
+
     @Test
     public void shouldDefaultMissingInterestParameterToNone() throws Exception {
         String areaOfWork = "area-of-work";
@@ -202,6 +322,42 @@ public class CourseControllerTest {
         String interest = "NONE";
         String status = "Published";
         String grade = "G6";
+
+    //-- Set user profile
+    CivilServant civilServant = new CivilServant();
+
+    Profession profession = new Profession();
+    profession.setId(1L);
+    profession.setName("Finance");
+
+    civilServant.setProfession(profession);
+
+    Profession otherAreaOfWork = new Profession();
+    otherAreaOfWork.setId(2L);
+    otherAreaOfWork.setName("Digital");
+
+    List<Profession> userOtherAreasOfWork = new ArrayList<>();
+    userOtherAreasOfWork.add(otherAreaOfWork);
+    civilServant.setOtherAreasOfWork(userOtherAreasOfWork);
+
+    OrganisationalUnit organisationalUnit= new OrganisationalUnit();
+    organisationalUnit.setCode("co");
+    civilServant.setOrganisationalUnit(organisationalUnit);
+
+    Grade grade_cs = new Grade();
+    grade_cs.setCode("G7");
+    grade_cs.setName("poor");
+    civilServant.setGrade(grade_cs);
+
+    Interest userInterest = new Interest();
+    userInterest.setName("Leadership");
+
+    List<Interest> interests = new ArrayList<>();
+    interests.add(userInterest);
+    civilServant.setInterests(interests);
+
+    when(registryService.getCurrentCivilServant())
+            .thenReturn(civilServant);
 
         Set<String> grades = new HashSet();
         grades.add(grade);
@@ -212,12 +368,18 @@ public class CourseControllerTest {
         Audience audience = new Audience();
         audience.setGrades(grades);
         audience.setAreasOfWork(organisationalUnits);
+        audience.setType(Audience.Type.OPEN);
 
         Set<Audience> audiences = new HashSet<>();
         audiences.add(audience);
 
         Course course = new Course();
         course.setAudiences(audiences);
+
+        List<String> organisationParents = new ArrayList<>();
+        organisationParents.add("department");
+
+        when(courseService.getOrganisationParents(any(String.class))).thenReturn(organisationParents);
 
         when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(singletonList(course)));
@@ -231,7 +393,7 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
 
-    @Ignore
+
     @Test
     public void shouldConcatenateMultipleParameters() throws Exception {
         String areaOfWork = "area-of-work1,area-of-work2";
@@ -239,6 +401,43 @@ public class CourseControllerTest {
         String interest = "interest1,interest2";
         String status = "Published";
         String grade = "G6";
+
+
+        //-- Set user profile
+        CivilServant civilServant = new CivilServant();
+
+        Profession profession = new Profession();
+        profession.setId(1L);
+        profession.setName("Finance");
+
+        civilServant.setProfession(profession);
+
+        Profession otherAreaOfWork = new Profession();
+        otherAreaOfWork.setId(2L);
+        otherAreaOfWork.setName("Digital");
+
+        List<Profession> userOtherAreasOfWork = new ArrayList<>();
+        userOtherAreasOfWork.add(otherAreaOfWork);
+        civilServant.setOtherAreasOfWork(userOtherAreasOfWork);
+
+        OrganisationalUnit organisationalUnit= new OrganisationalUnit();
+        organisationalUnit.setCode("co");
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        Grade grade_cs = new Grade();
+        grade_cs.setCode("G7");
+        grade_cs.setName("poor");
+        civilServant.setGrade(grade_cs);
+
+        Interest userInterest = new Interest();
+        userInterest.setName("Leadership");
+
+        List<Interest> interests = new ArrayList<>();
+        interests.add(userInterest);
+        civilServant.setInterests(interests);
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
 
         Set<String> grades = new HashSet();
         grades.add(grade);
@@ -249,6 +448,7 @@ public class CourseControllerTest {
         Audience audience = new Audience();
         audience.setGrades(grades);
         audience.setDepartments(organisationalUnits);
+        audience.setType(Audience.Type.OPEN);
 
         Set<Audience> audiences = new HashSet<>();
         audiences.add(audience);
@@ -276,138 +476,6 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
 
-
-@Ignore
-    @Test
-    public void shouldListRequiredCoursesTest() throws Exception {
-
-        // Set user profile
-        String userProfession = "Finance";
-        String userGrade = "G7";
-        String UserDepartment = "co";
-
-        CivilServant civilServant = new CivilServant();
-
-        Profession profession = new Profession();
-        profession.setId(1L);
-        profession.setName("Finance");
-
-        civilServant.setProfession(profession);
-
-        Profession otherAreaOfWork = new Profession();
-        otherAreaOfWork.setId(2L);
-        otherAreaOfWork.setName("Digital");
-
-        List<Profession> userOtherAreasOfWork = new ArrayList<>();
-        userOtherAreasOfWork.add(otherAreaOfWork);
-
-        civilServant.setOtherAreasOfWork(userOtherAreasOfWork);
-
-        OrganisationalUnit organisationalUnit= new OrganisationalUnit();
-        organisationalUnit.setCode("co");
-        civilServant.setOrganisationalUnit(organisationalUnit);
-
-        Grade grade = new Grade();
-        grade.setCode("G7");
-        grade.setName("poor");
-        civilServant.setGrade(grade);
-
-        List<String> otherAreasOfWorkNames = userOtherAreasOfWork.stream()
-                .map(Profession::getName)
-                .collect(Collectors.toList());
-
-        Interest userInterest = new Interest();
-        userInterest.setName("Leadership");
-
-        List<Interest> interests = new ArrayList<>();
-        interests.add(userInterest);
-
-        List<String> userInterests = interests.stream()
-                .map(Interest::getName)
-                .collect(Collectors.toList());
-
-        when(registryService.getCurrentCivilServant())
-                .thenReturn(civilServant);
-
-
-        // Set audience
-        String courseStatus = "Published";
-        String courseType = "REQUIRED_LEARNING";
-
-        String requiredCourseAudienceDept1 = "co";
-        String requiredCourseAudienceDept2 = "hmrc";
-        String requiredCourseAudienceDept3 = "dh";
-
-
-        List<String> organisationParentAndChild = new ArrayList<>();
-        organisationParentAndChild.add("co");
-      //  organisationParentAndChild.add("department2");
-
-        // Audience Dept List
-        Set<String> co_hmrc_dh_departments = new HashSet<>(Arrays.asList(requiredCourseAudienceDept1, requiredCourseAudienceDept2, requiredCourseAudienceDept3));
-        Set<String> aow = new HashSet<>(Arrays.asList("Finance"));
-        Set<String> aGrade = new HashSet<>(Arrays.asList("G7"));
-
-
-        // Create Required Audience
-        Audience audience = new Audience();
-        audience.setDepartments(co_hmrc_dh_departments);
-        audience.setType(Audience.Type.REQUIRED_LEARNING);
-        audience.setAreasOfWork(aow);
-        audience.setGrades(aGrade);
-        Set<Audience> audiences1 = new HashSet<>(singletonList(audience));
-
-        // Create Course
-        Course course1 = new Course();
-        course1.setAudiences(audiences1);
-
-        // Create the Courses List
-        List<Course> expectedCourses = new ArrayList<>();
-        expectedCourses.add(course1);
-
-        when(courseService.getOrganisationParents(any(String.class)))
-                .thenReturn(organisationParentAndChild);
-
-        PageImpl<Course> courses = new PageImpl<>(expectedCourses);
-
-       /* when(courseService.getRequiredCourses(userProfession, userGrade, organisationParentAndChild, otherAreasOfWorkNames,  userInterests, courseStatus,  PageRequest.of(0, 100)))
-                .thenReturn(courses);*/
-
-
-        when(courseService.getRequiredCourses(any(String.class), any(String.class), any(List.class), any(List.class), any(List.class),  any(String.class), any(Pageable.class)))
-                .thenReturn(courses);
-
-//        when(courseService.getRequiredCourses(userProfession, userGrade, organisationParentAndChild, otherAreasOfWorkNames,  userInterests, courseStatus,  PageRequest.of(0, 200)))
-//                .thenReturn(new PageImpl<>(new ArrayList<>(expectedCourses)));
-
-        mockMvc.perform(
-                get("/courses/getrequiredlearning")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].audiences[0].departments[0]",
-                        equalTo(course1.getAudiences().iterator().next().getDepartments().iterator().next())))
-                .andExpect(jsonPath("$.results[0].audiences[0].type", equalTo(courseType)));
-        }
-
-        @Ignore
-    @Test
-    public void shouldListMandatoryCourses() throws Exception {
-        String department = "department1";
-        String status = "Published";
-
-        Course course = new Course();
-
-        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
-                .thenReturn(new ArrayList<>(Collections.singletonList(course)));
-        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
-        mockMvc.perform(
-                get("/courses/")
-                        .param("department", "department1")
-                        .param("mandatory", "true")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
 
     @Test
     public void shouldGetRequiredLearningByOrgCodeMap() throws Exception {
@@ -437,29 +505,29 @@ public class CourseControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
-@Ignore
-    @Test
-    public void shouldListMandatoryCoursesWithMultipleParameters() throws Exception {
-        String department = "department1,department2";
-        String status = "Draft,Published";
-
-        Course course = new Course();
-
-        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
-                .thenReturn(new ArrayList<>(singletonList(course)));
-
-        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(singletonList(department)));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("department", "department1", "department2")
-                        .param("status", "Draft", "Published")
-                        .param("mandatory", "true")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-
-    }
+//@Ignore
+//    @Test
+//    public void shouldListMandatoryCoursesWithMultipleParameters() throws Exception {
+//        String department = "department1,department2";
+//        String status = "Draft,Published";
+//
+//        Course course = new Course();
+//
+//        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
+//                .thenReturn(new ArrayList<>(singletonList(course)));
+//
+//        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(singletonList(department)));
+//
+//        mockMvc.perform(
+//                get("/courses/")
+//                        .param("department", "department1", "department2")
+//                        .param("status", "Draft", "Published")
+//                        .param("mandatory", "true")
+//                        .with(csrf()))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+//
+//    }
 
     @Test
     @WithMockUser(username = "user", authorities = {"ORGANISATION_AUTHOR"})
