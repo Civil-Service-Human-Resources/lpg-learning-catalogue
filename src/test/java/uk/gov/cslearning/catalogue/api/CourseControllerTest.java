@@ -505,29 +505,7 @@ public class CourseControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
-//@Ignore
-//    @Test
-//    public void shouldListMandatoryCoursesWithMultipleParameters() throws Exception {
-//        String department = "department1,department2";
-//        String status = "Draft,Published";
-//
-//        Course course = new Course();
-//
-//        when(courseRepository.findMandatory(eq(department), eq(status), any(Pageable.class)))
-//                .thenReturn(new ArrayList<>(singletonList(course)));
-//
-//        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(singletonList(department)));
-//
-//        mockMvc.perform(
-//                get("/courses/")
-//                        .param("department", "department1", "department2")
-//                        .param("status", "Draft", "Published")
-//                        .param("mandatory", "true")
-//                        .with(csrf()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-//
-//    }
+
 
     @Test
     @WithMockUser(username = "user", authorities = {"ORGANISATION_AUTHOR"})
