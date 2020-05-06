@@ -25,7 +25,6 @@ import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.mapping.RoleMapping;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
-import uk.gov.cslearning.catalogue.repository.CourseRequiredRepository;
 import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
@@ -97,31 +96,53 @@ public class CourseController {
             results = courseRepository.findAllByStatusIn(
                     Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
-
             List<String> organisationParents = courseService.getOrganisationParents(departments);
             results = courseRepository.findSuggested(organisationParents, areasOfWork, interests, status, grade, pageable);
 
             CivilServant civilServant = registryService.getCurrentCivilServant();
             String organisationCode = civilServant.getOrganisationalUnitCode().get();
+            List<Profession> otherAreasOfWork = civilServant.getOtherAreasOfWork();
+            String professionName = civilServant.getProfessionName().get();
+
+            List<String> otherAreasOfWorkNames = otherAreasOfWork.stream()
+                    .map(Profession::getName)
+                    .collect(collectingAndThen(toList(), this::listWithNone));
+
             List<String> organisationParentChild = courseService.getOrganisationParents(organisationCode);
+            List<Interest> interests_cs = civilServant.getInterests();
+
+            List<String> interestNames = interests_cs.stream()
+                    .map(Interest::getName)
+                    .collect(collectingAndThen(toList(), this::listWithNone));
 
             ArrayList<Course> filteredCourses = new ArrayList<>();
 
             for (Course course : results) {
                 for (Audience audience : course.getAudiences()) {
                     for (String organisation : organisationParents) {
+                        // any course that has a dept defined (check if AOW and Interests are also part of audience).
                         if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)
+                                && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
+                                && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))
                                 && audience.getType().equals(Audience.Type.OPEN)) {
                             filteredCourses.add(course);
                         }
                     }
+
+                    // Show any courses with AOW (audience could also have a dept/interest so filter it if it does ie it could be Required for CO but Open for HMRC
+                    // causing it to appear in both req and suggested for same user)
                     if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)
-                            && (containsAny(audience.getDepartments(), organisationParentChild))
+                            && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
+                            && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))
                             && audience.getType().equals(Audience.Type.OPEN)) {
                         filteredCourses.add(course);
                     }
+
+                    // Show any courses with Interest (audience could also have a dept/aow so filter it if it does ie it could be Required for CO but Open for HMRC
+                    // causing it to appear in both req and suggested for same user)
                     if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)
-                            && (containsAny(audience.getDepartments(), organisationParentChild))
+                            && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
+                            && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
                             && audience.getType().equals(Audience.Type.OPEN)) {
                         filteredCourses.add(course);
                     }
@@ -188,7 +209,8 @@ public class CourseController {
         for (Course course : results) {
             for (Audience audience : course.getAudiences()) {
                 for (String organisation : organisationParentandChild) {
-                    if (audience.getDepartments().contains(organisation) && doesCourseAudienceMatchUserProfile(audience, grade, interestNames, otherAreasOfWorkNames, professionName)) {
+                    if (audience.getDepartments().contains(organisation)
+                            && doesCourseAudienceMatchUserProfile(audience, grade, interestNames, otherAreasOfWorkNames, professionName)) {
                         filteredCourses.add(course);
                     }
                 }
