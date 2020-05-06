@@ -60,6 +60,9 @@ oauth:
   clientSecret: ${CLIENT_SECRET:test}
   checkTokenUrl: "${oauth.serviceUrl}/oauth/check_token"
   tokenUrl: "${oauth.serviceUrl}/oauth/token"
+  maxTotalConnections: 200
+  defaultMaxConnectionsPerRoute: 100
+  maxPerServiceUrl: 100
 
 retention:
   timeInDays: ${RETENTION_TIME_IN_DAYS:90}
