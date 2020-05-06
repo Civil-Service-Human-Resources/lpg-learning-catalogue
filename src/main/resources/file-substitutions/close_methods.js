@@ -21,7 +21,7 @@ var CLOSE_METHODS = {
             } else {
                 courseId = nonProdMatch[3];
                 if (nonProdMatch[2] === 'local') {
-                    host = 'lpg.local.cshr.digital:3001/';
+                    host = 'localhost:3001/';
                 } else {
                     host = nonProdMatch[2] + '-lpg.cshr.digital/';
                 }
