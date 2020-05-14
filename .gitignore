@@ -6,3 +6,5 @@
 gradle/tools
 build
 out
+.project
+.settings/*
