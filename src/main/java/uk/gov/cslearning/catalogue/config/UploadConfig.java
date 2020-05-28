@@ -56,6 +56,7 @@ public class UploadConfig {
                 .put("story_content/user.js", "/file-substitutions/user.js") //Storyline
                 .put("SCORMDriver/Configuration.js", "/file-substitutions/Configuration.js") //DominKNOW
                 .build();
+                
     }
 
     @Bean("fileProcessorMap")
