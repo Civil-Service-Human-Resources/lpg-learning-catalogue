@@ -47,6 +47,10 @@ public class UploadConfigTest {
                 .put("xlsx", defaultUploader)
                 .put("mp4", defaultUploader)
                 .put("zip", scormUploader)
+                .put("jpg", defaultUploader)
+                .put("jpeg", defaultUploader)
+                .put("png", defaultUploader)
+                .put("svg", defaultUploader)
                 .build();
 
         assertEquals(uploaderMap.keySet(), config.uploaderMap(defaultUploader, scormUploader).keySet());
