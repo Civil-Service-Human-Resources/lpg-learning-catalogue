@@ -41,6 +41,10 @@ public class UploadConfig {
                 .put("xlsx", defaultUploader) // MS Excel
                 .put("mp4",  defaultUploader) // Video
                 .put("zip",  scormUploader)   // Scorm
+                .put("jpg", defaultUploader)  //jpeg
+                .put("jpeg", defaultUploader) //jpeg
+                .put("png", defaultUploader)  //png
+                .put("svg", defaultUploader)  //svg
                 .build();
 
     }
@@ -74,6 +78,16 @@ public class UploadConfig {
                 .put("xlsx", defaultFileProcessor) // MS Excel
                 .put("zip", scormFileProcessor) // Scorm
                 .put("mp4",  mp4FileProcessor)     // Video
+                .build();
+    }
+
+    @Bean(name = "imageProcessorMap")
+    public Map<String, FileProcessor> imageProcessorMap(DefaultFileProcessor defaultFileProcessor){
+        return ImmutableMap.<String, FileProcessor>builder()
+                .put("jpg", defaultFileProcessor)
+                .put("jpeg", defaultFileProcessor)
+                .put("png", defaultFileProcessor)
+                .put("svg", defaultFileProcessor)
                 .build();
     }
 
