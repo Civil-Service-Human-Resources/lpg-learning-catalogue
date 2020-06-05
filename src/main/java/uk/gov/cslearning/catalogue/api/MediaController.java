@@ -13,6 +13,7 @@ import uk.gov.cslearning.catalogue.service.upload.FileUploadFactory;
 import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Optional;
 
 @Controller
@@ -52,5 +53,21 @@ public class MediaController {
         Optional<Media> media = mediaManagementService.findById(mediaId);
 
         return media.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/skills/image")
+    public ResponseEntity uploadImage(MultipartFile file, @RequestParam String container, @RequestParam(required = false) String filename, UriComponentsBuilder builder) {
+
+        Media media = null;
+        try {
+            media = mediaManagementService.createImage(fileUploadFactory.create(file, container, filename));
+        } catch (IOException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Error uploading image/graph : Reason -> " + ex.getMessage());
+        }
+
+        return (ResponseEntity.created(builder.path("/media/{mediaUid}").build(media.getId()))
+                .header("Access-Control-Expose-Headers",  "Location")).build();
     }
 }
