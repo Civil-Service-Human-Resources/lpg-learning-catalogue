@@ -22,6 +22,9 @@ import org.springframework.security.oauth2.client.token.DefaultAccessTokenReques
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.web.client.RestTemplate;
 @Configuration
 @EnableWebSecurity
@@ -43,6 +46,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/oauth/token")
                 .permitAll();
+    }
+
+    @Bean
+    public TokenStore getTokenStore(OAuthProperties oAuthProperties) {
+        return new JwtTokenStore(accessTokenConverter(oAuthProperties));
+    }
+
+    @Bean
+    public JwtAccessTokenConverter accessTokenConverter(OAuthProperties oAuthProperties) {
+        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        jwtAccessTokenConverter.setSigningKey(oAuthProperties.getJwtKey());
+        return jwtAccessTokenConverter;
     }
 
     @Bean
