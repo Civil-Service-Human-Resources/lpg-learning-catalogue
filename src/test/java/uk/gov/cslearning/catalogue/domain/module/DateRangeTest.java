@@ -1,11 +1,10 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
+import org.junit.Test;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import static org.junit.Assert.assertEquals;
 
 public class DateRangeTest {
     @Test
@@ -45,5 +44,4 @@ public class DateRangeTest {
 
         assertEquals(dateRange1.hashCode(), dateRange2.hashCode());
     }
-
 }
