@@ -11,7 +11,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
-import uk.gov.cslearning.catalogue.service.IdentityTokenServices;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
 import uk.gov.cslearning.catalogue.service.record.model.Event;
 
@@ -20,7 +19,7 @@ import java.util.List;
 @Service
 public class LearnerRecordService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IdentityTokenServices.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LearnerRecordService.class);
 
     private final RestTemplate restTemplate;
 
