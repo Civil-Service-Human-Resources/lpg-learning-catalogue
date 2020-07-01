@@ -19,6 +19,7 @@ See the `diagram/` folder for diagram source in draw.io XML format
 For a complete list of build dependencies check the `build.gradle` file. The main source dependencies are:  
 - Spring Boot 2.0 (web, jetty, jersey, security, config)
 - Spring Security OAuth2 2.3.3
+- Spring Security JWT 1.1.1
 - Spring Data elasticsearch
 - Azure Storage 8.0
 - Azure App Insights 2.5
@@ -76,7 +77,7 @@ Deployment is controlled via the Terraform scripts in the main PaaS repository, 
 
 Significant configuration properties are highlighted here. For the full configuration file see `src/main/resources/application.yml`
 
-- `oauth` connection settings for the identity-service used to validate bearer tokens
+- `oauth` connection settings for the identity-service used to create cross-service bearer tokens
 - `record` connection settings and paths for the learner-record service
 - `registry` connection settings for the civil-servant-registry-service
 - `elasticsearch` connection settings for the ElasticSearch cluster
