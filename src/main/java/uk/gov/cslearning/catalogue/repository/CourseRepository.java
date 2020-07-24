@@ -13,6 +13,7 @@ import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.List;
 
 @Repository
@@ -20,6 +21,9 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?1\"}},{\"match\": {\"audiences.departments\": \"?0\"}}]}}")
     List<Course> findMandatory(String department, String status, Pageable pageable);
+
+    @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}}, {\"match\": {\"id\": \"?0\"}}, {\"match\": {\"audiences.departments\": \"?1\"}}]}}")
+    Optional<Course> findMandatoryById(String id, String department);
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?1\"}},{\"match\": {\"audiences.departments\": \"[?0]\"}}]}}")
     List<Course> findMandatoryOfMultipleDepts(List<String> department, String status, Pageable pageable);

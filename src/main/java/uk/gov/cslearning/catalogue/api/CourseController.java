@@ -1,18 +1,24 @@
 package uk.gov.cslearning.catalogue.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
+import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
+
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -28,12 +34,27 @@ import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.*;
-import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/courses")
@@ -138,6 +159,19 @@ public class CourseController {
         Page<Course> page = new PageImpl<>(filteredCourses, pageable, courses.size());
 
         return ResponseEntity.ok(new PageResults<>(page, pageable));
+    }
+
+    @GetMapping(value = "/required", params = {"id", "department"})
+    public ResponseEntity<List<Course>> findMandatoryByDepartmentAndId(@RequestParam(value = "id", defaultValue = "") String id,
+            @RequestParam("department") String department) {
+        LOGGER.debug("Fetching mandatory course by id {} and department {}", id, department);
+        List<String> organisationParents = courseService.getOrganisationParents(department);
+
+        List<Course> courses = new ArrayList<>();
+        organisationParents.forEach(parent -> courseRepository.findMandatoryById(id, parent)
+            .ifPresent(courses::add));
+
+        return ResponseEntity.ok(courses);
     }
 
     @GetMapping(value = "/required")
