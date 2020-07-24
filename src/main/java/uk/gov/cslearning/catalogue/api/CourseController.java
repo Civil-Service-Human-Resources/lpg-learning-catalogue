@@ -162,16 +162,20 @@ public class CourseController {
     }
 
     @GetMapping(value = "/required", params = {"id", "department"})
-    public ResponseEntity<List<Course>> findMandatoryByDepartmentAndId(@RequestParam(value = "id", defaultValue = "") String id,
+    public ResponseEntity<Boolean> checkIfCourseIsMandatoryByDepartmentAndId(@RequestParam(value = "id", defaultValue = "") String id,
             @RequestParam("department") String department) {
         LOGGER.debug("Fetching mandatory course by id {} and department {}", id, department);
         List<String> organisationParents = courseService.getOrganisationParents(department);
+        boolean isPresent = false;
 
-        List<Course> courses = new ArrayList<>();
-        organisationParents.forEach(parent -> courseRepository.findMandatoryById(id, parent)
-            .ifPresent(courses::add));
-
-        return ResponseEntity.ok(courses);
+        for (String parent : organisationParents) {
+            Optional<Course> course = courseRepository.findMandatoryById(id, parent);
+            if (course.isPresent()) {
+                isPresent = true;
+                break;
+            }
+        }
+        return ResponseEntity.ok(isPresent);
     }
 
     @GetMapping(value = "/required")
