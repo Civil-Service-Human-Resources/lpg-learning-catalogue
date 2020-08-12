@@ -400,13 +400,43 @@ public class CourseServiceTest {
         course3.setAudiences(prepareAudiences(TEST_DEPARTMENT_2, Instant.now()));
         courses.add(course3);
 
-        when(courseRepository.findMandatory(eq(Status.PUBLISHED.getValue()), eq(PAGEABLE))).thenReturn(courses);
+        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), eq(PAGEABLE))).thenReturn(courses);
 
         List<Course> mandatoryCourses = courseService.fetchMandatoryCourses(Status.PUBLISHED.getValue(), TEST_DEPARTMENT_1, PAGEABLE);
 
         assertEquals(mandatoryCourses.size(), 1);
         assertEquals(mandatoryCourses.get(0).getId(), COURSE_ID_2);
         assertEquals(mandatoryCourses.get(0).getAudiences().size(), 1);
+    }
+
+    @Test
+    public void shouldNotThrowNullPointerExceptionsWhenFilteringCourses() {
+        List<Course> courses = new ArrayList<>();
+
+        Course course1 = new Course();
+        course1.setId(COURSE_ID_1);
+        course1.setAudiences(prepareAudiences(null, null));
+        courses.add(course1);
+
+        Course course2 = new Course();
+        course2.setId(COURSE_ID_2);
+        course2.setAudiences(null);
+        courses.add(course2);
+
+        Course course3 = new Course();
+        course3.setId(COURSE_ID_3);
+        Audience audience = new Audience();
+        audience.setDepartments(null);
+        Set<Audience> audiences = new HashSet<>();
+        audiences.add(audience);
+        course3.setAudiences(audiences);
+        courses.add(course3);
+
+        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), eq(PAGEABLE))).thenReturn(courses);
+
+        List<Course> mandatoryCourses = courseService.fetchMandatoryCourses(Status.PUBLISHED.getValue(), TEST_DEPARTMENT_1, PAGEABLE);
+
+        assertEquals(mandatoryCourses.size(), 0);
     }
 
     private Set<Audience> prepareAudiences(String departmentName, Instant requiredBy) {

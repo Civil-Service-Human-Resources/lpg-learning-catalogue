@@ -140,7 +140,7 @@ public class CourseService {
     public List<Course> fetchMandatoryCourses(String status, String department, Pageable pageable) { ;
         Set<Course> mandatoryCoursesWithValidAudience = new HashSet<>();
 
-        courseRepository.findMandatory(status, pageable)
+        courseRepository.findAllRequiredLearning(status, pageable)
             .forEach(course -> course.getAudiences()
                 .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, department, mandatoryCoursesWithValidAudience)));
 

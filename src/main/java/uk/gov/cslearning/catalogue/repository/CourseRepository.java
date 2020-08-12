@@ -19,7 +19,7 @@ import java.util.List;
 public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository, CourseSuggestionsRepository {
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?0\"}}]}}")
-    List<Course> findMandatory(String status, Pageable pageable);
+    List<Course> findAllRequiredLearning(String status, Pageable pageable);
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?1\"}},{\"match\": {\"audiences.departments\": \"[?0]\"}}]}}")
     List<Course> findMandatoryOfMultipleDepts(List<String> department, String status, Pageable pageable);
