@@ -12,6 +12,8 @@ import static org.mockito.Mockito.when;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,12 +52,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 
+import com.google.common.collect.ImmutableList;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CourseServiceTest {
-
     private static final String COURSE_ID_1 = "courseId-1";
     private static final String COURSE_ID_2 = "courseId-2";
     private static final String COURSE_ID_3 = "courseId-3";
+    private static final String COURSE_ID_4 = "courseId-4";
     private static final String ORGANISATIONAL_UNIT_CODE = "code";
     private static final PageRequest PAGEABLE = PageRequest.of(0, 10);
     private static final Long PROFESSION_ID = 1L;
@@ -439,6 +443,53 @@ public class CourseServiceTest {
         assertEquals(mandatoryCourses.size(), 0);
     }
 
+    @Test
+    public void shouldFilterCoursesByAudiencesAndRequiredBy() {
+        List<Course> courses = new ArrayList<>();
+        Instant oneDay = prepareInstant("2000-01-02");
+
+        Course course1 = new Course();
+        course1.setId(COURSE_ID_1);
+        course1.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, oneDay));
+        courses.add(course1);
+
+        Instant sevenDays = prepareInstant("2000-01-08");
+
+        Course course2 = new Course();
+        course2.setId(COURSE_ID_2);
+        course2.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, sevenDays));
+        courses.add(course2);
+
+        Instant thirtyDays = prepareInstant("2000-01-31");
+
+        Course course3 = new Course();
+        course3.setId(COURSE_ID_3);
+        course3.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, thirtyDays));
+        courses.add(course3);
+
+        Instant twoDays = prepareInstant("2000-01-03");
+
+        Course course4 = new Course();
+        course4.setId(COURSE_ID_4);
+        course4.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, twoDays));
+        courses.add(course4);
+
+        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), eq(PAGEABLE))).thenReturn(courses);
+
+        Instant now = prepareInstant("2000-01-01");
+
+        List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(Status.PUBLISHED.getValue(),
+            TEST_DEPARTMENT_1,
+            PAGEABLE,
+            ImmutableList.of(1L, 7L, 30L),
+            now);
+
+        assertEquals(mandatoryCourses.size(), 3);
+        assertEquals(mandatoryCourses.get(0).getId(), COURSE_ID_3);
+        assertEquals(mandatoryCourses.get(1).getId(), COURSE_ID_2);
+        assertEquals(mandatoryCourses.get(2).getId(), COURSE_ID_1);
+    }
+
     private Set<Audience> prepareAudiences(String departmentName, Instant requiredBy) {
         Set<String> departments = new HashSet<>();
         departments.add(departmentName);
@@ -451,5 +502,11 @@ public class CourseServiceTest {
         notRequiredAudiences.add(audience);
 
         return notRequiredAudiences;
+    }
+
+    private Instant prepareInstant(String date) {
+        return LocalDate.parse(date)
+            .atStartOfDay(ZoneId.systemDefault())
+            .toInstant();
     }
 }

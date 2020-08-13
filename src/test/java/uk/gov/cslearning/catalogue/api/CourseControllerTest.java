@@ -24,10 +24,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -215,7 +217,6 @@ public class CourseControllerTest {
     @Test
     public void shouldDefaultMissingInterestParameterToNone() throws Exception {
         String areaOfWork = "area-of-work";
-        String department = "NONE";
         String interest = "NONE";
         String status = "Published";
         String grade = "G6";
@@ -251,7 +252,6 @@ public class CourseControllerTest {
     @Test
     public void shouldConcatenateMultipleParameters() throws Exception {
         String areaOfWork = "area-of-work1,area-of-work2";
-        String department = "department1,department2";
         String interest = "interest1,interest2";
         String status = "Published";
         String grade = "G6";
@@ -308,6 +308,26 @@ public class CourseControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+    }
+
+    @Test
+    public void shouldListMandatoryCoursesByDays() throws Exception {
+        String department = "department1";
+        String days = "1,7,30";
+
+        Course course = new Course();
+
+        when(courseService.fetchMandatoryCoursesByDueDate(any(String.class), any(String.class), any(Pageable.class), any(Collection.class), any(Instant.class)))
+            .thenReturn(new ArrayList<>(Collections.singletonList(course)));
+        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
+        mockMvc.perform(
+            get("/courses/")
+                .param("department", department)
+                .param("mandatory", "true")
+                .param("days", days)
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
 
     @Test

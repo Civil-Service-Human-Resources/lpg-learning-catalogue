@@ -1,9 +1,18 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
 import uk.gov.cslearning.catalogue.domain.Course;
@@ -12,10 +21,11 @@ import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
 
 @Service
 public class CourseService {
@@ -147,14 +157,57 @@ public class CourseService {
         return new ArrayList(mandatoryCoursesWithValidAudience);
     }
 
+    public List<Course> fetchMandatoryCoursesByDueDate(String status, String department, Pageable pageable, Collection<Long> days, Instant now) { ;
+        Set<Course> mandatoryCoursesWithValidAudience = new HashSet<>();
+
+        courseRepository.findAllRequiredLearning(status, pageable)
+            .forEach(course -> course.getAudiences()
+                .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, department, mandatoryCoursesWithValidAudience, days, now)));
+
+        return new ArrayList(mandatoryCoursesWithValidAudience);
+    }
+
+    public Page<Course> prepareCoursePage(Pageable pageable, List<Course> courses) {
+        Set<String> courseSet = new HashSet<>();
+        List<Course> filteredCourses = courses.stream()
+            .filter(course -> courseSet.add(course.getId()))
+            .collect(Collectors.toList());
+
+        return new PageImpl<>(filteredCourses, pageable, courses.size());
+    }
+
     private void addCourseIfAudienceIsRequired(Course course, Audience audience, String department, Set<Course> mandatoryCoursesWithValidAudience) {
         if (isAudienceRequired(audience, department)) {
             mandatoryCoursesWithValidAudience.add(course);
         }
     }
 
+    private void addCourseIfAudienceIsRequired(Course course,
+            Audience audience,
+            String department,
+            Set<Course> mandatoryCoursesWithValidAudience,
+            Collection<Long> days,
+            Instant now) {
+        if (isAudienceRequired(audience, department, days, now)) {
+            mandatoryCoursesWithValidAudience.add(course);
+        }
+    }
+
     private boolean isAudienceRequired(Audience audience, String department) {
-        return audience.getRequiredBy() != null && audience.getDepartments() != null && audience.getDepartments().contains(department);
+        return audience.getRequiredBy() != null
+            && audience.getDepartments() != null
+            && audience.getDepartments().contains(department);
+    }
+
+    private boolean isAudienceRequired(Audience audience, String department, Collection<Long> days, Instant now) {
+        return audience.getRequiredBy() != null
+            && audience.getDepartments() != null
+            && audience.getDepartments().contains(department)
+            && isRequiredDateDue(audience.getRequiredBy(), days, now);
+    }
+
+    private boolean isRequiredDateDue(Instant requiredBy, Collection<Long> days, Instant now) {
+        return days.contains(ChronoUnit.DAYS.between(now, requiredBy));
     }
 
     private Course getCourseEventsAvailability(Course course) {

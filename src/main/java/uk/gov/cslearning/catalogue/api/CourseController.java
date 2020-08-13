@@ -1,5 +1,42 @@
 package uk.gov.cslearning.catalogue.api;
 
+import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
+
+import java.security.Principal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
+import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Status;
+import uk.gov.cslearning.catalogue.domain.module.Audience;
+import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
+import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.mapping.DaysMapper;
+import uk.gov.cslearning.catalogue.mapping.RoleMapping;
+import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.CourseService;
+import uk.gov.cslearning.catalogue.service.EventService;
+import uk.gov.cslearning.catalogue.service.ModuleService;
+import uk.gov.cslearning.catalogue.service.RegistryService;
+import uk.gov.cslearning.catalogue.service.upload.AudienceService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,29 +48,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
-import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.domain.module.Audience;
-import uk.gov.cslearning.catalogue.domain.module.Event;
-import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
-import uk.gov.cslearning.catalogue.mapping.RoleMapping;
-import uk.gov.cslearning.catalogue.repository.CourseRepository;
-import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.EventService;
-import uk.gov.cslearning.catalogue.service.ModuleService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
-import uk.gov.cslearning.catalogue.service.upload.AudienceService;
-
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.*;
-import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
 @RestController
 @RequestMapping("/courses")
@@ -120,8 +144,8 @@ public class CourseController {
 
     @GetMapping(params = {"mandatory", "department"})
     public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
-                                                             @RequestParam(value = "status", defaultValue = "Published") String status,
-                                                             Pageable pageable) {
+            @RequestParam(value = "status", defaultValue = "Published") String status,
+            Pageable pageable) {
         LOGGER.debug("Listing mandatory courses for department {}", department);
         List<String> organisationParents = courseService.getOrganisationParents(department);
 
@@ -130,14 +154,25 @@ public class CourseController {
             courses.addAll(courseService.fetchMandatoryCourses(status, parent, pageable));
         }
 
-        Set<String> courseSet = new HashSet<>();
-        List<Course> filteredCourses = courses.stream()
-                .filter(e -> courseSet.add(e.getId()))
-                .collect(Collectors.toList());
+        return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, courses), pageable));
+    }
 
-        Page<Course> page = new PageImpl<>(filteredCourses, pageable, courses.size());
+    @GetMapping(params = {"mandatory", "department", "days"})
+    public ResponseEntity<PageResults<Course>> listMandatoryByDueDays(@RequestParam("department") String department,
+            @RequestParam(value = "status", defaultValue = "Published") String status,
+            @RequestParam(value = "days", defaultValue = "1") String days,
+            Pageable pageable) {
+        LOGGER.debug("Listing mandatory courses for department {}", department);
+        Collection<Long> numericDays = DaysMapper.convertDaysFromTextToNumeric(days);
+        List<String> organisationParents = courseService.getOrganisationParents(department);
 
-        return ResponseEntity.ok(new PageResults<>(page, pageable));
+        Instant now = Instant.now();
+        List<Course> courses = new ArrayList<>();
+        for (String parent : organisationParents) {
+            courses.addAll(courseService.fetchMandatoryCoursesByDueDate(status, parent, pageable, numericDays, now));
+        }
+
+        return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, courses), pageable));
     }
 
     @GetMapping(value = "/required")
