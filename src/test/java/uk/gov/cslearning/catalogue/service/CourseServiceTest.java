@@ -474,13 +474,11 @@ public class CourseServiceTest {
         course4.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, twoDays));
         courses.add(course4);
 
-        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), eq(PAGEABLE))).thenReturn(courses);
+        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()))).thenReturn(courses);
 
         Instant now = prepareInstant("2000-01-01");
 
         List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(Status.PUBLISHED.getValue(),
-            TEST_DEPARTMENT_1,
-            PAGEABLE,
             ImmutableList.of(1L, 7L, 30L),
             now);
 

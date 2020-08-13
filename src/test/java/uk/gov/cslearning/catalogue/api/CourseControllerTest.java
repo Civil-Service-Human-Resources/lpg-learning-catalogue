@@ -319,18 +319,17 @@ public class CourseControllerTest {
         Course course = new Course();
         List<Course> courses = new ArrayList<>(Collections.singletonList(course));
 
-        when(courseService.fetchMandatoryCoursesByDueDate(any(String.class), any(String.class), any(Pageable.class), any(Collection.class), any(Instant.class)))
+        when(courseService.fetchMandatoryCoursesByDueDate(any(String.class), any(Collection.class), any(Instant.class)))
             .thenReturn(new ArrayList<>(Collections.singletonList(course)));
         when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
-        when(courseService.prepareCoursePage(any(Pageable.class), any(List.class))).thenReturn(new PageImpl<>(courses));
+        when(courseService.groupByOrganisationCode(any(List.class))).thenReturn(ImmutableMap.of(department, courses));
         mockMvc.perform(
             get("/courses/")
-                .param("department", department)
                 .param("mandatory", "true")
                 .param("days", days)
                 .with(csrf()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
+            .andExpect(jsonPath("$.department1[0].id", equalTo(course.getId())));
     }
 
     @Test

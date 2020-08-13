@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -157,12 +158,12 @@ public class CourseService {
         return new ArrayList(mandatoryCoursesWithValidAudience);
     }
 
-    public List<Course> fetchMandatoryCoursesByDueDate(String status, String department, Pageable pageable, Collection<Long> days, Instant now) { ;
+    public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days, Instant now) { ;
         Set<Course> mandatoryCoursesWithValidAudience = new HashSet<>();
 
-        courseRepository.findAllRequiredLearning(status, pageable)
+        courseRepository.findAllRequiredLearning(status)
             .forEach(course -> course.getAudiences()
-                .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, department, mandatoryCoursesWithValidAudience, days, now)));
+                .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, mandatoryCoursesWithValidAudience, days, now)));
 
         return new ArrayList(mandatoryCoursesWithValidAudience);
     }
@@ -176,6 +177,29 @@ public class CourseService {
         return new PageImpl<>(filteredCourses, pageable, courses.size());
     }
 
+    public Map<String, List<Course>> groupByOrganisationCode(List<Course> courses) {
+        Map<String, List<Course>> groupedCourses = new HashMap<>();
+
+        for (Course course : courses) {
+            for (Audience audience : course.getAudiences()) {
+                addToGroupedCourses(courses, groupedCourses, audience);
+            }
+        }
+
+        return groupedCourses;
+    }
+
+    private void addToGroupedCourses(List<Course> courses, Map<String, List<Course>> groupedCourses, Audience audience) {
+        for (String department : audience.getDepartments()) {
+            if (!groupedCourses.containsKey(department)) {
+                groupedCourses.putIfAbsent(department, new ArrayList<>(courses));
+            } else {
+                groupedCourses.get(department)
+                    .addAll(courses);
+            }
+        }
+    }
+
     private void addCourseIfAudienceIsRequired(Course course, Audience audience, String department, Set<Course> mandatoryCoursesWithValidAudience) {
         if (isAudienceRequired(audience, department)) {
             mandatoryCoursesWithValidAudience.add(course);
@@ -184,11 +208,10 @@ public class CourseService {
 
     private void addCourseIfAudienceIsRequired(Course course,
             Audience audience,
-            String department,
             Set<Course> mandatoryCoursesWithValidAudience,
             Collection<Long> days,
             Instant now) {
-        if (isAudienceRequired(audience, department, days, now)) {
+        if (isAudienceRequired(audience, days, now)) {
             mandatoryCoursesWithValidAudience.add(course);
         }
     }
@@ -199,10 +222,9 @@ public class CourseService {
             && audience.getDepartments().contains(department);
     }
 
-    private boolean isAudienceRequired(Audience audience, String department, Collection<Long> days, Instant now) {
+    private boolean isAudienceRequired(Audience audience, Collection<Long> days, Instant now) {
         return audience.getRequiredBy() != null
             && audience.getDepartments() != null
-            && audience.getDepartments().contains(department)
             && isRequiredDateDue(audience.getRequiredBy(), days, now);
     }
 

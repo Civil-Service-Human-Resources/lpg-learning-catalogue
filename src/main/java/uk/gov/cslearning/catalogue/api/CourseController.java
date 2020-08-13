@@ -11,7 +11,6 @@ import java.security.Principal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -157,22 +156,13 @@ public class CourseController {
         return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, courses), pageable));
     }
 
-    @GetMapping(params = {"mandatory", "department", "days"})
-    public ResponseEntity<PageResults<Course>> listMandatoryByDueDays(@RequestParam("department") String department,
-            @RequestParam(value = "status", defaultValue = "Published") String status,
-            @RequestParam(value = "days", defaultValue = "1") String days,
-            Pageable pageable) {
-        LOGGER.debug("Listing mandatory courses for department {}", department);
-        Collection<Long> numericDays = DaysMapper.convertDaysFromTextToNumeric(days);
-        List<String> organisationParents = courseService.getOrganisationParents(department);
+    @GetMapping(params = {"mandatory", "days"})
+    public ResponseEntity<Map<String, List<Course>>> listMandatoryByDueDays(@RequestParam(value = "status", defaultValue = "Published") String status,
+            @RequestParam(value = "days", defaultValue = "1") String days) {
+        LOGGER.debug("Listing mandatory courses");
+        List<Course> courses = courseService.fetchMandatoryCoursesByDueDate(status, DaysMapper.convertDaysFromTextToNumeric(days), Instant.now());
 
-        Instant now = Instant.now();
-        List<Course> courses = new ArrayList<>();
-        for (String parent : organisationParents) {
-            courses.addAll(courseService.fetchMandatoryCoursesByDueDate(status, parent, pageable, numericDays, now));
-        }
-
-        return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, courses), pageable));
+        return ResponseEntity.ok(courseService.groupByOrganisationCode(courses));
     }
 
     @GetMapping(value = "/required")
