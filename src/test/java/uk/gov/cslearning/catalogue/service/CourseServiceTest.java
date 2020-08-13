@@ -485,9 +485,9 @@ public class CourseServiceTest {
             now);
 
         assertEquals(mandatoryCourses.size(), 3);
-        assertEquals(mandatoryCourses.get(0).getId(), COURSE_ID_3);
-        assertEquals(mandatoryCourses.get(1).getId(), COURSE_ID_2);
-        assertEquals(mandatoryCourses.get(2).getId(), COURSE_ID_1);
+        assertTrue(mandatoryCourses.contains(course1));
+        assertTrue(mandatoryCourses.contains(course2));
+        assertTrue(mandatoryCourses.contains(course3));
     }
 
     private Set<Audience> prepareAudiences(String departmentName, Instant requiredBy) {

@@ -297,10 +297,11 @@ public class CourseControllerTest {
         String department = "department1";
 
         Course course = new Course();
+        List<Course> courses = new ArrayList<>(Collections.singletonList(course));
 
-        when(courseService.fetchMandatoryCourses(any(String.class), any(String.class), any(Pageable.class)))
-                .thenReturn(new ArrayList<>(Collections.singletonList(course)));
+        when(courseService.fetchMandatoryCourses(any(String.class), any(String.class), any(Pageable.class))).thenReturn(courses);
         when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
+        when(courseService.prepareCoursePage(any(Pageable.class), any(List.class))).thenReturn(new PageImpl<>(courses));
         mockMvc.perform(
                 get("/courses/")
                         .param("department", "department1")
@@ -316,10 +317,12 @@ public class CourseControllerTest {
         String days = "1,7,30";
 
         Course course = new Course();
+        List<Course> courses = new ArrayList<>(Collections.singletonList(course));
 
         when(courseService.fetchMandatoryCoursesByDueDate(any(String.class), any(String.class), any(Pageable.class), any(Collection.class), any(Instant.class)))
             .thenReturn(new ArrayList<>(Collections.singletonList(course)));
         when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
+        when(courseService.prepareCoursePage(any(Pageable.class), any(List.class))).thenReturn(new PageImpl<>(courses));
         mockMvc.perform(
             get("/courses/")
                 .param("department", department)
@@ -364,10 +367,12 @@ public class CourseControllerTest {
         String department = "department1,department2";
 
         Course course = new Course();
+        List<Course> courses = new ArrayList<>(Collections.singletonList(course));
 
         when(courseService.fetchMandatoryCourses(any(String.class), any(String.class), any(Pageable.class)))
                 .thenReturn(new ArrayList<>(Collections.singletonList(course)));
         when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
+        when(courseService.prepareCoursePage(any(Pageable.class), any(List.class))).thenReturn(new PageImpl<>(courses));
 
         mockMvc.perform(
                 get("/courses/")
