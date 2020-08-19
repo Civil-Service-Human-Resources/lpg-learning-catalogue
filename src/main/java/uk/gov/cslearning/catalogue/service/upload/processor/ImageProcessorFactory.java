@@ -6,19 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.FileUploadBase;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
-import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 
 @Component
 public class ImageProcessorFactory {
@@ -30,8 +24,8 @@ public class ImageProcessorFactory {
 
     public FileProcessor create(FileUpload fileUpload) {
 
-        if (fileProcessorMap.containsKey(fileUpload.getExtension())) {
-            return fileProcessorMap.get(fileUpload.getExtension());
+        if (fileProcessorMap.containsKey(fileUpload.getExtension().toLowerCase())) {
+            return fileProcessorMap.get(fileUpload.getExtension().toLowerCase());
         } else {
             throw new UnknownFileTypeException(
                     String.format("Uploaded file has an unknown extension: %s",
@@ -69,13 +63,5 @@ public class ImageProcessorFactory {
                     "Uploaded file does not meet the required dimensions." +
                             " 960p width X 640p height");
         }
-
-    }
-
-    //Todo : remove this if not needed.
-    private int calculateDpiForImage(int width, int height) {
-        int dpi = 0;
-
-        return dpi;
     }
 }
