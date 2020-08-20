@@ -479,8 +479,7 @@ public class CourseServiceTest {
         Instant now = prepareInstant("2000-01-01");
 
         List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(Status.PUBLISHED.getValue(),
-            ImmutableList.of(1L, 7L, 30L),
-            now);
+            ImmutableList.of(1L, 7L, 30L));
 
         assertEquals(mandatoryCourses.size(), 3);
         assertTrue(mandatoryCourses.contains(course1));
