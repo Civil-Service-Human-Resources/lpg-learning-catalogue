@@ -446,28 +446,28 @@ public class CourseServiceTest {
     @Test
     public void shouldFilterCoursesByAudiencesAndRequiredBy() {
         List<Course> courses = new ArrayList<>();
-        Instant oneDay = prepareInstant("2000-01-02");
+        Instant oneDay = prepareInstantWithDayDifference(1);
 
         Course course1 = new Course();
         course1.setId(COURSE_ID_1);
         course1.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, oneDay));
         courses.add(course1);
 
-        Instant sevenDays = prepareInstant("2000-01-08");
+        Instant sevenDays = prepareInstantWithDayDifference(7);
 
         Course course2 = new Course();
         course2.setId(COURSE_ID_2);
         course2.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, sevenDays));
         courses.add(course2);
 
-        Instant thirtyDays = prepareInstant("2000-01-31");
+        Instant thirtyDays = prepareInstantWithDayDifference(30);
 
         Course course3 = new Course();
         course3.setId(COURSE_ID_3);
         course3.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, thirtyDays));
         courses.add(course3);
 
-        Instant twoDays = prepareInstant("2000-01-03");
+        Instant twoDays = prepareInstantWithDayDifference(2);
 
         Course course4 = new Course();
         course4.setId(COURSE_ID_4);
@@ -475,8 +475,6 @@ public class CourseServiceTest {
         courses.add(course4);
 
         when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()))).thenReturn(courses);
-
-        Instant now = prepareInstant("2000-01-01");
 
         List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(Status.PUBLISHED.getValue(),
             ImmutableList.of(1L, 7L, 30L));
@@ -501,8 +499,9 @@ public class CourseServiceTest {
         return notRequiredAudiences;
     }
 
-    private Instant prepareInstant(String date) {
-        return LocalDate.parse(date)
+    private Instant prepareInstantWithDayDifference(int days) {
+        return LocalDate.now()
+            .plusDays(days)
             .atStartOfDay(ZoneId.systemDefault())
             .toInstant();
     }
