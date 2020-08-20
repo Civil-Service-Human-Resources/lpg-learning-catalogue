@@ -1,6 +1,9 @@
 package uk.gov.cslearning.catalogue.service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -158,8 +161,9 @@ public class CourseService {
         return new ArrayList(mandatoryCoursesWithValidAudience);
     }
 
-    public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days, Instant now) { ;
+    public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days) { ;
         Set<Course> mandatoryCoursesWithValidAudience = new HashSet<>();
+        LocalDate now = LocalDate.now();
 
         courseRepository.findAllRequiredLearning(status)
             .forEach(course -> course.getAudiences()
@@ -210,7 +214,7 @@ public class CourseService {
             Audience audience,
             Set<Course> mandatoryCoursesWithValidAudience,
             Collection<Long> days,
-            Instant now) {
+            LocalDate now) {
         if (isAudienceRequired(audience, days, now)) {
             mandatoryCoursesWithValidAudience.add(course);
         }
@@ -222,13 +226,13 @@ public class CourseService {
             && audience.getDepartments().contains(department);
     }
 
-    private boolean isAudienceRequired(Audience audience, Collection<Long> days, Instant now) {
+    private boolean isAudienceRequired(Audience audience, Collection<Long> days, LocalDate now) {
         return audience.getRequiredBy() != null
             && audience.getDepartments() != null
-            && isRequiredDateDue(audience.getRequiredBy(), days, now);
+            && isRequiredDateDue(LocalDateTime.ofInstant(audience.getRequiredBy(), ZoneId.systemDefault()).toLocalDate(), days, now);
     }
 
-    private boolean isRequiredDateDue(Instant requiredBy, Collection<Long> days, Instant now) {
+    private boolean isRequiredDateDue(LocalDate requiredBy, Collection<Long> days, LocalDate now) {
         return days.contains(ChronoUnit.DAYS.between(now, requiredBy));
     }
 

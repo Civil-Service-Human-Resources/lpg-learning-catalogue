@@ -8,7 +8,6 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.security.Principal;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -160,7 +159,7 @@ public class CourseController {
     public ResponseEntity<Map<String, List<Course>>> listMandatoryByDueDays(@RequestParam(value = "status", defaultValue = "Published") String status,
             @RequestParam(value = "days", defaultValue = "1") String days) {
         LOGGER.debug("Listing mandatory courses");
-        List<Course> courses = courseService.fetchMandatoryCoursesByDueDate(status, DaysMapper.convertDaysFromTextToNumeric(days), Instant.now());
+        List<Course> courses = courseService.fetchMandatoryCoursesByDueDate(status, DaysMapper.convertDaysFromTextToNumeric(days));
 
         return ResponseEntity.ok(courseService.groupByOrganisationCode(courses));
     }
