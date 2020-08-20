@@ -141,4 +141,30 @@ public class MediaControllerTest {
                 .andExpect(header().string("location", "http://localhost/media/" + mediaId));
     }
 
+    @Test
+    public void shouldUploadImageFileIgnoreExtensionOnPostRequest() throws Exception {
+        String fileContainer = "container-id";
+        String mediaId = "media-uid";
+        String filename = "custom-filename";
+
+        MockMultipartFile file = new MockMultipartFile("file", "file.PNG", "application/octet-stream", "abc".getBytes());
+        FileUpload fileUpload = mock(FileUpload.class);
+
+        when(fileUploadFactory.create(file, fileContainer, filename)).thenReturn(fileUpload);
+
+        Media media = mock(Media.class);
+        when(media.getId()).thenReturn(mediaId);
+        when(mediaManagementService.createImage(fileUpload)).thenReturn(media);
+
+        mockMvc.perform(
+                multipart("/media/skills/image")
+                        .file(file)
+                        .param("container", fileContainer)
+                        .param("filename", filename)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("location", "http://localhost/media/" + mediaId));
+    }
+
 }
