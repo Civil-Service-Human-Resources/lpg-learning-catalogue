@@ -50,6 +50,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 import com.google.common.collect.ImmutableList;
@@ -474,10 +475,10 @@ public class CourseServiceTest {
         course4.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, twoDays));
         courses.add(course4);
 
-        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()))).thenReturn(courses);
+        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), any(Pageable.class))).thenReturn(courses);
 
         List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(Status.PUBLISHED.getValue(),
-            ImmutableList.of(1L, 7L, 30L));
+            ImmutableList.of(1L, 7L, 30L), any(Pageable.class));
 
         assertEquals(mandatoryCourses.size(), 3);
         assertTrue(mandatoryCourses.contains(course1));
