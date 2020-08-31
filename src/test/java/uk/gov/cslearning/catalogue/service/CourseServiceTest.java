@@ -90,6 +90,9 @@ public class CourseServiceTest {
     @Mock
     private RequiredByService requiredByService;
 
+    @Mock
+    private Pageable pageable;
+
     @InjectMocks
     private CourseService courseService;
 
@@ -475,10 +478,10 @@ public class CourseServiceTest {
         course4.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, twoDays));
         courses.add(course4);
 
-        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), any(Pageable.class))).thenReturn(courses);
+        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), eq(pageable))).thenReturn(courses);
 
         List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(Status.PUBLISHED.getValue(),
-            ImmutableList.of(1L, 7L, 30L), any(Pageable.class));
+            ImmutableList.of(1L, 7L, 30L), pageable);
 
         assertEquals(mandatoryCourses.size(), 3);
         assertTrue(mandatoryCourses.contains(course1));
