@@ -17,7 +17,7 @@ public class UploaderFactory {
     }
 
     public Uploader create(ProcessedFile processedFile) {
-        String extension = processedFile.getFileUpload().getExtension();
+        String extension = processedFile.getFileUpload().getExtension().toLowerCase();
 
         if (uploaderMap.containsKey(extension)) {
             return uploaderMap.get(extension);
