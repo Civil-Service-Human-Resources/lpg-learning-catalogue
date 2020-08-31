@@ -161,11 +161,11 @@ public class CourseService {
         return new ArrayList(mandatoryCoursesWithValidAudience);
     }
 
-    public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days) { ;
+    public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days, Pageable pageable) {
         Set<Course> mandatoryCoursesWithValidAudience = new HashSet<>();
         LocalDate now = LocalDate.now();
 
-        courseRepository.findAllRequiredLearning(status)
+        courseRepository.findAllRequiredLearning(status, pageable)
             .forEach(course -> course.getAudiences()
                 .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, mandatoryCoursesWithValidAudience, days, now)));
 

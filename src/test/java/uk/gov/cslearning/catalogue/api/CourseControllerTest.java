@@ -319,7 +319,7 @@ public class CourseControllerTest {
         Course course = new Course();
         List<Course> courses = new ArrayList<>(Collections.singletonList(course));
 
-        when(courseService.fetchMandatoryCoursesByDueDate(any(String.class), any(Collection.class)))
+        when(courseService.fetchMandatoryCoursesByDueDate(any(String.class), any(Collection.class), any(Pageable.class)))
             .thenReturn(new ArrayList<>(Collections.singletonList(course)));
         when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
         when(courseService.groupByOrganisationCode(any(List.class))).thenReturn(ImmutableMap.of(department, courses));
