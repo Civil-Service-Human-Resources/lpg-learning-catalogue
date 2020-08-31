@@ -7,6 +7,7 @@ import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -26,7 +27,15 @@ public class DefaultMediaManagementService implements MediaManagementService {
         Upload upload = fileUploadService.upload(fileUpload);
         Media media = mediaFactory.create(upload);
 
-        return mediaRepository.save((Media) media);
+        return mediaRepository.save(media);
+    }
+
+    @Override
+    public Media createImage(FileUpload fileUpload) throws IOException {
+        Upload upload = fileUploadService.uploadImageForSkills(fileUpload);
+        Media media = mediaFactory.create(upload);
+
+        return mediaRepository.save(media);
     }
 
     @Override
