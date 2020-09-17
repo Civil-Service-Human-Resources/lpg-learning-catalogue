@@ -186,20 +186,21 @@ public class CourseService {
 
         for (Course course : courses) {
             for (Audience audience : course.getAudiences()) {
-                addToGroupedCourses(courses, groupedCourses, audience);
+                addToGroupedCourses(course, groupedCourses, audience);
             }
         }
 
         return groupedCourses;
     }
 
-    private void addToGroupedCourses(List<Course> courses, Map<String, List<Course>> groupedCourses, Audience audience) {
+    private void addToGroupedCourses(Course course, Map<String, List<Course>> groupedCourses, Audience audience) {
         for (String department : audience.getDepartments()) {
             if (!groupedCourses.containsKey(department)) {
-                groupedCourses.putIfAbsent(department, new ArrayList<>(courses));
+                List<Course> departmentCourse = new ArrayList<>();
+                departmentCourse.add(course);
+                groupedCourses.put(department, departmentCourse);
             } else {
-                groupedCourses.get(department)
-                    .addAll(courses);
+                groupedCourses.get(department).add(course);
             }
         }
     }
