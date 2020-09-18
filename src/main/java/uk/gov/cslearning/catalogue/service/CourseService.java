@@ -162,14 +162,19 @@ public class CourseService {
     }
 
     public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days, Pageable pageable) {
-        Set<Course> mandatoryCoursesWithValidAudience = new HashSet<>();
         LocalDate now = LocalDate.now();
+
+        Map<Course, Set<Audience>> alterAudienceList = new HashMap();
 
         courseRepository.findAllRequiredLearning(status, pageable)
             .forEach(course -> course.getAudiences()
-                .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, mandatoryCoursesWithValidAudience, days, now)));
+                .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, alterAudienceList, days, now)));
 
-        return new ArrayList(mandatoryCoursesWithValidAudience);
+        for (Course course : alterAudienceList.keySet()) {
+            course.setAudiences(alterAudienceList.get(course));
+        }
+
+        return new ArrayList(alterAudienceList.keySet());
     }
 
     public Page<Course> prepareCoursePage(Pageable pageable, List<Course> courses) {
@@ -213,11 +218,17 @@ public class CourseService {
 
     private void addCourseIfAudienceIsRequired(Course course,
             Audience audience,
-            Set<Course> mandatoryCoursesWithValidAudience,
+            Map<Course, Set<Audience>> alterAudienceList,
             Collection<Long> days,
             LocalDate now) {
         if (isAudienceRequired(audience, days, now)) {
-            mandatoryCoursesWithValidAudience.add(course);
+            if (alterAudienceList.containsKey(course)) {
+                alterAudienceList.get(course).add(audience);
+            } else {
+                Set<Audience> newAudienceList = new HashSet();
+                newAudienceList.add(audience);
+                alterAudienceList.put(course, newAudienceList);
+            }
         }
     }
 
