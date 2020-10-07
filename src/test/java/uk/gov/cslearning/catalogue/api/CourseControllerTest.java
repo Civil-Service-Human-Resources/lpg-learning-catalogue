@@ -24,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -299,7 +298,7 @@ public class CourseControllerTest {
         Course course = new Course();
         List<Course> courses = new ArrayList<>(Collections.singletonList(course));
 
-        when(courseService.fetchMandatoryCourses(any(String.class), any(String.class), any(Pageable.class))).thenReturn(courses);
+        when(courseService.fetchMandatoryCourses(any(String.class), any(String.class))).thenReturn(courses);
         when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
         when(courseService.prepareCoursePage(any(Pageable.class), any(List.class))).thenReturn(new PageImpl<>(courses));
         mockMvc.perform(
@@ -319,7 +318,7 @@ public class CourseControllerTest {
         Course course = new Course();
         List<Course> courses = new ArrayList<>(Collections.singletonList(course));
 
-        when(courseService.fetchMandatoryCoursesByDueDate(any(String.class), any(Collection.class), any(Pageable.class)))
+        when(courseService.fetchMandatoryCoursesByDueDate(any(String.class), any(Collection.class)))
             .thenReturn(new ArrayList<>(Collections.singletonList(course)));
         when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
         when(courseService.groupByOrganisationCode(any(List.class))).thenReturn(ImmutableMap.of(department, courses));
@@ -368,7 +367,7 @@ public class CourseControllerTest {
         Course course = new Course();
         List<Course> courses = new ArrayList<>(Collections.singletonList(course));
 
-        when(courseService.fetchMandatoryCourses(any(String.class), any(String.class), any(Pageable.class)))
+        when(courseService.fetchMandatoryCourses(any(String.class), any(String.class)))
                 .thenReturn(new ArrayList<>(Collections.singletonList(course)));
         when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
         when(courseService.prepareCoursePage(any(Pageable.class), any(List.class))).thenReturn(new PageImpl<>(courses));

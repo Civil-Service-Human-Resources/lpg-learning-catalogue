@@ -410,7 +410,7 @@ public class CourseServiceTest {
 
         when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), eq(PAGEABLE))).thenReturn(courses);
 
-        List<Course> mandatoryCourses = courseService.fetchMandatoryCourses(Status.PUBLISHED.getValue(), TEST_DEPARTMENT_1, PAGEABLE);
+        List<Course> mandatoryCourses = courseService.fetchMandatoryCourses(Status.PUBLISHED.getValue(), TEST_DEPARTMENT_1);
 
         assertEquals(mandatoryCourses.size(), 1);
         assertEquals(mandatoryCourses.get(0).getId(), COURSE_ID_2);
@@ -442,7 +442,7 @@ public class CourseServiceTest {
 
         when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), eq(PAGEABLE))).thenReturn(courses);
 
-        List<Course> mandatoryCourses = courseService.fetchMandatoryCourses(Status.PUBLISHED.getValue(), TEST_DEPARTMENT_1, PAGEABLE);
+        List<Course> mandatoryCourses = courseService.fetchMandatoryCourses(Status.PUBLISHED.getValue(), TEST_DEPARTMENT_1);
 
         assertEquals(mandatoryCourses.size(), 0);
     }
@@ -480,8 +480,7 @@ public class CourseServiceTest {
 
         when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), eq(pageable))).thenReturn(courses);
 
-        List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(Status.PUBLISHED.getValue(),
-            ImmutableList.of(1L, 7L, 30L), pageable);
+        List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(Status.PUBLISHED.getValue(), ImmutableList.of(1L, 7L, 30L));
 
         assertEquals(mandatoryCourses.size(), 3);
         assertTrue(mandatoryCourses.contains(course1));

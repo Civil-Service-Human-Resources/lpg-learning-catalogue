@@ -149,7 +149,7 @@ public class CourseController {
 
         List<Course> courses = new ArrayList<>();
         for (String parent : organisationParents) {
-            courses.addAll(courseService.fetchMandatoryCourses(status, parent, pageable));
+            courses.addAll(courseService.fetchMandatoryCourses(status, parent));
         }
 
         return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, courses), pageable));
@@ -157,10 +157,9 @@ public class CourseController {
 
     @GetMapping(params = {"mandatory", "days"})
     public ResponseEntity<Map<String, List<Course>>> listMandatoryByDueDays(@RequestParam(value = "status", defaultValue = "Published") String status,
-            @RequestParam(value = "days", defaultValue = "1") String days,
-            Pageable pageable) {
+            @RequestParam(value = "days", defaultValue = "1") String days) {
         LOGGER.debug("Listing mandatory courses");
-        List<Course> courses = courseService.fetchMandatoryCoursesByDueDate(status, DaysMapper.convertDaysFromTextToNumeric(days), pageable);
+        List<Course> courses = courseService.fetchMandatoryCoursesByDueDate(status, DaysMapper.convertDaysFromTextToNumeric(days));
 
         return ResponseEntity.ok(courseService.groupByOrganisationCode(courses));
     }

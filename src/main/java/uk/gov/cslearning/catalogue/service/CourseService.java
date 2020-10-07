@@ -27,12 +27,14 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CourseService {
+    private static final Pageable DEFAULT_PAGEABLE = PageRequest.of(0, 10000);
 
     private final CourseRepository courseRepository;
 
@@ -151,22 +153,22 @@ public class CourseService {
                 .anyMatch(audience -> requiredByService.isAudienceRequiredWithinRange(audience, Instant.now(), from, to));
     }
 
-    public List<Course> fetchMandatoryCourses(String status, String department, Pageable pageable) { ;
-        Set<Course> mandatoryCoursesWithValidAudience = new HashSet<>();
+    public List<Course> fetchMandatoryCourses(String status, String department) { ;
+        List<Course> mandatoryCoursesWithValidAudience = new ArrayList<>();
 
-        courseRepository.findAllRequiredLearning(status, pageable)
+        courseRepository.findAllRequiredLearning(status, DEFAULT_PAGEABLE)
             .forEach(course -> course.getAudiences()
                 .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, department, mandatoryCoursesWithValidAudience)));
 
-        return new ArrayList(mandatoryCoursesWithValidAudience);
+        return mandatoryCoursesWithValidAudience;
     }
 
-    public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days, Pageable pageable) {
+    public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days) {
         LocalDate now = LocalDate.now();
 
         Map<Course, Set<Audience>> alterAudienceList = new HashMap();
 
-        courseRepository.findAllRequiredLearning(status, pageable)
+        courseRepository.findAllRequiredLearning(status, DEFAULT_PAGEABLE)
             .forEach(course -> course.getAudiences()
                 .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, alterAudienceList, days, now)));
 
@@ -180,6 +182,8 @@ public class CourseService {
     public Page<Course> prepareCoursePage(Pageable pageable, List<Course> courses) {
         Set<String> courseSet = new HashSet<>();
         List<Course> filteredCourses = courses.stream()
+            .skip(pageable.getPageNumber() * pageable.getPageSize())
+            .limit(pageable.getPageSize())
             .filter(course -> courseSet.add(course.getId()))
             .collect(Collectors.toList());
 
@@ -210,7 +214,7 @@ public class CourseService {
         }
     }
 
-    private void addCourseIfAudienceIsRequired(Course course, Audience audience, String department, Set<Course> mandatoryCoursesWithValidAudience) {
+    private void addCourseIfAudienceIsRequired(Course course, Audience audience, String department, List<Course> mandatoryCoursesWithValidAudience) {
         if (isAudienceRequired(audience, department)) {
             mandatoryCoursesWithValidAudience.add(course);
         }
