@@ -24,6 +24,7 @@ import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.repository.CourseRequiredRepository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,6 +39,8 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
 
+    private final CourseRequiredRepository courseRequiredRepository;
+
     private final EventService eventService;
 
     private final RegistryService registryService;
@@ -48,8 +51,9 @@ public class CourseService {
 
     private RequiredByService requiredByService;
 
-    public CourseService(CourseRepository courseRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService, RequiredByService requiredByService) {
+    public CourseService(CourseRepository courseRepository, CourseRequiredRepository courseRequiredRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService, RequiredByService requiredByService) {
         this.courseRepository = courseRepository;
+        this.courseRequiredRepository = courseRequiredRepository;
         this.eventService = eventService;
         this.registryService = registryService;
         this.ownerFactory = ownerFactory;
@@ -200,6 +204,10 @@ public class CourseService {
         }
 
         return groupedCourses;
+    }
+
+    public Page<Course> getRequiredCourses(String profession, String gradeCode, List<String>departments, List<String>otherAreasOfWork,  List<String>interests, String courseStatus,  Pageable pageable) {
+        return courseRequiredRepository.findRequired(profession, gradeCode, departments, otherAreasOfWork, interests, courseStatus, pageable);
     }
 
     private void addToGroupedCourses(Course course, Map<String, List<Course>> groupedCourses, Audience audience) {
