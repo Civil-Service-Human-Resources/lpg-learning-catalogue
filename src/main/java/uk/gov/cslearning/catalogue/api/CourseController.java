@@ -142,8 +142,7 @@ public class CourseController {
                         // any course that has a dept defined (check if AOW and Interests are also part of audience).
                         if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)
                                 && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
-                                && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))
-                                && (!audience.getType().equals(Audience.Type.REQUIRED_LEARNING))) {
+                                && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))) {
                             filteredCourses.add(course);
                         }
                     }
@@ -152,8 +151,7 @@ public class CourseController {
                     // ie, if your dept is CO and it has been flagged as required for CO, you would not want it appearing here for you also...
                     if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)
                             && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
-                            && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))
-                            && (!audience.getType().equals(Audience.Type.REQUIRED_LEARNING))) {
+                            && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))) {
                         filteredCourses.add(course);
                     }
 
@@ -161,8 +159,7 @@ public class CourseController {
                     // ie, if your dept is CO and it has been flagged as required for CO, you would not want it appearing here for you also...
                     if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)
                             && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
-                            && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
-                            && (!audience.getType().equals(Audience.Type.REQUIRED_LEARNING))) {
+                            && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)) {
                         filteredCourses.add(course);
                     }
                 }
