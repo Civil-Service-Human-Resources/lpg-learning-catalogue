@@ -179,50 +179,6 @@ public class CourseController {
     }
 
 
-//    @GetMapping
-//    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "NONE") String areasOfWork,
-//                                                    @RequestParam(name = "department", defaultValue = "NONE") String departments,
-//                                                    @RequestParam(name = "interest", defaultValue = "NONE") String interests,
-//                                                    @RequestParam(name = "status", defaultValue = "Published") String status,
-//                                                    @RequestParam(name = "grade", defaultValue = "NONE") String grade,
-//                                                    Pageable pageable) {
-//        Page<Course> results;
-//        if (areasOfWork.equals("NONE") && departments.equals("NONE") && interests.equals("NONE")) {
-//            results = courseRepository.findAllByStatusIn(
-//                    Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
-//        } else {
-//            List<String> organisationParents = courseService.getOrganisationParents(departments);
-//            results = courseRepository.findSuggested(organisationParents, areasOfWork, interests, status, grade, pageable);
-//
-//            ArrayList<Course> filteredCourses = new ArrayList<>();
-//
-//            for (Course course : results) {
-//                for (Audience audience : course.getAudiences()) {
-//                    for (String organisation : organisationParents) {
-//                        if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)) {
-//                            filteredCourses.add(course);
-//                        }
-//                    }
-//                    if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)) {
-//                        filteredCourses.add(course);
-//                    }
-//                    if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)) {
-//                        filteredCourses.add(course);
-//                    }
-//                }
-//            }
-//
-//            Set<Course> set = new LinkedHashSet<>();
-//            set.addAll(filteredCourses);
-//            filteredCourses.clear();
-//            filteredCourses.addAll(set);
-//
-//            results = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
-//        }
-//
-//        return ResponseEntity.ok(new PageResults<>(results, pageable));
-//    }
-
     @GetMapping(value = "/getrequiredlearning")
     public ResponseEntity<PageResults<Course>> listMandatory(@PageableDefault(size = 100) Pageable pageable) {
         CivilServant civilServant = registryService.getCurrentCivilServant();
