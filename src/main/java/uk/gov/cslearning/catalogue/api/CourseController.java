@@ -103,42 +103,72 @@ public class CourseController {
 
         return ResponseEntity.created(builder.path("/courses/{courseId}").build(newCourse.getId())).build();
     }
-
     @GetMapping
-    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "NONE") String areasOfWork,
-                                                    @RequestParam(name = "department", defaultValue = "NONE") String departments,
-                                                    @RequestParam(name = "interest", defaultValue = "NONE") String interests,
-                                                    @RequestParam(name = "status", defaultValue = "Published") String status,
-                                                    @RequestParam(name = "grade", defaultValue = "NONE") String grade,
+    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = ELASTIC_EMPTY_PARAM) String areasOfWork,
+                                                    @RequestParam(name = "department", defaultValue = ELASTIC_EMPTY_PARAM) String departments,
+                                                    @RequestParam(name = "interest", defaultValue = ELASTIC_EMPTY_PARAM) String interests,
+                                                    @RequestParam(name = "status", defaultValue = COURSE_STATUS) String status,
+                                                    @RequestParam(name = "grade", defaultValue = ELASTIC_EMPTY_PARAM) String grade,
                                                     Pageable pageable) {
         Page<Course> results;
-        if (areasOfWork.equals("NONE") && departments.equals("NONE") && interests.equals("NONE")) {
+        if (areasOfWork.equals(ELASTIC_EMPTY_PARAM) && departments.equals(ELASTIC_EMPTY_PARAM) && interests.equals(ELASTIC_EMPTY_PARAM)) {
             results = courseRepository.findAllByStatusIn(
                     Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
             List<String> organisationParents = courseService.getOrganisationParents(departments);
             results = courseRepository.findSuggested(organisationParents, areasOfWork, interests, status, grade, pageable);
 
+            CivilServant civilServant = registryService.getCurrentCivilServant();
+            String organisationCode = civilServant.getOrganisationalUnitCode().get();
+            List<Profession> otherAreasOfWork = civilServant.getOtherAreasOfWork();
+            String professionName = civilServant.getProfessionName().get();
+
+            List<String> otherAreasOfWorkNames = otherAreasOfWork.stream()
+                    .map(Profession::getName)
+                    .collect(collectingAndThen(toList(), this::listWithNone));
+
+            List<String> organisationParentChild = courseService.getOrganisationParents(organisationCode);
+            List<Interest> interests_cs = civilServant.getInterests();
+
+            List<String> interestNames = interests_cs.stream()
+                    .map(Interest::getName)
+                    .collect(collectingAndThen(toList(), this::listWithNone));
+
             ArrayList<Course> filteredCourses = new ArrayList<>();
 
             for (Course course : results) {
                 for (Audience audience : course.getAudiences()) {
                     for (String organisation : organisationParents) {
-                        if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)) {
+                        // any course that has a dept defined (check if AOW and Interests are also part of audience).
+                        if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)
+                                && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
+                                && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))
+                                && audience.getType().equals(Audience.Type.OPEN)) {
                             filteredCourses.add(course);
                         }
                     }
-                    if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)) {
+
+                    // Show any courses with AOW (audience could also have a dept/interest so filter it if it does
+                    // ie, if your dept is CO and it has been flagged as required for CO, you would not want it appearing here for you also...
+                    if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)
+                            && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
+                            && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))
+                            && audience.getType().equals(Audience.Type.OPEN)) {
                         filteredCourses.add(course);
                     }
-                    if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)) {
+
+                    // Show any courses with Interest (audience could also have a dept/aow so filter it if it does
+                    // ie, if your dept is CO and it has been flagged as required for CO, you would not want it appearing here for you also...
+                    if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)
+                            && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
+                            && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
+                            && audience.getType().equals(Audience.Type.OPEN)) {
                         filteredCourses.add(course);
                     }
                 }
             }
 
-            Set<Course> set = new LinkedHashSet<>();
-            set.addAll(filteredCourses);
+            Set<Course> set = new LinkedHashSet<>(filteredCourses);
             filteredCourses.clear();
             filteredCourses.addAll(set);
 
@@ -147,6 +177,51 @@ public class CourseController {
 
         return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
+
+
+//    @GetMapping
+//    public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = "NONE") String areasOfWork,
+//                                                    @RequestParam(name = "department", defaultValue = "NONE") String departments,
+//                                                    @RequestParam(name = "interest", defaultValue = "NONE") String interests,
+//                                                    @RequestParam(name = "status", defaultValue = "Published") String status,
+//                                                    @RequestParam(name = "grade", defaultValue = "NONE") String grade,
+//                                                    Pageable pageable) {
+//        Page<Course> results;
+//        if (areasOfWork.equals("NONE") && departments.equals("NONE") && interests.equals("NONE")) {
+//            results = courseRepository.findAllByStatusIn(
+//                    Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
+//        } else {
+//            List<String> organisationParents = courseService.getOrganisationParents(departments);
+//            results = courseRepository.findSuggested(organisationParents, areasOfWork, interests, status, grade, pageable);
+//
+//            ArrayList<Course> filteredCourses = new ArrayList<>();
+//
+//            for (Course course : results) {
+//                for (Audience audience : course.getAudiences()) {
+//                    for (String organisation : organisationParents) {
+//                        if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)) {
+//                            filteredCourses.add(course);
+//                        }
+//                    }
+//                    if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)) {
+//                        filteredCourses.add(course);
+//                    }
+//                    if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)) {
+//                        filteredCourses.add(course);
+//                    }
+//                }
+//            }
+//
+//            Set<Course> set = new LinkedHashSet<>();
+//            set.addAll(filteredCourses);
+//            filteredCourses.clear();
+//            filteredCourses.addAll(set);
+//
+//            results = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
+//        }
+//
+//        return ResponseEntity.ok(new PageResults<>(results, pageable));
+//    }
 
     @GetMapping(value = "/getrequiredlearning")
     public ResponseEntity<PageResults<Course>> listMandatory(@PageableDefault(size = 100) Pageable pageable) {
