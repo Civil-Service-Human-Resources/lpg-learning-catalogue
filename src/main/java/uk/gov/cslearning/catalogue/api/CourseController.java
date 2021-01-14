@@ -143,7 +143,7 @@ public class CourseController {
                         if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)
                                 && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
                                 && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))
-                                && audience.getType().equals(Audience.Type.OPEN)) {
+                                && (!audience.getType().equals(Audience.Type.REQUIRED_LEARNING))) {
                             filteredCourses.add(course);
                         }
                     }
@@ -153,7 +153,7 @@ public class CourseController {
                     if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)
                             && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
                             && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))
-                            && audience.getType().equals(Audience.Type.OPEN)) {
+                            && (!audience.getType().equals(Audience.Type.REQUIRED_LEARNING))) {
                         filteredCourses.add(course);
                     }
 
@@ -162,7 +162,7 @@ public class CourseController {
                     if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)
                             && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
                             && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
-                            && audience.getType().equals(Audience.Type.OPEN)) {
+                            && (!audience.getType().equals(Audience.Type.REQUIRED_LEARNING))) {
                         filteredCourses.add(course);
                     }
                 }
@@ -177,6 +177,7 @@ public class CourseController {
 
         return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
+
 
 
     @GetMapping(value = "/getrequiredlearning")
