@@ -57,7 +57,6 @@ public class UploadConfig {
                 .put("js/player_management/content_tracking/adapters/tincan_wrapper.js", "/file-substitutions/tincan_wrapper.js") //GOMO
                 .put("js/player_management/portal_overrides.js", "/file-substitutions/portal_overrides.js") //GOMO
                 .put("js/corePrimaryLoadList.min.js", "/file-substitutions/corePrimaryLoadList.min.js") //GOMO
-                .put("js/core_js_2_bundle.js", "/file-substitutions/core_js_2_bundle.js") //GOMO
                 .put("story_content/user.js", "/file-substitutions/user.js") //Storyline
                 .put("SCORMDriver/Configuration.js", "/file-substitutions/Configuration.js") //DominKNOW
                 .build();
