@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.api;
 
+import static java.util.Collections.singletonList;
 import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -39,8 +40,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
-import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
-import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
+import uk.gov.cslearning.catalogue.domain.CivilServant.*;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
@@ -148,6 +148,42 @@ public class CourseControllerTest {
         String status = "status";
         String grade = "G6";
 
+        //-- Set user profile
+        CivilServant civilServant = new CivilServant();
+
+        Profession profession = new Profession();
+        profession.setId(1L);
+        profession.setName("Finance");
+
+        civilServant.setProfession(profession);
+
+        Profession otherAreaOfWork = new Profession();
+        otherAreaOfWork.setId(2L);
+        otherAreaOfWork.setName("Digital");
+
+        List<Profession> userOtherAreasOfWork = new ArrayList<>();
+        userOtherAreasOfWork.add(otherAreaOfWork);
+        civilServant.setOtherAreasOfWork(userOtherAreasOfWork);
+
+        OrganisationalUnit organisationalUnit= new OrganisationalUnit();
+        organisationalUnit.setCode("co");
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        Grade grade_cs = new Grade();
+        grade_cs.setCode("G7");
+        grade_cs.setName("poor");
+        civilServant.setGrade(grade_cs);
+
+        Interest userInterest = new Interest();
+        userInterest.setName("Leadership");
+
+        List<Interest> interests = new ArrayList<>();
+        interests.add(userInterest);
+        civilServant.setInterests(interests);
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
+
         Set<String> grades = new HashSet();
         grades.add(grade);
 
@@ -157,6 +193,7 @@ public class CourseControllerTest {
         Audience audience = new Audience();
         audience.setGrades(grades);
         audience.setDepartments(organisationalUnits);
+        audience.setType(Audience.Type.OPEN);
 
         Set<Audience> audiences = new HashSet<>();
         audiences.add(audience);
@@ -170,7 +207,7 @@ public class CourseControllerTest {
         when(courseService.getOrganisationParents(any(String.class))).thenReturn(organisationParents);
 
         when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+                .thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
@@ -183,6 +220,7 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
+
 
     @Test
     public void shouldDefaultToShowingAllPublicCourses() throws Exception {
@@ -216,9 +254,46 @@ public class CourseControllerTest {
     @Test
     public void shouldDefaultMissingInterestParameterToNone() throws Exception {
         String areaOfWork = "area-of-work";
+        String department = "NONE";
         String interest = "NONE";
         String status = "Published";
         String grade = "G6";
+
+        //-- Set user profile
+        CivilServant civilServant = new CivilServant();
+
+        Profession profession = new Profession();
+        profession.setId(1L);
+        profession.setName("Finance");
+
+        civilServant.setProfession(profession);
+
+        Profession otherAreaOfWork = new Profession();
+        otherAreaOfWork.setId(2L);
+        otherAreaOfWork.setName("Digital");
+
+        List<Profession> userOtherAreasOfWork = new ArrayList<>();
+        userOtherAreasOfWork.add(otherAreaOfWork);
+        civilServant.setOtherAreasOfWork(userOtherAreasOfWork);
+
+        OrganisationalUnit organisationalUnit= new OrganisationalUnit();
+        organisationalUnit.setCode("co");
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        Grade grade_cs = new Grade();
+        grade_cs.setCode("G7");
+        grade_cs.setName("poor");
+        civilServant.setGrade(grade_cs);
+
+        Interest userInterest = new Interest();
+        userInterest.setName("Leadership");
+
+        List<Interest> interests = new ArrayList<>();
+        interests.add(userInterest);
+        civilServant.setInterests(interests);
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
 
         Set<String> grades = new HashSet();
         grades.add(grade);
@@ -229,6 +304,7 @@ public class CourseControllerTest {
         Audience audience = new Audience();
         audience.setGrades(grades);
         audience.setAreasOfWork(organisationalUnits);
+        audience.setType(Audience.Type.OPEN);
 
         Set<Audience> audiences = new HashSet<>();
         audiences.add(audience);
@@ -236,8 +312,13 @@ public class CourseControllerTest {
         Course course = new Course();
         course.setAudiences(audiences);
 
+        List<String> organisationParents = new ArrayList<>();
+        organisationParents.add("department");
+
+        when(courseService.getOrganisationParents(any(String.class))).thenReturn(organisationParents);
+
         when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+                .thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
@@ -248,12 +329,51 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
 
+
     @Test
     public void shouldConcatenateMultipleParameters() throws Exception {
         String areaOfWork = "area-of-work1,area-of-work2";
+        String department = "department1,department2";
         String interest = "interest1,interest2";
         String status = "Published";
         String grade = "G6";
+
+
+        //-- Set user profile
+        CivilServant civilServant = new CivilServant();
+
+        Profession profession = new Profession();
+        profession.setId(1L);
+        profession.setName("Finance");
+
+        civilServant.setProfession(profession);
+
+        Profession otherAreaOfWork = new Profession();
+        otherAreaOfWork.setId(2L);
+        otherAreaOfWork.setName("Digital");
+
+        List<Profession> userOtherAreasOfWork = new ArrayList<>();
+        userOtherAreasOfWork.add(otherAreaOfWork);
+        civilServant.setOtherAreasOfWork(userOtherAreasOfWork);
+
+        OrganisationalUnit organisationalUnit= new OrganisationalUnit();
+        organisationalUnit.setCode("co");
+        civilServant.setOrganisationalUnit(organisationalUnit);
+
+        Grade grade_cs = new Grade();
+        grade_cs.setCode("G7");
+        grade_cs.setName("poor");
+        civilServant.setGrade(grade_cs);
+
+        Interest userInterest = new Interest();
+        userInterest.setName("Leadership");
+
+        List<Interest> interests = new ArrayList<>();
+        interests.add(userInterest);
+        civilServant.setInterests(interests);
+
+        when(registryService.getCurrentCivilServant())
+                .thenReturn(civilServant);
 
         Set<String> grades = new HashSet();
         grades.add(grade);
@@ -264,6 +384,7 @@ public class CourseControllerTest {
         Audience audience = new Audience();
         audience.setGrades(grades);
         audience.setDepartments(organisationalUnits);
+        audience.setType(Audience.Type.OPEN);
 
         Set<Audience> audiences = new HashSet<>();
         audiences.add(audience);
@@ -278,7 +399,7 @@ public class CourseControllerTest {
         when(courseService.getOrganisationParents(any(String.class))).thenReturn(organisationParents);
 
         when(courseRepository.findSuggested(any(List.class), eq(areaOfWork), eq(interest), eq(status), eq(grade), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(course)));
+                .thenReturn(new PageImpl<>(singletonList(course)));
 
         mockMvc.perform(
                 get("/courses/")
@@ -290,6 +411,7 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
+
 
     @Test
     public void shouldListMandatoryCourses() throws Exception {
