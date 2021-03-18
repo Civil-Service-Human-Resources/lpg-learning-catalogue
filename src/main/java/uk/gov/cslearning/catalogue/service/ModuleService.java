@@ -133,14 +133,14 @@ public class ModuleService {
         do {
             PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
             Page<Course> courses = courseRepository.findAllByIdIn(courseIds, pageRequest);
-            numberOfCourses = courses.getSize();
-            page = page + 1;
             //Below two for loops need to be changed to the stream
             for (Course course : courses) {
                 for (Module module : course.getModules()) {
                     results.put(module.getId(), moduleDtoFactory.create(module, course));
                 }
             }
+            page = page + 1;
+            numberOfCourses = courses.getSize();
         } while(numberOfCourses == PAGE_SIZE);
         return results;
     }
