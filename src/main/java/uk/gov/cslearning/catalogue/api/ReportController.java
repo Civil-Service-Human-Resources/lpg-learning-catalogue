@@ -4,6 +4,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
@@ -11,13 +12,14 @@ import uk.gov.cslearning.catalogue.mapping.RoleMapping;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/reporting")
 public class ReportController {
-
-    private static final PageRequest MAX_PAGEABLE = PageRequest.of(0, 10000);
+    private static final int PAGE_SIZE = 10000;
+    private static final PageRequest MAX_PAGEABLE = PageRequest.of(0, PAGE_SIZE);
     private final EventService eventService;
     private final ModuleService moduleService;
 
@@ -29,6 +31,11 @@ public class ReportController {
     @GetMapping("/modules")
     public ResponseEntity<Map<String, ModuleDto>> getModules() {
         return ResponseEntity.ok(moduleService.getModuleMap());
+    }
+
+    @GetMapping(value = "/modules-for-courseids", params = {"courseIds"})
+    public ResponseEntity<Map<String, ModuleDto>> getModulesForCourseIds(@RequestParam List<String> courseIds) {
+        return ResponseEntity.ok(moduleService.getModuleMapForCourseIds(courseIds));
     }
 
     @RoleMapping("KPMG_SUPPLIER_REPORTER")

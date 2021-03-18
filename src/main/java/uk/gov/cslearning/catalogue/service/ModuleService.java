@@ -1,5 +1,7 @@
 package uk.gov.cslearning.catalogue.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
@@ -14,11 +16,14 @@ import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 @Service
 public class ModuleService {
+    private static final int PAGE_SIZE = 10000;
+
     private final CourseRepository courseRepository;
     private final FileUploadService fileUploadService;
     private final ModuleDtoFactory moduleDtoFactory;
@@ -118,6 +123,26 @@ public class ModuleService {
             }
         }
 
+        return results;
+    }
+
+    public Map<String, ModuleDto> getModuleMapForCourseIds(List<String> courseIds) {
+
+        Map<String, ModuleDto> results = new HashMap<>();
+        int page = 0;
+        int numberOfCourses;
+        do {
+            PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
+            Page<Course> courses = courseRepository.findAllByIdIn(courseIds, pageRequest);
+            numberOfCourses = courses.getSize();
+            page = page + 1;
+            //Below two for loops need to be changed to the stream
+            for (Course course : courses) {
+                for (Module module : course.getModules()) {
+                    results.put(module.getId(), moduleDtoFactory.create(module, course));
+                }
+            }
+        } while(numberOfCourses == PAGE_SIZE);
         return results;
     }
 

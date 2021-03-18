@@ -31,6 +31,8 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
 
     Page<Course> findAllByStatusIn(Collection<Status> status, Pageable pageable);
 
+    Page<Course> findAllByIdIn(Collection<String> courseIds, Pageable pageable);
+
     @Query("{\"bool\": {\"must\": [{\"exists\": {\"field\": \"modules.events\"}},{\"match\": {\"modules.type\": \"face-to-face\"}}]}}")
     List<Course> findEvents();
 
