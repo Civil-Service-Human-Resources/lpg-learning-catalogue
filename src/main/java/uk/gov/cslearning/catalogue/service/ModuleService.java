@@ -126,20 +126,15 @@ public class ModuleService {
     }
 
     public Map<String, ModuleDto> getModuleMapForCourseIds(List<String> courseIds) {
-
         Map<String, ModuleDto> results = new HashMap<>();
         int page = 0;
         int numberOfCourses;
         do {
-            PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
-            Page<Course> courses = courseRepository.findAllByIdIn(courseIds, pageRequest);
-            //Below two for loops need to be changed to the stream
-            for (Course course : courses) {
-                for (Module module : course.getModules()) {
-                    results.put(module.getId(), moduleDtoFactory.create(module, course));
-                }
-            }
-            page = page + 1;
+            Page<Course> courses = courseRepository.findAllByIdIn(courseIds, PageRequest.of(page, PAGE_SIZE));
+            courses.forEach(c ->
+                    c.getModules().forEach(m ->
+                            results.put(m.getId(), moduleDtoFactory.create(m, c))));
+            page++;
             numberOfCourses = courses.getSize();
         } while(numberOfCourses == PAGE_SIZE);
         return results;
