@@ -33,7 +33,7 @@ public class ReportController {
         return ResponseEntity.ok(moduleService.getModuleMap());
     }
 
-    @GetMapping(value = "/modules-for-courseids", params = {"courseIds"})
+    @GetMapping(value = "/modules-for-course-ids", params = {"courseIds"})
     public ResponseEntity<Map<String, ModuleDto>> getModulesForCourseIds(@RequestParam List<String> courseIds) {
         return ResponseEntity.ok(moduleService.getModuleMapForCourseIds(courseIds));
     }

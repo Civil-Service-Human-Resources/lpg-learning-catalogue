@@ -134,8 +134,8 @@ public class ModuleService {
             courses.forEach(c ->
                     c.getModules().forEach(m ->
                             results.put(m.getId(), moduleDtoFactory.create(m, c))));
-            page++;
-            numberOfCourses = courses.getSize();
+            page = page + 1;
+            numberOfCourses = courses.getNumberOfElements();
         } while(numberOfCourses == PAGE_SIZE);
         return results;
     }
