@@ -6,12 +6,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.FileModule;
-import uk.gov.cslearning.catalogue.domain.module.LinkModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
+import uk.gov.cslearning.catalogue.dto.factory.CourseDtoFactory;
 import uk.gov.cslearning.catalogue.dto.factory.ModuleDtoFactory;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
@@ -225,5 +225,57 @@ public class ModuleServiceTest {
         );
 
         assertEquals(expected, moduleService.getModuleMap());
+    }
+
+    @Test
+    public void shouldReturnModuleMapForGivenCourseIds() {
+        List<String> courseIds = Arrays.asList("course1-id", "course2-id");
+
+        Module module1 = new FileModule("", 1L);
+        module1.setTitle("module1-title");
+        module1.setOptional(false);
+        module1.setAssociatedLearning(false);
+        Course course1 = new Course();
+        course1.setId("course1-id");
+        course1.setTitle("course1-title");
+        course1.setTopicId("course1-topic-id");
+        course1.setModules(Collections.singletonList(module1));
+
+        Module module2 = new FaceToFaceModule("product-code");
+        module2.setTitle("module2-title");
+        module2.setOptional(true);
+        module2.setAssociatedLearning(true);
+
+        Module module3 = new ELearningModule("start-page", "url");
+        module3.setTitle("module3-title");
+        module3.setOptional(false);
+        module3.setAssociatedLearning(false);
+
+        Course course2 = new Course();
+        course2.setId("course2-id");
+        course2.setTitle("course2-title");
+        course2.setTopicId("course2-topic-id");
+        course2.setModules(Arrays.asList(module2, module3));
+
+        PageImpl<Course> pageImpl = new PageImpl<>(Arrays.asList(course1, course2));
+        when(courseRepository.findAllByIdIn(courseIds, PageRequest.of(0, 10000))).thenReturn(pageImpl);
+
+        ModuleDtoFactory moduleDtoFactory1 = new ModuleDtoFactory(new CourseDtoFactory());
+        ModuleDto moduleDto1 = moduleDtoFactory1.create(module1, course1);
+        ModuleDto moduleDto2 = moduleDtoFactory1.create(module2, course2);
+        ModuleDto moduleDto3 = moduleDtoFactory1.create(module3, course2);
+        when(moduleDtoFactory.create(module1, course1)).thenReturn(moduleDto1);
+        when(moduleDtoFactory.create(module2, course2)).thenReturn(moduleDto2);
+        when(moduleDtoFactory.create(module3, course2)).thenReturn(moduleDto3);
+
+        Map<String, ModuleDto> expected = ImmutableMap.of(
+                module1.getId(), moduleDto1,
+                module2.getId(), moduleDto2,
+                module3.getId(), moduleDto3
+        );
+
+        Map<String, ModuleDto> result = moduleService.getModuleMapForCourseIds(courseIds);
+
+        assertEquals(expected, result);
     }
 }
