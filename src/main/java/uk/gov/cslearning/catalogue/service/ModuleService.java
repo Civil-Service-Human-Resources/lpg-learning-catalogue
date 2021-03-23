@@ -142,12 +142,16 @@ public class ModuleService {
 
     public Map<String, ModuleDto> getModuleMapForSupplier(String supplier, Pageable pageable) {
         Map<String, ModuleDto> results = new HashMap<>();
-
-        for (Course course : courseRepository.findAllBySupplier(supplier, pageable)) {
-            for (Module module : course.getModules()) {
-                results.put(module.getId(), moduleDtoFactory.create(module, course));
-            }
-        }
+        int page = 0;
+        int numberOfCourses;
+        do {
+            Page<Course> courses = courseRepository.findAllBySupplier(supplier, pageable);
+            courses.forEach(c ->
+                    c.getModules().forEach(m ->
+                            results.put(m.getId(), moduleDtoFactory.create(m, c))));
+            page = page + 1;
+            numberOfCourses = courses.getNumberOfElements();
+        } while(numberOfCourses == PAGE_SIZE);
 
         return results;
     }
