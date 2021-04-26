@@ -1,5 +1,7 @@
 package uk.gov.cslearning.catalogue.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
@@ -19,6 +21,8 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class ModuleService {
+    private static final int PAGE_SIZE = 10000;
+
     private final CourseRepository courseRepository;
     private final FileUploadService fileUploadService;
     private final ModuleDtoFactory moduleDtoFactory;
@@ -121,14 +125,33 @@ public class ModuleService {
         return results;
     }
 
+    public Map<String, ModuleDto> getModuleMapForCourseIds(List<String> courseIds) {
+        Map<String, ModuleDto> results = new HashMap<>();
+        int page = 0;
+        int numberOfCourses;
+        do {
+            Page<Course> courses = courseRepository.findAllByIdIn(courseIds, PageRequest.of(page, PAGE_SIZE));
+            courses.forEach(c ->
+                    c.getModules().forEach(m ->
+                            results.put(m.getId(), moduleDtoFactory.create(m, c))));
+            page = page + 1;
+            numberOfCourses = courses.getNumberOfElements();
+        } while(numberOfCourses == PAGE_SIZE);
+        return results;
+    }
+
     public Map<String, ModuleDto> getModuleMapForSupplier(String supplier, Pageable pageable) {
         Map<String, ModuleDto> results = new HashMap<>();
-
-        for (Course course : courseRepository.findAllBySupplier(supplier, pageable)) {
-            for (Module module : course.getModules()) {
-                results.put(module.getId(), moduleDtoFactory.create(module, course));
-            }
-        }
+        int page = 0;
+        int numberOfCourses;
+        do {
+            Page<Course> courses = courseRepository.findAllBySupplier(supplier, pageable);
+            courses.forEach(c ->
+                    c.getModules().forEach(m ->
+                            results.put(m.getId(), moduleDtoFactory.create(m, c))));
+            page = page + 1;
+            numberOfCourses = courses.getNumberOfElements();
+        } while(numberOfCourses == PAGE_SIZE);
 
         return results;
     }
