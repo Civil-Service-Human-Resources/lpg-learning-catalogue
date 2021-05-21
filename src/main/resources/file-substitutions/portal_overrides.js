@@ -51,6 +51,8 @@ console.log('scheme: ' + scheme);
 var path = '/learning-record/' + courseId + '/' + moduleId + '/xapi';
 console.log('path: ' + path);
 
+console.log('endpoint: scheme + // + host + path: ' + scheme + '//' + host + path);
+
 console.log('portal_overrides.js end');
 alert('portal_overrides.js end');
 
