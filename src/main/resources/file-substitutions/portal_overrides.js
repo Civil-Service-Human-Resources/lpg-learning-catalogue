@@ -48,7 +48,7 @@ console.log('host: ' + host);
 var scheme = window.location.protocol
 console.log('scheme: ' + scheme);
 
-var path = 'learning-record/' + courseId + '/' + moduleId + '/xapi';
+var path = '/learning-record/' + courseId + '/' + moduleId + '/xapi';
 console.log('path: ' + path);
 
 console.log('portal_overrides.js end');
