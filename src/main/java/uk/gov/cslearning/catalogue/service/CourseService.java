@@ -224,6 +224,9 @@ public class CourseService {
 
     private void addCourseIfAudienceIsRequired(Course course, Audience audience, String department, List<Course> mandatoryCoursesWithValidAudience) {
         if (isAudienceRequired(audience, department)) {
+            Set<Audience> audiences = new HashSet<>();
+            audiences.add(audience);
+            course.setAudiences(audiences);
             mandatoryCoursesWithValidAudience.add(course);
         }
     }
