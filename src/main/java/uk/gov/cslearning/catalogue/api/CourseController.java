@@ -245,15 +245,32 @@ public class CourseController {
     public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
             @RequestParam(value = "status", defaultValue = "Published") String status,
             Pageable pageable) {
-        LOGGER.debug("Listing mandatory courses for department {}", department);
+        LOGGER.debug("Listing mandatory courses for department {} and its parent organisations", department);
         List<String> organisationParents = courseService.getOrganisationParents(department);
+        LOGGER.debug("Parent organisations {} for the organisation {}", organisationParents, department);
+        List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationParents, "Published", PageRequest.of(0, 10000));
+        Map<String, Audience> courseAudiences = new HashMap<>();
+        courses.forEach(course -> courseService.getRelevantAudiencesForCourse(course, organisationParents, courseAudiences));
 
-        List<Course> courses = new ArrayList<>();
-        for (String parent : organisationParents) {
-            courses.addAll(courseService.fetchMandatoryCourses(status, parent));
-        }
+        Set<String> courseIdSet = new HashSet<>();
+        List<Course> courseList = courses
+                .stream()
+                .filter(course -> courseIdSet.add(course.getId()))
+                .map(course ->
+                    {
+                        LOGGER.debug("mandatory course {}", course);
+                        Audience audience = courseAudiences.get(course.getId());
+                        LOGGER.debug("audience id {}", audience.getId());
+                        LOGGER.debug("audience type {}", audience.getType());
+                        LOGGER.debug("audience name {}", audience.getName());
+                        Set<Audience> audiences = new HashSet<>();
+                        audiences.add(audience);
+                        course.setAudiences(audiences);
+                        return course;
+                    })
+                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, courses), pageable));
+        return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, courseList), pageable));
     }
 
     @GetMapping(params = {"mandatory", "days"})

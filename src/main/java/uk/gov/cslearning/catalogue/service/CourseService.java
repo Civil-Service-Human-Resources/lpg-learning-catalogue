@@ -33,6 +33,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class CourseService {
     private static final Pageable DEFAULT_PAGEABLE = PageRequest.of(0, 10000);
@@ -144,6 +146,20 @@ public class CourseService {
 
     public Map<String, List<String>> getOrganisationParentsMap() {
         return registryService.getOrganisationalUnitParentsMap();
+    }
+
+    public Map<String, Audience> getRelevantAudiencesForCourse(Course course, List<String> organisationalUnitList, Map<String, Audience> courseAudiences) {
+        Optional<Audience> relevantAudience = course
+                .getAudiences()
+                .stream()
+                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
+                .filter(audience -> organisationalUnitList
+                        .stream()
+                        .anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
+                .findFirst();
+
+        relevantAudience.ifPresent(audience -> courseAudiences.put(course.getId(), audience));
+        return courseAudiences;
     }
 
     public boolean isCourseRequiredWithinRangeForOrg(Course course, List<String> organisationalUnitList, long from, long to) {
