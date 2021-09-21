@@ -245,9 +245,8 @@ public class CourseController {
     public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
             @RequestParam(value = "status", defaultValue = "Published") String status,
             Pageable pageable) {
-        LOGGER.debug("Listing mandatory courses for department {} and its parent organisations", department);
         List<String> organisationParents = courseService.getOrganisationParents(department);
-        LOGGER.debug("Parent organisations {} for the organisation {}", organisationParents, department);
+        LOGGER.debug("Listing mandatory courses for department {} and its parent organisations {}", department, organisationParents);
         List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationParents, "Published", PageRequest.of(0, 10000));
         Map<String, Audience> courseAudiences = new HashMap<>();
         courses.forEach(course -> courseService.getRelevantAudienceForCourse(course, organisationParents, courseAudiences));
