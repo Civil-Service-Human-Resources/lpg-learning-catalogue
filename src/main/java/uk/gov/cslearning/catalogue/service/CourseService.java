@@ -148,7 +148,7 @@ public class CourseService {
         return registryService.getOrganisationalUnitParentsMap();
     }
 
-    public Map<String, Audience> getRelevantAudiencesForCourse(Course course, List<String> organisationalUnitList, Map<String, Audience> courseAudiences) {
+    public Map<String, Audience> getRelevantAudienceForCourse(Course course, List<String> organisationalUnitList, Map<String, Audience> courseAudiences) {
         Optional<Audience> relevantAudience = course
                 .getAudiences()
                 .stream()

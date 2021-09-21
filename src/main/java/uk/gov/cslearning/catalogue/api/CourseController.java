@@ -250,7 +250,7 @@ public class CourseController {
         LOGGER.debug("Parent organisations {} for the organisation {}", organisationParents, department);
         List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationParents, "Published", PageRequest.of(0, 10000));
         Map<String, Audience> courseAudiences = new HashMap<>();
-        courses.forEach(course -> courseService.getRelevantAudiencesForCourse(course, organisationParents, courseAudiences));
+        courses.forEach(course -> courseService.getRelevantAudienceForCourse(course, organisationParents, courseAudiences));
 
         Set<String> courseIdSet = new HashSet<>();
         List<Course> courseList = courses
