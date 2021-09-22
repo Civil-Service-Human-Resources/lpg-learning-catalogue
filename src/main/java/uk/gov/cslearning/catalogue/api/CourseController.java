@@ -249,7 +249,10 @@ public class CourseController {
         LOGGER.debug("Listing mandatory courses for department {} and its parent organisations {}", department, organisationParents);
         List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationParents, "Published", PageRequest.of(0, 10000));
         Map<String, Audience> courseAudiences = new HashMap<>();
-        courses.forEach(course -> courseService.getRelevantAudienceForCourse(course, organisationParents, courseAudiences));
+        courses.forEach(course -> {
+            Optional<Audience> relevantAudienceForCourse = courseService.getRelevantAudienceForCourse(course, organisationParents);
+            relevantAudienceForCourse.ifPresent(audience -> courseAudiences.put(course.getId(), audience));
+        });
 
         Set<String> courseIdSet = new HashSet<>();
         List<Course> courseList = courses
