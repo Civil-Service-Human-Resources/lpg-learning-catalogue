@@ -146,7 +146,7 @@ public class CourseService {
         return registryService.getOrganisationalUnitParentsMap();
     }
 
-    public Optional<Audience> getRelevantAudienceForCourse(Course course, List<String> organisationalUnitList) {
+    public Optional<Audience> getRequiredAudienceForOrganisation(Course course, List<String> organisationalUnitList) {
         return course
                 .getAudiences()
                 .stream()

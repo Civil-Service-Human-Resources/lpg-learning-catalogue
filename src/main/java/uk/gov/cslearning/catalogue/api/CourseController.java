@@ -250,7 +250,7 @@ public class CourseController {
         List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationParents, "Published", PageRequest.of(0, 10000));
         Map<String, Audience> courseAudiences = new HashMap<>();
         courses.forEach(course -> {
-            Optional<Audience> relevantAudienceForCourse = courseService.getRelevantAudienceForCourse(course, organisationParents);
+            Optional<Audience> relevantAudienceForCourse = courseService.getRequiredAudienceForOrganisation(course, organisationParents);
             relevantAudienceForCourse.ifPresent(audience -> courseAudiences.put(course.getId(), audience));
         });
 
