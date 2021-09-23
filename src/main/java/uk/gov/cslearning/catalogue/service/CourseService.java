@@ -143,8 +143,9 @@ public class CourseService {
                 .getAudiences()
                 .stream()
                 .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
+                .sorted(Comparator.comparing(Audience::getId))
                 .filter(audience -> audience.getDepartments().contains(department))
-                .min(Comparator.comparing(Audience::getId));
+                .findFirst();
 
         if(relevantAudience.isPresent()) {
             return relevantAudience;
