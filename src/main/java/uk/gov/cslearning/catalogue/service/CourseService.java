@@ -33,8 +33,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class CourseService {
     private static final Pageable DEFAULT_PAGEABLE = PageRequest.of(0, 10000);
