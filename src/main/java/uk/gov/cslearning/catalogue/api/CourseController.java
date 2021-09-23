@@ -246,8 +246,16 @@ public class CourseController {
             relevantAudienceForCourse.ifPresent(audience -> courseAudiences.put(course.getId(), audience));
         });
 
+        List<Course> coursesWithValidAudience = new ArrayList<>();
+        courses.forEach(course -> {
+            Audience audience = courseAudiences.get(course.getId());
+            if (audience != null && audience.getId() != null) {
+                coursesWithValidAudience.add(course);
+            }
+        });
+
         Set<String> courseIdSet = new HashSet<>();
-        List<Course> courseList = courses
+        List<Course> courseList = coursesWithValidAudience
                 .stream()
                 .filter(course -> courseIdSet.add(course.getId()))
                 .map(course ->
