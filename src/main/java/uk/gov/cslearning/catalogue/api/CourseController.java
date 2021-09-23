@@ -12,15 +12,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
@@ -250,7 +242,7 @@ public class CourseController {
         List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationParents, "Published", PageRequest.of(0, 10000));
         Map<String, Audience> courseAudiences = new HashMap<>();
         courses.forEach(course -> {
-            Optional<Audience> relevantAudienceForCourse = courseService.getRequiredAudienceForOrganisation(course, organisationParents);
+            Optional<Audience> relevantAudienceForCourse = courseService.getRequiredAudienceForOrganisation(course, department, organisationParents);
             relevantAudienceForCourse.ifPresent(audience -> courseAudiences.put(course.getId(), audience));
         });
 
@@ -266,6 +258,7 @@ public class CourseController {
                         course.setAudiences(audiences);
                         return course;
                     })
+                .sorted(Comparator.comparing(Course::getTitle))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, courseList), pageable));
