@@ -138,30 +138,6 @@ public class CourseService {
         return registryService.getOrganisationalUnitParentsMap();
     }
 
-    public Optional<Audience> getRequiredAudienceForOrganisation(Course course, String department, List<String> organisationalUnitList) {
-        Optional<Audience> relevantAudience = course
-                .getAudiences()
-                .stream()
-                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                .sorted(Comparator.comparing(Audience::getId))
-                .filter(audience -> audience.getDepartments().contains(department))
-                .findFirst();
-
-        if(relevantAudience.isPresent()) {
-            return relevantAudience;
-        }
-
-        return course
-                .getAudiences()
-                .stream()
-                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                .sorted(Comparator.comparing(Audience::getId))
-                .filter(audience -> organisationalUnitList
-                        .stream()
-                        .anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
-                .findFirst();
-    }
-
     public boolean isCourseRequiredWithinRangeForOrg(Course course, List<String> organisationalUnitList, long from, long to) {
         List<Audience> orgAudiences = course.getAudiences()
                 .stream()
