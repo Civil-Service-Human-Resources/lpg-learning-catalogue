@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -136,30 +137,6 @@ public class CourseService {
 
     public Map<String, List<String>> getOrganisationParentsMap() {
         return registryService.getOrganisationalUnitParentsMap();
-    }
-
-    public Optional<Audience> getRequiredAudienceForOrganisation(Course course, String department, List<String> organisationalUnitList) {
-        Optional<Audience> relevantAudience = course
-                .getAudiences()
-                .stream()
-                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                .sorted(Comparator.comparing(Audience::getId))
-                .filter(audience -> audience.getDepartments().contains(department))
-                .findFirst();
-
-        if(relevantAudience.isPresent()) {
-            return relevantAudience;
-        }
-
-        return course
-                .getAudiences()
-                .stream()
-                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                .sorted(Comparator.comparing(Audience::getId))
-                .filter(audience -> organisationalUnitList
-                        .stream()
-                        .anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
-                .findFirst();
     }
 
     public boolean isCourseRequiredWithinRangeForOrg(Course course, List<String> organisationalUnitList, long from, long to) {
