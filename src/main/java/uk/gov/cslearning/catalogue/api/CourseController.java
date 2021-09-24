@@ -248,38 +248,46 @@ public class CourseController {
                 .filter(course -> courseIdSet.add(course.getId()))
                 .sorted(Comparator.comparing(Course::getTitle))
                 .forEach(course -> {
-                    Optional<Audience> relevantAudience = course
-                            .getAudiences()
-                            .stream()
-                            .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                            .filter(audience -> audience.getRequiredBy() != null)
-                            .filter(audience -> audience.getDepartments().contains(department))
-                            .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
-
-                    if (!relevantAudience.isPresent()) {
-                        relevantAudience = course
-                                .getAudiences()
-                                .stream()
-                                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                                .filter(audience -> audience.getRequiredBy() != null)
-                                .filter(audience -> organisationParents
-                                        .stream()
-                                        .anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
-                                .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
+                    Course mandatoryCourse = getMandatoryCourseForDepartments(course, department, organisationParents);
+                    if (mandatoryCourse != null) {
+                        coursesWithValidAudience.add(mandatoryCourse);
                     }
-
-                    relevantAudience.ifPresent(audience ->
-                    {
-                        Course newCourse;
-                        newCourse = course;
-                        Set<Audience> audiences = new HashSet<>();
-                        audiences.add(audience);
-                        newCourse.setAudiences(audiences);
-                        coursesWithValidAudience.add(newCourse);
-                    });
                 });
 
         return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, coursesWithValidAudience), pageable));
+    }
+
+    Course getMandatoryCourseForDepartments(Course course, String department, List<String> organisationParents) {
+        Optional<Audience> relevantAudience = course
+                .getAudiences()
+                .stream()
+                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
+                .filter(audience -> audience.getRequiredBy() != null)
+                .filter(audience -> audience.getDepartments().contains(department))
+                .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
+
+        if (!relevantAudience.isPresent()) {
+            relevantAudience = course
+                    .getAudiences()
+                    .stream()
+                    .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
+                    .filter(audience -> audience.getRequiredBy() != null)
+                    .filter(audience -> organisationParents
+                            .stream()
+                            .anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
+                    .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
+        }
+
+        Course mandatoryCourse = null;
+        if (relevantAudience.isPresent()) {
+            Audience audience = relevantAudience.get();
+            mandatoryCourse = course;
+            Set<Audience> audiences = new HashSet<>();
+            audiences.add(audience);
+            mandatoryCourse.setAudiences(audiences);
+        }
+
+        return mandatoryCourse;
     }
 
     @GetMapping(params = {"mandatory", "days"})
