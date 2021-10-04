@@ -12,15 +12,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
@@ -245,15 +237,52 @@ public class CourseController {
     public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
             @RequestParam(value = "status", defaultValue = "Published") String status,
             Pageable pageable) {
-        LOGGER.debug("Listing mandatory courses for department {}", department);
         List<String> organisationParents = courseService.getOrganisationParents(department);
+        LOGGER.debug("Listing mandatory courses for department {} and its parent organisations {}", department, organisationParents);
+        List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationParents, "Published", PageRequest.of(0, 10000));
+        Set<String> courseIdSet = new HashSet<>();
+        List<Course> coursesWithValidAudience = courses
+                .stream()
+                .filter(course -> courseIdSet.add(course.getId()))
+                .map(course -> getMandatoryCourseForDepartments(course, department, organisationParents))
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(Course::getTitle))
+                .collect(toList());
 
-        List<Course> courses = new ArrayList<>();
-        for (String parent : organisationParents) {
-            courses.addAll(courseService.fetchMandatoryCourses(status, parent));
+        return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, coursesWithValidAudience), pageable));
+    }
+
+    Course getMandatoryCourseForDepartments(Course course, String department, List<String> organisationParents) {
+        Optional<Audience> relevantAudience = course
+                .getAudiences()
+                .stream()
+                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
+                .filter(audience -> audience.getRequiredBy() != null)
+                .filter(audience -> audience.getDepartments().contains(department))
+                .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
+
+        if (!relevantAudience.isPresent()) {
+            relevantAudience = course
+                    .getAudiences()
+                    .stream()
+                    .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
+                    .filter(audience -> audience.getRequiredBy() != null)
+                    .filter(audience -> organisationParents
+                            .stream()
+                            .anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
+                    .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
         }
 
-        return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, courses), pageable));
+        Course mandatoryCourse = null;
+        if (relevantAudience.isPresent()) {
+            Audience audience = relevantAudience.get();
+            mandatoryCourse = course;
+            Set<Audience> audiences = new HashSet<>();
+            audiences.add(audience);
+            mandatoryCourse.setAudiences(audiences);
+        }
+
+        return mandatoryCourse;
     }
 
     @GetMapping(params = {"mandatory", "days"})
