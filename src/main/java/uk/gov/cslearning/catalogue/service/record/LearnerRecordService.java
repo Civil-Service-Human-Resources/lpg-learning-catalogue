@@ -4,16 +4,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
 import uk.gov.cslearning.catalogue.service.record.model.Event;
 
+import java.net.URI;
 import java.util.List;
 
 @Service
@@ -34,6 +37,24 @@ public class LearnerRecordService {
         this.requestEntityFactory = requestEntityFactory;
         this.eventUrlFormat = eventUrlFormat;
         this.bookingUrlFormat = bookingUrlFormat;
+    }
+
+    public Integer getEventActiveBookingsCount(String eventId) {
+        try{
+            Integer count = 0;
+            URI uri = UriComponentsBuilder.fromHttpUrl(String.format(eventUrlFormat, eventId))
+                    .queryParam("getBookingCount", true)
+                    .build().toUri();
+            RequestEntity request = requestEntityFactory.createGetRequest(uri);
+            Event event = restTemplate.exchange(request, Event.class).getBody();
+            if (event != null) {
+                count = event.getActiveBookingCount();
+            }
+            return count;
+        } catch (RequestEntityException | RestClientException e) {
+            LOGGER.error(String.format("Could not get booking count from learner record: %s", e.getLocalizedMessage()));
+            return 0;
+        }
     }
 
     public List<Booking> getEventBookings(String eventId) {
