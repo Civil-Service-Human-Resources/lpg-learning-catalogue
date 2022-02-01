@@ -46,6 +46,7 @@ management:
 record:
   serviceUrl: ${LEARNER_RECORD_URL:http://localhost:9000}
   eventUrlFormat: "${record.serviceUrl}/event/%s"
+  bulkEventsUrl: "${record.serviceUrl}/events"
   bookingUrlFormat: "${record.eventUrlFormat}/booking"
 
 registry:
