@@ -117,6 +117,7 @@ public class EventService {
                 .uniqueIndex(learnerRecordService.getEvents(eventUids, true), uk.gov.cslearning.catalogue.service.record.model.Event::getUid);
 
         events.forEach(e -> {
+            e.getVenue().setAvailability(e.getVenue().getCapacity());
             uk.gov.cslearning.catalogue.service.record.model.Event lrEvent = lrEventMap.get(e.getId());
             if (lrEvent != null) {
                 e.getVenue().setAvailability(e.getVenue().getCapacity() - lrEvent.getActiveBookingCount());

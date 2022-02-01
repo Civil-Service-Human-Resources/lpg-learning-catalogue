@@ -106,7 +106,7 @@ public class LearnerRecordService {
         try {
             batchedUids.forEach(batch -> {
                 URI uri = UriComponentsBuilder.fromHttpUrl(bulkEventsUrl)
-                        .queryParam("uids", batch)
+                        .queryParam("uids", batch.toArray())
                         .queryParam("getBookingCount", getBookingCount)
                         .build().toUri();
                 RequestEntity requestEntity = requestEntityFactory.createGetRequest(uri);
@@ -116,7 +116,7 @@ public class LearnerRecordService {
                 }
             });
         } catch (RequestEntityException | RestClientException e) {
-            log.error("Could not get events from learner record: %s", e.getLocalizedMessage());
+            log.error(String.format("Could not get events from learner record: %s", e.getLocalizedMessage()));
             return null;
         }
         return events;
