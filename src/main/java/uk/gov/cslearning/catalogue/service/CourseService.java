@@ -14,6 +14,7 @@ import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
+import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.CourseRequiredRepository;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 
 @Service
 public class CourseService {
@@ -253,12 +255,11 @@ public class CourseService {
     }
 
     private Course getCourseEventsAvailability(Course course) {
+
         course.getModules().forEach(module -> {
             if (module instanceof FaceToFaceModule) {
-                ((FaceToFaceModule) module).getEvents().forEach(event -> {
-                    eventService.getEventAvailability(event);
-                    event.setStatus(eventService.getStatus(event.getId()));
-                });
+                Collection<Event> moduleEvents = ((FaceToFaceModule) module).getEvents();
+                eventService.updateEventsWithLearnerRecordData(moduleEvents);
             }
         });
 

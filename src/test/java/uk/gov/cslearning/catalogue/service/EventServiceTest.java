@@ -93,15 +93,12 @@ public class EventServiceTest {
         modules.add(module);
         course.setModules(modules);
 
-        Booking booking = new Booking();
-        booking.setStatus(BookingStatus.CONFIRMED);
-        List<Booking> bookings = new ArrayList<>();
-        bookings.add(booking);
+        Integer confirmedBookings = 1;
 
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-        when(learnerRecordService.getEventBookings(savedEvent.getId())).thenReturn(bookings);
+        when(learnerRecordService.getEventActiveBookingsCount(savedEvent.getId())).thenReturn(confirmedBookings);
 
-        int availability = (venue.getCapacity() - bookings.size());
+        int availability = (venue.getCapacity() - confirmedBookings);
 
         Optional<Event> result = eventService.find(courseId, moduleId, savedEvent.getId());
 
@@ -109,7 +106,7 @@ public class EventServiceTest {
         Assert.assertTrue(result.get().getVenue().getAvailability() == availability);
 
         verify(courseRepository).findById(courseId);
-        verify(learnerRecordService).getEventBookings(savedEvent.getId());
+        verify(learnerRecordService).getEventActiveBookingsCount(savedEvent.getId());
     }
 
     @Test

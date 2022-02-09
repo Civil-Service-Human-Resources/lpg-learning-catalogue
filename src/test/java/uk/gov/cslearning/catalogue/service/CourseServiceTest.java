@@ -113,31 +113,6 @@ public class CourseServiceTest {
     }
 
     @Test
-    public void shouldFindCourseAndGetEventAvailabilitiesAndEventStatus() {
-        Course course = new Course();
-        FaceToFaceModule module = new FaceToFaceModule("product code");
-        Event event = new Event();
-
-        Collection<Event> events = new ArrayList<>();
-        events.add(event);
-        module.setEvents(events);
-
-        List<Module> modules = new ArrayList<>();
-        modules.add(module);
-        course.setModules(modules);
-
-        when(courseRepository.findById(COURSE_ID_1)).thenReturn(Optional.of(course));
-        when(eventService.getEventAvailability(event)).thenReturn(event);
-        when(eventService.getStatus(event.getId())).thenReturn(EventStatus.ACTIVE);
-
-        assertEquals(courseService.findById(COURSE_ID_1), Optional.of(course));
-
-        verify(courseRepository).findById(COURSE_ID_1);
-        verify(eventService).getEventAvailability(event);
-        verify(eventService).getStatus(event.getId());
-    }
-
-    @Test
     public void shouldGetCourseById() {
         Course course = new Course();
         Optional<Course> optionalCourse = Optional.of(course);
