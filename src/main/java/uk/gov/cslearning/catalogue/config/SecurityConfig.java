@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
@@ -45,7 +46,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and().authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/oauth/token")
+                .permitAll()
+                .antMatchers(HttpMethod.GET, "/health")
                 .permitAll();
+    }
+
+    @Override
+    public void configure(WebSecurity webSecurity) throws  Exception{
+        webSecurity.ignoring().antMatchers(HttpMethod.GET, "/health");
     }
 
     @Bean
