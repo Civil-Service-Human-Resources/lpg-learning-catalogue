@@ -18,8 +18,9 @@ public class LearnerRecordServiceTest {
     private RequestEntityFactory requestEntityFactory = Mockito.mock(RequestEntityFactory.class);
     private String eventUrlFormat = "testhost:9000/event/%s";
     private String bookingUrlFormat = "testhost:9000/event/%s/booking";
+    private String bulkEventsUrl = "testhost:9000/events-list";
 
-    private LearnerRecordService learnerRecordService = new LearnerRecordService(restTemplate, requestEntityFactory, eventUrlFormat, bookingUrlFormat);
+    private LearnerRecordService learnerRecordService = new LearnerRecordService(restTemplate, requestEntityFactory, eventUrlFormat, bookingUrlFormat, bulkEventsUrl);
 
     @Test
     public void shouldReturnEventBookings(){
