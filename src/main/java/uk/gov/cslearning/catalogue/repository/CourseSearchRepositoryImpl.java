@@ -80,7 +80,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             boolQuery = boolQuery
                     .must(QueryBuilders.boolQuery()
                             .should(QueryBuilders.matchQuery("modules.cost", 0))
-                            .minimumShouldMatch(1));
+                            .minimumShouldMatch("100%"));
         }
 
         List<String> statusList = new ArrayList<>();
