@@ -7,9 +7,13 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHitSupport;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.SearchPage;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
+import uk.gov.cslearning.catalogue.Utils;
 import uk.gov.cslearning.catalogue.domain.Course;
 
 import java.util.List;
@@ -42,14 +46,15 @@ public class CourseRequiredRepositoryImpl implements CourseRequiredRepository {
         filterQuery.must(QueryBuilders.matchQuery("status", courseStatus));
         filterQuery.must(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
 
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        Query searchQuery = new NativeSearchQueryBuilder()
             .withQuery(boolQuery)
             .withFilter(filterQuery)
             .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
             .withPageable(pageable)
             .build();
 
-        return operations.queryForPage(searchQuery, Course.class);
+        return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
+
     }
 }
 

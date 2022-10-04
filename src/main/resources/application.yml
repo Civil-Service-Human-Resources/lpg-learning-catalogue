@@ -17,11 +17,11 @@ logging:
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   level:
-    root: ${ROOT_LOGGING_LEVEL:INFO}
+    root: ${ROOT_LOGGING_LEVEL:DEBUG}
     com.zaxxer.hikari: ERROR
 
 elasticsearch:
-  uri: ${ELASTICSEARCH_URI:http://127.0.0.1:9200}
+  uri: ${ELASTICSEARCH_URI:127.0.0.1}
   username: ${ELASTICSEARCH_USERNAME:elastic}
   password: ${ELASTICSEARCH_PASSWORD:changeme}
   readTimeout: ${ELASTICSEARCH_READ_TIMEOUT:10000}
