@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.config;
 
+import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,7 +19,7 @@ import java.net.URI;
 public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration {
 
     @Value("${elasticsearch.uri}")
-    private URI uri;
+    private String uri;
 
     @Value("${elasticsearch.username}")
     private String username;
@@ -33,7 +34,7 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
     @Override
     public RestHighLevelClient elasticsearchClient() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .connectedTo(uri.toString())
+                .connectedTo(uri)
                 .withBasicAuth(username, password)
                 .withSocketTimeout(readTimeout)
                 .build();
