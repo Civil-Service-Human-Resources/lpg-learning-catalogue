@@ -15,7 +15,7 @@ import java.util.*;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
-@Document(indexName = "courses", type = "course")
+@Document(indexName = "courses")
 public class Course {
 
     @Id

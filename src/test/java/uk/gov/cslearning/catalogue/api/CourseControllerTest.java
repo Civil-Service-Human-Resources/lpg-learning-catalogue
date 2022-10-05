@@ -505,7 +505,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"ORGANISATION_AUTHOR"})
+    @WithMockUser(username = "user", roles = {"ORGANISATION_AUTHOR"})
     public void shouldListForOrganisation() throws Exception {
         Course course = new Course();
 
@@ -526,7 +526,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"PROFESSION_AUTHOR"})
+    @WithMockUser(username = "user", roles = {"PROFESSION_AUTHOR"})
     public void shouldListForProfession() throws Exception {
         Course course = new Course();
 
@@ -547,7 +547,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"KPMG_SUPPLIER_AUTHOR"})
+    @WithMockUser(username = "user", roles = {"KPMG_SUPPLIER_AUTHOR"})
     public void shouldListForSupplier() throws Exception {
         Course course = new Course();
 
@@ -568,7 +568,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
+    @WithMockUser(username = "user", roles = {"CSL_AUTHOR"})
     public void shouldListForCslAuthor() throws Exception {
         Course course = new Course();
 
@@ -581,7 +581,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"INVALID_ROLE"})
+    @WithMockUser(username = "user", roles = {"INVALID_ROLE"})
     public void shouldReturnForbiddenForCslAuthor() throws Exception {
         mockMvc.perform(
                 get("/courses/management")

@@ -29,13 +29,6 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
     @Value("${elasticsearch.readTimeout}")
     private int readTimeout;
 
-    public HttpHeaders compatibilityHeaders() {
-        HttpHeaders compatibilityHeaders = new HttpHeaders();
-        compatibilityHeaders.add("Accept", "application/vnd.elasticsearch+json;compatible-with=7");
-        compatibilityHeaders.add("Content-Type", "application/vnd.elasticsearch+json;"
-                + "compatible-with=7");
-        return compatibilityHeaders;
-    }
 
     @Override
     public RestHighLevelClient elasticsearchClient() {
@@ -43,7 +36,6 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
                 .connectedTo(uri.toString())
                 .withBasicAuth(username, password)
                 .withSocketTimeout(readTimeout)
-                .withDefaultHeaders(compatibilityHeaders())
                 .build();
         return RestClients.create(clientConfiguration).rest();
     }

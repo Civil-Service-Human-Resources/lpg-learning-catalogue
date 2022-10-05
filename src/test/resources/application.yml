@@ -21,7 +21,7 @@ logging:
     com.zaxxer.hikari: ERROR
 
 elasticsearch:
-  uri: ${ELASTICSEARCH_URI:http://127.0.0.1:9200}
+  uri: ${ELASTICSEARCH_URI:127.0.0.1}
   username: ${ELASTICSEARCH_USERNAME:elastic}
   password: ${ELASTICSEARCH_PASSWORD:changeme}
 
@@ -55,3 +55,7 @@ oauth:
   clientSecret: ${CLIENT_SECRET:test}
   checkTokenUrl: "${oauth.serviceUrl}/oauth/check_token"
   tokenUrl: "${oauth.serviceUrl}/oauth/token"
+  maxTotalConnections: 200
+  defaultMaxConnectionsPerRoute: 100
+  maxPerServiceUrl: 100
+  jwtKey: "key"
