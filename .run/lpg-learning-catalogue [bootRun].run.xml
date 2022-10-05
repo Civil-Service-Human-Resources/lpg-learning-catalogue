@@ -3,7 +3,7 @@
     <ExternalSystemSettings>
       <option name="env">
         <map>
-          <entry key="ELASTICSEARCH_URI" value="http://localhost:9200" />
+          <entry key="ELASTICSEARCH_URI" value="127.0.0.1" />
           <entry key="JAVA_HOME" value="C:\Program Files\Java\java-1.8.0" />
           <entry key="LEARNER_RECORD_URL" value="http://localhost:9000" />
           <entry key="OAUTH_SERVICE_URL" value="http://localhost:8080" />

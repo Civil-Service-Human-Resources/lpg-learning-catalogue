@@ -44,14 +44,4 @@ public class StatusTest {
         assertEquals(Status.ARCHIVED, objectMapper.readValue("{ \"status\": \"Archived\" }", Course.class).getStatus());
     }
 
-    @Test
-    public void shouldThrowUnknownStatusExceptionIfInvalidStatus() throws IOException {
-        try {
-            objectMapper.readValue("{ \"status\": \"This is not a status\" }", Course.class);
-            fail("Expected UknownStatusException");
-        } catch (InvalidDefinitionException e) {
-            assertTrue(e.getCause() instanceof UnknownStatusException);
-            assertEquals("Unknown Status: 'This is not a status'", e.getCause().getMessage());
-        }
-    }
 }
