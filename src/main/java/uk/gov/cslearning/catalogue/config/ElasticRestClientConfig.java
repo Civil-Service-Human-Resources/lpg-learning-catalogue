@@ -1,6 +1,13 @@
 package uk.gov.cslearning.catalogue.config;
 
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,8 +25,14 @@ import java.net.URI;
 @EnableElasticsearchRepositories(basePackages = "uk.gov.cslearning.catalogue.repository")
 public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration {
 
-    @Value("${elasticsearch.uri}")
-    private String uri;
+    @Value("${elasticsearch.protocol}")
+    private String protocol;
+
+    @Value("${elasticsearch.host}")
+    private String host;
+
+    @Value("${elasticsearch.port}")
+    private Integer port;
 
     @Value("${elasticsearch.username}")
     private String username;
@@ -32,12 +45,15 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
 
 
     @Override
+    @Bean(destroyMethod = "close")
     public RestHighLevelClient elasticsearchClient() {
-        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .connectedTo(uri)
-                .withBasicAuth(username, password)
-                .withSocketTimeout(readTimeout)
-                .build();
-        return RestClients.create(clientConfiguration).rest();
+
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+        RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost(host, port, protocol));
+        restClientBuilder.setHttpClientConfigCallback(builder -> builder.setDefaultCredentialsProvider(credentialsProvider))
+                .setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder.setSocketTimeout(readTimeout));
+        return new RestHighLevelClient(restClientBuilder);
+
     }
 }
