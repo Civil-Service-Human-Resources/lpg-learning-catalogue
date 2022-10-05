@@ -2,10 +2,6 @@ FROM amazoncorretto:8-alpine
 
 ENV SPRING_PROFILES_ACTIVE production
 
-ENV ELASTICSEARCH_URI http://127.0.0.1:9200
-ENV ELASTICSEARCH_USER elastic
-ENV ELASTICSEARCH_PASSWORD changeme
-
 EXPOSE 9000
 
 ADD environ/wait-for-it.sh .
