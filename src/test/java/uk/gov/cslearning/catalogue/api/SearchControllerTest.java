@@ -16,7 +16,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
@@ -45,7 +44,7 @@ class OptImpl extends Option {
 @WebMvcTest(SearchController.class)
 @WithMockUser(username = "user")
 @EnableSpringDataWebSupport
-@ContextConfiguration(classes = {RequestMappingConfig.class, WebConfig.class, SearchController.class})
+@ContextConfiguration(classes = {WebConfig.class, SearchController.class})
 public class SearchControllerTest {
 
     @Autowired
