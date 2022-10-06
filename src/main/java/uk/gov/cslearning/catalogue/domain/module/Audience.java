@@ -2,10 +2,13 @@ package uk.gov.cslearning.catalogue.domain.module;
 
 import lombok.Data;
 import org.elasticsearch.common.UUIDs;
+import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 
 @Data
 public class Audience {
@@ -28,8 +31,10 @@ public class Audience {
 
     private Set<String> interests = new HashSet<>();
 
+
     private Instant requiredBy;
 
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
     private String frequency;
 
     private Type type;
