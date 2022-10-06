@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.cslearning.catalogue.Utils;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -44,7 +45,6 @@ public class SearchController {
 
     @GetMapping("/management/courses")
     public ResponseEntity<SearchResults> searchForOrganisation(
-            HttpServletRequest request,
             Authentication authentication,
             @RequestParam(name = "status", defaultValue = "Published") String status,
             @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility,
@@ -53,22 +53,22 @@ public class SearchController {
         OwnerParameters ownerParameters = new OwnerParameters();
         Pageable pageable = pageParameters.getPageRequest();
 
-        ResponseEntity<SearchResults> response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();;
+        ResponseEntity<SearchResults> response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if (Stream.of("CSL_AUTHOR", "LEARNING_MANAGER").anyMatch(request::isUserInRole)) {
+        if (Utils.hasRoles(new String[]{"CSL_AUTHOR", "LEARNING_MANAGER"})) {
             SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
             response = ResponseEntity.ok(new SearchResults(searchPage, pageable));
-        } else if (request.isUserInRole("ORGANISATION_AUTHOR")) {
+        } else if (Utils.hasRole("ORGANISATION_AUTHOR")) {
             CivilServant civilServant = registryService.getCurrentCivilServant();
             civilServant.getOrganisationalUnitCode().ifPresent(ownerParameters::setOrganisationalUnitCode);
             SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
             response = ResponseEntity.ok(new SearchResults(searchPage, pageable));
-        } else if (request.isUserInRole("PROFESSION_AUTHOR")) {
+        } else if (Utils.hasRole("PROFESSION_AUTHOR")) {
             CivilServant civilServant = registryService.getCurrentCivilServant();
             civilServant.getProfessionId().ifPresent(organisationalUnitCode -> ownerParameters.setProfession(organisationalUnitCode.toString()));
             SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
             response = ResponseEntity.ok(new SearchResults(searchPage, pageable));
-        } else if (Stream.of("KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR").anyMatch(request::isUserInRole)) {
+        } else if (Utils.hasRoles(new String[]{"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})) {
             ownerParameters.setSupplier(authoritiesService.getSupplier(authentication));
             SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
             response = ResponseEntity.ok(new SearchResults(searchPage, pageable));
