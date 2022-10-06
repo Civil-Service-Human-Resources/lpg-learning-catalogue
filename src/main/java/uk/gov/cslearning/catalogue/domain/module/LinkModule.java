@@ -12,7 +12,6 @@ import java.net.URL;
 public class LinkModule extends Module {
 
     @Field(type = FieldType.Text)
-    @ValueConverter
     private URL url;
 
     @JsonCreator
