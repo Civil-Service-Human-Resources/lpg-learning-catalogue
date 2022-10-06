@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.config;
 
+import lombok.SneakyThrows;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -28,6 +29,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 import org.springframework.http.HttpHeaders;
 
 import java.net.URI;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -81,8 +83,11 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
     @Bean
     @Override
     public ElasticsearchCustomConversions elasticsearchCustomConversions() {
-        return new ElasticsearchCustomConversions(List.of(new ZonedDateTimeToStringConverter(),
-                new StringToZonedDateTimeConverter()));
+        return new ElasticsearchCustomConversions(List.of(
+                new ZonedDateTimeToStringConverter(),
+                new StringToZonedDateTimeConverter(),
+                new URLToStringConverter(),
+                new StringToURLConverter());
     }
 
     @WritingConverter
@@ -100,6 +105,25 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
         @Override
         public LocalDateTime convert(@NotNull String source) {
             return LocalDateTime.parse(source, DateTimeFormatter.ISO_DATE_TIME);
+        }
+    }
+
+    @WritingConverter
+    public class URLToStringConverter implements Converter<URL, String> {
+
+        @Override
+        public String convert(URL source) {
+            return source.toString();
+        }
+    }
+
+    @ReadingConverter
+    public class StringToURLConverter implements Converter<String, URL>  {
+
+        @SneakyThrows
+        @Override
+        public URL convert(@NotNull String source) {
+            return new URL(source);
         }
     }
 }
