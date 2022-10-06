@@ -8,25 +8,27 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import javax.validation.constraints.NotNull;
 
+import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
+
 public class DateRange {
 
     @NotNull
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd")
     private LocalDate date;
 
     @NotNull
-    @JsonSerialize(using = LocalTimeSerializer.class)
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @Field(type = Date, format = {}, pattern = "HH:mm:ss")
     private LocalTime startTime;
 
     @NotNull
-    @JsonSerialize(using = LocalTimeSerializer.class)
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @Field(type = Date, format = {}, pattern = "HH:mm:ss")
     private LocalTime endTime;
 
     public DateRange() {
