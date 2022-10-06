@@ -63,7 +63,7 @@ public class SearchControllerTest {
     private AuthoritiesService authoritiesService;
 
     @Test
-    @WithMockUser(username = "user", roles = {"ORGANISATION_AUTHOR"})
+    @WithMockUser(username = "user", authorities = {"ORGANISATION_AUTHOR"})
     public void shouldReturnSearchPageOfCoursesForOrganisationAuthor() throws Exception {
         ArrayList<Course> courseArrayList = new ArrayList<>();
         Course course = new Course();
@@ -92,7 +92,7 @@ public class SearchControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", roles = {"PROFESSION_AUTHOR"})
+    @WithMockUser(username = "user", authorities = {"PROFESSION_AUTHOR"})
     public void shouldReturnSearchPageOfCoursesForProfessionAuthor() throws Exception {
         ArrayList<Course> courseArrayList = new ArrayList<>();
         Course course = new Course();
@@ -121,7 +121,7 @@ public class SearchControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", roles = {"KPMG_SUPPLIER_AUTHOR"})
+    @WithMockUser(username = "user", authorities = {"KPMG_SUPPLIER_AUTHOR"})
     public void shouldReturnSearchPageOfCoursesForSupplierAuthor() throws Exception {
         ArrayList<Course> courseArrayList = new ArrayList<>();
         Course course = new Course();
@@ -148,7 +148,7 @@ public class SearchControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", roles = {"CSL_AUTHOR"})
+    @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
     public void shouldReturnSearchPageOfCoursesForCslAuthor() throws Exception {
         ArrayList<Course> courseArrayList = new ArrayList<>();
         Course course = new Course();
@@ -171,7 +171,7 @@ public class SearchControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", roles = {"INVALID_ROLE"})
+    @WithMockUser(username = "user", authorities = {"INVALID_ROLE"})
     public void shouldReturnSearchPageOfCoursesForInvalidRoles() throws Exception {
         mockMvc.perform(
                 get("/search/management/courses")

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.cslearning.catalogue.Utils;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.service.EventService;
@@ -29,11 +30,11 @@ public class ReportController {
     }
 
     @GetMapping("/modules")
-    public ResponseEntity<Map<String, ModuleDto>> getModules(HttpServletRequest request) {
+    public ResponseEntity<Map<String, ModuleDto>> getModules() {
         ResponseEntity<Map<String, ModuleDto>> response = ResponseEntity.ok(moduleService.getModuleMap());
-        if (request.isUserInRole("KPMG_SUPPLIER_REPORTER")) {
+        if (Utils.hasRole("KPMG_SUPPLIER_REPORTER")) {
             response = ResponseEntity.ok(moduleService.getModuleMapForSupplier("KPMG", MAX_PAGEABLE));
-        } else if (request.isUserInRole("KORNFERRY_SUPPLIER_REPORTER")) {
+        } else if (Utils.hasRole("KORNFERRY_SUPPLIER_REPORTER")) {
             response = ResponseEntity.ok(moduleService.getModuleMapForSupplier("KORNFERRY", MAX_PAGEABLE));
         }
         return response;
@@ -47,9 +48,9 @@ public class ReportController {
     @GetMapping("/events")
     public ResponseEntity<Map<String, EventDto>> getEvents(HttpServletRequest request) {
         ResponseEntity<Map<String, EventDto>> response = ResponseEntity.ok(eventService.getEventMap());
-        if (request.isUserInRole("KPMG_SUPPLIER_REPORTER")) {
+        if (Utils.hasRole("KPMG_SUPPLIER_REPORTER")) {
             response = ResponseEntity.ok(eventService.getEventMapBySupplier("KPMG", MAX_PAGEABLE));
-        } else if (request.isUserInRole("KORNFERRY_SUPPLIER_REPORTER")) {
+        } else if (Utils.hasRole("KORNFERRY_SUPPLIER_REPORTER")) {
             response = ResponseEntity.ok(eventService.getEventMapBySupplier("KORNFERRY", MAX_PAGEABLE));
         }
         return response;

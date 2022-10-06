@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.cslearning.catalogue.Utils;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.CivilServant.Interest;
 import uk.gov.cslearning.catalogue.domain.CivilServant.Profession;
@@ -326,29 +327,28 @@ public class CourseController {
     }
 
     @GetMapping(value = "/management")
-    public ResponseEntity<PageResults<Course>> listForOrganisation(HttpServletRequest request,
-                                                                   Authentication authentication,
+    public ResponseEntity<PageResults<Course>> listForOrganisation(Authentication authentication,
                                                                    Pageable pageable) {
 
         CivilServant civilServant = registryService.getCurrentCivilServant();
         ResponseEntity<PageResults<Course>> response = new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK);
 
-        if (request.isUserInRole("CSL_AUTHOR") || request.isUserInRole("LEARNING_MANAGER")) {
+        if (Utils.hasRoles(new String[]{"CSL_AUTHOR", "LEARNING_MANAGER"})) {
             Page<Course> results = courseService.findAllCourses(pageable);
             response = new ResponseEntity<>(new PageResults<>(results, pageable), OK);
-        } else if (request.isUserInRole("ORGANISATION_AUTHOR")) {
+        } else if (Utils.hasRole("ORGANISATION_AUTHOR")) {
             Optional<String> orgCodeOpt = civilServant.getOrganisationalUnitCode();
             if (orgCodeOpt.isPresent()) {
                 Page<Course> results = courseService.findCoursesByOrganisationalUnit(orgCodeOpt.get(), pageable);
                 response = new ResponseEntity<>(new PageResults<>(results, pageable), OK);
             }
-        } else if (request.isUserInRole("PROFESSION_AUTHOR")) {
+        } else if (Utils.hasRole("PROFESSION_AUTHOR")) {
             Optional<Long> professionIdOpt = civilServant.getProfessionId();
             if (professionIdOpt.isPresent()) {
                 Page<Course> results = courseService.findCoursesByProfession(professionIdOpt.toString(), pageable);
                 response = new ResponseEntity<>(new PageResults<>(results, pageable), OK);
             }
-        } else if (Stream.of("KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR").anyMatch(request::isUserInRole)) {
+        } else if (Utils.hasRoles(new String[]{"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})) {
             Page<Course> results = courseService.findCoursesBySupplier(authentication, pageable);
             response = new ResponseEntity<>(new PageResults<>(results, pageable), OK);
         } else {
