@@ -11,17 +11,26 @@ import org.apache.http.message.BasicHeader;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.collect.List;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.convert.ReadingConverter;
+import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
+import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.http.HttpHeaders;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "uk.gov.cslearning.catalogue.repository")
@@ -66,5 +75,31 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
                 new BasicHeader(HttpHeaders.ACCEPT, "application/vnd.elasticsearch+json;compatible-with=7"),
                 new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/vnd.elasticsearch+json;compatible-with=7")
         };
+    }
+
+
+    @Bean
+    @Override
+    public ElasticsearchCustomConversions elasticsearchCustomConversions() {
+        return new ElasticsearchCustomConversions(List.of(new ZonedDateTimeToStringConverter(),
+                new StringToZonedDateTimeConverter()));
+    }
+
+    @WritingConverter
+    public class ZonedDateTimeToStringConverter implements Converter<LocalDateTime, String> {
+
+        @Override
+        public String convert(LocalDateTime source) {
+            return source.format(DateTimeFormatter.ISO_DATE_TIME);
+        }
+    }
+
+    @ReadingConverter
+    public class StringToZonedDateTimeConverter implements Converter<String, LocalDateTime>  {
+
+        @Override
+        public LocalDateTime convert(@NotNull String source) {
+            return LocalDateTime.parse(source, DateTimeFormatter.ISO_DATE_TIME);
+        }
     }
 }
