@@ -87,7 +87,7 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
                 new ZonedDateTimeToStringConverter(),
                 new StringToZonedDateTimeConverter(),
                 new URLToStringConverter(),
-                new StringToURLConverter());
+                new StringToURLConverter()));
     }
 
     @WritingConverter
