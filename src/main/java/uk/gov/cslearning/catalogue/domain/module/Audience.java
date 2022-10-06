@@ -30,11 +30,10 @@ public class Audience {
     private Set<String> grades = new HashSet<>();
 
     private Set<String> interests = new HashSet<>();
-
-
+    
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
     private Instant requiredBy;
 
-    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
     private String frequency;
 
     private Type type;
