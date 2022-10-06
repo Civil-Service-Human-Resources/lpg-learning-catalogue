@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id 'org.springframework.boot' version '2.5.0'
     id 'ajk.gradle.elastic' version '0.0.20'
     id "org.sonarqube" version "2.6.2"
 }
