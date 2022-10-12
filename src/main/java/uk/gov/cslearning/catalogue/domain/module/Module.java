@@ -16,7 +16,7 @@ import java.math.BigDecimal;
         @JsonSubTypes.Type(VideoModule.class),
         @JsonSubTypes.Type(FileModule.class)
 })
-public abstract class Module {
+public class Module {
 
     private String id = UUIDs.randomBase64UUID();
 
