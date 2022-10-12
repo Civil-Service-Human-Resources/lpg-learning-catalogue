@@ -33,7 +33,7 @@ public class Audience {
 
     private Set<String> interests = new HashSet<>();
     
-    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd")
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
     private Instant requiredBy;
 
     private String frequency;
