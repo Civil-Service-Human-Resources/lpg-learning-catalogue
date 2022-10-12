@@ -36,23 +36,4 @@ public enum Status {
     public String getValue() {
         return value;
     }
-
-    @WritingConverter
-    public class StatusToStringConverter implements Converter<Status, String> {
-
-        @Override
-        public String convert(Status source) {
-            return source.getValue();
-        }
-    }
-
-    @ReadingConverter
-    public class StringtoStatusConverter implements Converter<String, Status>  {
-
-        @SneakyThrows
-        @Override
-        public Status convert(@NotNull String source) {
-            return Status.forValue(source);
-        }
-    }
 }
