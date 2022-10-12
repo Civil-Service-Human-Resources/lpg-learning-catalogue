@@ -17,13 +17,13 @@ logging:
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   level:
-    root: ${ROOT_LOGGING_LEVEL:DEBUG}
+    root: ${ROOT_LOGGING_LEVEL:INFO}
     com.zaxxer.hikari: ERROR
     org:
       springframework:
         data:
           elasticsearch:
-            core: ${ROOT_LOGGING_LEVEL:DEBUG}
+            core: ${ROOT_LOGGING_LEVEL:INFO}
 
 elasticsearch:
   protocol: ${ES_PROTOCOL:http}
