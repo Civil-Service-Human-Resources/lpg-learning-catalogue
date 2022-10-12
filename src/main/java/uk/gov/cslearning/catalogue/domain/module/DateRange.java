@@ -1,19 +1,12 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import javax.validation.constraints.NotNull;
 
 import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 
@@ -24,11 +17,11 @@ public class DateRange {
     private LocalDate date;
 
     @NotNull
-    @Field(type = Date, format = {}, pattern = "HH:mm:ss")
+    @Field(type = Date, format = {}, pattern = "HH:mm")
     private LocalTime startTime;
 
     @NotNull
-    @Field(type = Date, format = {}, pattern = "HH:mm:ss")
+    @Field(type = Date, format = {}, pattern = "HH:mm")
     private LocalTime endTime;
 
     public DateRange() {
