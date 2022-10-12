@@ -27,6 +27,7 @@ import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfig
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.http.HttpHeaders;
+import uk.gov.cslearning.catalogue.domain.Status;
 
 import java.net.URI;
 import java.net.URL;
@@ -87,7 +88,9 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
                 new ZonedDateTimeToStringConverter(),
                 new StringToZonedDateTimeConverter(),
                 new URLToStringConverter(),
-                new StringToURLConverter()));
+                new StringToURLConverter(),
+                Status.StatusToStringConverter.class,
+                Status.StringtoStatusConverter.class));
     }
 
     @WritingConverter
@@ -126,4 +129,5 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
             return new URL(source);
         }
     }
+
 }
