@@ -23,4 +23,8 @@ public class VideoModule extends Module {
     public void setUrl(URL url) {
         this.url = url;
     }
+
+    public String getModuleType() {
+        return "video";
+    }
 }
