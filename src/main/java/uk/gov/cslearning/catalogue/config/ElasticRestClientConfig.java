@@ -89,8 +89,8 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
                 new StringToZonedDateTimeConverter(),
                 new URLToStringConverter(),
                 new StringToURLConverter(),
-                Status.StatusToStringConverter.class,
-                Status.StringtoStatusConverter.class));
+                new StatusToStringConverter(),
+                new StringtoStatusConverter()));
     }
 
     @WritingConverter
@@ -127,6 +127,25 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
         @Override
         public URL convert(@NotNull String source) {
             return new URL(source);
+        }
+    }
+
+    @WritingConverter
+    public class StatusToStringConverter implements Converter<Status, String> {
+
+        @Override
+        public String convert(Status source) {
+            return source.getValue();
+        }
+    }
+
+    @ReadingConverter
+    public class StringtoStatusConverter implements Converter<String, Status>  {
+
+        @SneakyThrows
+        @Override
+        public Status convert(@NotNull String source) {
+            return Status.forValue(source);
         }
     }
 
