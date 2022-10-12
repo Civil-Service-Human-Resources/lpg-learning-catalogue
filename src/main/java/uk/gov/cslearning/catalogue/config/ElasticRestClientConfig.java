@@ -28,6 +28,7 @@ import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomCo
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.http.HttpHeaders;
 import uk.gov.cslearning.catalogue.domain.Status;
+import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 
 import java.net.URI;
 import java.net.URL;
@@ -90,7 +91,9 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
                 new URLToStringConverter(),
                 new StringToURLConverter(),
                 new StatusToStringConverter(),
-                new StringtoStatusConverter()));
+                new StringtoStatusConverter(),
+                new EventStatusToStringConverter(),
+                new StringtoEventStatusConverter()));
     }
 
     @WritingConverter
@@ -146,6 +149,25 @@ public class ElasticRestClientConfig extends AbstractElasticsearchConfiguration 
         @Override
         public Status convert(@NotNull String source) {
             return Status.forValue(source);
+        }
+    }
+
+    @WritingConverter
+    public class EventStatusToStringConverter implements Converter<EventStatus, String> {
+
+        @Override
+        public String convert(EventStatus source) {
+            return source.getValue();
+        }
+    }
+
+    @ReadingConverter
+    public class StringtoEventStatusConverter implements Converter<String, EventStatus>  {
+
+        @SneakyThrows
+        @Override
+        public EventStatus convert(@NotNull String source) {
+            return EventStatus.forValue(source);
         }
     }
 
