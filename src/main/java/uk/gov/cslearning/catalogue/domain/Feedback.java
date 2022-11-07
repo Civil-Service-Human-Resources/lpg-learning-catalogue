@@ -8,7 +8,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@Document(indexName = "lpg-feedback2", type = "feedback")
+@Document(indexName = "lpg-feedback2")
 public class Feedback {
 
     @Id
