@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.repository;
 
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -29,17 +30,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     @Override
     public Page<Course> findSuggested(List<String> departmentList, String areaOfWork, String interest, String status, String grade, Pageable pageable) {
-        BoolQueryBuilder courseQuery = boolQuery();
-        courseQuery.must(matchQuery("status", status));
-
-        BoolQueryBuilder audiencesQuery = boolQuery().must(matchQuery("audiences.type", "OPEN"));
-        departmentList.forEach(s -> audiencesQuery.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
-
-        if(!areaOfWork.equals("NONE")) audiencesQuery.must(matchQuery("audiences.areasOfWork", areaOfWork));
-        if(!interest.equals("NONE")) audiencesQuery.must(matchQuery("audiences.interests", interest));
-        if(!grade.equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", grade));
-
-        courseQuery.must(nestedQuery("audiences", audiencesQuery, ScoreMode.Avg));
+        BoolQueryBuilder courseQuery = getCourseQuery(status, departmentList, areaOfWork, interest, grade);
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(courseQuery)
@@ -48,5 +39,26 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
                 .build();
 
         return operations.queryForPage(searchQuery, Course.class);
+    }
+
+    private BoolQueryBuilder getCourseQuery(String status, List<String> departments, String areaOfWork, String interest, String grade){
+        BoolQueryBuilder courseQuery = boolQuery();
+        courseQuery.must(matchQuery("status", status));
+
+        NestedQueryBuilder audiencesNestedQuery = getAudienceNestedQuery(departments, areaOfWork, interest, grade);
+        courseQuery.must(audiencesNestedQuery);
+
+        return courseQuery;
+    }
+
+    private NestedQueryBuilder getAudienceNestedQuery(List<String> departments, String areaOfWork, String interest, String grade){
+        BoolQueryBuilder query = boolQuery().must(matchQuery("audiences.type", "OPEN"));
+        departments.forEach(s -> query.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+
+        if(!areaOfWork.equals("NONE")) query.must(matchQuery("audiences.areasOfWork", areaOfWork));
+        if(!interest.equals("NONE")) query.must(matchQuery("audiences.interests", interest));
+        if(!grade.equals("NONE")) query.must(matchQuery("audiences.grades", grade));
+
+        return nestedQuery("audiences", query, ScoreMode.Avg);
     }
 }
