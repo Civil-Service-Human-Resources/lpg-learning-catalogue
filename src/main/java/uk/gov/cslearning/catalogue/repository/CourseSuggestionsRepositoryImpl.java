@@ -37,7 +37,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
         if(!areaOfWork.equals("NONE")) audiencesQuery.must(matchQuery("audiences.areasOfWork", areaOfWork));
         if(!interest.equals("NONE")) audiencesQuery.must(matchQuery("audiences.interests", interest));
-        if(!interest.equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", grade));
+        if(!grade.equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", grade));
 
         courseQuery.must(nestedQuery("audiences", audiencesQuery, ScoreMode.Avg));
 
