@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@Document(indexName = "media2")
+@Document(indexName = "media")
 public class Media {
     @Id
     private String id;

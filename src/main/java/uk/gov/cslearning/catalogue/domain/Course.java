@@ -20,7 +20,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.util.CollectionUtils.containsAny;
 
-@Document(indexName = "courses2")
+@Document(indexName = "courses")
 public class Course {
 
     @Id
