@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.repository;
 
+import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -16,7 +17,7 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 @Repository
 public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsRepository {
@@ -56,20 +57,20 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     @Override
     public Page<Course> findSuggested(List<String> departmentList, String areaOfWork, String interest, String status, String grade, Pageable pageable) {
-        BoolQueryBuilder boolQuery = boolQuery();
+        BoolQueryBuilder courseQuery = boolQuery();
+        courseQuery.must(matchQuery("status", status));
 
-        departmentList.forEach(s -> boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
-        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", areaOfWork));
-        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.interests", interest));
+        BoolQueryBuilder audiencesQuery = boolQuery().must(matchQuery("audiences.type", "OPEN"));
+        departmentList.forEach(s -> audiencesQuery.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
 
-        BoolQueryBuilder filterQuery = boolQuery();
-        filterQuery.must(QueryBuilders.matchQuery("audiences.grades", grade));
-        filterQuery.must(QueryBuilders.matchQuery("status", status));
-        filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
+        if(!areaOfWork.equals("NONE")) audiencesQuery.must(matchQuery("audiences.areasOfWork", areaOfWork));
+        if(!interest.equals("NONE")) audiencesQuery.must(matchQuery("audiences.interests", interest));
+        if(!interest.equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", grade));
+
+        courseQuery.must(nestedQuery("audiences", audiencesQuery, ScoreMode.Avg));
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(boolQuery)
-                .withFilter(filterQuery)
+                .withQuery(courseQuery)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
