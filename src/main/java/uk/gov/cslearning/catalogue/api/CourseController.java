@@ -234,17 +234,16 @@ public class CourseController {
     }
 
     @GetMapping(params = {"mandatory", "department"})
-    public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
+    public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") List<String> departments,
             @RequestParam(value = "status", defaultValue = "Published") String status,
             Pageable pageable) {
-        List<String> organisationParents = courseService.getOrganisationParents(department);
-        LOGGER.debug("Listing mandatory courses for department {} and its parent organisations {}", department, organisationParents);
-        List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationParents, "Published", PageRequest.of(0, 10000));
+        LOGGER.debug("Listing mandatory courses for departments {}", departments);
+        List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(departments, "Published", PageRequest.of(0, 10000));
         Set<String> courseIdSet = new HashSet<>();
         List<Course> coursesWithValidAudience = courses
                 .stream()
                 .filter(course -> courseIdSet.add(course.getId()))
-                .map(course -> getMandatoryCourseForDepartments(course, department, organisationParents))
+                .map(course -> getMandatoryCourseForDepartments(course, departments))
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(Course::getTitle))
                 .collect(toList());
@@ -252,26 +251,12 @@ public class CourseController {
         return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, coursesWithValidAudience), pageable));
     }
 
-    Course getMandatoryCourseForDepartments(Course course, String department, List<String> organisationParents) {
+    Course getMandatoryCourseForDepartments(Course course, List<String> departments) {
         Optional<Audience> relevantAudience = course
                 .getAudiences()
                 .stream()
-                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                .filter(audience -> audience.getRequiredBy() != null)
-                .filter(audience -> audience.getDepartments().contains(department))
+                .filter(audience -> audience.isRequiredForDepartments(departments))
                 .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
-
-        if (!relevantAudience.isPresent()) {
-            relevantAudience = course
-                    .getAudiences()
-                    .stream()
-                    .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                    .filter(audience -> audience.getRequiredBy() != null)
-                    .filter(audience -> organisationParents
-                            .stream()
-                            .anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
-                    .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
-        }
 
         Course mandatoryCourse = null;
         if (relevantAudience.isPresent()) {

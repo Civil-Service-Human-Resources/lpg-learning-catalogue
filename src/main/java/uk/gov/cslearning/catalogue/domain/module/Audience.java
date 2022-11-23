@@ -5,6 +5,7 @@ import org.elasticsearch.common.UUIDs;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -37,5 +38,13 @@ public class Audience {
     private String eventId;
 
     public Audience() {
+    }
+
+    public boolean isRequired() {
+        return type.equals(Type.REQUIRED_LEARNING) && requiredBy != null;
+    }
+
+    public boolean isRequiredForDepartments(List<String> departments) {
+        return this.isRequired() && departments.stream().anyMatch(departmentCode -> this.getDepartments().contains(departmentCode));
     }
 }
