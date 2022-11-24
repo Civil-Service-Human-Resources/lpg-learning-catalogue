@@ -252,18 +252,12 @@ public class CourseController {
     }
 
     Course getMandatoryCourseForDepartments(Course course, List<String> departments) {
-        Optional<Audience> relevantAudience = course
-                .getAudiences()
-                .stream()
-                .filter(audience -> audience.isRequiredForDepartments(departments))
-                .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
+        List<Audience> relevantAudiences = course.getMandatoryAudiencesForDepartments(departments);
 
         Course mandatoryCourse = null;
-        if (relevantAudience.isPresent()) {
-            Audience audience = relevantAudience.get();
+        if (!relevantAudiences.isEmpty()) {
             mandatoryCourse = course;
-            Set<Audience> audiences = new HashSet<>();
-            audiences.add(audience);
+            Set<Audience> audiences = new HashSet<>(relevantAudiences);
             mandatoryCourse.setAudiences(audiences);
         }
 

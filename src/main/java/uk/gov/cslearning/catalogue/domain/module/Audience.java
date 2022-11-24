@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.elasticsearch.common.UUIDs;
 
@@ -40,10 +41,12 @@ public class Audience {
     public Audience() {
     }
 
+    @JsonIgnore
     public boolean isRequired() {
         return type.equals(Type.REQUIRED_LEARNING) && requiredBy != null;
     }
 
+    @JsonIgnore
     public boolean isRequiredForDepartments(List<String> departments) {
         return this.isRequired() && departments.stream().anyMatch(departmentCode -> this.getDepartments().contains(departmentCode));
     }
