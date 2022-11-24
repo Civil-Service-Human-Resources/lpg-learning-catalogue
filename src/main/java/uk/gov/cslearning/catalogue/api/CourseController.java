@@ -107,8 +107,8 @@ public class CourseController {
             results = courseRepository.findAllByStatusIn(
                     Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
-            List<String> organisationParents = courseService.getOrganisationParents(departments);
-            results = courseRepository.findSuggested(organisationParents, areasOfWork, interests, status, grade, pageable);
+            List<String> departmentsList = Arrays.asList(departments.split(","));
+            results = courseRepository.findSuggested(departmentsList, areasOfWork, interests, status, grade, pageable);
 
             CivilServant civilServant = registryService.getCurrentCivilServant();
             String organisationCode = civilServant.getOrganisationalUnitCode().get();
@@ -130,7 +130,7 @@ public class CourseController {
 
             for (Course course : results) {
                 for (Audience audience : course.getAudiences()) {
-                    for (String organisation : organisationParents) {
+                    for (String organisation : departmentsList) {
                         // any course that has a dept defined (check if AOW and Interests are also part of audience).
                         if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)
                                 && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
