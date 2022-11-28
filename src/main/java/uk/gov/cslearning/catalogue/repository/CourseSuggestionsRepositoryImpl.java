@@ -10,6 +10,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
+import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 
 import java.util.List;
@@ -24,6 +25,38 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
     public CourseSuggestionsRepositoryImpl(ElasticsearchOperations operations) {
         checkArgument(operations != null);
         this.operations = operations;
+    }
+
+    @Override
+    public Page<Course> findSuggested(GetCoursesParameters parameters) {
+        return this.findSuggested(
+                parameters.getDepartments(), parameters.getAreaOfWork(),
+                parameters.getInterest(), parameters.getStatus(), parameters.getGrade(), parameters.getPageable()
+        );
+//        BoolQueryBuilder boolQuery = boolQuery();
+//
+//        parameters.getDepartments().forEach(s -> boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+//        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
+//        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.interests", parameters.getInterest()));
+//
+//        BoolQueryBuilder filterQuery = boolQuery();
+//        filterQuery.must(QueryBuilders.matchQuery("audiences.grades", parameters.getGrade()));
+//        filterQuery.must(QueryBuilders.matchQuery("status", parameters.getStatus()));
+//        filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
+//
+////        parameters.getExcludeCourseIDs().forEach(id -> filterQuery.mustNot(QueryBuilders.matchQuery("id", id)));
+////        parameters.getExcludeAreasOfWork().forEach(aow -> filterQuery.mustNot(QueryBuilders.matchQuery("audiences.areasOfWork", aow)));
+////        parameters.getExcludeInterests().forEach(interest -> filterQuery.mustNot(QueryBuilders.matchQuery("audiences.interests", interest)));
+////        parameters.getExcludeDepartments().forEach(department -> filterQuery.mustNot(QueryBuilders.matchQuery("audiences.departments", department)));
+//
+//        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+//                .withQuery(boolQuery)
+//                .withFilter(filterQuery)
+//                .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
+//                .withPageable(parameters.getPageable())
+//                .build();
+//
+//        return operations.queryForPage(searchQuery, Course.class);
     }
 
     @Override
