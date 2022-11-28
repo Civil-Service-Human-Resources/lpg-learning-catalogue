@@ -97,21 +97,19 @@ public class CourseController {
     }
     @GetMapping
     public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = ELASTIC_EMPTY_PARAM) String areasOfWork,
-                                                    @RequestParam(name = "department", defaultValue = ELASTIC_EMPTY_PARAM) String departments,
+                                                    @RequestParam(name = "department", defaultValue = ELASTIC_EMPTY_PARAM) List<String> departments,
                                                     @RequestParam(name = "interest", defaultValue = ELASTIC_EMPTY_PARAM) String interests,
                                                     @RequestParam(name = "status", defaultValue = COURSE_STATUS) String status,
                                                     @RequestParam(name = "grade", defaultValue = ELASTIC_EMPTY_PARAM) String grade,
                                                     Pageable pageable) {
         Page<Course> results;
-        if (areasOfWork.equals(ELASTIC_EMPTY_PARAM) && departments.equals(ELASTIC_EMPTY_PARAM) && interests.equals(ELASTIC_EMPTY_PARAM)) {
+        if (areasOfWork.equals(ELASTIC_EMPTY_PARAM) && departments.isEmpty() && interests.equals(ELASTIC_EMPTY_PARAM)) {
             results = courseRepository.findAllByStatusIn(
                     Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), pageable);
         } else {
-            List<String> departmentsList = Arrays.asList(departments.split(","));
-            results = courseRepository.findSuggested(departmentsList, areasOfWork, interests, status, grade, pageable);
+            results = courseRepository.findSuggested(departments, areasOfWork, interests, status, grade, pageable);
 
             CivilServant civilServant = registryService.getCurrentCivilServant();
-            String organisationCode = civilServant.getOrganisationalUnitCode().get();
             List<Profession> otherAreasOfWork = civilServant.getOtherAreasOfWork();
             String professionName = civilServant.getProfessionName().get();
 
@@ -119,7 +117,6 @@ public class CourseController {
                     .map(Profession::getName)
                     .collect(collectingAndThen(toList(), this::listWithNone));
 
-            List<String> organisationParentChild = courseService.getOrganisationParents(organisationCode);
             List<Interest> interests_cs = civilServant.getInterests();
 
             List<String> interestNames = interests_cs.stream()
@@ -130,7 +127,7 @@ public class CourseController {
 
             for (Course course : results) {
                 for (Audience audience : course.getAudiences()) {
-                    for (String organisation : departmentsList) {
+                    for (String organisation : departments) {
                         // any course that has a dept defined (check if AOW and Interests are also part of audience).
                         if (audience.getDepartments().contains(organisation) && audience.getGrades().contains(grade)
                                 && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)
@@ -142,7 +139,7 @@ public class CourseController {
                     // Show any courses with AOW (audience could also have a dept/interest so filter it if it does
                     // ie, if your dept is CO and it has been flagged as required for CO, you would not want it appearing here for you also...
                     if (audience.getAreasOfWork().contains(areasOfWork) && audience.getGrades().contains(grade)
-                            && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
+                            && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),departments))
                             && (audience.getInterests().isEmpty() || containsAny(audience.getInterests(), interestNames))) {
                         filteredCourses.add(course);
                     }
@@ -150,7 +147,7 @@ public class CourseController {
                     // Show any courses with Interest (audience could also have a dept/aow so filter it if it does
                     // ie, if your dept is CO and it has been flagged as required for CO, you would not want it appearing here for you also...
                     if (audience.getInterests().contains(interests) && audience.getGrades().contains(grade)
-                            && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),organisationParentChild))
+                            && (audience.getDepartments().isEmpty() || containsAny(audience.getDepartments(),departments))
                             && isAreaOfWorkValid(audience, otherAreasOfWorkNames, professionName)) {
                         filteredCourses.add(course);
                     }
