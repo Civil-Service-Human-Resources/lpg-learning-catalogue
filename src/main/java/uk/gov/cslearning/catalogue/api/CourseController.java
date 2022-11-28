@@ -97,7 +97,7 @@ public class CourseController {
     }
     @GetMapping
     public ResponseEntity<PageResults<Course>> list(@RequestParam(name = "areaOfWork", defaultValue = ELASTIC_EMPTY_PARAM) String areasOfWork,
-                                                    @RequestParam(name = "department", defaultValue = ELASTIC_EMPTY_PARAM) List<String> departments,
+                                                    @RequestParam(name = "department", defaultValue = "") List<String> departments,
                                                     @RequestParam(name = "interest", defaultValue = ELASTIC_EMPTY_PARAM) String interests,
                                                     @RequestParam(name = "status", defaultValue = COURSE_STATUS) String status,
                                                     @RequestParam(name = "grade", defaultValue = ELASTIC_EMPTY_PARAM) String grade,
