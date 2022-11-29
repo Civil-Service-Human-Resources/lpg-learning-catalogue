@@ -53,15 +53,11 @@ public class CourseControllerV2 {
         ArrayList<Course> filteredCourses = new ArrayList<>();
 
         for (Course course : results) {
-            if (!parameters.getExcludeCourseIDs().contains(course.getId())) {
-                for (Audience audience : course.getAudiences()) {
-                    if (!audience.isRequiredForDepartments(parameters.getDepartments())
-                    && !containsAny(audience.getAreasOfWork(), parameters.getExcludeAreasOfWork())
-                    && !containsAny(audience.getInterests(), parameters.getExcludeInterests())
-                    && !containsAny(audience.getDepartments(), parameters.getExcludeDepartments())) {
-                        filteredCourses.add(course);
-                    }
-                }
+            if (course.shouldExcludeCourseFromSuggestions(
+                    parameters.getDepartments(), parameters.getExcludeAreasOfWork(),
+                    parameters.getExcludeInterests(), parameters.getExcludeDepartments())
+                    || !parameters.getExcludeCourseIDs().contains(course.getId())) {
+                filteredCourses.add(course);
             }
         }
 ////

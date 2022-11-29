@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
+import static org.springframework.util.CollectionUtils.containsAny;
 
 @Document(indexName = "courses", type = "course")
 public class Course {
@@ -69,6 +70,20 @@ public class Course {
                 .stream()
                 .filter(audience -> audience.isRequiredForDepartments(departmentCodes))
                 .collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    public boolean shouldExcludeCourseFromSuggestions(List<String> departments, List<String> excludeAreasOfWork,
+                                                      List<String> excludeInterests, List<String> excludeDepartments) {
+        for (Audience audience : this.getAudiences()) {
+            if (audience.isRequiredForDepartments(departments)
+                    && containsAny(audience.getAreasOfWork(), excludeAreasOfWork)
+                    && containsAny(audience.getInterests(), excludeInterests)
+                    && containsAny(audience.getDepartments(), excludeDepartments)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public List<Module> getModules() {
