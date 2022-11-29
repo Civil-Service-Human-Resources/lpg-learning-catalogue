@@ -22,5 +22,4 @@ public class GetCoursesParameters {
     List<String> excludeAreasOfWork = Collections.emptyList();
     List<String> excludeInterests = Collections.emptyList();
     List<String> excludeDepartments = Collections.emptyList();
-    List<String> excludeCourseIDs = Collections.emptyList();
 }

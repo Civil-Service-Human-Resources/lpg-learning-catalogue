@@ -40,7 +40,6 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         filterQuery.must(QueryBuilders.matchQuery("status", parameters.getStatus()));
         filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
 
-        parameters.getExcludeCourseIDs().forEach(id -> filterQuery.mustNot(QueryBuilders.matchQuery("id", id)));
         parameters.getExcludeAreasOfWork().forEach(aow -> filterQuery.mustNot(QueryBuilders.matchQuery("audiences.areasOfWork", aow)));
         parameters.getExcludeInterests().forEach(interest -> filterQuery.mustNot(QueryBuilders.matchQuery("audiences.interests", interest)));
         parameters.getExcludeDepartments().forEach(department -> filterQuery.mustNot(QueryBuilders.matchQuery("audiences.departments", department)));
