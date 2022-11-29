@@ -28,11 +28,10 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
     }
 
     @Override
-    public Page<Course> findSuggested(GetCoursesParameters parameters) {
+    public Page<Course> findSuggested(GetCoursesParameters parameters, Pageable pageable) {
         return this.findSuggested(
                 parameters.getDepartments(), parameters.getAreaOfWork(),
-                parameters.getInterest(), parameters.getStatus(), parameters.getGrade(), parameters.getPageable()
-        );
+                parameters.getInterest(), parameters.getStatus(), parameters.getGrade(), pageable);
 //        BoolQueryBuilder boolQuery = boolQuery();
 //
 //        parameters.getDepartments().forEach(s -> boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));

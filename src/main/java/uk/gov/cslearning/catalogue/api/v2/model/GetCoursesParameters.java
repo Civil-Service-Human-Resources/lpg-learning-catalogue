@@ -1,6 +1,7 @@
 package uk.gov.cslearning.catalogue.api.v2.model;
 
 import lombok.Data;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
@@ -22,6 +23,4 @@ public class GetCoursesParameters {
     List<String> excludeInterests = Collections.emptyList();
     List<String> excludeDepartments = Collections.emptyList();
     List<String> excludeCourseIDs = Collections.emptyList();
-
-    Pageable pageable;
 }

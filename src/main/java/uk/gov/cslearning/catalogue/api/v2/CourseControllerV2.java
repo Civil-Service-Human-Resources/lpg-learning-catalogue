@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +34,8 @@ public class CourseControllerV2 {
     }
 
     @GetMapping
-    public ResponseEntity<PageResults<Course>> list(GetCoursesParameters parameters) {
-        Page<Course> results = courseRepository.findSuggested(parameters);
+    public ResponseEntity<PageResults<Course>> list(GetCoursesParameters parameters, Pageable pageable) {
+        Page<Course> results = courseRepository.findSuggested(parameters, pageable);
 
 //        List<Profession> otherAreasOfWork = civilServant.getOtherAreasOfWork();
 //        String professionName = civilServant.getProfessionName().get();
@@ -97,9 +98,9 @@ public class CourseControllerV2 {
         filteredCourses.clear();
         filteredCourses.addAll(set);
 
-        results = new PageImpl<>(filteredCourses, parameters.getPageable(), filteredCourses.size());
+        results = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
 
-        return ResponseEntity.ok(new PageResults<>(results, parameters.getPageable()));
+        return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
 
     private boolean isAreaOfWorkValid(Audience audience, List<String> professions) {
