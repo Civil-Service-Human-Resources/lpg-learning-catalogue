@@ -80,10 +80,10 @@ public class Course {
                     && containsAny(audience.getAreasOfWork(), excludeAreasOfWork)
                     && containsAny(audience.getInterests(), excludeInterests)
                     && containsAny(audience.getDepartments(), excludeDepartments)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public List<Module> getModules() {
