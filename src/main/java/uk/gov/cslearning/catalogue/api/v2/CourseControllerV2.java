@@ -50,16 +50,16 @@ public class CourseControllerV2 {
 //                .map(Interest::getName)
 //                .collect(collectingAndThen(toList(), this::listWithNone));
 
-        ArrayList<Course> filteredCourses = new ArrayList<>();
-
-        for (Course course : results) {
-            if (course.shouldExcludeCourseFromSuggestions(
-                    parameters.getDepartments(), parameters.getExcludeAreasOfWork(),
-                    parameters.getExcludeInterests(), parameters.getExcludeDepartments())
-                    || !parameters.getExcludeCourseIDs().contains(course.getId())) {
-                filteredCourses.add(course);
-            }
-        }
+//        ArrayList<Course> filteredCourses = new ArrayList<>();
+//
+//        for (Course course : results) {
+//            if (course.shouldExcludeCourseFromSuggestions(
+//                    parameters.getDepartments(), parameters.getExcludeAreasOfWork(),
+//                    parameters.getExcludeInterests(), parameters.getExcludeDepartments())
+//                    || !parameters.getExcludeCourseIDs().contains(course.getId())) {
+//                filteredCourses.add(course);
+//            }
+//        }
 ////
 //        for (Course course : results) {
 //            for (Audience audience : course.getAudiences()) {
@@ -90,11 +90,11 @@ public class CourseControllerV2 {
 //            }
 //        }
 //
-        Set<Course> set = new LinkedHashSet<>(filteredCourses);
-        filteredCourses.clear();
-        filteredCourses.addAll(set);
-
-        results = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
+//        Set<Course> set = new LinkedHashSet<>(filteredCourses);
+//        filteredCourses.clear();
+//        filteredCourses.addAll(set);
+//
+//        results = new PageImpl<>(filteredCourses, pageable, filteredCourses.size());
 
         return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
