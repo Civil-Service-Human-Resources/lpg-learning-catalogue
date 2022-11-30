@@ -32,10 +32,8 @@ import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 import uk.gov.cslearning.catalogue.service.upload.AudienceService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
