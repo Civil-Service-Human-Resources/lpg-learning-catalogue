@@ -1,16 +1,9 @@
 package uk.gov.cslearning.catalogue.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.convert.ReadingConverter;
-import org.springframework.data.convert.WritingConverter;
 import uk.gov.cslearning.catalogue.exception.UnknownStatusException;
 
-import java.net.URL;
 import java.util.Arrays;
 
 public enum Status {

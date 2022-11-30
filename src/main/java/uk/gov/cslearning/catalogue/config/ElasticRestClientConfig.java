@@ -6,7 +6,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.message.BasicHeader;
 import org.elasticsearch.client.RestClient;
@@ -15,14 +14,11 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.collect.List;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
-import org.springframework.data.elasticsearch.client.ClientConfiguration;
-import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
@@ -30,10 +26,8 @@ import org.springframework.http.HttpHeaders;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 
-import java.net.URI;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @Configuration

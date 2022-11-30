@@ -19,10 +19,8 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/search")
