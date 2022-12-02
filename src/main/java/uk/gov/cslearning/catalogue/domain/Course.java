@@ -72,20 +72,6 @@ public class Course {
                 .collect(Collectors.toList());
     }
 
-    @JsonIgnore
-    public boolean shouldExcludeCourseFromSuggestions(List<String> departments, List<String> excludeAreasOfWork,
-                                                      List<String> excludeInterests, List<String> excludeDepartments) {
-        for (Audience audience : this.getAudiences()) {
-            if (audience.isRequiredForDepartments(departments)
-                    && containsAny(audience.getAreasOfWork(), excludeAreasOfWork)
-                    && containsAny(audience.getInterests(), excludeInterests)
-                    && containsAny(audience.getDepartments(), excludeDepartments)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }

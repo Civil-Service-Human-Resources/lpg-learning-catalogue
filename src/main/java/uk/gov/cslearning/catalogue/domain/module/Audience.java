@@ -43,7 +43,7 @@ public class Audience {
 
     @JsonIgnore
     public boolean isRequired() {
-        return type.equals(Type.REQUIRED_LEARNING) && requiredBy != null;
+        return type != null && type.equals(Type.REQUIRED_LEARNING) && requiredBy != null;
     }
 
     @JsonIgnore
