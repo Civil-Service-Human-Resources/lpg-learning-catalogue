@@ -23,6 +23,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,6 +79,16 @@ public class ReportControllerTest {
                 .andExpect(jsonPath("$.event_id.module.course.id", equalTo(courseId)))
                 .andExpect(jsonPath("$.event_id.module.course.title", equalTo(courseTitle)));
 
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"KPMG_SUPPLIER_REPORTER", "KORNFERRY_SUPPLIER_REPORTER"})
+    public void modulesEndpointShouldReturnWithOkWhenRoleIsKPMGOrKornferrySupplierReporter() throws Exception {
+
+        mockMvc.perform(
+            get("/reporting/modules")
+                .with(csrf()))
+                .andExpect(status().isOk());
     }
 
     @Test
