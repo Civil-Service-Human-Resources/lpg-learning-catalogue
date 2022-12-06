@@ -568,8 +568,8 @@ public class CourseControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
-    public void shouldListForCslAuthor() throws Exception {
+    @WithMockUser(username = "user", authorities = {"CSL_AUTHOR", "LEARNING_MANAGER"})
+    public void shouldListForCslAuthorOrLearningManager() throws Exception {
         Course course = new Course();
 
         when(courseService.findAllCourses(any(Pageable.class))).thenReturn(new PageImpl<>(Collections.singletonList(course)));
