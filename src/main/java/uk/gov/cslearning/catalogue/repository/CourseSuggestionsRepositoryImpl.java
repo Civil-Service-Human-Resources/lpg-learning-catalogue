@@ -40,9 +40,9 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         filterQuery.must(QueryBuilders.matchQuery("status", parameters.getStatus()));
         filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
 
-        parameters.getExcludeAreasOfWork().forEach(aow -> filterQuery.mustNot(QueryBuilders.matchQuery("audiences.areasOfWork", aow)));
-        parameters.getExcludeInterests().forEach(interest -> filterQuery.mustNot(QueryBuilders.matchQuery("audiences.interests", interest)));
-        parameters.getExcludeDepartments().forEach(department -> filterQuery.mustNot(QueryBuilders.matchQuery("audiences.departments", department)));
+        parameters.getExcludeAreasOfWork().forEach(aow -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+        parameters.getExcludeInterests().forEach(interest -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+        parameters.getExcludeDepartments().forEach(department -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
