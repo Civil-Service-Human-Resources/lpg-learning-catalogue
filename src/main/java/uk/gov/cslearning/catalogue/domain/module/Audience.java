@@ -1,11 +1,13 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
@@ -41,5 +43,15 @@ public class Audience {
     private String eventId;
 
     public Audience() {
+    }
+
+    @JsonIgnore
+    public boolean isRequired() {
+        return type != null && type.equals(Type.REQUIRED_LEARNING) && requiredBy != null;
+    }
+
+    @JsonIgnore
+    public boolean isRequiredForDepartments(List<String> departments) {
+        return this.isRequired() && departments.stream().anyMatch(departmentCode -> this.getDepartments().contains(departmentCode));
     }
 }

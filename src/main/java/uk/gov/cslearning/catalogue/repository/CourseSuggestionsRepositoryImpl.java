@@ -13,6 +13,8 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.Utils;
+
+import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 
 import java.util.List;
@@ -27,6 +29,33 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
     public CourseSuggestionsRepositoryImpl(ElasticsearchOperations operations) {
         checkArgument(operations != null);
         this.operations = operations;
+    }
+
+    @Override
+    public Page<Course> findSuggested(GetCoursesParameters parameters, Pageable pageable) {
+        BoolQueryBuilder boolQuery = boolQuery();
+
+        parameters.getDepartments().forEach(s -> boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
+        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.interests", parameters.getInterest()));
+
+        BoolQueryBuilder filterQuery = boolQuery();
+        filterQuery.must(QueryBuilders.matchQuery("audiences.grades", parameters.getGrade()));
+        filterQuery.must(QueryBuilders.matchQuery("status", parameters.getStatus()));
+        filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
+
+        parameters.getExcludeAreasOfWork().forEach(aow -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+        parameters.getExcludeInterests().forEach(interest -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+        parameters.getExcludeDepartments().forEach(department -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .withFilter(filterQuery)
+                .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
+                .withPageable(pageable)
+                .build();
+
+        return operations.queryForPage(searchQuery, Course.class);
     }
 
     @Override
