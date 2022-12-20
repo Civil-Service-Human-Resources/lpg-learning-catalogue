@@ -45,14 +45,14 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         parameters.getExcludeInterests().forEach(interest -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
         parameters.getExcludeDepartments().forEach(department -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
 
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        Query searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withFilter(filterQuery)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
 
-        return operations.queryForPage(searchQuery, Course.class);
+        return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
     }
 
     @Override
