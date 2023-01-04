@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,8 +34,6 @@ import uk.gov.cslearning.catalogue.domain.Scope;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
-import uk.gov.cslearning.catalogue.domain.module.Event;
-import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
@@ -110,31 +107,6 @@ public class CourseServiceTest {
 
         verify(eventService, times(0)).getEventAvailability(any());
         assertEquals(courseService.findById(COURSE_ID_1), Optional.empty());
-    }
-
-    @Test
-    public void shouldFindCourseAndGetEventAvailabilitiesAndEventStatus() {
-        Course course = new Course();
-        FaceToFaceModule module = new FaceToFaceModule("product code");
-        Event event = new Event();
-
-        Collection<Event> events = new ArrayList<>();
-        events.add(event);
-        module.setEvents(events);
-
-        List<Module> modules = new ArrayList<>();
-        modules.add(module);
-        course.setModules(modules);
-
-        when(courseRepository.findById(COURSE_ID_1)).thenReturn(Optional.of(course));
-        when(eventService.getEventAvailability(event)).thenReturn(event);
-        when(eventService.getStatus(event.getId())).thenReturn(EventStatus.ACTIVE);
-
-        assertEquals(courseService.findById(COURSE_ID_1), Optional.of(course));
-
-        verify(courseRepository).findById(COURSE_ID_1);
-        verify(eventService).getEventAvailability(event);
-        verify(eventService).getStatus(event.getId());
     }
 
     @Test

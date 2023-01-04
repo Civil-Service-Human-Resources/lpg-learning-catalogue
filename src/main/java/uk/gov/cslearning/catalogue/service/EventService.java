@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.service;
 
+import com.google.common.collect.Maps;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Course;
@@ -10,11 +11,10 @@ import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
-import uk.gov.cslearning.catalogue.service.record.model.Booking;
-import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -86,18 +86,8 @@ public class EventService {
     }
 
     public Event getEventAvailability(Event event) {
-        List<Booking> bookings = learnerRecordService.getEventBookings(event.getId());
-
-        event.getVenue().setAvailability(event.getVenue().getCapacity());
-
-        if (bookings != null && !bookings.isEmpty()) {
-            bookings.forEach(b -> {
-                if (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.REQUESTED) {
-                    event.getVenue().setAvailability(event.getVenue().getAvailability() - 1);
-                }
-            });
-        }
-
+        Integer activeBookings = learnerRecordService.getEventActiveBookingsCount(event.getId());
+        event.getVenue().setAvailability(event.getVenue().getCapacity() - activeBookings);
         return event;
     }
 
@@ -119,5 +109,21 @@ public class EventService {
         Iterable<Course> courses = courseRepository.findAllBySupplier(supplier, pageable);
 
         return eventDtoMapService.getStringEventDtoMapForSupplier(courses);
+    }
+
+    public Collection<Event> updateEventsWithLearnerRecordData(Collection<Event> events) {
+        List<String> eventUids = events.stream().map(Event::getId).collect(Collectors.toList());
+        Map<String, uk.gov.cslearning.catalogue.service.record.model.Event> lrEventMap = Maps
+                .uniqueIndex(learnerRecordService.getEvents(eventUids, true), uk.gov.cslearning.catalogue.service.record.model.Event::getUid);
+
+        events.forEach(e -> {
+            e.getVenue().setAvailability(e.getVenue().getCapacity());
+            uk.gov.cslearning.catalogue.service.record.model.Event lrEvent = lrEventMap.get(e.getId());
+            if (lrEvent != null) {
+                e.getVenue().setAvailability(e.getVenue().getCapacity() - lrEvent.getActiveBookingCount());
+                e.setStatus(EventStatus.forValue(lrEvent.getStatus()));
+            }
+        });
+        return events;
     }
 }

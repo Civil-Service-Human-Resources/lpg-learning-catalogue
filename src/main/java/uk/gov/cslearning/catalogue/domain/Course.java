@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
@@ -11,9 +12,11 @@ import uk.gov.cslearning.catalogue.domain.module.Module;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
+import static org.springframework.util.CollectionUtils.containsAny;
 
 @Document(indexName = "courses", type = "course")
 public class Course {
@@ -59,6 +62,14 @@ public class Course {
         this.shortDescription = shortDescription;
         this.description = description;
         this.visibility = visibility;
+    }
+
+    @JsonIgnore
+    public List<Audience> getMandatoryAudiencesForDepartments(List<String> departmentCodes) {
+        return getAudiences()
+                .stream()
+                .filter(audience -> audience.isRequiredForDepartments(departmentCodes))
+                .collect(Collectors.toList());
     }
 
     public List<Module> getModules() {
