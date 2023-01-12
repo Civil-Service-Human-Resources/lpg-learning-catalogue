@@ -13,7 +13,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
 import uk.gov.cslearning.catalogue.dto.CourseDto;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
@@ -24,6 +23,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WithMockUser(username = "user")
 @EnableSpringDataWebSupport
-@ContextConfiguration(classes = {RequestMappingConfig.class, WebConfig.class, ReportController.class})
+@ContextConfiguration(classes = {WebConfig.class, ReportController.class})
 public class ReportControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -79,6 +79,16 @@ public class ReportControllerTest {
                 .andExpect(jsonPath("$.event_id.module.course.id", equalTo(courseId)))
                 .andExpect(jsonPath("$.event_id.module.course.title", equalTo(courseTitle)));
 
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"KPMG_SUPPLIER_REPORTER", "KORNFERRY_SUPPLIER_REPORTER"})
+    public void modulesEndpointShouldReturnWithOkWhenRoleIsKPMGOrKornferrySupplierReporter() throws Exception {
+
+        mockMvc.perform(
+            get("/reporting/modules")
+                .with(csrf()))
+                .andExpect(status().isOk());
     }
 
     @Test

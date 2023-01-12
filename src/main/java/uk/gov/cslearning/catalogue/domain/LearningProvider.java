@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Document(indexName = "lpg-learning-providers", type = "learningProvider")
+@Document(indexName = "lpg-learning-providers")
 public class LearningProvider {
 
     @Id

@@ -16,7 +16,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
@@ -34,11 +33,18 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+class OptImpl extends Option {
+
+    public OptImpl(Text text, float score) {
+        super(text, score);
+    }
+}
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(SearchController.class)
 @WithMockUser(username = "user")
 @EnableSpringDataWebSupport
-@ContextConfiguration(classes = {RequestMappingConfig.class, WebConfig.class, SearchController.class})
+@ContextConfiguration(classes = {WebConfig.class, SearchController.class})
 public class SearchControllerTest {
 
     @Autowired
@@ -65,7 +71,7 @@ public class SearchControllerTest {
         Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
 
         SearchPage searchPage = new SearchPage();
-        Option suggestion = new Option(new Text("test-suggestion"), 0.1f);
+        Option suggestion = new OptImpl(new Text("test-suggestion"), 0.1f);
         searchPage.setTopScoringSuggestion(suggestion);
         searchPage.setCourses(coursePage);
 
@@ -94,7 +100,7 @@ public class SearchControllerTest {
         Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
 
         SearchPage searchPage = new SearchPage();
-        Option suggestion = new Option(new Text("test-suggestion"), 0.1f);
+        Option suggestion = new OptImpl(new Text("test-suggestion"), 0.1f);
         searchPage.setTopScoringSuggestion(suggestion);
         searchPage.setCourses(coursePage);
 
@@ -123,7 +129,7 @@ public class SearchControllerTest {
         Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
 
         SearchPage searchPage = new SearchPage();
-        Option suggestion = new Option(new Text("test-suggestion"), 0.1f);
+        Option suggestion = new OptImpl(new Text("test-suggestion"), 0.1f);
         searchPage.setTopScoringSuggestion(suggestion);
         searchPage.setCourses(coursePage);
 
@@ -150,7 +156,7 @@ public class SearchControllerTest {
         Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
 
         SearchPage searchPage = new SearchPage();
-        Option suggestion = new Option(new Text("test-suggestion"), 0.1f);
+        Option suggestion = new OptImpl(new Text("test-suggestion"), 0.1f);
         searchPage.setTopScoringSuggestion(suggestion);
         searchPage.setCourses(coursePage);
 

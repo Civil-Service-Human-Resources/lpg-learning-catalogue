@@ -37,13 +37,19 @@ public abstract class Module {
 
     private boolean associatedLearning;
 
+    private String type;
+
     public Module() {
     }
 
-    public Module(@NotNull String title, @NotNull String description, @NotNull Long duration) {
+    public Module(@NotNull String title,
+                  @NotNull String description,
+                  @NotNull Long duration,
+                  @NotNull String type) {
         this.title = title;
         this.description = description;
         this.duration = duration;
+        this.type = type;
     }
 
     public String getId() {
@@ -110,29 +116,6 @@ public abstract class Module {
         this.associatedLearning = associatedLearning;
     }
 
-    public String getModuleType() {
-        String className = this.getClass().getName();
+    public abstract String getModuleType();
 
-        if (this instanceof FaceToFaceModule) {
-            return "face-to-face";
-        }
-
-        if (this instanceof LinkModule) {
-            return "link";
-        }
-
-        if (this instanceof VideoModule) {
-            return "video";
-        }
-
-        if (this instanceof ELearningModule) {
-            return "elearning";
-        }
-
-        if (this instanceof FileModule) {
-            return "file";
-        }
-
-        return className;
-    }
 }

@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.cslearning.catalogue.Utils;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
-import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.mapping.RoleMapping;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
@@ -42,66 +41,39 @@ public class SearchController {
         this.authoritiesService = authoritiesService;
     }
 
-    @RoleMapping("ORGANISATION_AUTHOR")
     @GetMapping("/management/courses")
-    public ResponseEntity<SearchResults> searchForOrganisation(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
-        CivilServant civilServant = registryService.getCurrentCivilServant();
-
+    public ResponseEntity<SearchResults> searchForOrganisation(
+            Authentication authentication,
+            @RequestParam(name = "status", defaultValue = "Published") String status,
+            @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility,
+            String query, FilterParameters filterParameters, ProfileParameters profileParameters,
+            PageParameters pageParameters) {
         OwnerParameters ownerParameters = new OwnerParameters();
-
-        civilServant.getOrganisationalUnitCode().ifPresent(ownerParameters::setOrganisationalUnitCode);
-
-        Pageable pageable = pageParameters.getPageRequest();
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
-
-        return ResponseEntity.ok(new SearchResults(searchPage, pageable));
-    }
-
-    @RoleMapping("PROFESSION_AUTHOR")
-    @GetMapping("/management/courses")
-    public ResponseEntity<SearchResults> searchForProfession(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
-        CivilServant civilServant = registryService.getCurrentCivilServant();
-
-        OwnerParameters ownerParameters = new OwnerParameters();
-
-        civilServant.getProfessionId().ifPresent(organisationalUnitCode -> ownerParameters.setProfession(organisationalUnitCode.toString()));
-
-        Pageable pageable = pageParameters.getPageRequest();
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
-
-        return ResponseEntity.ok(new SearchResults(searchPage, pageable));
-    }
-
-    @RoleMapping({"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})
-    @GetMapping("/management/courses")
-    public ResponseEntity<SearchResults> searchForSupplier(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, PageParameters pageParameters, ProfileParameters profileParameters, Authentication authentication) {
-        OwnerParameters ownerParameters = new OwnerParameters();
-
-        ownerParameters.setSupplier(authoritiesService.getSupplier(authentication));
-
-        Pageable pageable = pageParameters.getPageRequest();
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
-
-        return ResponseEntity.ok(new SearchResults(searchPage, pageable));
-    }
-
-    @RoleMapping({"CSL_AUTHOR", "LEARNING_MANAGER"})
-    @GetMapping("/management/courses")
-    public ResponseEntity<SearchResults> searchForCslAuthorOrLearningManager(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
         Pageable pageable = pageParameters.getPageRequest();
 
-        OwnerParameters ownerParameters = new OwnerParameters();
+        ResponseEntity<SearchResults> response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
+        if (Utils.hasRoles(new String[]{"CSL_AUTHOR", "LEARNING_MANAGER"})) {
+            SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
+            response = ResponseEntity.ok(new SearchResults(searchPage, pageable));
+        } else if (Utils.hasRole("ORGANISATION_AUTHOR")) {
+            CivilServant civilServant = registryService.getCurrentCivilServant();
+            civilServant.getOrganisationalUnitCode().ifPresent(ownerParameters::setOrganisationalUnitCode);
+            SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
+            response = ResponseEntity.ok(new SearchResults(searchPage, pageable));
+        } else if (Utils.hasRole("PROFESSION_AUTHOR")) {
+            CivilServant civilServant = registryService.getCurrentCivilServant();
+            civilServant.getProfessionId().ifPresent(organisationalUnitCode -> ownerParameters.setProfession(organisationalUnitCode.toString()));
+            SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
+            response = ResponseEntity.ok(new SearchResults(searchPage, pageable));
+        } else if (Utils.hasRoles(new String[]{"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})) {
+            ownerParameters.setSupplier(authoritiesService.getSupplier(authentication));
+            SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
+            response = ResponseEntity.ok(new SearchResults(searchPage, pageable));
+        }
 
-        return ResponseEntity.ok(new SearchResults(searchPage, pageable));
+        return response;
     }
-
-    @GetMapping("/management/courses")
-    public ResponseEntity<PageResults<Course>> unauth() {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-    }
-
     @GetMapping("/courses")
     public ResponseEntity<SearchResults> search(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
         OwnerParameters ownerParameters = new OwnerParameters();
