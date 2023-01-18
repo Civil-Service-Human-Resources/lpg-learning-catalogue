@@ -4,20 +4,16 @@ import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.cslearning.catalogue.config.OAuthProperties;
 import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.service.upload.FileUploadFactory;
 import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
 import java.time.LocalDateTime;
@@ -44,9 +40,6 @@ public class MediaControllerTest {
     @MockBean
     private MediaManagementService mediaManagementService;
 
-    @MockBean
-    private FileUploadFactory fileUploadFactory;
-
     @Test
     public void shouldUploadFileOnPostRequest() throws Exception {
         String fileContainer = "container-id";
@@ -54,9 +47,7 @@ public class MediaControllerTest {
         String filename = "custom-filename";
 
         MockMultipartFile file = new MockMultipartFile("file", "file.doc", "application/octet-stream", "abc".getBytes());
-        FileUpload fileUpload = mock(FileUpload.class);
-
-        when(fileUploadFactory.create(file, fileContainer, filename)).thenReturn(fileUpload);
+        FileUpload fileUpload = FileUpload.createFromMetadata(file, fileContainer, filename);
 
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
@@ -128,9 +119,7 @@ public class MediaControllerTest {
         String filename = "custom-filename";
 
         MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "application/octet-stream", "abc".getBytes());
-        FileUpload fileUpload = mock(FileUpload.class);
-
-        when(fileUploadFactory.create(file, fileContainer, filename)).thenReturn(fileUpload);
+        FileUpload fileUpload = FileUpload.createFromMetadata(file, fileContainer, filename);
 
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
@@ -154,9 +143,7 @@ public class MediaControllerTest {
         String filename = "custom-filename";
 
         MockMultipartFile file = new MockMultipartFile("file", "file.PNG", "application/octet-stream", "abc".getBytes());
-        FileUpload fileUpload = mock(FileUpload.class);
-
-        when(fileUploadFactory.create(file, fileContainer, filename)).thenReturn(fileUpload);
+        FileUpload fileUpload = FileUpload.createFromMetadata(file, fileContainer, filename);
 
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);

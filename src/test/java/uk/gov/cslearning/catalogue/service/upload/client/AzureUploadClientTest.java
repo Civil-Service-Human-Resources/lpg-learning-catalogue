@@ -28,11 +28,10 @@ public class AzureUploadClientTest {
     private final String storageContainerName = "storage-container-name";
     private final CloudBlobClient cloudBlobClient = PowerMockito.mock(CloudBlobClient.class);
     private AzureUploadClient azureUploadClient;
-    private UploadedFileFactory uploadedFileFactory = PowerMockito.mock(UploadedFileFactory.class);
 
     @Before
     public void setUp() {
-        azureUploadClient = new AzureUploadClient(cloudBlobClient, storageContainerName, uploadedFileFactory);
+        azureUploadClient = new AzureUploadClient(cloudBlobClient, storageContainerName);
     }
 
     @Test

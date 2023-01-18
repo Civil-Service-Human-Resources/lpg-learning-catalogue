@@ -1,13 +1,14 @@
 package uk.gov.cslearning.catalogue.dto;
 
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+@Data
 public class Upload {
     private final ProcessedFile processedFile;
     private List<UploadedFile> uploadedFiles = new ArrayList<>();
@@ -16,36 +17,26 @@ public class Upload {
     private Throwable error;
     private LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
 
+    public static Upload createSuccessfulUpload(ProcessedFile processedFile, List<UploadedFile> uploadedFiles, String path) {
+        Upload upload = new Upload(processedFile);
+        upload.setStatus(UploadStatus.SUCCESS);
+        upload.setUploadedFiles(uploadedFiles);
+        upload.setPath(path);
+
+        return upload;
+    }
+
+    public static Upload createFailedUpload(ProcessedFile processedFile, String path, Throwable e) {
+        Upload upload = new Upload(processedFile);
+        upload.setStatus(UploadStatus.FAIL);
+        upload.setPath(path);
+        upload.setError(e);
+
+        return upload;
+    }
+
     public Upload(ProcessedFile processedFile) {
         this.processedFile = processedFile;
-    }
-
-    public ProcessedFile getProcessedFile() {
-        return processedFile;
-    }
-
-    public List<UploadedFile> getUploadedFiles() {
-        return uploadedFiles;
-    }
-
-    public void setUploadedFiles(List<UploadedFile> uploadedFiles) {
-        this.uploadedFiles = new ArrayList<>(uploadedFiles);
-    }
-
-    public UploadStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(UploadStatus status) {
-        this.status = status;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     public long getSizeKB() {
@@ -54,14 +45,6 @@ public class Upload {
 
     public void addToUploadedFiles(UploadedFile uploadedFile) {
         uploadedFiles.add(new UploadedFile(uploadedFile));
-    }
-
-    public void setError(Throwable error) {
-        this.error = error;
-    }
-
-    public Optional<Throwable> getError() {
-        return Optional.ofNullable(error);
     }
 
     @Override

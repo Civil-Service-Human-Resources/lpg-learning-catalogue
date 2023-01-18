@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.ProcessedFile;
-import uk.gov.cslearning.catalogue.dto.ProcessedFileFactory;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 
 import java.io.IOException;
@@ -24,8 +23,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Mp4FileProcessorTest {
-    @Mock
-    private ProcessedFileFactory processedFileFactory;
 
     @Mock
     private MetadataParser metadataParser;
@@ -49,8 +46,6 @@ public class Mp4FileProcessorTest {
         when(metadataParser.parse(inputStream)).thenReturn(metadataMap);
 
         ProcessedFile processedFile = mock(ProcessedFile.class);
-        when(processedFileFactory.create(fileUpload, metadataMap)).thenReturn(processedFile);
-
         ProcessedFile result = mp4FileProcessor.process(fileUpload);
         assertEquals(processedFile, result);
     }

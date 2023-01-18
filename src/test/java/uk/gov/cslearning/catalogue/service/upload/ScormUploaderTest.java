@@ -12,9 +12,7 @@ import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.dto.UploadedFile;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
-import uk.gov.cslearning.catalogue.service.upload.uploader.UploadFactory;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ZipEntryUploader;
-import uk.gov.cslearning.catalogue.service.upload.uploader.ZipEntryUploaderFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,12 +29,6 @@ public class ScormUploaderTest {
 
     @Mock
     private InputStreamFactory inputStreamFactory;
-
-    @Mock
-    private UploadFactory uploadFactory;
-
-    @Mock
-    private ZipEntryUploaderFactory zipEntryUploaderFactory;
 
     @InjectMocks
     private ScormUploader uploader;

@@ -15,7 +15,6 @@ import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPathFactory;
 import java.util.Map;
 
 @Configuration
@@ -47,19 +46,6 @@ public class UploadConfig {
                 .put("svg", defaultUploader)  //svg
                 .build();
 
-    }
-
-    @Bean("fileSubstitutions")
-    public Map<String, String> fileSubstitutions() {
-        return ImmutableMap.<String, String>builder()
-                /* file-to-substitute => substituted-with */
-                .put("js/player_management/close_methods.js", "/file-substitutions/close_methods.js") //GOMO
-                .put("js/player_management/content_tracking/adapters/tincan_wrapper.js", "/file-substitutions/tincan_wrapper.js") //GOMO
-                .put("js/player_management/portal_overrides.js", "/file-substitutions/portal_overrides.js") //GOMO
-                .put("js/corePrimaryLoadList.min.js", "/file-substitutions/corePrimaryLoadList.min.js") //GOMO
-                .put("story_content/user.js", "/file-substitutions/user.js") //Storyline
-                .put("SCORMDriver/Configuration.js", "/file-substitutions/Configuration.js") //DominKNOW
-                .build();
     }
 
     @Bean("fileProcessorMap")
@@ -101,15 +87,5 @@ public class UploadConfig {
     public DocumentBuilderFactory documentBuilderFactory() {
         return DocumentBuilderFactory.newInstance();
     }
-    @Bean
-    public XPathFactory xPathFactory() {
-        return XPathFactory.newInstance();
-    }
-    @Bean("scormManifestXpathMap")
-    public Map<String, String> scormManifestXpathMap() {
-        return ImmutableMap.of(
-                "imsmanifest.xml", "/manifest/resources/resource/@href",
-                "tincan.xml", "/tincan/activities/activity/launch"
-        );
-    }
+
 }

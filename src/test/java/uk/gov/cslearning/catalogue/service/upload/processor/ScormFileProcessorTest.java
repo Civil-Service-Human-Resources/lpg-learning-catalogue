@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.dto.ProcessedFile;
-import uk.gov.cslearning.catalogue.dto.ProcessedFileFactory;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
 
@@ -25,7 +24,6 @@ import java.util.zip.ZipInputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 @RunWith(PowerMockRunner.class)
 public class ScormFileProcessorTest {
@@ -35,8 +33,6 @@ public class ScormFileProcessorTest {
     private Map<String, String> manifestXpaths;
     @Mock
     private XPathProcessor xPathProcessor;
-    @Mock
-    private ProcessedFileFactory processedFileFactory;
     @InjectMocks
     private ScormFileProcessor processor;
     @Test
@@ -58,8 +54,7 @@ public class ScormFileProcessorTest {
         String nodeContent = "start-page";
         when(xPathProcessor.evaluate(xpathString, zipInputStream)).thenReturn(nodeContent);
         Map<String, String> metadata = ImmutableMap.of("startPage", nodeContent);
-        ProcessedFile processedFile = mock(ProcessedFile.class);
-        when(processedFileFactory.create(eq(fileUpload), eq(metadata))).thenReturn(processedFile);
+        ProcessedFile processedFile = ProcessedFile.createWithMetadata(fileUpload, metadata);
         assertEquals(processedFile, processor.process(fileUpload));
     }
     @Test
@@ -77,8 +72,7 @@ public class ScormFileProcessorTest {
         when(zipInputStream.getNextEntry()).thenReturn(zipEntry).thenReturn(null);
         when(manifestXpaths.containsKey(name)).thenReturn(false);
         Map<String, String> metadata = Collections.emptyMap();
-        ProcessedFile processedFile = mock(ProcessedFile.class);
-        when(processedFileFactory.create(eq(fileUpload), eq(metadata))).thenReturn(processedFile);
+        ProcessedFile processedFile = ProcessedFile.createWithMetadata(fileUpload, metadata);
         assertEquals(processedFile, processor.process(fileUpload));
         verifyZeroInteractions(xPathProcessor);
     }

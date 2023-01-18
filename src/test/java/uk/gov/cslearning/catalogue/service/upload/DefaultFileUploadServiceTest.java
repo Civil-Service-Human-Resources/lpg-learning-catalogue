@@ -12,7 +12,6 @@ import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
-import uk.gov.cslearning.catalogue.service.upload.client.UploadClientFactory;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessorFactory;
 import uk.gov.cslearning.catalogue.service.upload.processor.ImageProcessorFactory;
@@ -25,7 +24,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import javax.inject.Inject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultFileUploadServiceTest {
@@ -44,8 +42,6 @@ public class DefaultFileUploadServiceTest {
 
     @InjectMocks
     private DefaultFileUploadService fileUploadService;
-
-    private FileUploadFactory fileUploadFactory = new FileUploadFactory();
 
     @Test
     public void shouldReturnUpload() {
@@ -113,7 +109,7 @@ public class DefaultFileUploadServiceTest {
         byte[] array = {};
         MockMultipartFile mockMultipartFile = new MockMultipartFile("test_file.pdf", array);
 
-        return fileUploadFactory.create(mockMultipartFile, "", "test_file.pdf");
+        return FileUpload.createFromMetadata(mockMultipartFile, "", "test_file.pdf");
     }
 
     private Upload verifyUpload(FileUpload fileUpload, FileProcessor fileProcessor) {

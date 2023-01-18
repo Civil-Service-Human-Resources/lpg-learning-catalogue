@@ -60,23 +60,6 @@ public class UploadConfigTest {
     }
 
     @Test
-    public void shouldHaveCorrectFileSubstitutionMap() {
-        Map<String, String> substitutionMap = ImmutableMap.<String, String>builder()
-                /* file-to-substitute => substituted-with */
-                .put("js/player_management/close_methods.js", "/file-substitutions/close_methods.js") //GOMO
-                .put("js/player_management/content_tracking/adapters/tincan_wrapper.js", "/file-substitutions/tincan_wrapper.js") //GOMO
-                .put("js/player_management/portal_overrides.js", "/file-substitutions/portal_overrides.js") //GOMO
-                .put("js/corePrimaryLoadList.min.js", "/file-substitutions/corePrimaryLoadList.min.js") //GOMO
-                .put("story_content/user.js", "/file-substitutions/user.js") //Storyline
-                .put("SCORMDriver/Configuration.js", "/file-substitutions/Configuration.js") //DominKNOW
-                .build();
-
-        assertEquals(substitutionMap.keySet(), config.fileSubstitutions().keySet());
-        substitutionMap.forEach((key, value) -> assertEquals(key, value, config.fileSubstitutions().get(key)));
-    }
-
-
-    @Test
     public void storageClientShouldReturnCloudBlobClient() {
         CloudStorageAccount cloudStorageAccount = PowerMockito.mock(CloudStorageAccount.class);
         CloudBlobClient cloudBlobClient = PowerMockito.mock(CloudBlobClient.class);
@@ -107,11 +90,11 @@ public class UploadConfigTest {
                 .build();
 
         assertEquals(fileProcessorMap.keySet(),
-                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor, scormFileProcessor).keySet());
+                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor).keySet());
 
 
         fileProcessorMap.forEach((key, value) -> assertEquals(key, value,
-                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor, scormFileProcessor).get(key)));
+                config.fileProcessorMap(defaultFileProcessor, mp4FileProcessor).get(key)));
     }
 
     @Test

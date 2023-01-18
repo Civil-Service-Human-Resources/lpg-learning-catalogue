@@ -23,7 +23,7 @@ version = '0.1.0-' + (System.getenv('TRAVIS_COMMIT') ?: 'local')
 
 bootJar {
     archiveFileName = 'learning-catalogue.jar'
-    mainClassName = 'uk.gov.cslearning.catalogue.Application'
+    mainClass.set('uk.gov.cslearning.catalogue.Application')
 }
 
 dependencies {
@@ -34,44 +34,44 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web') {
         exclude module: 'spring-boot-starter-tomcat'
     }
-    compile 'org.springframework.boot:spring-boot-starter-jetty'
-    compile 'org.springframework.boot:spring-boot-starter-jersey'
-    compile 'org.springframework.boot:spring-boot-starter-security'
-    compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile 'org.springframework.boot:spring-boot-configuration-processor'
-    compile 'org.springframework.security.oauth:spring-security-oauth2:2.3.3.RELEASE'
-    compile group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.1.1.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-jetty'
+    implementation 'org.springframework.boot:spring-boot-starter-jersey'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation 'org.springframework.security.oauth:spring-security-oauth2:2.3.3.RELEASE'
+    implementation group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.1.1.RELEASE'
 
     compile('org.springframework.data:spring-data-elasticsearch') {
         exclude module: 'log4j-api'
     }
-    compile 'com.google.guava:guava:23.5-jre'
-    compile 'org.apache.commons:commons-lang3:3.7'
-    compile 'org.codehaus.janino:janino:3.0.8'
+    implementation 'com.google.guava:guava:23.5-jre'
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'org.codehaus.janino:janino:3.0.8'
 
-    compile 'io.springfox:springfox-swagger2:2.7.0'
-    compile 'io.springfox:springfox-swagger-ui:2.7.0'
+    implementation 'io.springfox:springfox-swagger2:2.7.0'
+    implementation 'io.springfox:springfox-swagger-ui:2.7.0'
 
-    compile 'commons-io:commons-io:2.6'
-    compile 'com.microsoft.azure:azure-storage:8.0.0'
-    compile 'com.microsoft.azure:azure-storage-spring-boot-starter:2.0.2'
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'com.microsoft.azure:azure-storage:8.0.0'
+    implementation 'com.microsoft.azure:azure-storage-spring-boot-starter:2.0.2'
 
-    compile 'org.apache.tika:tika-core:1.18'
-    compile 'org.apache.tika:tika-parsers:1.18'
+    implementation 'org.apache.tika:tika-core:1.18'
+    implementation 'org.apache.tika:tika-parsers:1.18'
 
-    compile group: 'com.microsoft.azure', name: 'applicationinsights-web-auto', version: '2.5.0'
-    compile group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: '2.5.0'
-    compile group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.5.0'
+    implementation group: 'com.microsoft.azure', name: 'applicationinsights-web-auto', version: '2.5.0'
+    implementation group: 'com.microsoft.azure', name: 'applicationinsights-logging-logback', version: '2.5.0'
+    implementation group: 'com.microsoft.azure', name: 'applicationinsights-spring-boot-starter', version: '2.5.0'
 
-    testCompile 'com.google.code.gson:gson:2.8.2'
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.springframework.security:spring-security-test'
+    testImplementation 'com.google.code.gson:gson:2.8.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 
-    testCompile 'org.powermock:powermock-api-mockito2:1.7.4'
-    testCompile 'org.powermock:powermock-module-junit4:1.7.4'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.4'
+    testImplementation 'org.powermock:powermock-module-junit4:1.7.4'
 
-    testCompile 'org.mockito:mockito-core:2.8.47'
-    testCompile 'com.jayway.jsonpath:json-path:2.4.0'
+    testImplementation 'org.mockito:mockito-core:2.8.47'
+    testImplementation 'com.jayway.jsonpath:json-path:2.4.0'
 
 }
 

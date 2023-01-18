@@ -1,19 +1,20 @@
 package uk.gov.cslearning.catalogue.dto;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 
+@Data
+@NoArgsConstructor
 public class UploadedFile {
     private long sizeKB;
     private String path;
     private UploadStatus status;
     private Throwable error;
     private final LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
-
-    public UploadedFile() {
-    }
 
     public UploadedFile(UploadedFile uploadedFile) {
         this.sizeKB = uploadedFile.getSizeKB();
@@ -22,40 +23,23 @@ public class UploadedFile {
         this.error = uploadedFile.getError();
     }
 
-    public String getPath() {
-        return path;
+    public static UploadedFile createSuccessulUploadedFile(String filePath, long fileSizeBytes) {
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.setSizeKB(fileSizeBytes/1024);
+        uploadedFile.setPath(filePath);
+        uploadedFile.setStatus(UploadStatus.SUCCESS);
+
+        return uploadedFile;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
+    public static UploadedFile createFailedUploadedFile(String filePath, long fileSizeBytes, Throwable error) {
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.setSizeKB(fileSizeBytes/1024);
+        uploadedFile.setPath(filePath);
+        uploadedFile.setStatus(UploadStatus.FAIL);
+        uploadedFile.setError(error);
 
-    public long getSizeKB() {
-        return sizeKB;
-    }
-
-    public void setSizeKB(long sizeKB) {
-        this.sizeKB = sizeKB;
-    }
-
-    public UploadStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(UploadStatus status) {
-        this.status = status;
-    }
-
-    public Throwable getError() {
-        return error;
-    }
-
-    public void setError(Throwable error) {
-        this.error = error;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+        return uploadedFile;
     }
 
     @Override

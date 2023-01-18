@@ -3,7 +3,6 @@ package uk.gov.cslearning.catalogue.api;
 import org.junit.Test;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.service.upload.FileUploadFactory;
 
 import java.util.regex.Pattern;
 
@@ -13,8 +12,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class FileUploadFactoryTest {
-
-    private final FileUploadFactory fileUploadFactory = new FileUploadFactory();
 
     @Test
     public void createReturnsFileUpload() {
@@ -28,7 +25,7 @@ public class FileUploadFactoryTest {
         when(file.getSize()).thenReturn(fileSizeBytes);
         when(file.getOriginalFilename()).thenReturn(originalFilename);
 
-        FileUpload result = fileUploadFactory.create(file, container, filename);
+        FileUpload result = FileUpload.createFromMetadata(file, container, filename);
 
         assertEquals(container, result.getContainer());
         assertEquals(filename, result.getName());
@@ -49,7 +46,7 @@ public class FileUploadFactoryTest {
         when(file.getSize()).thenReturn(fileSizeBytes);
         when(file.getOriginalFilename()).thenReturn(originalFilename);
 
-        FileUpload result = fileUploadFactory.create(file, container, null);
+        FileUpload result = FileUpload.createFromMetadata(file, container, null);
 
         assertEquals(container, result.getContainer());
         assertEquals(originalFilename, result.getName());
@@ -66,7 +63,7 @@ public class FileUploadFactoryTest {
         long sizeKB = 99;
         when(file.getSize()).thenReturn(sizeKB * 1024);
         when(file.getOriginalFilename()).thenReturn(name);
-        FileUpload fileUpload = fileUploadFactory.create(file, container, name);
+        FileUpload fileUpload = FileUpload.createFromMetadata(file, container, name);
 
         String pattern = "uk\\.gov\\.cslearning\\.catalogue\\.service\\.upload\\.FileUploadFactory\\$1@\\w+" +
                 "\\[id=[^,]{22},container=testcontainer,file=Mock for MultipartFile, hashCode: \\d+,extension=xxx," +
