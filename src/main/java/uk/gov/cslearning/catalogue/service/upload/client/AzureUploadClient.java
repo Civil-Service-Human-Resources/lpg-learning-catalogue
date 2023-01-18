@@ -1,10 +1,11 @@
 package uk.gov.cslearning.catalogue.service.upload.client;
 
 import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.*;
+import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlobDirectory;
+import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.microsoft.azure.storage.blob.ListBlobItem;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.dto.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.UploadedFile;
 
@@ -12,16 +13,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-@Component
 @Slf4j
 public class AzureUploadClient implements UploadClient {
-    private final CloudBlobClient azureClient;
-    private final String storageContainerName;
+    private final CloudBlobContainer container;
 
-    public AzureUploadClient(CloudBlobClient azureClient,
-                             @Value("${azure.storage.container}") String storageContainerName) {
-        this.azureClient = azureClient;
-        this.storageContainerName = storageContainerName;
+    public AzureUploadClient(CloudBlobContainer container) {
+        this.container = container;
     }
 
     @Override
@@ -33,9 +30,6 @@ public class AzureUploadClient implements UploadClient {
     public UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes, String contentType) {
 
         try {
-            CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
-            container.createIfNotExists();
-
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.getProperties().setContentType(contentType);
             blob.upload(inputStream, fileSizeBytes);
@@ -56,7 +50,6 @@ public class AzureUploadClient implements UploadClient {
     @Override
     public void delete(String filePath) {
         try {
-            CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.deleteIfExists();
         } catch (StorageException | URISyntaxException e) {
@@ -67,7 +60,6 @@ public class AzureUploadClient implements UploadClient {
     @Override
     public void deleteDirectory(String filePath) {
         try {
-            CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
             CloudBlobDirectory directory = container.getDirectoryReference(filePath);
             for (ListBlobItem blob : directory.listBlobsSegmented().getResults()) {
                 if (blob instanceof CloudBlobDirectory) {

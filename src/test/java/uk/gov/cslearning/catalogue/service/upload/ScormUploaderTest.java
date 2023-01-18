@@ -70,15 +70,12 @@ public class ScormUploaderTest {
         String destinationDirectory = String.join("/", containerName, fileUploadId);
 
         ZipEntryUploader zipEntryUploader = mock(ZipEntryUploader.class);
-        when(zipEntryUploaderFactory.get(zipEntry)).thenReturn(zipEntryUploader);
 
         when(zipEntryUploader.upload(uploadClient, zipEntry, zipInputStream,
                 String.join("/", destinationDirectory, zipEntryName))).thenReturn(Optional.of(uploadedFile));
 
-        Upload upload = mock(Upload.class);
-        when(uploadFactory.createUpload(eq(processedFile), eq(Collections.singletonList(uploadedFile)), eq(destinationDirectory))).thenReturn(upload);
-
-        Upload result = uploader.upload(processedFile, uploadClient);
+        Upload upload = Upload.createSuccessfulUpload(processedFile, Collections.singletonList(uploadedFile), destinationDirectory);
+        Upload result = uploader.upload(processedFile);
 
         assertEquals(upload, result);
 
@@ -107,10 +104,9 @@ public class ScormUploaderTest {
 
         doThrow(exception).when(multipartFile).getInputStream();
 
-        Upload upload = mock(Upload.class);
-        when(uploadFactory.createFailedUpload(processedFile, destinationDirectory, exception)).thenReturn(upload);
+        Upload upload = Upload.createFailedUpload(processedFile, destinationDirectory, exception);
 
-        Upload result = uploader.upload(processedFile, mock(UploadClient.class));
+        Upload result = uploader.upload(processedFile);
 
         assertEquals(upload, result);
     }

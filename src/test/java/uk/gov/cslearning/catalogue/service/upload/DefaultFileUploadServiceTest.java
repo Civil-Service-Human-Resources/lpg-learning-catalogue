@@ -11,28 +11,22 @@ import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.dto.Upload;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
-import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessorFactory;
 import uk.gov.cslearning.catalogue.service.upload.processor.ImageProcessorFactory;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.UploaderFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultFileUploadServiceTest {
 
     @Mock
     private FileProcessorFactory fileProcessorFactory;
-
-    @Mock
-    private UploadClientFactory uploadClientFactory;
 
     @Mock
     private UploaderFactory uploaderFactory;
@@ -116,14 +110,11 @@ public class DefaultFileUploadServiceTest {
         ProcessedFile processedFile = mock(ProcessedFile.class);
         when(fileProcessor.process(fileUpload)).thenReturn(processedFile);
 
-        UploadClient uploadClient = mock(UploadClient.class);
-        when(uploadClientFactory.create(processedFile)).thenReturn(uploadClient);
-
         Uploader uploader = mock(Uploader.class);
         when(uploaderFactory.create(processedFile)).thenReturn(uploader);
 
         Upload upload = mock(Upload.class);
-        when(uploader.upload(processedFile, uploadClient)).thenReturn(upload);
+        when(uploader.upload(processedFile)).thenReturn(upload);
 
         return upload;
     }

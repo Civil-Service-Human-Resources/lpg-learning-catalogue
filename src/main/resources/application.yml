@@ -35,11 +35,12 @@ elasticsearch:
 
 azure:
   account:
-    name: ${AZURE_ACCOUNT_NAME:lpgdev}
-    key: ${AZURE_ACCOUNT_KEY:changeme}
+    name: ${AZURE_ACCOUNT_NAME:devstoreaccount1}
+    key: ${AZURE_ACCOUNT_KEY:Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==}
   storage:
     container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
-    connection-string: "DefaultEndpointsProtocol=https;AccountName=${azure.account.name};AccountKey=${azure.account.key}"
+    rustici-container: ${AZURE_STORAGE_RUSTICI_CONTAINER:learning_material}
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=${azure.account.name};AccountKey=${azure.account.key};BlobEndpoint=http://127.0.0.1:9100/devstoreaccount1;}
 
 management:
   endpoints:

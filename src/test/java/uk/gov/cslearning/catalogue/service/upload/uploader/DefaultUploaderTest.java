@@ -3,7 +3,6 @@ package uk.gov.cslearning.catalogue.service.upload.uploader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
@@ -23,9 +22,6 @@ import static org.powermock.api.mockito.PowerMockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultUploaderTest {
-
-    @Mock
-    private UploadFactory uploadFactory;
 
     @InjectMocks
     private DefaultUploader uploader;
@@ -58,11 +54,8 @@ public class DefaultUploaderTest {
         UploadedFile uploadedFile = mock(UploadedFile.class);
         when(uploadClient.upload(inputStream, path, fileSize, contentType)).thenReturn(uploadedFile);
 
-        Upload upload = mock(Upload.class);
-
-        when(uploadFactory.createUpload(processedFile, Collections.singletonList(uploadedFile), path)).thenReturn(upload);
-
-        Upload result = uploader.upload(processedFile, uploadClient);
+        Upload upload = Upload.createSuccessfulUpload(processedFile, Collections.singletonList(uploadedFile), path);
+        Upload result = uploader.upload(processedFile);
 
         assertEquals(upload, result);
     }
@@ -86,11 +79,8 @@ public class DefaultUploaderTest {
         IOException exception = mock(IOException.class);
         doThrow(exception).when(multipartFile).getInputStream();
 
-        Upload upload = mock(Upload.class);
-        when(uploadFactory.createFailedUpload(processedFile, path, exception)).thenReturn(upload);
-
-        UploadClient uploadClient = mock(UploadClient.class);
-        Upload result = uploader.upload(processedFile, uploadClient);
+        Upload upload = Upload.createFailedUpload(processedFile, path, exception);
+        Upload result = uploader.upload(processedFile);
 
         assertEquals(upload, result);
     }
