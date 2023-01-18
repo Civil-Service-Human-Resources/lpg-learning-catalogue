@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.processor.Mp4FileProcessor;
-import uk.gov.cslearning.catalogue.service.upload.processor.ScormFileProcessor;
 import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
 import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
@@ -51,8 +50,7 @@ public class UploadConfig {
     @Bean("fileProcessorMap")
     public Map<String, FileProcessor> fileProcessorMap(
             DefaultFileProcessor defaultFileProcessor,
-            Mp4FileProcessor mp4FileProcessor,
-            ScormFileProcessor scormFileProcessor
+            Mp4FileProcessor mp4FileProcessor
     ) {
         return ImmutableMap.<String, FileProcessor>builder()
                 .put("doc",  defaultFileProcessor) // MS Word
@@ -63,7 +61,7 @@ public class UploadConfig {
                 .put("pptx", defaultFileProcessor) // MS PowerPoint
                 .put("xls",  defaultFileProcessor) // MS Excel
                 .put("xlsx", defaultFileProcessor) // MS Excel
-                .put("zip", scormFileProcessor) // Scorm
+                .put("zip", defaultFileProcessor) // Scorm
                 .put("mp4",  mp4FileProcessor)     // Video
                 .build();
     }
