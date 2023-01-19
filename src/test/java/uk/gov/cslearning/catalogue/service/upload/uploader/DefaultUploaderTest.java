@@ -6,9 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.ProcessedFile;
-import uk.gov.cslearning.catalogue.dto.Upload;
-import uk.gov.cslearning.catalogue.dto.UploadedFile;
+import uk.gov.cslearning.catalogue.dto.upload.Upload;
+import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 
 import java.io.IOException;

@@ -1,13 +1,10 @@
-package uk.gov.cslearning.catalogue.service.upload;
+package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
-import uk.gov.cslearning.catalogue.service.AuthoritiesService;
-import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
 
 import java.util.Arrays;
 import java.util.HashSet;

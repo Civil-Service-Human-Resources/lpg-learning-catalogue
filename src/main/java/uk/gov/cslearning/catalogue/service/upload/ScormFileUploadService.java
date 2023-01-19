@@ -3,13 +3,11 @@ package uk.gov.cslearning.catalogue.service.upload;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
-import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
+import uk.gov.cslearning.catalogue.service.upload.processor.ScormFileProcessor;
 
 @Service
-public class DefaultFileUploadService extends FileUploadService {
-
-    public DefaultFileUploadService(DefaultFileProcessor processor, @Qualifier("existing_container") UploadClient uploadClient) {
+public class ScormFileUploadService extends FileUploadService {
+    public ScormFileUploadService(ScormFileProcessor processor, @Qualifier("learning_material") UploadClient uploadClient) {
         super(processor, uploadClient);
     }
-
 }

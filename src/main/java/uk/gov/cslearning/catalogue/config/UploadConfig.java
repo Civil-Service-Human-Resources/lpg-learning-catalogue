@@ -11,14 +11,9 @@ import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
+import uk.gov.cslearning.catalogue.service.upload.*;
 import uk.gov.cslearning.catalogue.service.upload.client.AzureUploadClient;
-import uk.gov.cslearning.catalogue.service.upload.processor.DefaultFileProcessor;
-import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
-import uk.gov.cslearning.catalogue.service.upload.processor.Mp4FileProcessor;
-import uk.gov.cslearning.catalogue.service.upload.uploader.DefaultUploader;
-import uk.gov.cslearning.catalogue.service.upload.uploader.ScormUploader;
-import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
+import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.URISyntaxException;
@@ -57,56 +52,28 @@ public class UploadConfig {
         return cloudStorageAccount.createCloudBlobClient();
     }
 
-    @Bean(name = "uploaderMap")
-    public Map<String, Uploader> uploaderMap(
-            DefaultUploader defaultUploader,
-            ScormUploader scormUploader
+    @Bean("fileUploadServiceMap")
+    public Map<String, FileUploadService> fileProcessorMap(
+            ScormFileUploadService scormFileUploadService,
+            ImageFileUploadService imageFileUploadService,
+            Mp4FileUploadService mp4FileUploadService,
+            DefaultFileUploadService defaultFileUploadService
     ) {
-        return ImmutableMap.<String, Uploader>builder()
-                .put("doc",  defaultUploader) // MS Word
-                .put("docx", defaultUploader) // MS Word
-                .put("pdf",  defaultUploader) // PDF
-                .put("ppsm", defaultUploader) // MS PowerPoint
-                .put("ppt",  defaultUploader) // MS PowerPoint
-                .put("pptx", defaultUploader) // MS PowerPoint
-                .put("xls",  defaultUploader) // MS Excel
-                .put("xlsx", defaultUploader) // MS Excel
-                .put("mp4",  defaultUploader) // Video
-                .put("zip",  scormUploader)   // Scorm
-                .put("jpg", defaultUploader)  //jpeg
-                .put("jpeg", defaultUploader) //jpeg
-                .put("png", defaultUploader)  //png
-                .put("svg", defaultUploader)  //svg
-                .build();
-
-    }
-
-    @Bean("fileProcessorMap")
-    public Map<String, FileProcessor> fileProcessorMap(
-            DefaultFileProcessor defaultFileProcessor,
-            Mp4FileProcessor mp4FileProcessor
-    ) {
-        return ImmutableMap.<String, FileProcessor>builder()
-                .put("doc",  defaultFileProcessor) // MS Word
-                .put("docx", defaultFileProcessor) // MS Word
-                .put("pdf",  defaultFileProcessor) // PDF
-                .put("ppsm", defaultFileProcessor) // MS PowerPoint
-                .put("ppt",  defaultFileProcessor) // MS PowerPoint
-                .put("pptx", defaultFileProcessor) // MS PowerPoint
-                .put("xls",  defaultFileProcessor) // MS Excel
-                .put("xlsx", defaultFileProcessor) // MS Excel
-                .put("zip", defaultFileProcessor) // Scorm
-                .put("mp4",  mp4FileProcessor)     // Video
-                .build();
-    }
-
-    @Bean(name = "imageProcessorMap")
-    public Map<String, FileProcessor> imageProcessorMap(DefaultFileProcessor defaultFileProcessor){
-        return ImmutableMap.<String, FileProcessor>builder()
-                .put("jpg", defaultFileProcessor)
-                .put("jpeg", defaultFileProcessor)
-                .put("png", defaultFileProcessor)
-                .put("svg", defaultFileProcessor)
+        return ImmutableMap.<String, FileUploadService>builder()
+                .put("doc",  defaultFileUploadService) // MS Word
+                .put("docx", defaultFileUploadService) // MS Word
+                .put("pdf",  defaultFileUploadService) // PDF
+                .put("ppsm", defaultFileUploadService) // MS PowerPoint
+                .put("ppt",  defaultFileUploadService) // MS PowerPoint
+                .put("pptx", defaultFileUploadService) // MS PowerPoint
+                .put("xls",  defaultFileUploadService) // MS Excel
+                .put("xlsx", defaultFileUploadService) // MS Excel
+                .put("zip", scormFileUploadService) // Scorm
+                .put("mp4",  mp4FileUploadService)     // Video
+                .put("jpg", imageFileUploadService) // img
+                .put("jpeg", imageFileUploadService) // img
+                .put("png", imageFileUploadService) // img
+                .put("svg", imageFileUploadService) // img
                 .build();
     }
 

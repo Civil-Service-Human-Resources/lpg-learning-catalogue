@@ -3,7 +3,6 @@ package uk.gov.cslearning.catalogue.service.upload.uploader;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
 
 import static org.junit.Assert.*;

@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.dto.factory;
+package uk.gov.cslearning.catalogue.service.upload;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
@@ -17,10 +17,10 @@ public class UploadableFileFactory {
         this.metadataParser = metadataParser;
     }
 
-    public UploadableFile create(String filename, InputStream inputStream) throws IOException {
-        UploadableFile uploadableFile = new UploadableFile(filename, IOUtils.toByteArray(inputStream));
-        String contentType = metadataParser.getContentType(uploadableFile.getAsByteArrayInputStream(), uploadableFile.getName());
-        uploadableFile.setContentType(contentType);
-        return uploadableFile;
+    public UploadableFile create(String filename, String destination, InputStream inputStream) throws IOException {
+        String contentType = metadataParser.getContentType(inputStream, filename);
+        byte[] bytes = IOUtils.toByteArray(inputStream);
+        return new UploadableFile(filename, destination, inputStream, bytes, contentType);
     }
+
 }

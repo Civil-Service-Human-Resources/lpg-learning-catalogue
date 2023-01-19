@@ -7,10 +7,11 @@ import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.blob.ListBlobItem;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.cslearning.catalogue.dto.UploadableFile;
-import uk.gov.cslearning.catalogue.dto.UploadedFile;
+import uk.gov.cslearning.catalogue.dto.upload.FailedUploadedFile;
+import uk.gov.cslearning.catalogue.dto.upload.SuccessfulUploadedFile;
+import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 
 @Slf4j
@@ -22,29 +23,20 @@ public class AzureUploadClient implements UploadClient {
     }
 
     @Override
-    public UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes) {
-        return upload(inputStream, filePath, fileSizeBytes, "application/octet-stream");
-    }
-
-    @Override
-    public UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes, String contentType) {
-
+    public UploadedFile upload(UploadableFile file) {
+        String filePath = file.getFullPath();
+        int fileSizeBytes = file.getBytes().length;
+        long fileSizeInKB = fileSizeBytes / 1024;
         try {
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
-            blob.getProperties().setContentType(contentType);
-            blob.upload(inputStream, fileSizeBytes);
+            blob.getProperties().setContentType(file.getContentType());
+            blob.upload(file.getAsByteArrayInputStream(), fileSizeBytes);
 
-            return UploadedFile.createSuccessulUploadedFile(filePath, fileSizeBytes);
+            return new SuccessfulUploadedFile(fileSizeInKB, filePath);
         } catch (StorageException | URISyntaxException | IOException e) {
             log.error("Unable to upload file", e);
-            return UploadedFile.createFailedUploadedFile(filePath, fileSizeBytes, e);
+            return new FailedUploadedFile(fileSizeInKB, filePath, e);
         }
-    }
-
-    @Override
-    public UploadedFile upload(UploadableFile file, String destinationDirectory) {
-        String filePath = String.join("/", destinationDirectory, file.getName());
-        return upload(file.getAsByteArrayInputStream(), filePath, file.getBytes().length, file.getContentType());
     }
 
     @Override

@@ -3,13 +3,16 @@ package uk.gov.cslearning.catalogue.service.upload.client;
 import com.microsoft.azure.storage.ResultSegment;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.*;
+import org.eclipse.jetty.util.IO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import uk.gov.cslearning.catalogue.dto.UploadedFile;
+import uk.gov.cslearning.catalogue.dto.UploadableFile;
+import uk.gov.cslearning.catalogue.dto.upload.SuccessfulUploadedFile;
+import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +38,9 @@ public class AzureUploadClientTest {
     @Test
     public void uploadShouldUploadAndReturnUploadedFile() throws Exception {
         String contentType = "application/octet-stream";
-        String filePath = "test-file-path";
+        String destination = "test-file-path";
+        String filename = "test.txt";
+        String filePath = "test-file-path/text.txt";
         long fileSize = 99;
         InputStream inputStream = mock(InputStream.class);
 
@@ -45,9 +50,10 @@ public class AzureUploadClientTest {
         PowerMockito.when(container.getBlockBlobReference(filePath)).thenReturn(blob);
         PowerMockito.when(blob.getProperties()).thenReturn(blobProperties);
 
-        UploadedFile uploadedFile = UploadedFile.createSuccessulUploadedFile(filePath, fileSize);
+        UploadableFile uploadableFile = new UploadableFile(filename, destination, inputStream, IO.readBytes(inputStream), contentType);
+        UploadedFile uploadedFile = new SuccessfulUploadedFile(fileSize, filePath);
 
-        UploadedFile result = azureUploadClient.upload(inputStream, filePath, fileSize);
+        UploadedFile result = azureUploadClient.upload(uploadableFile);
 
         assertEquals(uploadedFile, result);
 

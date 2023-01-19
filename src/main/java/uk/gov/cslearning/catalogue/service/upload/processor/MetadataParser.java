@@ -14,15 +14,13 @@ import java.util.Map;
 @Component
 public class MetadataParser {
     private final Tika tika;
-    private final MetadataFactory metadataFactory;
 
-    public MetadataParser(Tika tika, MetadataFactory metadataFactory) {
+    public MetadataParser(Tika tika) {
         this.tika = tika;
-        this.metadataFactory = metadataFactory;
     }
 
     public Map<String, String> parse(InputStream inputStream) {
-        Metadata metadata = metadataFactory.create();
+        Metadata metadata = new Metadata();
 
         try {
             tika.parse(inputStream, metadata);

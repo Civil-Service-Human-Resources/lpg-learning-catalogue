@@ -7,15 +7,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockMultipartFile;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.ProcessedFile;
-import uk.gov.cslearning.catalogue.dto.Upload;
+import uk.gov.cslearning.catalogue.dto.upload.Upload;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.exception.UnknownFileTypeException;
 import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessor;
-import uk.gov.cslearning.catalogue.service.upload.processor.FileProcessorFactory;
-import uk.gov.cslearning.catalogue.service.upload.processor.ImageProcessorFactory;
-import uk.gov.cslearning.catalogue.service.upload.uploader.Uploader;
-import uk.gov.cslearning.catalogue.service.upload.uploader.UploaderFactory;
 
 import java.io.IOException;
 

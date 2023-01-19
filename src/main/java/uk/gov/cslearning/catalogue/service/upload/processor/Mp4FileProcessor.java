@@ -2,11 +2,14 @@ package uk.gov.cslearning.catalogue.service.upload.processor;
 
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.ProcessedFile;
+import uk.gov.cslearning.catalogue.dto.UploadableFile;
+import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 
 @Component
 public class Mp4FileProcessor implements FileProcessor {
@@ -17,11 +20,14 @@ public class Mp4FileProcessor implements FileProcessor {
     }
 
     @Override
-    public ProcessedFile process(FileUpload fileUpload) {
+    public ProcessedFileUpload process(FileUpload fileUpload) {
         try (InputStream inputStream = fileUpload.getFile().getInputStream()) {
-            return ProcessedFile.createWithMetadata(fileUpload, metadataParser.parse(inputStream));
+            Map<String, String> metadata = metadataParser.parse(inputStream);
+            UploadableFile uploadableFile = UploadableFile.createFromFileUpload(fileUpload);
+            return new ProcessedFileUpload(fileUpload, Collections.singletonList(uploadableFile), metadata);
         } catch (IOException e) {
             throw new FileUploadException(e);
         }
+
     }
 }

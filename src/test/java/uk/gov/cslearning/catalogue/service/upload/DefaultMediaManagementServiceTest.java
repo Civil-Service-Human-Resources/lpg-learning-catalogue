@@ -8,7 +8,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.domain.MediaFactory;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.Upload;
+import uk.gov.cslearning.catalogue.dto.upload.Upload;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
 
 import java.io.IOException;

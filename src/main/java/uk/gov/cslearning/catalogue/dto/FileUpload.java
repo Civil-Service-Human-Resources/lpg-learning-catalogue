@@ -2,18 +2,28 @@ package uk.gov.cslearning.catalogue.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 
+/**
+ * Container DTO for file uploads
+ */
 @Data
 @AllArgsConstructor
+@ToString
 public class FileUpload {
+    /**
+     * ModuleID
+     */
     String id;
+    /**
+     * CourseID
+     */
     String container;
     String extension;
     MultipartFile file;
@@ -30,16 +40,8 @@ public class FileUpload {
         return new FileUpload(id, container, extension, file, name, sizeKB, timestamp);
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("container", container)
-                .append("file", file)
-                .append("extension", extension)
-                .append("name", name)
-                .append("sizeKB", sizeKB)
-                .append("timestamp", timestamp)
-                .toString();
+    public String getDestination() {
+        return String.join("/", this.getContainer(), this.getId());
     }
+
 }

@@ -77,10 +77,6 @@ public class Media {
         this.container = container;
     }
 
-    public LocalDateTime getDateAdded() {
-        return dateAdded;
-    }
-
     public void setDateAdded(LocalDateTime dateAdded) {
         this.dateAdded = dateAdded;
     }

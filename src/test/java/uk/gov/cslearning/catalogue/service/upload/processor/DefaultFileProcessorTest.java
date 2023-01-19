@@ -2,7 +2,6 @@ package uk.gov.cslearning.catalogue.service.upload.processor;
 
 import org.junit.Test;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.ProcessedFile;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;

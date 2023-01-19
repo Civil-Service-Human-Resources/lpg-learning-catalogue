@@ -30,7 +30,7 @@ import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.EventService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
-import uk.gov.cslearning.catalogue.service.upload.AudienceService;
+import uk.gov.cslearning.catalogue.service.AudienceService;
 
 import java.util.*;
 import java.util.stream.Collectors;

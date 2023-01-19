@@ -4,16 +4,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.cslearning.catalogue.api.validators.ValidFile;
 import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.dto.FileUpload;
 import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Optional;
 
 @Controller
@@ -27,7 +28,9 @@ public class MediaController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> upload(MultipartFile file, @RequestParam String container, @RequestParam(required = false) String filename, UriComponentsBuilder builder) {
+    public ResponseEntity<Void> upload(@Validated @ValidFile MultipartFile file,
+                                       @RequestParam String container,
+                                       @RequestParam(required = false) String filename, UriComponentsBuilder builder) {
 
         Media media = mediaManagementService.create(FileUpload.createFromMetadata(file, container, filename));
 
@@ -37,7 +40,9 @@ public class MediaController {
 
     //Work around for uploading without js enabled
     @PostMapping("/nojs")
-    public ResponseEntity<Void> uploadWithNoJs(MultipartFile file, @RequestParam String container, @RequestParam(required = false) String filename, HttpServletRequest request) {
+    public ResponseEntity<Void> uploadWithNoJs(@Validated @ValidFile MultipartFile file,
+                                               @RequestParam String container,
+                                               @RequestParam(required = false) String filename, HttpServletRequest request) {
         Media media = mediaManagementService.create(FileUpload.createFromMetadata(file, container, filename));
         String referrer = request.getHeader("referer");
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(referrer + "/{id}").buildAndExpand(media.getId());
@@ -56,14 +61,7 @@ public class MediaController {
     @PostMapping("/skills/image")
     public ResponseEntity uploadImage(MultipartFile file, @RequestParam String container, @RequestParam(required = false) String filename, UriComponentsBuilder builder) {
 
-        Media media;
-        try {
-            media = mediaManagementService.createImage(FileUpload.createFromMetadata(file, container, filename));
-        } catch (IOException ex) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Error uploading image/graph : Reason -> " + ex.getMessage());
-        }
+        Media media = mediaManagementService.create(FileUpload.createFromMetadata(file, container, filename));
 
         return (ResponseEntity.created(builder.path("/media/{mediaUid}").build(media.getId()))
                 .header("Access-Control-Expose-Headers",  "Location")).build();
