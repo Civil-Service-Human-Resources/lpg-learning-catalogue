@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.dto;
+package uk.gov.cslearning.catalogue.dto.upload;
 
 public enum UploadStatus {
     SUCCESS, FAIL

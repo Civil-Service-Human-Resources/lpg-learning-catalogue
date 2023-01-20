@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.dto;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 
 import java.time.Clock;
 import java.time.LocalDateTime;

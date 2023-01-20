@@ -2,8 +2,6 @@ package uk.gov.cslearning.catalogue.dto.upload;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.UploadableFile;
 
 import java.util.Collections;
 import java.util.List;

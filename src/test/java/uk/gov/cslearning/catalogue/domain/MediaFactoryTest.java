@@ -2,8 +2,8 @@ package uk.gov.cslearning.catalogue.domain;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.UploadStatus;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.UploadStatus;
 import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.Upload;
 

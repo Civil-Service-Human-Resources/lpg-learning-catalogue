@@ -9,8 +9,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -35,12 +33,6 @@ public class UploadConfigTest {
     public void tikaShouldReturnTika() {
         Tika tika = config.tika();
         assertNotNull(tika);
-    }
-
-    @Test
-    public void shouldReturnDocumentBuilderFatory() {
-        DocumentBuilderFactory documentBuilderFactory = config.documentBuilderFactory();
-        assertNotNull(documentBuilderFactory);
     }
 
 }

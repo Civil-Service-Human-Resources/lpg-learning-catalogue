@@ -15,7 +15,6 @@ import uk.gov.cslearning.catalogue.service.upload.*;
 import uk.gov.cslearning.catalogue.service.upload.client.AzureUploadClient;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.URISyntaxException;
 import java.util.Map;
 
@@ -80,11 +79,6 @@ public class UploadConfig {
     @Bean
     public Tika tika() {
         return new Tika();
-    }
-
-    @Bean
-    public DocumentBuilderFactory documentBuilderFactory() {
-        return DocumentBuilderFactory.newInstance();
     }
 
 }

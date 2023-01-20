@@ -1,8 +1,8 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
 import org.springframework.stereotype.Component;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.UploadableFile;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 

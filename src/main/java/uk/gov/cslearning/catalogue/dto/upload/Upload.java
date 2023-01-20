@@ -3,18 +3,21 @@ package uk.gov.cslearning.catalogue.dto.upload;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import uk.gov.cslearning.catalogue.dto.UploadStatus;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @ToString
 @RequiredArgsConstructor
 public class Upload {
     private final ProcessedFileUpload processedFileUpload;
-    private final UploadStatus status;
-    private final LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
+    private final List<UploadedFile> files;
     private final String path;
+    private final LocalDateTime timestamp = LocalDateTime.now(Clock.systemUTC());
+    public long getSizeKB() {
+        return files.stream().mapToLong(UploadedFile::getSizeKB).sum();
+    }
 
 }

@@ -2,7 +2,7 @@ package uk.gov.cslearning.catalogue.api;
 
 import org.junit.Test;
 import org.springframework.web.multipart.MultipartFile;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 
 import java.util.regex.Pattern;
 

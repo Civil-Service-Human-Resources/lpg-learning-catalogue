@@ -2,8 +2,8 @@ package uk.gov.cslearning.catalogue.service.upload.processor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.UploadableFile;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
 import uk.gov.cslearning.catalogue.exception.FileProcessingException;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;

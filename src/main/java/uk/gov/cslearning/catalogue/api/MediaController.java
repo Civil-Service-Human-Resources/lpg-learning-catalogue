@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.api.validators.ValidFile;
 import uk.gov.cslearning.catalogue.domain.Media;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
 import javax.servlet.http.HttpServletRequest;

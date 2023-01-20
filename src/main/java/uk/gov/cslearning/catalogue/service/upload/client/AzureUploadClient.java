@@ -6,9 +6,7 @@ import com.microsoft.azure.storage.blob.CloudBlobDirectory;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.blob.ListBlobItem;
 import lombok.extern.slf4j.Slf4j;
-import uk.gov.cslearning.catalogue.dto.UploadableFile;
-import uk.gov.cslearning.catalogue.dto.upload.FailedUploadedFile;
-import uk.gov.cslearning.catalogue.dto.upload.SuccessfulUploadedFile;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
 import java.io.IOException;
@@ -31,11 +29,9 @@ public class AzureUploadClient implements UploadClient {
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.getProperties().setContentType(file.getContentType());
             blob.upload(file.getAsByteArrayInputStream(), fileSizeBytes);
-
-            return new SuccessfulUploadedFile(fileSizeInKB, filePath);
+            return UploadedFile.createSuccessfulUploadedFile(fileSizeInKB, filePath);
         } catch (StorageException | URISyntaxException | IOException e) {
-            log.error("Unable to upload file", e);
-            return new FailedUploadedFile(fileSizeInKB, filePath, e);
+            return UploadedFile.createFailedUploadedFile(fileSizeInKB, filePath, e);
         }
     }
 

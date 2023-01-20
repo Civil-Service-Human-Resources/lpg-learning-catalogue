@@ -1,7 +1,7 @@
 package uk.gov.cslearning.catalogue.service.upload;
 
 import uk.gov.cslearning.catalogue.domain.Media;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 
 import java.util.Optional;
 

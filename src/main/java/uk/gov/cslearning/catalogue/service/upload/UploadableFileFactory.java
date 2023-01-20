@@ -2,7 +2,7 @@ package uk.gov.cslearning.catalogue.service.upload;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
-import uk.gov.cslearning.catalogue.dto.UploadableFile;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
 
 import java.io.IOException;
