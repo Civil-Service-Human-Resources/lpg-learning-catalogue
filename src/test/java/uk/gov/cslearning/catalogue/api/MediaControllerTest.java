@@ -123,7 +123,7 @@ public class MediaControllerTest {
 
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
-        when(mediaManagementService.createImage(fileUpload)).thenReturn(media);
+        when(mediaManagementService.create(fileUpload)).thenReturn(media);
 
         mockMvc.perform(
                 multipart("/media/skills/image")
@@ -147,7 +147,7 @@ public class MediaControllerTest {
 
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
-        when(mediaManagementService.createImage(fileUpload)).thenReturn(media);
+        when(mediaManagementService.create(fileUpload)).thenReturn(media);
 
         mockMvc.perform(
                 multipart("/media/skills/image")

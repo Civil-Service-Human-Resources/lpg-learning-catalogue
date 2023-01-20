@@ -11,9 +11,6 @@ import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.Upload;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,15 +23,16 @@ public class DefaultMediaManagementServiceTest {
     @Mock
     private MediaRepository mediaRepository;
 
+    @Mock
+    private FileUploadServiceFactory fileUploadServiceFactory;
+
     private final FileUploadService mockFileUploadService = mock(FileUploadService.class);
 
     private DefaultMediaManagementService mediaManagementService;
 
     @Before
     public void setUp() {
-        Map<String, FileUploadService> fileUploadServiceMap = new HashMap<>();
-        fileUploadServiceMap.put("any", mockFileUploadService);
-        mediaManagementService = new DefaultMediaManagementService(mediaFactory, mediaRepository, fileUploadServiceMap);
+        mediaManagementService = new DefaultMediaManagementService(mediaFactory, mediaRepository, fileUploadServiceFactory);
     }
 
     @Test
@@ -45,6 +43,7 @@ public class DefaultMediaManagementServiceTest {
         Media media = mock(Media.class);
         Media savedMedia = mock(Media.class);
 
+        when(fileUploadServiceFactory.getFileUploadServiceWithExt("any")).thenReturn(mockFileUploadService);
         when(mockFileUploadService.upload(fileUpload)).thenReturn(upload);
         when(mediaFactory.create(upload)).thenReturn(media);
         when(mediaRepository.save(media)).thenReturn(savedMedia);

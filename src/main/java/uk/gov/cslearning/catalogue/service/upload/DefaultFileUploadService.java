@@ -12,4 +12,8 @@ public class DefaultFileUploadService extends FileUploadService {
         super(processor, uploadClient);
     }
 
+    @Override
+    public UploadServiceType getType() {
+        return UploadServiceType.FILE;
+    }
 }

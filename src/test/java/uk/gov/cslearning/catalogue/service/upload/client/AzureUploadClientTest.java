@@ -31,7 +31,7 @@ public class AzureUploadClientTest {
     private AzureUploadClient azureUploadClient;
 
     @SneakyThrows
-    private UploadableFile generateFileUpload() {
+    private UploadableFile generateFileUpload() throws IOException {
         String contentType = "application/octet-stream";
         String destination = "test-file-path";
         String filename = "test.txt";
@@ -70,7 +70,7 @@ public class AzureUploadClientTest {
     }
 
     @Test
-    public void shouldAddURISyntaxExceptionToUploadedFile() throws URISyntaxException, StorageException {
+    public void shouldAddURISyntaxExceptionToUploadedFile() throws URISyntaxException, StorageException, IOException {
         String filePath = "test-file-path";
         long fileSize = 99;
 

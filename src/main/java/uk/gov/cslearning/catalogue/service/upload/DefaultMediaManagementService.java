@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.service.upload;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.domain.MediaFactory;
@@ -9,27 +8,25 @@ import uk.gov.cslearning.catalogue.dto.upload.Upload;
 import uk.gov.cslearning.catalogue.repository.MediaRepository;
 
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class DefaultMediaManagementService implements MediaManagementService {
     private final MediaFactory mediaFactory;
     private final MediaRepository mediaRepository;
-    private final Map<String, FileUploadService> fileUploadServiceMap;
+    private final FileUploadServiceFactory fileUploadServiceFactory;
 
     public DefaultMediaManagementService(MediaFactory mediaFactory, MediaRepository mediaRepository,
-                                         @Qualifier("fileUploadServiceMap") Map<String,
-                                         FileUploadService> fileUploadServiceMap) {
+                                         FileUploadServiceFactory fileUploadServiceFactory) {
         this.mediaFactory = mediaFactory;
         this.mediaRepository = mediaRepository;
-        this.fileUploadServiceMap = fileUploadServiceMap;
+        this.fileUploadServiceFactory = fileUploadServiceFactory;
     }
 
     @Override
     public Media create(FileUpload fileUpload) {
         String fileExt = fileUpload.getExtension().toLowerCase(Locale.ROOT);
-        FileUploadService fileUploadService = fileUploadServiceMap.get(fileExt);
+        FileUploadService fileUploadService = fileUploadServiceFactory.getFileUploadServiceWithExt(fileExt);
         Upload upload = fileUploadService.upload(fileUpload);
         Media media = mediaFactory.create(upload);
 

@@ -4,7 +4,8 @@ spring:
     serialization:
       write_dates_as_timestamps: false
   resources:
-    add-mappings: false
+    web:
+      add-mappings: false
   servlet:
     multipart:
       max-file-size: 5120MB

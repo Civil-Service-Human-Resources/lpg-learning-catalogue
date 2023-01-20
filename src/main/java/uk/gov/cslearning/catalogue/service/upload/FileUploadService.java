@@ -66,4 +66,6 @@ public abstract class FileUploadService {
 
         uploadClient.deleteDirectory(relativePath);
     }
+
+    abstract public UploadServiceType getType();
 }

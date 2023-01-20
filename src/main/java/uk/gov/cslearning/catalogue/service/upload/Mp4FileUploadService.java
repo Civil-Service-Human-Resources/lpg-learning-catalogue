@@ -9,4 +9,9 @@ public class Mp4FileUploadService extends FileUploadService {
     public Mp4FileUploadService(Mp4FileProcessor processor, UploadClient uploadClient) {
         super(processor, uploadClient);
     }
+
+    @Override
+    public UploadServiceType getType() {
+        return UploadServiceType.MP4;
+    }
 }

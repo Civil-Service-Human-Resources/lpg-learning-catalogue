@@ -10,4 +10,9 @@ public class ScormFileUploadService extends FileUploadService {
     public ScormFileUploadService(ScormFileProcessor processor, @Qualifier("learning_material") UploadClient uploadClient) {
         super(processor, uploadClient);
     }
+
+    @Override
+    public UploadServiceType getType() {
+        return UploadServiceType.SCORM;
+    }
 }

@@ -25,16 +25,12 @@ public class MetadataParserTest {
     @Mock
     private Tika tika;
 
-    @Mock
-    private MetadataFactory metadataFactory;
-
     @InjectMocks
     private MetadataParser metadataParser;
 
     @Test
     public void parseShouldReturnMetadata() throws IOException, TikaException, SAXException {
         Metadata metadata = mock(Metadata.class);
-        when(metadataFactory.create()).thenReturn(metadata);
 
         InputStream inputStream = mock(InputStream.class);
 
@@ -57,7 +53,6 @@ public class MetadataParserTest {
     @Test
     public void shouldThrowFileUploadExceptionOnIOException() throws IOException {
         Metadata metadata = mock(Metadata.class);
-        when(metadataFactory.create()).thenReturn(metadata);
 
         InputStream inputStream = mock(InputStream.class);
 

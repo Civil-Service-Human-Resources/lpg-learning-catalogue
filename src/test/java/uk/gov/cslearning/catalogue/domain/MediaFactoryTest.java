@@ -3,11 +3,12 @@ package uk.gov.cslearning.catalogue.domain;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
-import uk.gov.cslearning.catalogue.dto.upload.UploadStatus;
 import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.Upload;
+import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -35,8 +36,9 @@ public class MediaFactoryTest {
         when(fileUpload.getName()).thenReturn(name);
 
         ProcessedFileUpload processedFileUpload = new ProcessedFileUpload(fileUpload, Collections.emptyList(), metadata);
+        List<UploadedFile> uploadedFileList = Collections.emptyList();
 
-        Upload upload = new Upload(processedFileUpload, UploadStatus.SUCCESS, path);
+        Upload upload = new Upload(processedFileUpload, uploadedFileList, path);
 
         Media media = mediaFactory.create(upload);
 

@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.config;
 
-import com.google.common.collect.ImmutableMap;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
@@ -11,12 +10,10 @@ import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import uk.gov.cslearning.catalogue.service.upload.*;
 import uk.gov.cslearning.catalogue.service.upload.client.AzureUploadClient;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 
 import java.net.URISyntaxException;
-import java.util.Map;
 
 @Configuration
 @Slf4j
@@ -49,31 +46,6 @@ public class UploadConfig {
     @Bean
     public CloudBlobClient storageClient(CloudStorageAccount cloudStorageAccount) {
         return cloudStorageAccount.createCloudBlobClient();
-    }
-
-    @Bean("fileUploadServiceMap")
-    public Map<String, FileUploadService> fileProcessorMap(
-            ScormFileUploadService scormFileUploadService,
-            ImageFileUploadService imageFileUploadService,
-            Mp4FileUploadService mp4FileUploadService,
-            DefaultFileUploadService defaultFileUploadService
-    ) {
-        return ImmutableMap.<String, FileUploadService>builder()
-                .put("doc",  defaultFileUploadService) // MS Word
-                .put("docx", defaultFileUploadService) // MS Word
-                .put("pdf",  defaultFileUploadService) // PDF
-                .put("ppsm", defaultFileUploadService) // MS PowerPoint
-                .put("ppt",  defaultFileUploadService) // MS PowerPoint
-                .put("pptx", defaultFileUploadService) // MS PowerPoint
-                .put("xls",  defaultFileUploadService) // MS Excel
-                .put("xlsx", defaultFileUploadService) // MS Excel
-                .put("zip", scormFileUploadService) // Scorm
-                .put("mp4",  mp4FileUploadService)     // Video
-                .put("jpg", imageFileUploadService) // img
-                .put("jpeg", imageFileUploadService) // img
-                .put("png", imageFileUploadService) // img
-                .put("svg", imageFileUploadService) // img
-                .build();
     }
 
     @Bean

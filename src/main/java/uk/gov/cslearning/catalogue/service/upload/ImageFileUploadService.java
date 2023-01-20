@@ -9,4 +9,9 @@ public class ImageFileUploadService extends FileUploadService {
     public ImageFileUploadService(ImageFileProcessor processor, UploadClient uploadClient) {
         super(processor, uploadClient);
     }
+
+    @Override
+    public UploadServiceType getType() {
+        return UploadServiceType.IMAGE;
+    }
 }
