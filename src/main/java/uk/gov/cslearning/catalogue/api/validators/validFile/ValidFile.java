@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.api.validators;
+package uk.gov.cslearning.catalogue.api.validators.validFile;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

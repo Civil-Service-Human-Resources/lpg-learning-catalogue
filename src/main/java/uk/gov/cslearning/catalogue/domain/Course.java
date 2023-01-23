@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
-import static org.springframework.util.CollectionUtils.containsAny;
 
 @Document(indexName = "courses")
 public class Course {
@@ -75,14 +74,23 @@ public class Course {
                 .collect(Collectors.toList());
     }
 
+    @JsonIgnore
+    public void addModule(Module module) {
+        modules.add(module);
+        setModules(modules);
+    }
+
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }
 
     public Module getModuleById(String moduleId) {
-        List<Module> modules = getModules();
-        Optional<Module> module = modules.stream().filter(m -> m.getId().equals(moduleId)).findFirst();
-        return module.get();
+        return newGetModuleById(moduleId).get();
+    }
+
+    @JsonIgnore
+    public Optional<Module> newGetModuleById(String moduleId) {
+        return getModules().stream().filter(m -> m.getId().equals(moduleId)).findFirst();
     }
 
     public void setModules(List<Module> modules) {

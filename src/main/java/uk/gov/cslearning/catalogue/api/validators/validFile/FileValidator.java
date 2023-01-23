@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.api.validators;
+package uk.gov.cslearning.catalogue.api.validators.validFile;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,11 +27,13 @@ public class FileValidator implements ConstraintValidator<ValidFile, MultipartFi
     @Override
     public boolean isValid(MultipartFile multipartFile, ConstraintValidatorContext context) {
 
-        boolean result = true;
-
-        String fileExt = FilenameUtils.getExtension(multipartFile.getOriginalFilename()).toLowerCase(Locale.ROOT);
-        if (!isSupportedFileExt(fileExt)) {
-            result = false;
+        boolean result = false;
+        String filename = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
+        if (filename != null) {
+            String fileExt = filename.toLowerCase(Locale.ROOT);
+            if (isSupportedFileExt(fileExt)) {
+                result = true;
+            }
         }
 
         return result;
