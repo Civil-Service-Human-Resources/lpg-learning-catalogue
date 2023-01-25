@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
+import uk.gov.cslearning.catalogue.service.upload.FileUploadServiceFactory;
 import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -31,7 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(MediaController.class)
 @WithMockUser(username = "user")
-@ContextConfiguration(classes = {WebConfig.class, MediaController.class})
+@ContextConfiguration(classes = {WebConfig.class, MediaController.class,
+                                ApiExceptionHandler.class, FileUploadServiceFactory.class})
 public class MediaControllerTest {
 
     @Autowired
@@ -47,11 +50,10 @@ public class MediaControllerTest {
         String filename = "custom-filename";
 
         MockMultipartFile file = new MockMultipartFile("file", "file.doc", "application/octet-stream", "abc".getBytes());
-        FileUpload fileUpload = FileUpload.createFromMetadata(file, fileContainer, filename);
 
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
-        when(mediaManagementService.create(fileUpload)).thenReturn(media);
+        when(mediaManagementService.create(any(FileUpload.class))).thenReturn(media);
 
         mockMvc.perform(
                 multipart("/media")
@@ -62,6 +64,24 @@ public class MediaControllerTest {
                         .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("location", "http://localhost/media/" + mediaId));
+    }
+
+    @Test
+    public void shouldRejectInvalidFileExt() throws Exception {
+        String fileContainer = "container-id";
+        String mediaId = "media-uid";
+        String filename = "custom-filename";
+
+        MockMultipartFile file = new MockMultipartFile("file", "file.asp", "application/octet-stream", "abc".getBytes());
+
+        mockMvc.perform(
+                        multipart("/media")
+                                .file(file)
+                                .param("container", fileContainer)
+                                .param("filename", filename)
+                                .contentType(MediaType.MULTIPART_FORM_DATA)
+                                .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -119,11 +139,9 @@ public class MediaControllerTest {
         String filename = "custom-filename";
 
         MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "application/octet-stream", "abc".getBytes());
-        FileUpload fileUpload = FileUpload.createFromMetadata(file, fileContainer, filename);
-
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
-        when(mediaManagementService.create(fileUpload)).thenReturn(media);
+        when(mediaManagementService.create(any(FileUpload.class))).thenReturn(media);
 
         mockMvc.perform(
                 multipart("/media/skills/image")
@@ -147,7 +165,7 @@ public class MediaControllerTest {
 
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
-        when(mediaManagementService.create(fileUpload)).thenReturn(media);
+        when(mediaManagementService.create(any(FileUpload.class))).thenReturn(media);
 
         mockMvc.perform(
                 multipart("/media/skills/image")

@@ -1,17 +1,16 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.tika.exception.TikaException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.service.upload.UploadableFileFactory;
+import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +33,7 @@ public class Mp4FileProcessorTest {
     private Mp4FileProcessor mp4FileProcessor;
 
     @Test
-    public void processShouldSetMetadata() throws IOException, TikaException, SAXException {
+    public void processShouldSetMetadata() throws IOException {
         Map<String, String> metadataMap = ImmutableMap.of(
                 "key1", "value1",
                 "key2", ""

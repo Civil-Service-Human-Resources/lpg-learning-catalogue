@@ -1,24 +1,21 @@
 package uk.gov.cslearning.catalogue.api.validators.validFile;
 
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
+import uk.gov.cslearning.catalogue.service.upload.FileUploadServiceFactory;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Locale;
-import java.util.Map;
 
 @Component
 public class FileValidator implements ConstraintValidator<ValidFile, MultipartFile> {
 
-    @Qualifier("fileUploadServiceMap")
-    private final Map<String, FileUploadService> fileUploadServiceMap;
+    private final FileUploadServiceFactory fileUploadServiceFactory;
 
-    public FileValidator(Map<String, FileUploadService> fileUploadServiceMap) {
-        this.fileUploadServiceMap = fileUploadServiceMap;
+    public FileValidator(FileUploadServiceFactory fileUploadServiceFactory) {
+        this.fileUploadServiceFactory = fileUploadServiceFactory;
     }
 
     @Override
@@ -40,6 +37,6 @@ public class FileValidator implements ConstraintValidator<ValidFile, MultipartFi
     }
 
     private boolean isSupportedFileExt(String fileExt) {
-        return fileUploadServiceMap.containsKey(fileExt);
+        return fileUploadServiceFactory.getValidFileExts().contains(fileExt);
     }
 }

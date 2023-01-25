@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class ModuleService {
     private static final int PAGE_SIZE = 10000;
@@ -48,9 +46,11 @@ public class ModuleService {
 
     public Module save(String courseId, Module module) {
         Course course = courseService.getCourseById(courseId);
-        course.addModule(module);
-        courseRepository.save(course);
-
+        course.upsertModule(module);
+        courseService.save(course);
+        if (module.getModuleType().equals("elearning")) {
+            rusticiEngineService.uploadElearningModule(courseId, module.getId());
+        }
         return module;
     }
 
@@ -68,12 +68,11 @@ public class ModuleService {
             new Thread(() -> deleteFile(courseId, oldModule)).start();
         }
 
-        List<Module> updatedModules = course.getModules().stream()
-                .map(m -> m.getId().equals(newModule.getId()) ? newModule : m)
-                .collect(toList());
-
-        course.setModules(updatedModules);
+        course.upsertModule(newModule);
         courseService.save(course);
+        if (newModule.getModuleType().equals("elearning")) {
+            rusticiEngineService.uploadElearningModule(courseId, newModule.getId());
+        }
 
         return course;
     }

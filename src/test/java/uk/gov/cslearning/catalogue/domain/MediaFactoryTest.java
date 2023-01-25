@@ -36,7 +36,9 @@ public class MediaFactoryTest {
         when(fileUpload.getName()).thenReturn(name);
 
         ProcessedFileUpload processedFileUpload = new ProcessedFileUpload(fileUpload, Collections.emptyList(), metadata);
-        List<UploadedFile> uploadedFileList = Collections.emptyList();
+        UploadedFile uploadedFile = mock(UploadedFile.class);
+        when(uploadedFile.getSizeKB()).thenReturn(sizeKB);
+        List<UploadedFile> uploadedFileList = Collections.singletonList(uploadedFile);
 
         Upload upload = new Upload(processedFileUpload, uploadedFileList, path);
 

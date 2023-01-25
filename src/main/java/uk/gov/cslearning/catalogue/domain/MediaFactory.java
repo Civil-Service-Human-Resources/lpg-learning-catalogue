@@ -21,7 +21,7 @@ public class MediaFactory {
         media.setExtension(processedFileUpload.getFileUpload().getExtension());
         media.setName(processedFileUpload.getFileUpload().getName());
         media.setPath(upload.getPath());
-        media.setFileSizeKB(processedFileUpload.getFileUpload().getSizeKB());
+        media.setFileSizeKB(upload.getSizeKB());
         Map<String, Object> convertedMap = processedFileUpload.getMetadata()
                 .entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         media.setMetadata(convertedMap);

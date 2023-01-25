@@ -6,6 +6,7 @@ import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.service.upload.UploadableFileFactory;
+import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataParser;
 
 import java.io.IOException;
 import java.io.InputStream;

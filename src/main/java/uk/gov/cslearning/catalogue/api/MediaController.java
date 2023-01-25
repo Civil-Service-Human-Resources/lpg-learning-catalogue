@@ -15,10 +15,12 @@ import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/media")
+@Validated
 public class MediaController {
 
     private final MediaManagementService mediaManagementService;
@@ -28,7 +30,7 @@ public class MediaController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> upload(@Validated @ValidFile MultipartFile file,
+    public ResponseEntity<Void> upload(@Valid @ValidFile MultipartFile file,
                                        @RequestParam String container,
                                        @RequestParam(required = false) String filename, UriComponentsBuilder builder) {
 

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,6 +36,10 @@ public class FileUploadServiceFactory {
     @Autowired
     private FileUploadServiceFactory(List<FileUploadService> fileUploadServices) {
         fileUploadServiceMap = fileUploadServices.stream().collect(Collectors.toMap(FileUploadService::getType, Function.identity()));
+    }
+
+    public List<String> getValidFileExts() {
+        return new ArrayList<>(this.extServiceMap.keySet());
     }
 
     public FileUploadService getFileUploadService(UploadServiceType type) {

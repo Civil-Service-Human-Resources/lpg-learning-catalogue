@@ -15,8 +15,6 @@ import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
-import uk.gov.cslearning.catalogue.service.record.model.Booking;
-import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
 import java.util.*;
 
@@ -29,6 +27,9 @@ public class EventServiceTest {
 
     @Mock
     private CourseRepository courseRepository;
+
+    @Mock
+    private CourseService courseService;
 
     @Mock
     private EventDtoMapService eventDtoMapService;
@@ -61,12 +62,12 @@ public class EventServiceTest {
         modules.add(module);
         course.setModules(modules);
 
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(courseService.getCourseById(courseId)).thenReturn(course);
 
         Assert.assertEquals(eventService.save(courseId, moduleId, newEvent), newEvent);
 
-        verify(courseRepository).findById(courseId);
-        verify(courseRepository).save(course);
+        verify(courseService).getCourseById(courseId);
+        verify(courseService).save(course);
     }
 
     @Test
@@ -95,7 +96,7 @@ public class EventServiceTest {
 
         Integer confirmedBookings = 1;
 
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(courseService.getCourseById(courseId)).thenReturn(course);
         when(learnerRecordService.getEventActiveBookingsCount(savedEvent.getId())).thenReturn(confirmedBookings);
 
         int availability = (venue.getCapacity() - confirmedBookings);
@@ -105,7 +106,7 @@ public class EventServiceTest {
         Assert.assertEquals(result, Optional.of(savedEvent));
         Assert.assertTrue(result.get().getVenue().getAvailability() == availability);
 
-        verify(courseRepository).findById(courseId);
+        verify(courseService).getCourseById(courseId);
         verify(learnerRecordService).getEventActiveBookingsCount(savedEvent.getId());
     }
 

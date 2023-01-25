@@ -75,11 +75,22 @@ public class Course {
     }
 
     @JsonIgnore
-    public void addModule(Module module) {
-        modules.add(module);
-        setModules(modules);
+    public void upsertModule(Module newModule) {
+        List<Module> mods = new ArrayList<>(getModules());
+        int indexToReplace = -1;
+        for (int i = 0; i < mods.size(); i++) {
+            if (newModule.getId().equals(mods.get(i).getId())) {
+                indexToReplace = i;
+                break;
+            }
+        }
+        if (indexToReplace > -1) {
+            mods.set(indexToReplace, newModule);
+        } else {
+            mods.add(newModule);
+        }
+        setModules(mods);
     }
-
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }

@@ -5,6 +5,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.cslearning.catalogue.service.rustici.CSLToRusticiDataService;
 
 @Configuration
 public class RusticiConfig {
@@ -20,6 +21,14 @@ public class RusticiConfig {
 
     @Value("rustici.tenant")
     private String rusticiTenant;
+
+    @Value("azure.content-cdn")
+    private String contentCdn;
+
+    @Bean()
+    public CSLToRusticiDataService getDataTranslationService() {
+        return new CSLToRusticiDataService(contentCdn);
+    }
 
     @Bean("rusticiHttpClient")
     public RestTemplate getRestTemplate() {

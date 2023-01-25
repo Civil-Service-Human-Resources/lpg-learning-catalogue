@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.service.upload.processor;
+package uk.gov.cslearning.catalogue.service.upload.processor.metadata;
 
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
@@ -14,15 +14,16 @@ import java.util.Map;
 @Component
 public class MetadataParser {
     private final Tika tika;
+    private final MetadataFactory metadataFactory;
 
-    public MetadataParser(Tika tika) {
+    public MetadataParser(Tika tika, MetadataFactory metadataFactory) {
         this.tika = tika;
+        this.metadataFactory = metadataFactory;
     }
 
     public Map<String, String> parse(InputStream inputStream) {
-        Metadata metadata = new Metadata();
-
         try {
+            Metadata metadata = metadataFactory.getMetadata();
             tika.parse(inputStream, metadata);
 
             Map<String, String> data = new HashMap<>();

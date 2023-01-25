@@ -38,7 +38,7 @@ public class DefaultMediaManagementServiceTest {
     @Test
     public void shouldUploadFileAndReturnMedia() {
         FileUpload fileUpload = mock(FileUpload.class);
-        fileUpload.setExtension("any");
+        when(fileUpload.getExtension()).thenReturn("any");
         Upload upload = mock(Upload.class);
         Media media = mock(Media.class);
         Media savedMedia = mock(Media.class);

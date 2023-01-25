@@ -5,7 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
-import uk.gov.cslearning.catalogue.service.upload.processor.MetadataParser;
+import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataParser;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -2,15 +2,15 @@ package uk.gov.cslearning.catalogue.service.upload.processor;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.tika.Tika;
-import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.xml.sax.SAXException;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
+import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataFactory;
+import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,15 +24,18 @@ import static org.mockito.Mockito.*;
 public class MetadataParserTest {
     @Mock
     private Tika tika;
+    @Mock
+    private MetadataFactory metadataFactory;
 
     @InjectMocks
     private MetadataParser metadataParser;
 
     @Test
-    public void parseShouldReturnMetadata() throws IOException, TikaException, SAXException {
+    public void parseShouldReturnMetadata() throws IOException {
         Metadata metadata = mock(Metadata.class);
-
         InputStream inputStream = mock(InputStream.class);
+
+        when(metadataFactory.getMetadata()).thenReturn(metadata);
 
         doAnswer(
                 invocation -> {
@@ -50,22 +53,18 @@ public class MetadataParserTest {
         assertEquals(expected, metadataParser.parse(inputStream));
     }
 
-    @Test
+    @Test(expected = FileUploadException.class)
     public void shouldThrowFileUploadExceptionOnIOException() throws IOException {
-        Metadata metadata = mock(Metadata.class);
 
+        Metadata metadata = mock(Metadata.class);
         InputStream inputStream = mock(InputStream.class);
 
         IOException ioException = mock(IOException.class);
 
+        when(metadataFactory.getMetadata()).thenReturn(metadata);
         doThrow(ioException).when(tika).parse(inputStream, metadata);
+        metadataParser.parse(inputStream);
 
-        try {
-            metadataParser.parse(inputStream);
-            fail("Expected FileUploadException");
-        } catch (FileUploadException e) {
-            assertEquals(ioException, e.getCause());
-        }
     }
 
     @Test
