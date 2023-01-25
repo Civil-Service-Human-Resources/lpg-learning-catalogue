@@ -2,11 +2,14 @@ package uk.gov.cslearning.catalogue.service.rustici;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourse;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourseResponse;
+import uk.gov.cslearning.catalogue.exception.RusticiEngineException;
 import uk.gov.cslearning.catalogue.service.record.RequestEntityException;
 
 import java.net.URI;
@@ -41,7 +44,11 @@ public class RusticiEngineClient {
     public CreateCourseResponse createCourse(CreateCourse requestBody, String rusticiCourseId) {
         String uri = String.format("courses?courseId=%s", rusticiCourseId);
         RequestEntity<CreateCourse> req = this.generatePost(uri, requestBody);
-        return restTemplate.exchange(req, CreateCourseResponse.class).getBody();
+        ResponseEntity<CreateCourseResponse> response = restTemplate.exchange(req, CreateCourseResponse.class);
+        if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
+            throw new RusticiEngineException(String.format("Error uploading ELearning: course with ID %s already exists in Rustici Engine", rusticiCourseId));
+        }
+        return response.getBody();
     }
 
     public void deleteCourse(String rusticiCourseId) {

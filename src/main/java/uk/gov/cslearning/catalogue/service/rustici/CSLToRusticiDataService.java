@@ -27,7 +27,6 @@ public class CSLToRusticiDataService {
     }
 
     public String getRusticiCourseCdnLocation(String courseId, String moduleId) {
-        String rusticiCourseId = getRusticiCourseId(courseId, moduleId);
         return String.format("%s/%s", cdnEndpoint, String.format("%s/%s", courseId, moduleId));
     }
 }

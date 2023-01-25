@@ -13,26 +13,25 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
 public class EventService {
     private final CourseRepository courseRepository;
+    private final CourseService courseService;
     private final LearnerRecordService learnerRecordService;
     private final EventDtoMapService eventDtoMapService;
 
-    public EventService(CourseRepository courseRepository, LearnerRecordService learnerRecordService, EventDtoMapService eventDtoMapService) {
+    public EventService(CourseRepository courseRepository, CourseService courseService,
+                        LearnerRecordService learnerRecordService, EventDtoMapService eventDtoMapService) {
         this.courseRepository = courseRepository;
+        this.courseService = courseService;
         this.learnerRecordService = learnerRecordService;
         this.eventDtoMapService = eventDtoMapService;
     }
 
     public Event save(String courseId, String moduleId, Event event) {
-        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
-            throw new IllegalStateException(
-                    String.format("Unable to add event. Course does not exist: %s", courseId));
-        });
+        Course course = courseService.getCourseById(courseId);
 
         FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
 
@@ -52,16 +51,13 @@ public class EventService {
         newEvents.add(event);
 
         module.setEvents(newEvents);
-        courseRepository.save(course);
+        courseService.save(course);
 
         return event;
     }
 
     public Optional<Event> find(String courseId, String moduleId, String eventId) {
-        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
-            throw new IllegalStateException(
-                    String.format("Unable to find event: %s. Course does not exist: %s", eventId, courseId));
-        });
+        Course course = courseService.getCourseById(courseId);
 
         FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
 

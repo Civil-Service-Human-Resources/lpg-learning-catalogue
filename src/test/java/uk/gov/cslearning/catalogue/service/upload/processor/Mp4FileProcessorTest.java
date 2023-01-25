@@ -10,22 +10,25 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
-import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
-import uk.gov.cslearning.catalogue.exception.FileUploadException;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
+import uk.gov.cslearning.catalogue.service.upload.UploadableFileFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Mp4FileProcessorTest {
 
     @Mock
     private MetadataParser metadataParser;
+
+    @Mock
+    private UploadableFileFactory uploadableFileFactory;
 
     @InjectMocks
     private Mp4FileProcessor mp4FileProcessor;
@@ -36,35 +39,18 @@ public class Mp4FileProcessorTest {
                 "key1", "value1",
                 "key2", ""
         );
+        FileUpload fileUpload = mock(FileUpload.class);
+        UploadableFile uploadableFile = mock(UploadableFile.class);
+        when(uploadableFileFactory.createFromFileUpload(fileUpload)).thenReturn(uploadableFile);
 
         MultipartFile multipartFile = mock(MultipartFile.class);
         InputStream inputStream = mock(InputStream.class);
         when(multipartFile.getInputStream()).thenReturn(inputStream);
-        FileUpload fileUpload = mock(FileUpload.class);
         when(fileUpload.getFile()).thenReturn(multipartFile);
 
         when(metadataParser.parse(inputStream)).thenReturn(metadataMap);
 
-        ProcessedFileUpload processedFile = mock(ProcessedFileUpload.class);
-        ProcessedFileUpload result = mp4FileProcessor.process(fileUpload);
-        assertEquals(processedFile, result);
-    }
-
-
-    @Test
-    public void shouldThrowFileUploadExceptionOnIOException() throws IOException {
-        MultipartFile multipartFile = mock(MultipartFile.class);
-        FileUpload fileUpload = mock(FileUpload.class);
-        when(fileUpload.getFile()).thenReturn(multipartFile);
-
-        IOException ioException = mock(IOException.class);
-        doThrow(ioException).when(multipartFile).getInputStream();
-
-        try {
-            mp4FileProcessor.process(fileUpload);
-            fail("Expected FileUploadException");
-        } catch (FileUploadException e) {
-            assertEquals(ioException, e.getCause());
-        }
+        Map<String, String> result = mp4FileProcessor.process(fileUpload).getMetadata();
+        assertEquals(metadataMap, result);
     }
 }

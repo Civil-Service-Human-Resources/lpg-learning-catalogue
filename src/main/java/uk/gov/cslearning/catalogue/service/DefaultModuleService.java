@@ -25,7 +25,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 @Service
-public class ModuleService {
+public class DefaultModuleService {
     private static final int PAGE_SIZE = 10000;
 
     private final CourseRepository courseRepository;
@@ -34,11 +34,11 @@ public class ModuleService {
     private final ModuleDtoFactory moduleDtoFactory;
     private final RusticiEngineService rusticiEngineService;
 
-    public ModuleService(CourseRepository courseRepository,
-                         CourseService courseService,
-                         FileUploadServiceFactory fileUploadServiceFactory,
-                         ModuleDtoFactory moduleDtoFactory,
-                         RusticiEngineService rusticiEngineService) {
+    public DefaultModuleService(CourseRepository courseRepository,
+                                CourseService courseService,
+                                FileUploadServiceFactory fileUploadServiceFactory,
+                                ModuleDtoFactory moduleDtoFactory,
+                                RusticiEngineService rusticiEngineService) {
         this.courseRepository = courseRepository;
         this.courseService = courseService;
         this.fileUploadServiceFactory = fileUploadServiceFactory;

@@ -4,10 +4,7 @@ import org.junit.Test;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 
-import java.util.regex.Pattern;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,21 +52,4 @@ public class FileUploadFactoryTest {
         assertEquals(10, result.getSizeKB());
     }
 
-    @Test
-    public void toStringContainsAllFields() {
-        String container = "testcontainer";
-        String name = "testname.xxx";
-        MultipartFile file = mock(MultipartFile.class);
-        long sizeKB = 99;
-        when(file.getSize()).thenReturn(sizeKB * 1024);
-        when(file.getOriginalFilename()).thenReturn(name);
-        FileUpload fileUpload = FileUpload.createFromMetadata(file, container, name);
-
-        String pattern = "uk\\.gov\\.cslearning\\.catalogue\\.service\\.upload\\.FileUploadFactory\\$1@\\w+" +
-                "\\[id=[^,]{22},container=testcontainer,file=Mock for MultipartFile, hashCode: \\d+,extension=xxx," +
-                "name=testname\\.xxx,sizeKB=99," +
-                "timestamp=\\d\\d\\d\\d\\-\\d\\d\\-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d\\]";
-
-        assertTrue(fileUpload.toString() ,Pattern.matches(pattern, fileUpload.toString()));
-    }
 }
