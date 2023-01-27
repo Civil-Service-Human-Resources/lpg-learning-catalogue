@@ -12,9 +12,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.cslearning.catalogue.config.FileUploadMap;
 import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
-import uk.gov.cslearning.catalogue.service.upload.FileUploadServiceFactory;
 import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
 import java.time.LocalDateTime;
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(MediaController.class)
 @WithMockUser(username = "user")
 @ContextConfiguration(classes = {WebConfig.class, MediaController.class,
-                                ApiExceptionHandler.class, FileUploadServiceFactory.class})
+                                ApiExceptionHandler.class, FileUploadMap.class})
 public class MediaControllerTest {
 
     @Autowired
