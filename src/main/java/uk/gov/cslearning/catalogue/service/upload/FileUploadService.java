@@ -1,6 +1,7 @@
 package uk.gov.cslearning.catalogue.service.upload;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import uk.gov.cslearning.catalogue.dto.upload.*;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
@@ -16,7 +17,7 @@ public abstract class FileUploadService {
     protected FileProcessor processor;
     protected UploadClient uploadClient;
 
-    public FileUploadService(FileProcessor processor, UploadClient uploadClient) {
+    public FileUploadService(FileProcessor processor, @Qualifier("existing_container") UploadClient uploadClient) {
         this.processor = processor;
         this.uploadClient = uploadClient;
     }

@@ -65,14 +65,16 @@ public class ModuleService {
 
         Module oldModule = course.getModuleById(newModule.getId());
         if (hasFileChanged(newModule, oldModule)) {
-            new Thread(() -> deleteFile(courseId, oldModule)).start();
+            new Thread(() -> {
+                deleteFile(courseId, oldModule);
+                if (newModule.getModuleType().equals("elearning")) {
+                    rusticiEngineService.uploadElearningModule(courseId, newModule.getId());
+                }
+            }).start();
         }
 
         course.upsertModule(newModule);
         courseService.save(course);
-        if (newModule.getModuleType().equals("elearning")) {
-            rusticiEngineService.uploadElearningModule(courseId, newModule.getId());
-        }
 
         return course;
     }

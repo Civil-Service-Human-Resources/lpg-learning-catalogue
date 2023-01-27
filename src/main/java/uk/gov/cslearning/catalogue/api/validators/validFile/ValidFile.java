@@ -9,7 +9,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {FileValidator.class})
 public @interface ValidFile {
-    String message() default "Invalid extension for upload";
+
+    String message() default "Invalid file";
 
     Class<?>[] groups() default {};
 

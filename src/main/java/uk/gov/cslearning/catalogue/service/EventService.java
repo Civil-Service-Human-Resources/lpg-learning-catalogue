@@ -13,25 +13,31 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
 public class EventService {
     private final CourseRepository courseRepository;
-    private final CourseService courseService;
     private final LearnerRecordService learnerRecordService;
     private final EventDtoMapService eventDtoMapService;
 
-    public EventService(CourseRepository courseRepository, CourseService courseService,
-                        LearnerRecordService learnerRecordService, EventDtoMapService eventDtoMapService) {
+    public EventService(CourseRepository courseRepository, LearnerRecordService learnerRecordService,
+                        EventDtoMapService eventDtoMapService) {
         this.courseRepository = courseRepository;
-        this.courseService = courseService;
         this.learnerRecordService = learnerRecordService;
         this.eventDtoMapService = eventDtoMapService;
     }
 
+    private Course getCourseById(String courseId) {
+        return courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
+            throw new IllegalStateException(
+                    String.format("Unable to find course. Course does not exist: %s", courseId));
+        });
+    }
+
     public Event save(String courseId, String moduleId, Event event) {
-        Course course = courseService.getCourseById(courseId);
+        Course course = getCourseById(courseId);
 
         FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
 
@@ -51,13 +57,13 @@ public class EventService {
         newEvents.add(event);
 
         module.setEvents(newEvents);
-        courseService.save(course);
+        courseRepository.save(course);
 
         return event;
     }
 
     public Optional<Event> find(String courseId, String moduleId, String eventId) {
-        Course course = courseService.getCourseById(courseId);
+        Course course = getCourseById(courseId);
 
         FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
 

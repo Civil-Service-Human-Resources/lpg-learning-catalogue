@@ -4,8 +4,7 @@ spring:
     serialization:
       write_dates_as_timestamps: false
   resources:
-    web:
-      add-mappings: false
+    add-mappings: false
   servlet:
     multipart:
       max-file-size: 5120MB
@@ -46,7 +45,7 @@ azure:
     key: ${AZURE_ACCOUNT_KEY:Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==}
   storage:
     container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
-    rustici-container: ${AZURE_STORAGE_RUSTICI_CONTAINER:learning_material}
+    rustici-container: ${AZURE_STORAGE_RUSTICI_CONTAINER:rustici}
     connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=${azure.account.name};AccountKey=${azure.account.key};BlobEndpoint=http://127.0.0.1:9100/devstoreaccount1;}
   content-cdn: ${AZURE_CONTENT_CDN_ENDPOINT:csl.local/azurite}
 
