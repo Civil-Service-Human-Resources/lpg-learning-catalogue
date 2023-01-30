@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -23,15 +24,17 @@ public class AzureUploadClient implements UploadClient {
 
     @Override
     public UploadedFile upload(UploadableFile file) {
+        log.debug(String.format("Uploading file %s", file.getFullPath()));
         String filePath = file.getFullPath();
         int fileSizeBytes = file.getBytes().length;
         long fileSizeInKB = fileSizeBytes / 1024;
-        try(InputStream byteInputStream = file.getAsByteArrayInputStream()) {
+        try(InputStream byteInputStream = new ByteArrayInputStream(file.getBytes())) {
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.getProperties().setContentType(file.getContentType());
             blob.upload(byteInputStream, fileSizeBytes);
             return UploadedFile.createSuccessfulUploadedFile(fileSizeInKB, filePath);
         } catch (StorageException | URISyntaxException | IOException e) {
+            log.error(String.format("Encountered error uploading file: %s", e));
             return UploadedFile.createFailedUploadedFile(fileSizeBytes / 1024, filePath, e);
         }
     }

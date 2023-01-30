@@ -41,7 +41,6 @@ public class AzureUploadClientTest {
         when(uploadableFile.getFullPath()).thenReturn(filePath);
         when(uploadableFile.getContentType()).thenReturn(contentType);
         when(uploadableFile.getBytes()).thenReturn(new byte[fileSize]);
-        when(uploadableFile.getAsByteArrayInputStream()).thenReturn(inputStream);
         return uploadableFile;
     }
 

@@ -34,6 +34,7 @@ public abstract class FileUploadService {
     }
 
     public Upload upload(FileUpload fileUpload) {
+        log.info("Creating fileUpload");
         ProcessedFileUpload processedFileUpload = processor.process(fileUpload);
         List<UploadableFile> uploadableFiles = processedFileUpload.getUploadableFiles();
         List<UploadedFile> uploadedFiles = uploadableFiles
