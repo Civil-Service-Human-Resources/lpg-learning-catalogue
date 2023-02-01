@@ -100,10 +100,11 @@ public class ModuleService {
             fileUploadService = fileUploadServiceFactory.getFileUploadService(UploadServiceType.MP4);
             fileUploadService.delete(filePath);
         } else if (module instanceof ELearningModule) {
-            String filePath = ((ELearningModule) module).getUrl();
+            ELearningModule EMod = (ELearningModule) module;
+            String filePath = EMod.getUrl();
             fileUploadService = fileUploadServiceFactory.getFileUploadService(UploadServiceType.SCORM);
             fileUploadService.deleteDirectory(filePath);
-            rusticiEngineService.deleteElearningModule(courseId, module.getId());
+            rusticiEngineService.deleteElearningModule(courseId, EMod.getMediaId());
         }
     }
 

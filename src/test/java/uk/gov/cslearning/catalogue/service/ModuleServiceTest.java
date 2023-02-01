@@ -181,10 +181,12 @@ public class ModuleServiceTest {
     @Test
     public void shouldDeleteElearningModuleAndFile() throws Exception {
         String moduleId = "moduleId";
+        String mediaId = "mediaId";
         String courseId = "courseId";
         String url = "test/path/to/file.pdf";
         Course course = new Course();
-        Module module = new ELearningModule("", url);
+        ELearningModule module = new ELearningModule("", url);
+        module.setMediaId(mediaId);
         module.setId(moduleId);
         List<Module> modules = new ArrayList<>();
         modules.add(module);
@@ -196,7 +198,7 @@ public class ModuleServiceTest {
         moduleService.deleteModule(courseId, moduleId);
         assertEquals(0, course.getModules().size());
         verify(fileUploadService, timeout(2000)).deleteDirectory(url);
-        verify(rusticiEngineService).deleteElearningModule(courseId, moduleId);
+        verify(rusticiEngineService).deleteElearningModule(courseId, mediaId);
     }
 
     @Test
