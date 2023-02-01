@@ -11,18 +11,19 @@ public class CSLToRusticiDataService {
         this.cdnEndpoint = cdnEndpoint;
     }
 
-    public CreateCourse getCreateCourseData(String courseId, String moduleId) {
-        String ELearningCdnLocation = getRusticiCourseCdnLocation(courseId, moduleId);
+    public CreateCourse getCreateCourseData(String courseId, String mediaId) {
+        String ELearningCdnLocation = getRusticiCourseCdnLocation(courseId, mediaId);
+        String imsManifestUrl = String.format("%s/imsmanifest.xml", ELearningCdnLocation);
         return CreateCourse.createFromData(
-                String.format("%s/imsmanifest.xml", ELearningCdnLocation),
-                ELearningCdnLocation);
+                ELearningCdnLocation,
+                imsManifestUrl);
     }
 
-    public String getRusticiCourseId(String courseId, String moduleId) {
-        return String.format(RUSTICI_COURSE_ID_FORMAT, courseId, moduleId);
+    public String getRusticiCourseId(String courseId, String mediaId) {
+        return String.format(RUSTICI_COURSE_ID_FORMAT, courseId, mediaId);
     }
 
-    public String getRusticiCourseCdnLocation(String courseId, String moduleId) {
-        return String.format("%s/%s", cdnEndpoint, getRusticiCourseId(courseId, moduleId));
+    public String getRusticiCourseCdnLocation(String courseId, String mediaId) {
+        return String.format("%s/%s/%s", cdnEndpoint, courseId, mediaId);
     }
 }

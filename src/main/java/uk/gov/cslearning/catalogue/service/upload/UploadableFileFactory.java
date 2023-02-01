@@ -7,6 +7,7 @@ import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataParser;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,8 +26,8 @@ public class UploadableFileFactory {
     }
 
     private UploadableFile createFromZipEntry(String filename, String destination, InputStream inputStream) throws IOException {
-        String contentType = metadataParser.getContentType(inputStream, filename);
         byte[] bytes = IOUtils.toByteArray(inputStream);
+        String contentType = metadataParser.getContentType(new ByteArrayInputStream(bytes), filename);
         return new UploadableFile(filename, destination, bytes, contentType);
     }
 

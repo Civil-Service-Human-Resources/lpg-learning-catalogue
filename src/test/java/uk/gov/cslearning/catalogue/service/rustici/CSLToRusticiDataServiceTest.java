@@ -17,11 +17,11 @@ public class CSLToRusticiDataServiceTest {
 
     @Test
     public void testGetCreateCourseData() {
-        String testModuleID = "testModuleID";
+        String testMediaId = "testMediaID";
         String testCourseID = "testCourseID";
-        CreateCourse createCourse = cslToRusticiDataService.getCreateCourseData(testCourseID, testModuleID);
-        assertEquals("test.com/testCourseID.testModuleID/imsmanifest.xml", createCourse.getReferenceRequest().getWebPathToCourse());
-        assertEquals("test.com/testCourseID.testModuleID", createCourse.getReferenceRequest().getUrl());
+        CreateCourse createCourse = cslToRusticiDataService.getCreateCourseData(testCourseID, testMediaId);
+        assertEquals("test.com/testCourseID/testMediaID/imsmanifest.xml", createCourse.getReferenceRequest().getUrl());
+        assertEquals("test.com/testCourseID/testMediaID", createCourse.getReferenceRequest().getWebPathToCourse());
     }
 
 }

@@ -10,19 +10,19 @@ import uk.gov.cslearning.catalogue.service.rustici.CSLToRusticiDataService;
 @Configuration
 public class RusticiConfig {
 
-    @Value("rustici.url")
+    @Value("${rustici.url}")
     private String rusticiUrl;
 
-    @Value("rustici.username")
+    @Value("${rustici.username}")
     private String rusticiUsername;
 
-    @Value("rustici.password")
+    @Value("${rustici.password}")
     private String rusticiPassword;
 
-    @Value("rustici.tenant")
+    @Value("${rustici.tenant}")
     private String rusticiTenant;
 
-    @Value("azure.content-cdn")
+    @Value("${azure.content-cdn}")
     private String contentCdn;
 
     @Bean()
@@ -36,8 +36,8 @@ public class RusticiConfig {
             request.getHeaders().add("EngineTenantName", rusticiTenant);
             return execution.execute(request, body);
         }))
-                .rootUri(rusticiUrl)
-                .basicAuthentication(rusticiUsername, rusticiPassword)
-                .build();
+        .rootUri(rusticiUrl)
+        .basicAuthentication(rusticiUsername, rusticiPassword)
+        .build();
     }
 }

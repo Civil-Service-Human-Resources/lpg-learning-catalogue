@@ -65,7 +65,7 @@ public class ModuleServiceTest {
     public void shouldSaveElearningModuleToCourse() {
         String courseId = "course-id";
         ELearningModule module = new ELearningModule("", "http://test");
-        module.setId("module-id");
+        module.setMediaId("module-id");
         Course course = new Course();
 
         when(courseService.getCourseById(courseId)).thenReturn(course);

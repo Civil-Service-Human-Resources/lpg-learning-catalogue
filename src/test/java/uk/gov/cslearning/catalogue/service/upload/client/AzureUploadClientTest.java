@@ -13,7 +13,6 @@ import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class AzureUploadClientTest {
     private final String contentType = "application/octet-stream";
     private final int fileSize = 2048;
 
-    private UploadableFile generateFileUpload(InputStream inputStream) throws IOException {
+    private UploadableFile generateFileUpload() {
         UploadableFile uploadableFile = mock(UploadableFile.class);
         when(uploadableFile.getFullPath()).thenReturn(filePath);
         when(uploadableFile.getContentType()).thenReturn(contentType);
@@ -47,8 +46,7 @@ public class AzureUploadClientTest {
     @Test
     public void uploadShouldUploadAndReturnUploadedFile() throws Exception {
 
-        InputStream inputStream = mock(InputStream.class);
-        UploadableFile uploadableFile = generateFileUpload(inputStream);
+        UploadableFile uploadableFile = generateFileUpload();
 
         when(container.getBlockBlobReference(filePath)).thenReturn(blob);
         when(blob.getProperties()).thenReturn(blobProperties);
@@ -60,15 +58,13 @@ public class AzureUploadClientTest {
         assertEquals(result.getStatus(), UploadStatus.SUCCESS);
         assertNull(result.getException());
 
-        verify(blob).upload(inputStream, fileSize);
         verify(blobProperties).setContentType(contentType);
     }
 
     @Test
     public void shouldAddURISyntaxExceptionToUploadedFile() throws URISyntaxException, StorageException, IOException {
 
-        InputStream inputStream = mock(InputStream.class);
-        UploadableFile uploadableFile = generateFileUpload(inputStream);
+        UploadableFile uploadableFile = generateFileUpload();
         URISyntaxException exception = mock(URISyntaxException.class);
 
         doThrow(exception).when(container).getBlockBlobReference(filePath);

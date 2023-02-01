@@ -31,7 +31,9 @@ public class RusticiEngineClientTest {
         CreateCourse createCourse = mock(CreateCourse.class);
         ResponseEntity<CreateCourseResponse> response = mock(ResponseEntity.class);
         when(response.getStatusCode()).thenReturn(HttpStatus.CONFLICT);
-        when(restTemplate.exchange(ArgumentMatchers.<RequestEntity<CreateCourse>>any(), ArgumentMatchers.<Class<CreateCourseResponse>>any())).thenReturn(response);
+        when(restTemplate.postForEntity(ArgumentMatchers.<String>any(),
+                ArgumentMatchers.<RequestEntity<CreateCourse>>any(),
+                ArgumentMatchers.<Class<CreateCourseResponse>>any())).thenReturn(response);
         client.createCourse(createCourse, "test.test");
     }
 

@@ -46,11 +46,11 @@ public class ModuleService {
 
     public Module save(String courseId, Module module) {
         Course course = courseService.getCourseById(courseId);
+        if (module.getModuleType().equals("elearning")) {
+            rusticiEngineService.uploadElearningModule(courseId, ((ELearningModule) module).getMediaId());
+        }
         course.upsertModule(module);
         courseService.save(course);
-        if (module.getModuleType().equals("elearning")) {
-            rusticiEngineService.uploadElearningModule(courseId, module.getId());
-        }
         return module;
     }
 

@@ -19,9 +19,9 @@ public class RusticiEngineService {
         this.rusticiEngineClient = rusticiEngineClient;
     }
 
-    public void uploadElearningModule(String courseId, String moduleId) {
-        CreateCourse data = rusticiDataService.getCreateCourseData(courseId, moduleId);
-        String rusticiCourseId = rusticiDataService.getRusticiCourseId(courseId, moduleId);
+    public void uploadElearningModule(String courseId, String mediaId) {
+        CreateCourse data = rusticiDataService.getCreateCourseData(courseId, mediaId);
+        String rusticiCourseId = rusticiDataService.getRusticiCourseId(courseId, mediaId);
         CreateCourseResponse createCourseResponse = rusticiEngineClient.createCourse(data, rusticiCourseId);
         if (!createCourseResponse.getParserWarnings().isEmpty()) {
             log.warn("Parser warnings reported when uploading course");
@@ -31,8 +31,8 @@ public class RusticiEngineService {
         log.info(String.format("Successfully uploaded %s course \"%s\" to Rustici", courseObj.getCourseLearningStandard(), courseObj.getTitle()));
     }
 
-    public void deleteElearningModule(String courseId, String moduleId) {
-        String rusticiCourseId = rusticiDataService.getRusticiCourseId(courseId, moduleId);
+    public void deleteElearningModule(String courseId, String mediaId) {
+        String rusticiCourseId = rusticiDataService.getRusticiCourseId(courseId, mediaId);
         rusticiEngineClient.deleteCourse(rusticiCourseId);
         log.info(String.format("Successfully deleted course from Rustici with ID %s", rusticiCourseId));
     }
