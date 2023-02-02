@@ -13,6 +13,7 @@ import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.dto.factory.CourseDtoFactory;
 import uk.gov.cslearning.catalogue.dto.factory.ModuleDtoFactory;
+import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.rustici.RusticiEngineService;
 import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
@@ -113,7 +114,7 @@ public class ModuleServiceTest {
         newModule.setTitle(updatedTitle);
         when(courseService.getCourseById(courseId)).thenReturn(course);
         moduleService.updateModule(courseId, newModule);
-        assertEquals(course.getModuleById(moduleId).getTitle(), updatedTitle);
+        assertEquals(course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::resourceNotFoundException).getTitle(), updatedTitle);
     }
 
     @Test
@@ -138,7 +139,7 @@ public class ModuleServiceTest {
         when(courseService.getCourseById(courseId)).thenReturn(course);
         when(fileUploadServiceFactory.getFileUploadService(UploadServiceType.FILE)).thenReturn(fileUploadService);
         moduleService.updateModule(courseId, newModule);
-        assertEquals(((FileModule) course.getModuleById(moduleId)).getUrl(), newUrl);
+        assertEquals(((FileModule) course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::resourceNotFoundException)).getUrl(), newUrl);
         verify(fileUploadService, timeout(2000)).delete(url);
     }
 

@@ -11,6 +11,7 @@ import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.domain.module.VideoModule;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.dto.factory.ModuleDtoFactory;
+import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.rustici.RusticiEngineService;
 import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
@@ -63,7 +64,7 @@ public class ModuleService {
     public Course updateModule(String courseId, Module newModule) {
         Course course = courseService.getCourseById(courseId);
 
-        Module oldModule = course.getModuleById(newModule.getId());
+        Module oldModule = course.getModuleById(newModule.getId()).orElseThrow(ResourceNotFoundException::resourceNotFoundException);
         if (hasFileChanged(newModule, oldModule)) {
             new Thread(() -> {
                 deleteFile(courseId, oldModule);
@@ -81,7 +82,7 @@ public class ModuleService {
 
     public void deleteModule(String courseId, String moduleId) {
         Course course = courseService.getCourseById(courseId);
-        Module module = course.getModuleById(moduleId);
+        Module module = course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
         new Thread(() -> deleteFile(courseId, module)).start();
 

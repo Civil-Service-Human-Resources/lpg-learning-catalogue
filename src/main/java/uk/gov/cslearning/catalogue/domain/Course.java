@@ -95,12 +95,8 @@ public class Course {
         return unmodifiableList(modules);
     }
 
-    public Module getModuleById(String moduleId) {
-        return newGetModuleById(moduleId).get();
-    }
-
     @JsonIgnore
-    public Optional<Module> newGetModuleById(String moduleId) {
+    public Optional<Module> getModuleById(String moduleId) {
         return getModules().stream().filter(m -> m.getId().equals(moduleId)).findFirst();
     }
 

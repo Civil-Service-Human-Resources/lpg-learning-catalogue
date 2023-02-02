@@ -9,6 +9,7 @@ import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.dto.EventDto;
+import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 
@@ -39,7 +40,8 @@ public class EventService {
     public Event save(String courseId, String moduleId, Event event) {
         Course course = getCourseById(courseId);
 
-        FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
+        FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId)
+                .orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
         if (module == null) {
             throw new IllegalStateException(
@@ -65,7 +67,8 @@ public class EventService {
     public Optional<Event> find(String courseId, String moduleId, String eventId) {
         Course course = getCourseById(courseId);
 
-        FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
+        FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId)
+                .orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
         if (module == null) {
             throw new IllegalStateException(

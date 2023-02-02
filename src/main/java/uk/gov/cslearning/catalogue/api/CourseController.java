@@ -24,6 +24,7 @@ import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.mapping.DaysMapper;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.CourseService;
@@ -473,7 +474,8 @@ public class CourseController {
         Optional<Course> result = courseRepository.findById(courseId);
 
         return result.map(course -> {
-            Module module = course.getModuleById(moduleId);
+            Module module = course.getModuleById(moduleId)
+                    .orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
             if (module instanceof FaceToFaceModule) {
                 FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
@@ -508,7 +510,7 @@ public class CourseController {
         Optional<Course> result = courseRepository.findById(courseId);
 
         return result.map(course -> {
-            Module module = course.getModuleById(moduleId);
+            Module module = course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
             if (module instanceof FaceToFaceModule) {
                 FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
