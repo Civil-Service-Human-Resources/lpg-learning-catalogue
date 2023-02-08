@@ -19,9 +19,9 @@ public class RusticiEngineService {
         this.rusticiEngineClient = rusticiEngineClient;
     }
 
-    public void uploadElearningModule(String courseId, String mediaId) {
+    public void uploadElearningModule(String courseId, String moduleId, String mediaId) {
         CreateCourse data = rusticiDataService.getCreateCourseData(courseId, mediaId);
-        String rusticiCourseId = rusticiDataService.getRusticiCourseId(courseId, mediaId);
+        String rusticiCourseId = rusticiDataService.getRusticiCourseId(courseId, moduleId);
         CreateCourseResponse createCourseResponse = rusticiEngineClient.createCourse(data, rusticiCourseId);
         if (!createCourseResponse.getParserWarnings().isEmpty()) {
             log.warn("Parser warnings reported when uploading course");

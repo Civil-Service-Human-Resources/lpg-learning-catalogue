@@ -14,13 +14,18 @@ public class MediaFactory {
 
     public Media create(Upload upload) {
         ProcessedFileUpload processedFileUpload = upload.getProcessedFileUpload();
+        String ext = processedFileUpload.getFileUpload().getExtension();
         Media media = new Media();
         media.setId(processedFileUpload.getFileUpload().getId());
         media.setContainer(processedFileUpload.getFileUpload().getContainer());
         media.setDateAdded(LocalDateTime.now(Clock.systemUTC()));
-        media.setExtension(processedFileUpload.getFileUpload().getExtension());
+        media.setExtension(ext);
         media.setName(processedFileUpload.getFileUpload().getName());
-        media.setPath(upload.getPath());
+        String path = upload.getPath();
+        if (!ext.equals("zip")) {
+            path = String.format("%s/%s", upload.getPath(), processedFileUpload.getFileUpload().getName());
+        }
+        media.setPath(path);
         media.setFileSizeKB(upload.getSizeKB());
         Map<String, Object> convertedMap = processedFileUpload.getMetadata()
                 .entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

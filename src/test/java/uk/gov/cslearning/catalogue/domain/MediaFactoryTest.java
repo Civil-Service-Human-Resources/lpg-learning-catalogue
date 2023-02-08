@@ -23,7 +23,7 @@ public class MediaFactoryTest {
     public void createReturnsMedia() {
         String id = "test-id";
         String container = "test-container";
-        String extension = "xxx";
+        String extension = "zip";
         String name = "file-name";
         String path = "test-path";
         long sizeKB = 13;

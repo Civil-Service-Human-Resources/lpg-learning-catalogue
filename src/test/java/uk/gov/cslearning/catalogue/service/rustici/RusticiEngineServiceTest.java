@@ -23,6 +23,7 @@ public class RusticiEngineServiceTest {
 
     private final String courseId = "courseId";
     private final String moduleId = "moduleId";
+    private final String mediaId = "mediaId";
 
     @Test
     public void testSuccessfullyUploadElearningModule() {
@@ -33,11 +34,11 @@ public class RusticiEngineServiceTest {
         CreateCourse createCourse = mock(CreateCourse.class);
         CreateCourseResponse createCourseResponse = mock(CreateCourseResponse.class);
         when(createCourseResponse.getCourse()).thenReturn(course);
-        when(rusticiDataService.getCreateCourseData(courseId, moduleId)).thenReturn(createCourse);
+        when(rusticiDataService.getCreateCourseData(courseId, mediaId)).thenReturn(createCourse);
         when(rusticiDataService.getRusticiCourseId(courseId, moduleId)).thenReturn(rusticiCourseId);
         when(rusticiEngineClient.createCourse(createCourse, rusticiCourseId)).thenReturn(createCourseResponse);
 
-        rusticiEngineService.uploadElearningModule(courseId, moduleId);
+        rusticiEngineService.uploadElearningModule(courseId, moduleId, mediaId);
         verify(rusticiEngineClient).createCourse(createCourse, rusticiCourseId);
     }
 

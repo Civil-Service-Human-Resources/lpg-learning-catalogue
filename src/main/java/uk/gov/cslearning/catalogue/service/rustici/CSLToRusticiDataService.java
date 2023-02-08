@@ -19,8 +19,8 @@ public class CSLToRusticiDataService {
                 imsManifestUrl);
     }
 
-    public String getRusticiCourseId(String courseId, String mediaId) {
-        return String.format(RUSTICI_COURSE_ID_FORMAT, courseId, mediaId);
+    public String getRusticiCourseId(String courseId, String moduleId) {
+        return String.format(RUSTICI_COURSE_ID_FORMAT, courseId, moduleId);
     }
 
     public String getRusticiCourseCdnLocation(String courseId, String mediaId) {

@@ -66,7 +66,8 @@ public class ModuleServiceTest {
     public void shouldSaveElearningModuleToCourse() {
         String courseId = "course-id";
         ELearningModule module = new ELearningModule("", "http://test");
-        module.setMediaId("module-id");
+        module.setMediaId("media-id");
+        module.setId("module-id");
         Course course = new Course();
 
         when(courseService.getCourseById(courseId)).thenReturn(course);
@@ -74,7 +75,7 @@ public class ModuleServiceTest {
         assertEquals(module, moduleService.save(courseId, module));
         assertEquals(Collections.singletonList(module), course.getModules());
         verify(courseService).save(course);
-        verify(rusticiEngineService).uploadElearningModule(courseId, "module-id");
+        verify(rusticiEngineService).uploadElearningModule(courseId, "module-id", "media-id");
     }
 
     @Test

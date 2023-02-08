@@ -48,7 +48,7 @@ public class ModuleService {
     public Module save(String courseId, Module module) {
         Course course = courseService.getCourseById(courseId);
         if (module.getModuleType().equals("elearning")) {
-            rusticiEngineService.uploadElearningModule(courseId, ((ELearningModule) module).getMediaId());
+            rusticiEngineService.uploadElearningModule(courseId, module.getId(), ((ELearningModule) module).getMediaId());
         }
         course.upsertModule(module);
         courseService.save(course);
@@ -69,7 +69,7 @@ public class ModuleService {
             new Thread(() -> {
                 deleteFile(courseId, oldModule);
                 if (newModule.getModuleType().equals("elearning")) {
-                    rusticiEngineService.uploadElearningModule(courseId, newModule.getId());
+                    rusticiEngineService.uploadElearningModule(courseId, newModule.getId(), newModule.getId());
                 }
             }).start();
         }
