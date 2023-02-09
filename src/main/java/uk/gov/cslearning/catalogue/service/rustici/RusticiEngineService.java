@@ -31,8 +31,8 @@ public class RusticiEngineService {
         log.info(String.format("Successfully uploaded %s course \"%s\" to Rustici", courseObj.getCourseLearningStandard(), courseObj.getTitle()));
     }
 
-    public void deleteElearningModule(String courseId, String mediaId) {
-        String rusticiCourseId = rusticiDataService.getRusticiCourseId(courseId, mediaId);
+    public void deleteElearningModule(String courseId, String moduleId) {
+        String rusticiCourseId = rusticiDataService.getRusticiCourseId(courseId, moduleId);
         rusticiEngineClient.deleteCourse(rusticiCourseId);
         log.info(String.format("Successfully deleted course from Rustici with ID %s", rusticiCourseId));
     }

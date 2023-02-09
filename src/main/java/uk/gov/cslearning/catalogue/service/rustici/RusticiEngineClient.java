@@ -1,15 +1,18 @@
 package uk.gov.cslearning.catalogue.service.rustici;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourse;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourseResponse;
 import uk.gov.cslearning.catalogue.exception.RusticiEngineException;
 
 @Service
+@Slf4j
 public class RusticiEngineClient {
 
     private final RestTemplate restTemplate;
@@ -30,6 +33,11 @@ public class RusticiEngineClient {
 
     public void deleteCourse(String rusticiCourseId) {
         String url = String.format("/courses/%s", rusticiCourseId);
-        restTemplate.delete(url);
+        try {
+            restTemplate.delete(url);
+        } catch (RestClientException e) {
+            log.error(String.format("Error when deleting course with ID %s: %s", rusticiCourseId, e));
+            throw e;
+        }
     }
 }

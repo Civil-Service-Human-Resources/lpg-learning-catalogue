@@ -200,7 +200,7 @@ public class ModuleServiceTest {
         moduleService.deleteModule(courseId, moduleId);
         assertEquals(0, course.getModules().size());
         verify(fileUploadService, timeout(2000)).deleteDirectory(url);
-        verify(rusticiEngineService).deleteElearningModule(courseId, mediaId);
+        verify(rusticiEngineService).deleteElearningModule(courseId, moduleId);
     }
 
     @Test

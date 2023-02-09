@@ -105,7 +105,7 @@ public class ModuleService {
             String filePath = EMod.getUrl();
             fileUploadService = fileUploadServiceFactory.getFileUploadService(UploadServiceType.SCORM);
             fileUploadService.deleteDirectory(filePath);
-            rusticiEngineService.deleteElearningModule(courseId, EMod.getMediaId());
+            rusticiEngineService.deleteElearningModule(courseId, EMod.getId());
         }
     }
 
