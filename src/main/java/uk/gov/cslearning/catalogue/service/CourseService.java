@@ -16,10 +16,7 @@ import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.CourseRequiredRepository;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Supplier;
@@ -65,6 +62,7 @@ public class CourseService {
         civilServant.setSupplier(authoritiesService.getSupplier(authentication));
 
         course.setOwner(ownerFactory.create(civilServant, course));
+        course.setCreatedTimestamp(LocalDateTime.now(Clock.systemUTC()));
 
         courseRepository.save(course);
 
@@ -82,6 +80,7 @@ public class CourseService {
         course.setStatus(newCourse.getStatus());
         course.setDescription(newCourse.getDescription());
         course.setTopicId(newCourse.getTopicId());
+        course.setUpdatedTimestamp(LocalDateTime.now(Clock.systemUTC()));
         Optional.ofNullable(newCourse.getLearningProvider()).ifPresent(course::setLearningProvider);
 
         courseRepository.save(course);
