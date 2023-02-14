@@ -32,6 +32,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     @Override
     public Page<Course> findSuggested(GetCoursesParameters parameters, Pageable pageable) {
+        System.out.println("findSuggested 1");
         BoolQueryBuilder boolQuery = boolQuery();
 
         parameters.getDepartments().forEach(s -> boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
@@ -59,6 +60,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     @Override
     public Page<Course> findSuggested(List<String> departmentList, String areaOfWork, String interest, String status, String grade, Pageable pageable) {
+        System.out.println("findSuggested 2");
         BoolQueryBuilder courseQuery = getCourseQuery(status, departmentList, areaOfWork, interest, grade);
 
         Query searchQuery = new NativeSearchQueryBuilder()
