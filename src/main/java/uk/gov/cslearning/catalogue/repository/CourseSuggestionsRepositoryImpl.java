@@ -85,7 +85,9 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
                 .withPageable(pageable)
                 .build();
 
-        return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
+        Page<Course> results = Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
+        System.out.println("Number of elements: " + results.getTotalElements());
+        return results;
 
     }
 

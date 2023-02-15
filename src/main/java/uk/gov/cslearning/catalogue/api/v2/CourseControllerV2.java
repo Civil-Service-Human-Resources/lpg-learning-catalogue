@@ -26,7 +26,6 @@ public class CourseControllerV2 {
     @GetMapping
     public ResponseEntity<PageResults<Course>> list(GetCoursesParameters parameters, Pageable pageable) {
         Page<Course> results = courseRepository.findSuggested(parameters, pageable);
-        System.out.println("ELEMENTS: " + results.getTotalElements());
         return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
 }
