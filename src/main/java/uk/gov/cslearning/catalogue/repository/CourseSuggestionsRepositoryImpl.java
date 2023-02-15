@@ -60,15 +60,10 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
     // NEW!
     @Override
     public Page<Course> findSuggested(GetCoursesParameters parameters, Pageable pageable) {
-        System.out.println("-- PARAMETERS 1 -- ");
-        System.out.println("Status: " + parameters.getStatus());
-        System.out.println("Departments size: " + parameters.getDepartments().size());
-        System.out.println("Area of work: " + parameters.getAreaOfWork());
-        System.out.println("Interest: " + parameters.getInterest());
-        System.out.println("Grade: " + parameters.getGrade());
 
         BoolQueryBuilder courseQuery = boolQuery();
         courseQuery.must(matchQuery("status", parameters.getStatus()));
+
         parameters.getDepartments().forEach(s -> courseQuery.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
 
         BoolQueryBuilder query = boolQuery().must(matchQuery("audiences.type", "OPEN"));
