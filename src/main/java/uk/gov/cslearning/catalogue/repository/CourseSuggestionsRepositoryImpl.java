@@ -72,9 +72,9 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         if(!parameters.getInterest().equals("NONE")) query.must(matchQuery("audiences.interests", parameters.getInterest()));
         if(!parameters.getGrade().equals("NONE")) query.must(matchQuery("audiences.grades", parameters.getGrade()));
 
-        parameters.getExcludeAreasOfWork().forEach(aow -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
-        parameters.getExcludeInterests().forEach(interest -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
-        parameters.getExcludeDepartments().forEach(department -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+        // parameters.getExcludeAreasOfWork().forEach(aow -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+        // parameters.getExcludeInterests().forEach(interest -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+        // parameters.getExcludeDepartments().forEach(department -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
 
         NestedQueryBuilder audiencesNestedQuery = nestedQuery("audiences", query, ScoreMode.Avg);
         courseQuery.must(audiencesNestedQuery);
@@ -85,9 +85,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
                 .withPageable(pageable)
                 .build();
 
-        Page<Course> results = Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
-        System.out.println("Number of elements: " + results.getTotalElements());
-        return results;
+        return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
 
     }
 
