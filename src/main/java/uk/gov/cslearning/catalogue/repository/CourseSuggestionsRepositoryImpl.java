@@ -60,6 +60,9 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
     // NEW!
     @Override
     public Page<Course> findSuggested(GetCoursesParameters parameters, Pageable pageable) {
+        System.out.println("Finding suggested learning...");
+
+        System.out.println(parameters.toString());
 
         BoolQueryBuilder courseQuery = boolQuery();
         courseQuery.must(matchQuery("status", parameters.getStatus()));
@@ -72,9 +75,9 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         if(!parameters.getInterest().equals("NONE")) query.must(matchQuery("audiences.interests", parameters.getInterest()));
         if(!parameters.getGrade().equals("NONE")) query.must(matchQuery("audiences.grades", parameters.getGrade()));
 
-        // parameters.getExcludeAreasOfWork().forEach(aow -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
-        // parameters.getExcludeInterests().forEach(interest -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
-        // parameters.getExcludeDepartments().forEach(department -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+        parameters.getExcludeAreasOfWork().forEach(aow -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+        parameters.getExcludeInterests().forEach(interest -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+        parameters.getExcludeDepartments().forEach(department -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
 
         NestedQueryBuilder audiencesNestedQuery = nestedQuery("audiences", query, ScoreMode.Avg);
         courseQuery.must(audiencesNestedQuery);
