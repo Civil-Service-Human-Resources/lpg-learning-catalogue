@@ -67,8 +67,6 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         BoolQueryBuilder courseQuery = boolQuery();
         courseQuery.must(matchQuery("status", parameters.getStatus()));
 
-        parameters.getDepartments().forEach(s -> courseQuery.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
-
         BoolQueryBuilder query = boolQuery().must(matchQuery("audiences.type", "OPEN"));
         parameters.getDepartments().forEach(s -> query.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
         if(!parameters.getAreaOfWork().equals("NONE")) query.must(matchQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
