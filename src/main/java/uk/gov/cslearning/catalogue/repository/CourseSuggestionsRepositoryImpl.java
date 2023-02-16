@@ -60,7 +60,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
     // NEW!
     @Override
     public Page<Course> findSuggested(GetCoursesParameters parameters, Pageable pageable) {
-        System.out.println("Finding suggested learning...");
+        System.out.println("Finding suggested learning... [2]");
 
         System.out.println(parameters.toString());
 
