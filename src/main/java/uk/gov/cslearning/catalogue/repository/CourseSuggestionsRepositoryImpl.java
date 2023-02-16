@@ -30,55 +30,10 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         this.operations = operations;
     }
 
-    // @Override
-    // public Page<Course> findSuggested(GetCoursesParameters parameters, Pageable pageable) {
-    //     BoolQueryBuilder boolQuery = boolQuery();
-
-    //     parameters.getDepartments().forEach(s -> boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
-    //     boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
-    //     boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.interests", parameters.getInterest()));
-
-    //     BoolQueryBuilder filterQuery = boolQuery();
-    //     filterQuery.must(QueryBuilders.matchQuery("audiences.grades", parameters.getGrade()));
-    //     filterQuery.must(QueryBuilders.matchQuery("status", parameters.getStatus()));
-    //     filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
-
-    //     parameters.getExcludeAreasOfWork().forEach(aow -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
-    //     parameters.getExcludeInterests().forEach(interest -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
-    //     parameters.getExcludeDepartments().forEach(department -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
-
-    //     Query searchQuery = new NativeSearchQueryBuilder()
-    //             .withQuery(boolQuery)
-    //             .withFilter(filterQuery)
-    //             .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
-    //             .withPageable(pageable)
-    //             .build();
-
-    //     return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
-    // }
-
-    // NEW!
     @Override
     public Page<Course> findSuggested(GetCoursesParameters parameters, Pageable pageable) {
-        System.out.println("Finding suggested learning... [2]");
 
-        System.out.println(parameters.toString());
-
-        BoolQueryBuilder courseQuery = boolQuery();
-        courseQuery.must(matchQuery("status", parameters.getStatus()));
-
-        BoolQueryBuilder query = boolQuery().must(matchQuery("audiences.type", "OPEN"));
-        parameters.getDepartments().forEach(s -> query.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
-        if(!parameters.getAreaOfWork().equals("NONE")) query.must(matchQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
-        if(!parameters.getInterest().equals("NONE")) query.must(matchQuery("audiences.interests", parameters.getInterest()));
-        if(!parameters.getGrade().equals("NONE")) query.must(matchQuery("audiences.grades", parameters.getGrade()));
-
-        parameters.getExcludeAreasOfWork().forEach(aow -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
-        parameters.getExcludeInterests().forEach(interest -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
-        parameters.getExcludeDepartments().forEach(department -> query.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
-
-        NestedQueryBuilder audiencesNestedQuery = nestedQuery("audiences", query, ScoreMode.Avg);
-        courseQuery.must(audiencesNestedQuery);
+        BoolQueryBuilder courseQuery = getCourseQuery(parameters);
 
         Query searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(courseQuery)
@@ -122,5 +77,30 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         if(!grade.equals("NONE")) query.must(matchQuery("audiences.grades", grade));
 
         return nestedQuery("audiences", query, ScoreMode.Avg);
+    }
+
+    private BoolQueryBuilder getCourseQuery(GetCoursesParameters parameters){
+        BoolQueryBuilder courseQuery = boolQuery();
+        courseQuery.must(matchQuery("status", parameters.getStatus()));
+
+        NestedQueryBuilder audiencesNestedQuery = getAudienceNestedQuery(parameters);
+        courseQuery.must(audiencesNestedQuery);
+
+        return courseQuery;
+    }
+
+    private NestedQueryBuilder getAudienceNestedQuery(GetCoursesParameters parameters){
+        BoolQueryBuilder audiencesQuery = boolQuery().must(matchQuery("audiences.type", "OPEN"));
+        parameters.getDepartments().forEach(s -> audiencesQuery.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+        if(!parameters.getAreaOfWork().equals("NONE")) audiencesQuery.must(matchQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
+        if(!parameters.getInterest().equals("NONE")) audiencesQuery.must(matchQuery("audiences.interests", parameters.getInterest()));
+        if(!parameters.getGrade().equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", parameters.getGrade()));
+
+        parameters.getExcludeAreasOfWork().forEach(aow -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+        parameters.getExcludeInterests().forEach(interest -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+        parameters.getExcludeDepartments().forEach(department -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+
+        NestedQueryBuilder audiencesNestedQuery = nestedQuery("audiences", audiencesQuery, ScoreMode.Avg);
+        return audiencesNestedQuery;
     }
 }
