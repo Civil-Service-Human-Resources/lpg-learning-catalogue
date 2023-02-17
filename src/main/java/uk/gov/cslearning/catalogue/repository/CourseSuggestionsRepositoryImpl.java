@@ -72,9 +72,9 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         BoolQueryBuilder query = boolQuery().must(matchQuery("audiences.type", "OPEN"));
         departments.forEach(s -> query.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
 
-        if(!areaOfWork.equals("NONE")) query.must(matchQuery("audiences.areasOfWork", areaOfWork));
-        if(!interest.equals("NONE")) query.must(matchQuery("audiences.interests", interest));
-        if(!grade.equals("NONE")) query.must(matchQuery("audiences.grades", grade));
+        query.must(matchQuery("audiences.areasOfWork", areaOfWork));
+        query.must(matchQuery("audiences.interests", interest));
+        query.must(matchQuery("audiences.grades", grade));
 
         return nestedQuery("audiences", query, ScoreMode.Avg);
     }
