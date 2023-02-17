@@ -37,6 +37,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
         Query searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(courseQuery)
+                .withFilter(getExcludedQuery(parameters))
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
@@ -89,6 +90,20 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         return courseQuery;
     }
 
+    private BoolQueryBuilder getExcludedQuery(GetCoursesParameters parameters){
+        BoolQueryBuilder courseQuery = boolQuery();
+
+        BoolQueryBuilder audiencesQuery = boolQuery();
+        parameters.getExcludeAreasOfWork().forEach(aow -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+        parameters.getExcludeInterests().forEach(interest -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+        parameters.getExcludeDepartments().forEach(department -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+
+        NestedQueryBuilder audiencesNestedQuery = nestedQuery("audiences", audiencesQuery, ScoreMode.Avg);
+        courseQuery.must(audiencesNestedQuery);
+
+        return courseQuery;
+    }
+
     private NestedQueryBuilder getAudienceNestedQuery(GetCoursesParameters parameters){
         BoolQueryBuilder audiencesQuery = boolQuery().must(matchQuery("audiences.type", "OPEN"));
         parameters.getDepartments().forEach(s -> audiencesQuery.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
@@ -96,9 +111,9 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         if(!parameters.getInterest().equals("NONE")) audiencesQuery.must(matchQuery("audiences.interests", parameters.getInterest()));
         if(!parameters.getGrade().equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", parameters.getGrade()));
 
-        parameters.getExcludeAreasOfWork().forEach(aow -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
-        parameters.getExcludeInterests().forEach(interest -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
-        parameters.getExcludeDepartments().forEach(department -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+        // parameters.getExcludeAreasOfWork().forEach(aow -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+        // parameters.getExcludeInterests().forEach(interest -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+        // parameters.getExcludeDepartments().forEach(department -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
 
         NestedQueryBuilder audiencesNestedQuery = nestedQuery("audiences", audiencesQuery, ScoreMode.Avg);
         return audiencesNestedQuery;
