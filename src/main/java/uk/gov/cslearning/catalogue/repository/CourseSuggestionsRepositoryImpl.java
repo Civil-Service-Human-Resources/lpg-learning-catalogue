@@ -37,7 +37,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
         Query searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(courseQuery)
-                .withFilter(getExcludedQuery(parameters))
+                .withQuery(getExcludedQuery(parameters))
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
