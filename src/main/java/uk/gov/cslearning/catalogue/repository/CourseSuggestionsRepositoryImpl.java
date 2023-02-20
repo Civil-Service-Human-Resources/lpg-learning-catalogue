@@ -104,11 +104,14 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     private NestedQueryBuilder getAudienceNestedQuery(GetCoursesParameters parameters){
         BoolQueryBuilder audiencesQuery = boolQuery().must(matchQuery("audiences.type", "OPEN"));
-        parameters.getDepartments().forEach(s -> audiencesQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+        if (!parameters.getDepartments().isEmpty()) {
+            BoolQueryBuilder departmentQuery = boolQuery();
+            parameters.getDepartments().forEach(s -> departmentQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+            audiencesQuery.must(departmentQuery);
+        }
         if(!parameters.getAreaOfWork().equals("NONE")) audiencesQuery.must(matchQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
         if(!parameters.getInterest().equals("NONE")) audiencesQuery.must(matchQuery("audiences.interests", parameters.getInterest()));
         if(!parameters.getGrade().equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", parameters.getGrade()));
-
 
         return nestedQuery("audiences", audiencesQuery, ScoreMode.Avg);
     }
