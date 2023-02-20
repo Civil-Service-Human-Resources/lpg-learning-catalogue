@@ -16,6 +16,7 @@ import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
 import uk.gov.cslearning.catalogue.Utils;
 import uk.gov.cslearning.catalogue.domain.Course;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -79,12 +80,36 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         return nestedQuery("audiences", query, ScoreMode.Avg);
     }
 
+    private List<NestedQueryBuilder> getAudienceExclusionQuery(GetCoursesParameters parameters) {
+
+        BoolQueryBuilder depsShouldQuery = boolQuery();
+        parameters.getExcludeDepartments().forEach(department -> depsShouldQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+        NestedQueryBuilder excludeDepsNested = nestedQuery("audiences", depsShouldQuery, ScoreMode.Avg);
+
+        BoolQueryBuilder aowShouldQuery = boolQuery();
+        parameters.getExcludeAreasOfWork().forEach(aow -> aowShouldQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+        NestedQueryBuilder excludeAowsNested = nestedQuery("audiences", aowShouldQuery, ScoreMode.Avg);
+
+        BoolQueryBuilder interestsShouldQuery = boolQuery();
+        parameters.getExcludeInterests().forEach(interest -> interestsShouldQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+        NestedQueryBuilder excludeInterestsNested = nestedQuery("audiences", interestsShouldQuery, ScoreMode.Avg);
+
+        return Arrays.asList(excludeDepsNested, excludeAowsNested, excludeInterestsNested);
+    }
+
     private BoolQueryBuilder getCourseQuery(GetCoursesParameters parameters){
         BoolQueryBuilder courseQuery = boolQuery();
         courseQuery.must(matchQuery("status", parameters.getStatus()));
 
         NestedQueryBuilder audiencesNestedQuery = getAudienceNestedQuery(parameters);
         courseQuery.must(audiencesNestedQuery);
+
+        List<NestedQueryBuilder> excludeQueries = getAudienceExclusionQuery(parameters);
+        excludeQueries.forEach(courseQuery::mustNot);
+
+//        parameters.getExcludeAreasOfWork().forEach(aow -> courseQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+//        parameters.getExcludeInterests().forEach(interest -> courseQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+//        parameters.getExcludeDepartments().forEach(department -> courseQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
 
         return courseQuery;
     }
@@ -96,11 +121,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
         if(!parameters.getInterest().equals("NONE")) audiencesQuery.must(matchQuery("audiences.interests", parameters.getInterest()));
         if(!parameters.getGrade().equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", parameters.getGrade()));
 
-        parameters.getExcludeAreasOfWork().forEach(aow -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
-        parameters.getExcludeInterests().forEach(interest -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
-        parameters.getExcludeDepartments().forEach(department -> audiencesQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
 
-        NestedQueryBuilder audiencesNestedQuery = nestedQuery("audiences", audiencesQuery, ScoreMode.Avg);
-        return audiencesNestedQuery;
+        return nestedQuery("audiences", audiencesQuery, ScoreMode.Avg);
     }
 }
