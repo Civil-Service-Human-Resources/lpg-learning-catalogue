@@ -70,7 +70,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     private NestedQueryBuilder getAudienceNestedQuery(List<String> departments, String areaOfWork, String interest, String grade){
         BoolQueryBuilder query = boolQuery().must(matchQuery("audiences.type", "OPEN"));
-        departments.forEach(s -> query.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+        departments.forEach(s -> query.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
 
         query.must(matchQuery("audiences.areasOfWork", areaOfWork));
         query.must(matchQuery("audiences.interests", interest));
@@ -91,7 +91,7 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     private NestedQueryBuilder getAudienceNestedQuery(GetCoursesParameters parameters){
         BoolQueryBuilder audiencesQuery = boolQuery().must(matchQuery("audiences.type", "OPEN"));
-        parameters.getDepartments().forEach(s -> audiencesQuery.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+        parameters.getDepartments().forEach(s -> audiencesQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
         if(!parameters.getAreaOfWork().equals("NONE")) audiencesQuery.must(matchQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
         if(!parameters.getInterest().equals("NONE")) audiencesQuery.must(matchQuery("audiences.interests", parameters.getInterest()));
         if(!parameters.getGrade().equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", parameters.getGrade()));
