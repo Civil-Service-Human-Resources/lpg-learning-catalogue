@@ -22,6 +22,6 @@ public class GetCoursesParameters {
     List<String> excludeDepartments = Collections.emptyList();
 
     public boolean hasExclusions() {
-        return excludeDepartments.isEmpty() || excludeInterests.isEmpty() || excludeAreasOfWork.isEmpty();
+        return !excludeDepartments.isEmpty() || !excludeInterests.isEmpty() || !excludeAreasOfWork.isEmpty();
     }
 }
