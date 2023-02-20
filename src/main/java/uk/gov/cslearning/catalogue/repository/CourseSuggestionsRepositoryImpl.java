@@ -12,11 +12,11 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
-import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
 import uk.gov.cslearning.catalogue.Utils;
+import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -82,19 +82,27 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     private List<NestedQueryBuilder> getAudienceExclusionQuery(GetCoursesParameters parameters) {
 
-        BoolQueryBuilder depsShouldQuery = boolQuery();
-        parameters.getExcludeDepartments().forEach(department -> depsShouldQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
-        NestedQueryBuilder excludeDepsNested = nestedQuery("audiences", depsShouldQuery, ScoreMode.Avg);
+        List<NestedQueryBuilder> excludeQueries = new ArrayList<>();
 
-        BoolQueryBuilder aowShouldQuery = boolQuery();
-        parameters.getExcludeAreasOfWork().forEach(aow -> aowShouldQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
-        NestedQueryBuilder excludeAowsNested = nestedQuery("audiences", aowShouldQuery, ScoreMode.Avg);
+        if (!parameters.getExcludeDepartments().isEmpty()) {
+            BoolQueryBuilder depsShouldQuery = boolQuery();
+            parameters.getExcludeDepartments().forEach(department -> depsShouldQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+            excludeQueries.add(nestedQuery("audiences", depsShouldQuery, ScoreMode.Avg));
+        }
 
-        BoolQueryBuilder interestsShouldQuery = boolQuery();
-        parameters.getExcludeInterests().forEach(interest -> interestsShouldQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
-        NestedQueryBuilder excludeInterestsNested = nestedQuery("audiences", interestsShouldQuery, ScoreMode.Avg);
+        if (!parameters.getExcludeAreasOfWork().isEmpty()) {
+            BoolQueryBuilder aowShouldQuery = boolQuery();
+            parameters.getExcludeAreasOfWork().forEach(aow -> aowShouldQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+            excludeQueries.add(nestedQuery("audiences", aowShouldQuery, ScoreMode.Avg));
+        }
 
-        return Arrays.asList(excludeDepsNested, excludeAowsNested, excludeInterestsNested);
+        if (!parameters.getExcludeInterests().isEmpty()) {
+            BoolQueryBuilder interestsShouldQuery = boolQuery();
+            parameters.getExcludeInterests().forEach(interest -> interestsShouldQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+            excludeQueries.add(nestedQuery("audiences", interestsShouldQuery, ScoreMode.Avg));
+        }
+
+        return excludeQueries;
     }
 
     private BoolQueryBuilder getCourseQuery(GetCoursesParameters parameters){
