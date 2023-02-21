@@ -12,8 +12,8 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
-import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
 import uk.gov.cslearning.catalogue.Utils;
+import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 
 import java.util.List;
@@ -32,29 +32,17 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     @Override
     public Page<Course> findSuggested(GetCoursesParameters parameters, Pageable pageable) {
-        BoolQueryBuilder boolQuery = boolQuery();
 
-        parameters.getDepartments().forEach(s -> boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
-        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
-        boolQuery.should(QueryBuilders.matchPhraseQuery("audiences.interests", parameters.getInterest()));
-
-        BoolQueryBuilder filterQuery = boolQuery();
-        filterQuery.must(QueryBuilders.matchQuery("audiences.grades", parameters.getGrade()));
-        filterQuery.must(QueryBuilders.matchQuery("status", parameters.getStatus()));
-        filterQuery.mustNot(QueryBuilders.matchQuery("audiences.type", "REQUIRED_LEARNING"));
-
-        parameters.getExcludeAreasOfWork().forEach(aow -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
-        parameters.getExcludeInterests().forEach(interest -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
-        parameters.getExcludeDepartments().forEach(department -> filterQuery.mustNot(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+        BoolQueryBuilder courseQuery = getCourseQuery(parameters);
 
         Query searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(boolQuery)
-                .withFilter(filterQuery)
+                .withQuery(courseQuery)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
 
         return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
+
     }
 
     @Override
@@ -82,12 +70,49 @@ public class CourseSuggestionsRepositoryImpl implements CourseSuggestionsReposit
 
     private NestedQueryBuilder getAudienceNestedQuery(List<String> departments, String areaOfWork, String interest, String grade){
         BoolQueryBuilder query = boolQuery().must(matchQuery("audiences.type", "OPEN"));
-        departments.forEach(s -> query.must(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+        departments.forEach(s -> query.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
 
-        if(!areaOfWork.equals("NONE")) query.must(matchQuery("audiences.areasOfWork", areaOfWork));
-        if(!interest.equals("NONE")) query.must(matchQuery("audiences.interests", interest));
-        if(!grade.equals("NONE")) query.must(matchQuery("audiences.grades", grade));
+        query.must(matchQuery("audiences.areasOfWork", areaOfWork));
+        query.must(matchQuery("audiences.interests", interest));
+        query.must(matchQuery("audiences.grades", grade));
 
         return nestedQuery("audiences", query, ScoreMode.Avg);
+    }
+
+    private NestedQueryBuilder getAudienceExclusionQuery(GetCoursesParameters parameters) {
+
+        BoolQueryBuilder nestedAudienceExclude = boolQuery();
+        parameters.getExcludeDepartments().forEach(department -> nestedAudienceExclude.should(QueryBuilders.matchPhraseQuery("audiences.departments", department)));
+        parameters.getExcludeAreasOfWork().forEach(aow -> nestedAudienceExclude.should(QueryBuilders.matchPhraseQuery("audiences.areasOfWork", aow)));
+        parameters.getExcludeInterests().forEach(interest -> nestedAudienceExclude.mustNot(QueryBuilders.matchPhraseQuery("audiences.interests", interest)));
+        return nestedQuery("audiences", nestedAudienceExclude, ScoreMode.Avg);
+    }
+
+    private BoolQueryBuilder getCourseQuery(GetCoursesParameters parameters){
+        BoolQueryBuilder courseQuery = boolQuery();
+        courseQuery.must(matchQuery("status", parameters.getStatus()));
+
+        NestedQueryBuilder audiencesNestedQuery = getAudienceNestedQuery(parameters);
+        courseQuery.must(audiencesNestedQuery);
+
+        if (parameters.hasExclusions()) {
+            courseQuery.mustNot(getAudienceExclusionQuery(parameters));
+        }
+
+        return courseQuery;
+    }
+
+    private NestedQueryBuilder getAudienceNestedQuery(GetCoursesParameters parameters){
+        BoolQueryBuilder audiencesQuery = boolQuery().must(matchQuery("audiences.type", "OPEN"));
+        if (!parameters.getDepartments().isEmpty()) {
+            BoolQueryBuilder departmentQuery = boolQuery();
+            parameters.getDepartments().forEach(s -> departmentQuery.should(QueryBuilders.matchPhraseQuery("audiences.departments", s)));
+            audiencesQuery.must(departmentQuery);
+        }
+        if(!parameters.getAreaOfWork().equals("NONE")) audiencesQuery.must(matchQuery("audiences.areasOfWork", parameters.getAreaOfWork()));
+        if(!parameters.getInterest().equals("NONE")) audiencesQuery.must(matchQuery("audiences.interests", parameters.getInterest()));
+        if(!parameters.getGrade().equals("NONE")) audiencesQuery.must(matchQuery("audiences.grades", parameters.getGrade()));
+
+        return nestedQuery("audiences", audiencesQuery, ScoreMode.Avg);
     }
 }
