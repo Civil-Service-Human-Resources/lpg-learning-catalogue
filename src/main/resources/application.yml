@@ -33,13 +33,21 @@ elasticsearch:
   password: ${ELASTICSEARCH_PASSWORD:changeme}
   readTimeout: ${ELASTICSEARCH_READ_TIMEOUT:10000}
 
+rustici:
+  url: ${RUSTICI_URL:http://csl.local/rustici/RusticiEngine/api/v2}
+  username: ${RUSTICI_USERNAME:apiuser}
+  password: ${RUSTICI_PASSWORD:password}
+  tenant: ${RUSTICI_TENANT:default}
+
 azure:
   account:
-    name: ${AZURE_ACCOUNT_NAME:lpgdev}
-    key: ${AZURE_ACCOUNT_KEY:changeme}
+    name: ${AZURE_ACCOUNT_NAME:devstoreaccount1}
+    key: ${AZURE_ACCOUNT_KEY:Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==}
   storage:
     container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
-    connection-string: "DefaultEndpointsProtocol=https;AccountName=${azure.account.name};AccountKey=${azure.account.key}"
+    rustici-container: ${AZURE_STORAGE_RUSTICI_CONTAINER:rustici}
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=${azure.account.name};AccountKey=${azure.account.key};${azure.storage.blob-endpoint}}
+  content-cdn: ${AZURE_CONTENT_CDN_ENDPOINT:http://csl.local/azurite/devstoreaccount1/${azure.storage.rustici-container}}
 
 management:
   endpoints:

@@ -1,49 +1,47 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
-import com.google.common.collect.ImmutableMap;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.xml.sax.SAXException;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.ProcessedFile;
-import uk.gov.cslearning.catalogue.dto.ProcessedFileFactory;
-import uk.gov.cslearning.catalogue.exception.FileUploadException;
-import uk.gov.cslearning.catalogue.service.upload.InputStreamFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
+import uk.gov.cslearning.catalogue.exception.FileProcessingException;
+import uk.gov.cslearning.catalogue.exception.InvalidScormException;
+import uk.gov.cslearning.catalogue.service.upload.UploadableFileFactory;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-@Component
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@Slf4j
 public class ScormFileProcessor implements FileProcessor {
-    private final InputStreamFactory inputStreamFactory;
-    private final Map<String, String> manifestXpaths;
-    private final XPathProcessor xPathProcessor;
-    private final ProcessedFileFactory processedFileFactory;
-    public ScormFileProcessor(InputStreamFactory inputStreamFactory, @Qualifier("scormManifestXpathMap") Map<String, String> manifestXpaths, XPathProcessor xPathProcessor, ProcessedFileFactory processedFileFactory) {
-        this.inputStreamFactory = inputStreamFactory;
-        this.manifestXpaths = manifestXpaths;
-        this.xPathProcessor = xPathProcessor;
-        this.processedFileFactory = processedFileFactory;
+
+    private final List<String> requiredFiles = Collections.singletonList("imsmanifest.xml");
+    private final UploadableFileFactory uploadableFileFactory;
+
+    public ScormFileProcessor(UploadableFileFactory uploadableFileFactory) {
+        this.uploadableFileFactory = uploadableFileFactory;
     }
-    @Override
-    public ProcessedFile process(FileUpload fileUpload) {
-        try (ZipInputStream inputStream = inputStreamFactory.createZipInputStream(fileUpload.getFile().getInputStream())){
-            Map<String, String> metadata = Collections.emptyMap();
-            ZipEntry zipEntry = inputStream.getNextEntry();
-            while (zipEntry != null) {
-                if (manifestXpaths.containsKey(zipEntry.getName())) {
-                    String startPage = xPathProcessor.evaluate(manifestXpaths.get(zipEntry.getName()), inputStream);
-                    metadata = ImmutableMap.of("startPage", startPage);
-                }
-                zipEntry = inputStream.getNextEntry();
-            }
-            return processedFileFactory.create(fileUpload, metadata);
-        } catch (IOException | ParserConfigurationException | SAXException | XPathExpressionException e) {
-            throw new FileUploadException(e);
+
+    private void validateMissingFiles(List<String> filenamesInZip) {
+        List<String> missingFiles = requiredFiles.stream().filter(rF -> !filenamesInZip.contains(rF)).collect(Collectors.toList());
+        if (!missingFiles.isEmpty()) {
+            throw new InvalidScormException(String.format("SCORM file is missing the following required files: %s", String.join(",", missingFiles)));
         }
+    }
+
+    @Override
+    public ProcessedFileUpload process(FileUpload fileUpload) throws FileProcessingException {
+        List<UploadableFile> uploadableFiles;
+        try {
+            uploadableFiles = uploadableFileFactory.createFromZip(fileUpload);
+            validateMissingFiles(uploadableFiles.stream().map(UploadableFile::getName).collect(Collectors.toList()));
+        } catch (IOException | InvalidScormException e) {
+            log.error(String.format("Error processing SCORM package: %s", fileUpload), e);
+            throw new FileProcessingException(e);
+        }
+        return new ProcessedFileUpload(fileUpload, uploadableFiles);
     }
 }

@@ -13,8 +13,13 @@ import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.dto.factory.CourseDtoFactory;
 import uk.gov.cslearning.catalogue.dto.factory.ModuleDtoFactory;
+import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.rustici.RusticiEngineService;
 import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
+import uk.gov.cslearning.catalogue.service.upload.FileUploadServiceFactory;
+import uk.gov.cslearning.catalogue.service.upload.ScormFileUploadService;
+import uk.gov.cslearning.catalogue.service.upload.UploadServiceType;
 
 import java.net.URI;
 import java.net.URL;
@@ -30,10 +35,16 @@ public class ModuleServiceTest {
     private CourseRepository courseRepository;
 
     @Mock
-    private FileUploadService fileUploadService;
+    private CourseService courseService;
+
+    @Mock
+    private FileUploadServiceFactory fileUploadServiceFactory;
 
     @Mock
     private ModuleDtoFactory moduleDtoFactory;
+
+    @Mock
+    private RusticiEngineService rusticiEngineService;
 
     @InjectMocks
     private ModuleService moduleService;
@@ -44,26 +55,27 @@ public class ModuleServiceTest {
         Module module = new LinkModule(new URI("http://localhost").toURL());
         Course course = new Course();
 
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(courseService.getCourseById(courseId)).thenReturn(course);
 
         assertEquals(module, moduleService.save(courseId, module));
         assertEquals(Collections.singletonList(module), course.getModules());
-        verify(courseRepository).save(course);
+        verify(courseService).save(course);
     }
 
     @Test
-    public void shouldThrowExceptionIfCourseNotFound() throws Exception {
+    public void shouldSaveElearningModuleToCourse() {
         String courseId = "course-id";
-        Module module = new LinkModule(new URI("http://localhost").toURL());
+        ELearningModule module = new ELearningModule("", "http://test");
+        module.setMediaId("media-id");
+        module.setId("module-id");
+        Course course = new Course();
 
-        when(courseRepository.findById(courseId)).thenReturn(Optional.empty());
+        when(courseService.getCourseById(courseId)).thenReturn(course);
 
-        try {
-            moduleService.save(courseId, module);
-            fail("Expected IllegalStateException");
-        } catch (IllegalStateException e) {
-            assertEquals("Unable to add module. Course does not exist: " + courseId, e.getMessage());
-        }
+        assertEquals(module, moduleService.save(courseId, module));
+        assertEquals(Collections.singletonList(module), course.getModules());
+        verify(courseService).save(course);
+        verify(rusticiEngineService).uploadElearningModule(courseId, "module-id", "media-id");
     }
 
     @Test
@@ -77,46 +89,12 @@ public class ModuleServiceTest {
         Course course = new Course();
         course.setModules(Arrays.asList(module1, module2, module3));
 
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(courseService.getCourseById(courseId)).thenReturn(course);
 
         Optional<Module> result = moduleService.find(courseId, module2.getId());
 
         assertTrue(result.isPresent());
         assertEquals(module2, result.get());
-    }
-
-    @Test
-    public void shouldReturnEmptyOptional() throws Exception {
-        String courseId = "course-id";
-        String moduleId = "module-id";
-
-        Module module1 = new LinkModule(new URI("http://module1").toURL());
-        Module module2 = new LinkModule(new URI("http://module2").toURL());
-        Module module3 = new LinkModule(new URI("http://module3").toURL());
-
-        Course course = new Course();
-        course.setModules(Arrays.asList(module1, module2, module3));
-
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-
-        Optional<Module> result = moduleService.find(courseId, moduleId);
-
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    public void shouldThrowExceptionIfCourseForModuleNotFound() {
-        String courseId = "course-id";
-        String moduleId = "module-id";
-
-        when(courseRepository.findById(courseId)).thenReturn(Optional.empty());
-
-        try {
-            moduleService.find(courseId, moduleId);
-            fail("Expected IllegalStateException");
-        } catch (IllegalStateException e) {
-            assertEquals(String.format("Unable to find module: %s. Course does not exist: %s", moduleId, courseId), e.getMessage());
-        }
     }
 
     @Test
@@ -135,9 +113,9 @@ public class ModuleServiceTest {
         Module newModule = new LinkModule(new URL(url));
         newModule.setId(moduleId);
         newModule.setTitle(updatedTitle);
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(courseService.getCourseById(courseId)).thenReturn(course);
         moduleService.updateModule(courseId, newModule);
-        assertEquals(course.getModuleById(moduleId).getTitle(), updatedTitle);
+        assertEquals(course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::resourceNotFoundException).getTitle(), updatedTitle);
     }
 
     @Test
@@ -147,18 +125,22 @@ public class ModuleServiceTest {
         String url = "test/path/to/file.pdf";
         String newUrl = "test/path/to/file2.pdf";
         Course course = new Course();
-        Module module = new FileModule(url, (long) 1024);
+        FileModule module = new FileModule(url, (long) 1024);
         module.setId(moduleId);
-        ((FileModule) module).setMediaId("media-id");
+        module.setMediaId("media-id");
         List<Module> modules = new ArrayList<>();
         modules.add(module);
         course.setModules(modules);
-        Module newModule = new FileModule(newUrl, (long) 1024);
+        FileModule newModule = new FileModule(newUrl, (long) 1024);
         newModule.setId(moduleId);
-        ((FileModule) newModule).setMediaId("new-media-id");
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        newModule.setMediaId("new-media-id");
+
+        FileUploadService fileUploadService = mock(FileUploadService.class);
+
+        when(courseService.getCourseById(courseId)).thenReturn(course);
+        when(fileUploadServiceFactory.getFileUploadService(UploadServiceType.FILE)).thenReturn(fileUploadService);
         moduleService.updateModule(courseId, newModule);
-        assertEquals(((FileModule) course.getModuleById(moduleId)).getUrl(), newUrl);
+        assertEquals(((FileModule) course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::resourceNotFoundException)).getUrl(), newUrl);
         verify(fileUploadService, timeout(2000)).delete(url);
     }
 
@@ -173,9 +155,9 @@ public class ModuleServiceTest {
         List<Module> modules = new ArrayList<>();
         modules.add(module);
         course.setModules(modules);
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(courseService.getCourseById(courseId)).thenReturn(course);
         moduleService.deleteModule(courseId, moduleId);
-        assertTrue(course.getModules().size() == 0);
+        assertEquals(0, course.getModules().size());
     }
 
     @Test
@@ -189,10 +171,36 @@ public class ModuleServiceTest {
         List<Module> modules = new ArrayList<>();
         modules.add(module);
         course.setModules(modules);
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+
+        FileUploadService fileUploadService = mock(FileUploadService.class);
+        when(fileUploadServiceFactory.getFileUploadService(UploadServiceType.FILE)).thenReturn(fileUploadService);
+        when(courseService.getCourseById(courseId)).thenReturn(course);
         moduleService.deleteModule(courseId, moduleId);
-        assertTrue(course.getModules().size() == 0);
+        assertEquals(0, course.getModules().size());
         verify(fileUploadService, timeout(2000)).delete(url);
+    }
+
+    @Test
+    public void shouldDeleteElearningModuleAndFile() throws Exception {
+        String moduleId = "moduleId";
+        String mediaId = "mediaId";
+        String courseId = "courseId";
+        String url = "test/path/to/file.pdf";
+        Course course = new Course();
+        ELearningModule module = new ELearningModule("", url);
+        module.setMediaId(mediaId);
+        module.setId(moduleId);
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+
+        ScormFileUploadService fileUploadService = mock(ScormFileUploadService.class);
+        when(fileUploadServiceFactory.getFileUploadService(UploadServiceType.SCORM)).thenReturn(fileUploadService);
+        when(courseService.getCourseById(courseId)).thenReturn(course);
+        moduleService.deleteModule(courseId, moduleId);
+        assertEquals(0, course.getModules().size());
+        verify(fileUploadService, timeout(2000)).deleteDirectory(url);
+        verify(rusticiEngineService).deleteElearningModule(courseId, moduleId);
     }
 
     @Test

@@ -1,14 +1,12 @@
 package uk.gov.cslearning.catalogue.service.upload.client;
 
-import uk.gov.cslearning.catalogue.dto.UploadedFile;
+import org.springframework.stereotype.Component;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
+import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
-import java.io.InputStream;
-
+@Component
 public interface UploadClient {
-
-    UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes);
-
-    UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes, String contentType);
+    UploadedFile upload(UploadableFile file);
 
     void delete(String filePath);
 

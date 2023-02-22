@@ -3,161 +3,85 @@ package uk.gov.cslearning.catalogue.service.upload.client;
 import com.microsoft.azure.storage.ResultSegment;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.*;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import uk.gov.cslearning.catalogue.dto.UploadedFile;
+import uk.gov.cslearning.catalogue.dto.upload.UploadStatus;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
+import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.doThrow;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CloudBlobClient.class, CloudBlobContainer.class, CloudBlockBlob.class, BlobProperties.class, CloudBlobDirectory.class})
+@PrepareForTest({CloudBlobContainer.class, CloudBlockBlob.class, BlobProperties.class, CloudBlobDirectory.class})
 public class AzureUploadClientTest {
 
-    private final String storageContainerName = "storage-container-name";
-    private final CloudBlobClient cloudBlobClient = PowerMockito.mock(CloudBlobClient.class);
+    private CloudBlobContainer container = PowerMockito.mock(CloudBlobContainer.class);
+    private CloudBlockBlob blob = PowerMockito.mock(CloudBlockBlob.class);
+    private BlobProperties blobProperties = PowerMockito.mock(BlobProperties.class);
     private AzureUploadClient azureUploadClient;
-    private UploadedFileFactory uploadedFileFactory = PowerMockito.mock(UploadedFileFactory.class);
 
-    @Before
-    public void setUp() {
-        azureUploadClient = new AzureUploadClient(cloudBlobClient, storageContainerName, uploadedFileFactory);
+    private final String filePath = "test-file-path/text.txt";
+    private final String contentType = "application/octet-stream";
+    private final int fileSize = 2048;
+
+    private UploadableFile generateFileUpload() {
+        UploadableFile uploadableFile = mock(UploadableFile.class);
+        when(uploadableFile.getFullPath()).thenReturn(filePath);
+        when(uploadableFile.getContentType()).thenReturn(contentType);
+        when(uploadableFile.getBytes()).thenReturn(new byte[fileSize]);
+        return uploadableFile;
     }
 
     @Test
     public void uploadShouldUploadAndReturnUploadedFile() throws Exception {
-        String contentType = "application/octet-stream";
-        String filePath = "test-file-path";
-        long fileSize = 99;
-        InputStream inputStream = mock(InputStream.class);
 
-        CloudBlobContainer container = PowerMockito.mock(CloudBlobContainer.class);
-        CloudBlockBlob blob = PowerMockito.mock(CloudBlockBlob.class);
-        BlobProperties blobProperties = PowerMockito.mock(BlobProperties.class);
+        UploadableFile uploadableFile = generateFileUpload();
 
-        PowerMockito.when(cloudBlobClient.getContainerReference(storageContainerName)).thenReturn(container);
-        PowerMockito.when(container.getBlockBlobReference(filePath)).thenReturn(blob);
-        PowerMockito.when(blob.getProperties()).thenReturn(blobProperties);
+        when(container.getBlockBlobReference(filePath)).thenReturn(blob);
+        when(blob.getProperties()).thenReturn(blobProperties);
 
-        UploadedFile uploadedFile = mock(UploadedFile.class);
-        PowerMockito.when(uploadedFileFactory.successulUploadedFile(filePath, fileSize)).thenReturn(uploadedFile);
+        UploadedFile result = new AzureUploadClient(container).upload(uploadableFile);
 
-        UploadedFile result = azureUploadClient.upload(inputStream, filePath, fileSize);
-
-        assertEquals(uploadedFile, result);
-
-        verify(blob).upload(inputStream, fileSize);
-        verify(uploadedFileFactory).successulUploadedFile(filePath, fileSize);
-        verify(blobProperties).setContentType(contentType);
-    }
-
-    @Test
-    public void uploadShouldSetContentType() throws Exception {
-        String contentType = "application/mp4";
-        String filePath = "test-file-path";
-        long fileSize = 99;
-        InputStream inputStream = mock(InputStream.class);
-
-        CloudBlobContainer container = PowerMockito.mock(CloudBlobContainer.class);
-        CloudBlockBlob blob = PowerMockito.mock(CloudBlockBlob.class);
-        BlobProperties blobProperties = PowerMockito.mock(BlobProperties.class);
-
-        PowerMockito.when(cloudBlobClient.getContainerReference(storageContainerName)).thenReturn(container);
-        PowerMockito.when(container.getBlockBlobReference(filePath)).thenReturn(blob);
-        PowerMockito.when(blob.getProperties()).thenReturn(blobProperties);
-
-        azureUploadClient.upload(inputStream, filePath, fileSize, contentType);
+        assertEquals(result.getSizeKB(), 2);
+        assertEquals(result.getPath(), filePath);
+        assertEquals(result.getStatus(), UploadStatus.SUCCESS);
+        assertNull(result.getException());
 
         verify(blobProperties).setContentType(contentType);
     }
 
-
     @Test
-    public void shouldThrowFileUploadExceptionOnStorageException() throws URISyntaxException, StorageException {
-        String filePath = "test-file-path";
-        long fileSize = 99;
-        InputStream inputStream = mock(InputStream.class);
+    public void shouldAddURISyntaxExceptionToUploadedFile() throws URISyntaxException, StorageException, IOException {
 
-        StorageException exception = mock(StorageException.class);
-
-        doThrow(exception).when(cloudBlobClient).getContainerReference(storageContainerName);
-
-        UploadedFile uploadedFile = mock(UploadedFile.class);
-        PowerMockito.when(uploadedFileFactory.failedUploadedFile(filePath, fileSize, exception)).thenReturn(uploadedFile);
-
-        UploadedFile result = azureUploadClient.upload(inputStream, filePath, fileSize);
-        assertEquals(uploadedFile, result);
-
-        verify(uploadedFileFactory).failedUploadedFile(filePath, fileSize, exception);
-    }
-
-    @Test
-    public void shouldAddURISyntaxExceptionToUploadedFile() throws URISyntaxException, StorageException {
-        String filePath = "test-file-path";
-        long fileSize = 99;
-        InputStream inputStream = mock(InputStream.class);
-
+        UploadableFile uploadableFile = generateFileUpload();
         URISyntaxException exception = mock(URISyntaxException.class);
 
-        doThrow(exception).when(cloudBlobClient).getContainerReference(storageContainerName);
+        doThrow(exception).when(container).getBlockBlobReference(filePath);
 
-        UploadedFile uploadedFile = mock(UploadedFile.class);
-        PowerMockito.when(uploadedFileFactory.failedUploadedFile(filePath, fileSize, exception)).thenReturn(uploadedFile);
+        UploadedFile result = new AzureUploadClient(container).upload(uploadableFile);
 
-        UploadedFile result = azureUploadClient.upload(inputStream, filePath, fileSize);
-        assertEquals(uploadedFile, result);
-
-        verify(uploadedFileFactory).failedUploadedFile(filePath, fileSize, exception);
-    }
-
-    @Test
-    public void shouldThrowFileUploadExceptionOnIOException() throws URISyntaxException, StorageException, IOException {
-        String filePath = "test-file-path";
-        long fileSize = 99;
-        InputStream inputStream = mock(InputStream.class);
-
-        CloudBlobContainer container = PowerMockito.mock(CloudBlobContainer.class);
-        CloudBlockBlob blob = PowerMockito.mock(CloudBlockBlob.class);
-        BlobProperties blobProperties = PowerMockito.mock(BlobProperties.class);
-
-        PowerMockito.when(cloudBlobClient.getContainerReference(storageContainerName)).thenReturn(container);
-        PowerMockito.when(container.getBlockBlobReference(filePath)).thenReturn(blob);
-        PowerMockito.when(blob.getProperties()).thenReturn(blobProperties);
-
-        IOException exception = mock(IOException.class);
-
-        doThrow(exception).when(blob).upload(inputStream, fileSize);
-
-        UploadedFile uploadedFile = mock(UploadedFile.class);
-        PowerMockito.when(uploadedFileFactory.failedUploadedFile(filePath, fileSize, exception)).thenReturn(uploadedFile);
-
-        UploadedFile result = azureUploadClient.upload(inputStream, filePath, fileSize);
-        assertEquals(uploadedFile, result);
-
-        verify(uploadedFileFactory).failedUploadedFile(filePath, fileSize, exception);
+        assertEquals(result.getSizeKB(), 2);
+        assertEquals(result.getPath(), filePath);
+        assertEquals(result.getStatus(), UploadStatus.FAIL);
+        assertEquals(result.getException(), exception);
     }
 
     @Test
     public void shouldDeleteBlob() throws StorageException, URISyntaxException {
-        String filePath = "path/to/file.pdf";
-        CloudBlobContainer container = PowerMockito.mock(CloudBlobContainer.class);
-        CloudBlockBlob blob = PowerMockito.mock(CloudBlockBlob.class);
-        PowerMockito.when(cloudBlobClient.getContainerReference(storageContainerName)).thenReturn(container);
-        PowerMockito.when(container.getBlockBlobReference(filePath)).thenReturn(blob);
-        PowerMockito.when(blob.deleteIfExists()).thenReturn(true);
-        azureUploadClient.delete(filePath);
-        verify(cloudBlobClient).getContainerReference(storageContainerName);
+        when(container.getBlockBlobReference(filePath)).thenReturn(blob);
+        when(blob.deleteIfExists()).thenReturn(true);
+        new AzureUploadClient(container).delete(filePath);
         verify(container).getBlockBlobReference(filePath);
         verify(blob).deleteIfExists();
     }
@@ -176,7 +100,6 @@ public class AzureUploadClientTest {
         directoryContents.add(subDirectory);
         ArrayList<ListBlobItem> subDirectoryContents = new ArrayList<>();
         subDirectoryContents.add(blob);
-        PowerMockito.when(cloudBlobClient.getContainerReference(storageContainerName)).thenReturn(container);
         PowerMockito.when(container.getDirectoryReference(dirPath)).thenReturn(directory);
         PowerMockito.when(container.getDirectoryReference(subPath)).thenReturn(subDirectory);
         PowerMockito.when(directory.listBlobsSegmented()).thenReturn(resultSegment);
@@ -184,7 +107,7 @@ public class AzureUploadClientTest {
         PowerMockito.when(resultSegment.getResults()).thenReturn(directoryContents).thenReturn(subDirectoryContents);
         PowerMockito.when(blob.deleteIfExists()).thenReturn(true);
         PowerMockito.when(subDirectory.getUri()).thenReturn(new URI(subPath));
-        azureUploadClient.deleteDirectory(dirPath);
+        new AzureUploadClient(container).deleteDirectory(dirPath);
         verify(blob, times(2)).deleteIfExists();
     }
 }

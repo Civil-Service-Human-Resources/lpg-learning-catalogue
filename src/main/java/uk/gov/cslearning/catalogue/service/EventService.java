@@ -9,6 +9,7 @@ import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.dto.EventDto;
+import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 
@@ -22,19 +23,25 @@ public class EventService {
     private final LearnerRecordService learnerRecordService;
     private final EventDtoMapService eventDtoMapService;
 
-    public EventService(CourseRepository courseRepository, LearnerRecordService learnerRecordService, EventDtoMapService eventDtoMapService) {
+    public EventService(CourseRepository courseRepository, LearnerRecordService learnerRecordService,
+                        EventDtoMapService eventDtoMapService) {
         this.courseRepository = courseRepository;
         this.learnerRecordService = learnerRecordService;
         this.eventDtoMapService = eventDtoMapService;
     }
 
-    public Event save(String courseId, String moduleId, Event event) {
-        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
+    private Course getCourseById(String courseId) {
+        return courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
             throw new IllegalStateException(
-                    String.format("Unable to add event. Course does not exist: %s", courseId));
+                    String.format("Unable to find course. Course does not exist: %s", courseId));
         });
+    }
 
-        FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
+    public Event save(String courseId, String moduleId, Event event) {
+        Course course = getCourseById(courseId);
+
+        FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId)
+                .orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
         if (module == null) {
             throw new IllegalStateException(
@@ -58,12 +65,10 @@ public class EventService {
     }
 
     public Optional<Event> find(String courseId, String moduleId, String eventId) {
-        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
-            throw new IllegalStateException(
-                    String.format("Unable to find event: %s. Course does not exist: %s", eventId, courseId));
-        });
+        Course course = getCourseById(courseId);
 
-        FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId);
+        FaceToFaceModule module = (FaceToFaceModule) course.getModuleById(moduleId)
+                .orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
         if (module == null) {
             throw new IllegalStateException(
