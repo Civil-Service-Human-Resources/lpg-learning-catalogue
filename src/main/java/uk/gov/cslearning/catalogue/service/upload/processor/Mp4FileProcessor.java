@@ -1,30 +1,38 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
 import org.springframework.stereotype.Component;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.ProcessedFile;
-import uk.gov.cslearning.catalogue.dto.ProcessedFileFactory;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
+import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
+import uk.gov.cslearning.catalogue.service.upload.UploadableFileFactory;
+import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataParser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 
 @Component
 public class Mp4FileProcessor implements FileProcessor {
-    private final ProcessedFileFactory processedFileFactory;
     private final MetadataParser metadataParser;
+    private final UploadableFileFactory uploadableFileFactory;
 
-    public Mp4FileProcessor(ProcessedFileFactory processedFileFactory, MetadataParser metadataParser) {
-        this.processedFileFactory = processedFileFactory;
+    public Mp4FileProcessor(MetadataParser metadataParser,
+                            UploadableFileFactory uploadableFileFactory) {
         this.metadataParser = metadataParser;
+        this.uploadableFileFactory = uploadableFileFactory;
     }
 
     @Override
-    public ProcessedFile process(FileUpload fileUpload) {
+    public ProcessedFileUpload process(FileUpload fileUpload) {
         try (InputStream inputStream = fileUpload.getFile().getInputStream()) {
-            return processedFileFactory.create(fileUpload, metadataParser.parse(inputStream));
+            UploadableFile uploadableFile = uploadableFileFactory.createFromFileUpload(fileUpload);
+            Map<String, String> metadata = metadataParser.parse(inputStream);
+            return new ProcessedFileUpload(fileUpload, Collections.singletonList(uploadableFile), metadata);
         } catch (IOException e) {
             throw new FileUploadException(e);
         }
+
     }
 }

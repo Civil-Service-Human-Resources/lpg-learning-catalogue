@@ -1,74 +1,61 @@
 package uk.gov.cslearning.catalogue.service.upload.client;
 
 import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import uk.gov.cslearning.catalogue.dto.UploadedFile;
+import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlobDirectory;
+import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.microsoft.azure.storage.blob.ListBlobItem;
+import lombok.extern.slf4j.Slf4j;
+import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
+import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-@Component
+@Slf4j
 public class AzureUploadClient implements UploadClient {
-    private static final Logger LOG = LoggerFactory.getLogger(AzureUploadClient.class);
-    private final CloudBlobClient azureClient;
-    private final String storageContainerName;
-    private final UploadedFileFactory uploadedFileFactory;
+    private final CloudBlobContainer container;
 
-    public AzureUploadClient(CloudBlobClient azureClient,
-                             @Value("${azure.storage.container}") String storageContainerName,
-                             UploadedFileFactory uploadedFileFactory) {
-        this.azureClient = azureClient;
-        this.storageContainerName = storageContainerName;
-        this.uploadedFileFactory = uploadedFileFactory;
+    public AzureUploadClient(CloudBlobContainer container) {
+        this.container = container;
     }
 
     @Override
-    public UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes) {
-        return upload(inputStream, filePath, fileSizeBytes, "application/octet-stream");
-    }
-
-    @Override
-    public UploadedFile upload(InputStream inputStream, String filePath, long fileSizeBytes, String contentType) {
-
-        try {
-            CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
-            container.createIfNotExists();
-
+    public UploadedFile upload(UploadableFile file) {
+        log.debug(String.format("Uploading file %s", file.getFullPath()));
+        String filePath = file.getFullPath();
+        int fileSizeBytes = file.getBytes().length;
+        long fileSizeInKB = fileSizeBytes / 1024;
+        try(InputStream byteInputStream = new ByteArrayInputStream(file.getBytes())) {
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
-            blob.getProperties().setContentType(contentType);
-            blob.upload(inputStream, fileSizeBytes);
-
-            return uploadedFileFactory.successulUploadedFile(filePath, fileSizeBytes);
+            blob.getProperties().setContentType(file.getContentType());
+            blob.upload(byteInputStream, fileSizeBytes);
+            return UploadedFile.createSuccessfulUploadedFile(fileSizeInKB, filePath);
         } catch (StorageException | URISyntaxException | IOException e) {
-            LOG.error("Unable to upload file", e);
-            return uploadedFileFactory.failedUploadedFile(filePath, fileSizeBytes, e);
+            log.error(String.format("Encountered error uploading file: %s", e));
+            return UploadedFile.createFailedUploadedFile(fileSizeBytes / 1024, filePath, e);
         }
     }
 
     @Override
     public void delete(String filePath) {
         try {
-            CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.deleteIfExists();
         } catch (StorageException | URISyntaxException e) {
-            LOG.error("Unable to delete file", e);
+            log.error("Unable to delete file", e);
         }
     }
 
     @Override
     public void deleteDirectory(String filePath) {
         try {
-            CloudBlobContainer container = azureClient.getContainerReference(storageContainerName);
             CloudBlobDirectory directory = container.getDirectoryReference(filePath);
             for (ListBlobItem blob : directory.listBlobsSegmented().getResults()) {
                 if (blob instanceof CloudBlobDirectory) {
-                    String items[] = blob.getUri().getPath().split("/");
+                    String[] items = blob.getUri().getPath().split("/");
                     String path = filePath + "/" + items[items.length - 1];
                     deleteDirectory(path);
                 } else {
@@ -76,7 +63,7 @@ public class AzureUploadClient implements UploadClient {
                 }
             }
         } catch (StorageException | URISyntaxException e) {
-            LOG.error("Unable to delete folder", e);
+            log.error("Unable to delete folder", e);
         }
     }
 }
