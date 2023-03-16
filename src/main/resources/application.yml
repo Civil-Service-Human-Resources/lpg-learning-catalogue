@@ -34,6 +34,7 @@ elasticsearch:
   readTimeout: ${ELASTICSEARCH_READ_TIMEOUT:10000}
 
 rustici:
+  e-learning-manifests: ${ELEARNING_MANIFESTS:"imsmanifest.xml, tincan.xml"}
   url: ${RUSTICI_URL:http://csl.local/rustici/RusticiEngine/api/v2}
   username: ${RUSTICI_USERNAME:apiuser}
   password: ${RUSTICI_PASSWORD:password}
@@ -45,9 +46,9 @@ azure:
     key: ${AZURE_ACCOUNT_KEY:Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==}
   storage:
     container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
-    rustici-container: ${AZURE_STORAGE_RUSTICI_CONTAINER:rustici}
+    scorm-container: ${AZURE_STORAGE_SCORM_CONTAINER:rustici}
     connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=${azure.account.name};AccountKey=${azure.account.key};${azure.storage.blob-endpoint}}
-  content-cdn: ${AZURE_CONTENT_CDN_ENDPOINT:http://csl.local/azurite/devstoreaccount1/${azure.storage.rustici-container}}
+  scorm-cdn: ${SCORM_CDN_ENDPOINT:http://csl.local/azurite/devstoreaccount1/${azure.storage.scorm-container}}
 
 management:
   endpoints:

@@ -14,13 +14,15 @@ import uk.gov.cslearning.catalogue.service.upload.client.AzureUploadClient;
 import uk.gov.cslearning.catalogue.service.upload.client.UploadClient;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @Slf4j
 public class UploadConfig {
 
     @Bean(name = "learning_material")
-    public UploadClient scormAzureUploadClient(CloudBlobClient client, @Value("${azure.storage.rustici-container}") String containerName) {
+    public UploadClient scormAzureUploadClient(CloudBlobClient client, @Value("${azure.storage.scorm-container}") String containerName) {
         CloudBlobContainer container = createBlobContainer(client, containerName);
         return new AzureUploadClient(container);
     }
@@ -51,6 +53,11 @@ public class UploadConfig {
     @Bean
     public Tika tika() {
         return new Tika();
+    }
+
+    @Bean(name = "elearning_manifest_list")
+    public List<String> getElearningManifests(@Value("rustici.e-learning-manifests") String eLearningManifestsCsv) {
+        return Arrays.asList(eLearningManifestsCsv.split(","));
     }
 
 }

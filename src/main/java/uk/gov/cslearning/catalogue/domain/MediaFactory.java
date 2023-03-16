@@ -6,8 +6,6 @@ import uk.gov.cslearning.catalogue.dto.upload.Upload;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class MediaFactory {
@@ -27,9 +25,7 @@ public class MediaFactory {
         }
         media.setPath(path);
         media.setFileSizeKB(upload.getSizeKB());
-        Map<String, Object> convertedMap = processedFileUpload.getMetadata()
-                .entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        media.setMetadata(convertedMap);
+        media.setMetadata(processedFileUpload.getMetadata());
 
         return media;
 

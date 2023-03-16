@@ -19,8 +19,9 @@ public class CSLToRusticiDataServiceTest {
     public void testGetCreateCourseData() {
         String testMediaId = "testMediaID";
         String testCourseID = "testCourseID";
-        CreateCourse createCourse = cslToRusticiDataService.getCreateCourseData(testCourseID, testMediaId);
-        assertEquals("test.com/testCourseID/testMediaID/imsmanifest.xml", createCourse.getReferenceRequest().getUrl());
+        String testManifestFile = "testManifest.xml";
+        CreateCourse createCourse = cslToRusticiDataService.getCreateCourseData(testCourseID, testMediaId, testManifestFile);
+        assertEquals("test.com/testCourseID/testMediaID/testManifest.xml", createCourse.getReferenceRequest().getUrl());
         assertEquals("test.com/testCourseID/testMediaID", createCourse.getReferenceRequest().getWebPathToCourse());
     }
 

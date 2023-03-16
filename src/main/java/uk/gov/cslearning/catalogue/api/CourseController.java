@@ -395,7 +395,7 @@ public class CourseController {
     @PostMapping("/{courseId}/modules")
     @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_CREATE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity<Void> createModule(@PathVariable String courseId, @RequestBody Module module, UriComponentsBuilder builder) {
-        LOGGER.debug("Adding module to course with ID {}", courseId);
+        LOGGER.info("Adding module to course with ID {}", courseId);
 
         Module saved = moduleService.save(courseId, module);
 

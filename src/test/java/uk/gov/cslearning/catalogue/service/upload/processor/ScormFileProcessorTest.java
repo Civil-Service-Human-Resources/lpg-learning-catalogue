@@ -1,10 +1,11 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import uk.gov.cslearning.catalogue.domain.CustomMediaMetadata;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
@@ -13,6 +14,7 @@ import uk.gov.cslearning.catalogue.service.upload.UploadableFileFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -24,9 +26,13 @@ public class ScormFileProcessorTest {
 
     @Mock
     private UploadableFileFactory uploadableFileFactory;
-
-    @InjectMocks
+    private final List<String> validManifestFiles = Arrays.asList("imsmanifest.xml", "testmanifest.xml");
     private ScormFileProcessor scormFileProcessor;
+
+    @Before
+    public void before() {
+        this.scormFileProcessor = new ScormFileProcessor(uploadableFileFactory, validManifestFiles);
+    }
 
     private UploadableFile generateMockUploadableFile(String filename) {
         UploadableFile uploadableFile = mock(UploadableFile.class);
@@ -43,6 +49,7 @@ public class ScormFileProcessorTest {
         FileUpload fileUpload = mock(FileUpload.class);
         when(uploadableFileFactory.createFromZip(fileUpload)).thenReturn(uploadableFiles);
         ProcessedFileUpload processedFileUpload = scormFileProcessor.process(fileUpload);
+        assertEquals("File has incorrect manifest", "imsmanifest.xml", processedFileUpload.getMetadata().get(CustomMediaMetadata.ELEARNING_MANIFEST.getMetadataKey()));
         assertEquals("File upload was not stored correctly", fileUpload, processedFileUpload.getFileUpload());
         assertEquals("Incorrect number of uploadableFiles", 3, processedFileUpload.getUploadableFiles().size());
     }

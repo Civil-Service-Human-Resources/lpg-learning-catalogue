@@ -11,9 +11,9 @@ public class CSLToRusticiDataService {
         this.cdnEndpoint = cdnEndpoint;
     }
 
-    public CreateCourse getCreateCourseData(String courseId, String mediaId) {
+    public CreateCourse getCreateCourseData(String courseId, String mediaId, String manifestFile) {
         String ELearningCdnLocation = getRusticiCourseCdnLocation(courseId, mediaId);
-        String imsManifestUrl = String.format("%s/imsmanifest.xml", ELearningCdnLocation);
+        String imsManifestUrl = String.format("%s/%s", ELearningCdnLocation, manifestFile);
         return CreateCourse.createFromData(
                 ELearningCdnLocation,
                 imsManifestUrl);
