@@ -1,8 +1,8 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.CustomMediaMetadata;
@@ -26,13 +26,10 @@ public class ScormFileProcessorTest {
 
     @Mock
     private UploadableFileFactory uploadableFileFactory;
-    private final List<String> validManifestFiles = Arrays.asList("imsmanifest.xml", "testmanifest.xml");
+    @Mock
+    private ELearningManifestService eLearningManifestService;
+    @InjectMocks
     private ScormFileProcessor scormFileProcessor;
-
-    @Before
-    public void before() {
-        this.scormFileProcessor = new ScormFileProcessor(uploadableFileFactory, validManifestFiles);
-    }
 
     private UploadableFile generateMockUploadableFile(String filename) {
         UploadableFile uploadableFile = mock(UploadableFile.class);
@@ -48,6 +45,9 @@ public class ScormFileProcessorTest {
         uploadableFiles.add(generateMockUploadableFile("imsmanifest.xml"));
         FileUpload fileUpload = mock(FileUpload.class);
         when(uploadableFileFactory.createFromZip(fileUpload)).thenReturn(uploadableFiles);
+        when(eLearningManifestService.fetchManifestFromFileList(Arrays.asList("TestFile.txt",
+                "TestFile.txt",
+                "imsmanifest.xml"))).thenReturn("imsmanifest.xml");
         ProcessedFileUpload processedFileUpload = scormFileProcessor.process(fileUpload);
         assertEquals("File has incorrect manifest", "imsmanifest.xml", processedFileUpload.getMetadata().get(CustomMediaMetadata.ELEARNING_MANIFEST.getMetadataKey()));
         assertEquals("File upload was not stored correctly", fileUpload, processedFileUpload.getFileUpload());
@@ -62,6 +62,9 @@ public class ScormFileProcessorTest {
         uploadableFiles.add(generateMockUploadableFile("TestFile.txt"));
         FileUpload fileUpload = mock(FileUpload.class);
         when(uploadableFileFactory.createFromZip(fileUpload)).thenReturn(uploadableFiles);
+        when(eLearningManifestService.fetchManifestFromFileList(Arrays.asList("TestFile.txt",
+                "TestFile.txt",
+                "TestFile.txt"))).thenReturn(null);
         scormFileProcessor.process(fileUpload);
     }
 }

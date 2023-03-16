@@ -1,7 +1,6 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.CustomMediaMetadata;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
@@ -20,25 +19,21 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ScormFileProcessor implements FileProcessor {
-
-    private final List<String> validManifests;
+    private final ELearningManifestService eLearningManifestService;
     private final UploadableFileFactory uploadableFileFactory;
 
     public ScormFileProcessor(UploadableFileFactory uploadableFileFactory,
-                              @Qualifier("elearning_manifest_list") List<String> validManifests) {
+                              ELearningManifestService eLearningManifestService) {
         this.uploadableFileFactory = uploadableFileFactory;
-        this.validManifests = validManifests;
+        this.eLearningManifestService = eLearningManifestService;
     }
 
     private String fetchManifest(List<String> filenamesInZip) {
-        List<String> manifests = validManifests.stream().filter(filenamesInZip::contains).collect(Collectors.toList());
-        if (manifests.isEmpty()) {
-            throw new InvalidScormException(String.format("SCORM file is missing a manifest. Possible manifests are: %s", String.join(",", validManifests)));
+        String manifest = eLearningManifestService.fetchManifestFromFileList(filenamesInZip);
+        if (manifest == null) {
+            throw new InvalidScormException("ELearning package does not contain a valid manifest");
         }
-        if (manifests.size() > 1) {
-            throw new InvalidScormException(String.format("SCORM file has more than one valid manifest. Possible manifests are: %s", String.join(",", validManifests)));
-        }
-        return manifests.get(0);
+        return manifest;
     }
 
     @Override
