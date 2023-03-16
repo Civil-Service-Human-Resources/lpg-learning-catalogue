@@ -12,10 +12,10 @@ public class CSLToRusticiDataService {
     }
 
     public CreateCourse getCreateCourseData(String courseId, String mediaId, String manifestFile) {
-        String ELearningCdnLocation = getRusticiCourseCdnLocation(courseId, mediaId);
-        String imsManifestUrl = String.format("%s/%s", ELearningCdnLocation, manifestFile);
+        String eLearningCdnLocation = getRusticiCourseCdnLocation(courseId, mediaId);
+        String imsManifestUrl = String.format("%s/%s", eLearningCdnLocation, manifestFile);
         return CreateCourse.createFromData(
-                ELearningCdnLocation,
+                eLearningCdnLocation,
                 imsManifestUrl);
     }
 
