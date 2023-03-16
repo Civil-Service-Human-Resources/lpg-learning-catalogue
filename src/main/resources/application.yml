@@ -34,7 +34,7 @@ elasticsearch:
   readTimeout: ${ELASTICSEARCH_READ_TIMEOUT:10000}
 
 rustici:
-  e-learning-manifests: ${ELEARNING_MANIFESTS:"imsmanifest.xml, tincan.xml"}
+  e-learning-manifests: ${ELEARNING_MANIFESTS:imsmanifest.xml,tincan.xml}
   url: ${RUSTICI_URL:http://csl.local/rustici/RusticiEngine/api/v2}
   username: ${RUSTICI_USERNAME:apiuser}
   password: ${RUSTICI_PASSWORD:password}

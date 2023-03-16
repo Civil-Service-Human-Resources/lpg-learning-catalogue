@@ -56,7 +56,7 @@ public class UploadConfig {
     }
 
     @Bean(name = "elearning_manifest_list")
-    public List<String> getElearningManifests(@Value("rustici.e-learning-manifests") String eLearningManifestsCsv) {
+    public List<String> getElearningManifests(@Value("${rustici.e-learning-manifests}") String eLearningManifestsCsv) {
         return Arrays.asList(eLearningManifestsCsv.split(","));
     }
 
