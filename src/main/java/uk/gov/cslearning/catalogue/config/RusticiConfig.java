@@ -22,12 +22,12 @@ public class RusticiConfig {
     @Value("${rustici.tenant}")
     private String rusticiTenant;
 
-    @Value("${azure.content-cdn}")
-    private String contentCdn;
+    @Value("${azure.scorm-cdn}")
+    private String scormCdn;
 
     @Bean()
     public CSLToRusticiDataService getDataTranslationService() {
-        return new CSLToRusticiDataService(contentCdn);
+        return new CSLToRusticiDataService(scormCdn);
     }
 
     @Bean("rusticiHttpClient")

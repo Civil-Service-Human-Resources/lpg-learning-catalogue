@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -31,7 +32,7 @@ public class Media {
     @NotNull
     private String path;
 
-    private Map<String, Object> metadata = new HashMap<>();
+    private Map<String, String> metadata = new HashMap<>();
 
     private long fileSizeKB;
     private String extension;
@@ -101,11 +102,16 @@ public class Media {
         this.path = path;
     }
 
-    public Map<String, Object> getMetadata() {
+    public Map<String, String> getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(Map<String, Object> metadata) {
+    public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
+    }
+
+    @JsonIgnore
+    public String getMetadataWithCustomKey(CustomMediaMetadata key) {
+        return this.metadata.get(key.getMetadataKey());
     }
 }
