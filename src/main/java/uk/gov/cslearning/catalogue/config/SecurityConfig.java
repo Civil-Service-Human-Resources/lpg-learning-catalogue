@@ -43,12 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.cors().and().csrf().disable().authorizeRequests()
-                .anyRequest().authenticated()
                 .and().authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, "/oauth/token")
-                .permitAll()
-                .antMatchers(HttpMethod.GET, "/health")
-                .permitAll();
+                .antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll()
+                .antMatchers(HttpMethod.GET, "/health").permitAll()
+                .anyRequest().authenticated();
     }
 
     @Override

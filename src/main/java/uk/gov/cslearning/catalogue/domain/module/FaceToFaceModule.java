@@ -51,4 +51,8 @@ public class FaceToFaceModule extends Module {
     public void setProductCode(String productCode) {
         this.productCode = productCode;
     }
+
+    public String getModuleType() {
+        return "face-to-face";
+    }
 }

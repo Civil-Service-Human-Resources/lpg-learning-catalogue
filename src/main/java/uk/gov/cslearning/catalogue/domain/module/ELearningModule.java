@@ -31,4 +31,8 @@ public class ELearningModule extends Module {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public String getModuleType() {
+        return "elearning";
+    }
 }

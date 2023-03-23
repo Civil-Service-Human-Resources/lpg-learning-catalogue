@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import uk.gov.cslearning.catalogue.domain.Owner.Owner;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Module;
@@ -18,7 +20,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.util.CollectionUtils.containsAny;
 
-@Document(indexName = "courses", type = "course")
+@Document(indexName = "courses")
 public class Course {
 
     @Id
@@ -41,6 +43,7 @@ public class Course {
 
     private LearningProvider learningProvider;
 
+    @Field(type = FieldType.Nested)
     private Set<Audience> audiences = new HashSet<>();
 
     private String preparation;

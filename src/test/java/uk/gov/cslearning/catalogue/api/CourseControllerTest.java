@@ -39,7 +39,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
 import uk.gov.cslearning.catalogue.domain.CivilServant.*;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -85,7 +84,7 @@ import com.google.common.collect.ImmutableMap;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(CourseController.class)
 @WithMockUser(username = "user")
-@ContextConfiguration(classes = {RequestMappingConfig.class, WebConfig.class, CourseController.class})
+@ContextConfiguration(classes = {WebConfig.class, CourseController.class})
 @EnableSpringDataWebSupport
 public class CourseControllerTest {
 
@@ -569,8 +568,8 @@ public class CourseControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
-    public void shouldListForCslAuthor() throws Exception {
+    @WithMockUser(username = "user", authorities = {"CSL_AUTHOR", "LEARNING_MANAGER"})
+    public void shouldListForCslAuthorOrLearningManager() throws Exception {
         Course course = new Course();
 
         when(courseService.findAllCourses(any(Pageable.class))).thenReturn(new PageImpl<>(Collections.singletonList(course)));

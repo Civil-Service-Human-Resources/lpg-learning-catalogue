@@ -14,14 +14,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.cslearning.catalogue.api.CourseController;
 import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
-import uk.gov.cslearning.catalogue.config.RequestMappingConfig;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
@@ -36,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(CourseControllerV2.class)
 @WithMockUser(username = "user")
-@ContextConfiguration(classes = {RequestMappingConfig.class, WebConfig.class, CourseControllerV2.class})
+@ContextConfiguration(classes = {WebConfig.class, CourseControllerV2.class})
 @EnableSpringDataWebSupport
 public class CourseControllerV2Test {
 
@@ -47,8 +44,7 @@ public class CourseControllerV2Test {
     private CourseRepository courseRepository;
 
     @Test
-    @SneakyThrows
-    public void testGetCoursesDefaultParameters() {
+    public void testGetCoursesDefaultParameters() throws Exception {
         GetCoursesParameters params = new GetCoursesParameters();
         Course course = new Course();
         course.setId("TestID");
@@ -62,8 +58,7 @@ public class CourseControllerV2Test {
     }
 
     @Test
-    @SneakyThrows
-    public void testGetCoursesParameters() {
+    public void testGetCoursesParameters() throws Exception {
         GetCoursesParameters params = new GetCoursesParameters();
         params.setDepartments(Arrays.asList("dep1", "dep2"));
         params.setGrade("G7");
