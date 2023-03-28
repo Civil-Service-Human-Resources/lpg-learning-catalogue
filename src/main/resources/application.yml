@@ -35,7 +35,8 @@ elasticsearch:
 
 rustici:
   e-learning-manifests: ${ELEARNING_MANIFESTS:imsmanifest.xml,tincan.xml}
-  url: ${RUSTICI_URL:http://csl.local/rustici/RusticiEngine/api/v2}
+  url: ${RUSTICI_URL:http://csl.local/rustici}
+  api-url: "${rustici.url}/RusticiEngine/api/v2"
   username: ${RUSTICI_USERNAME:apiuser}
   password: ${RUSTICI_PASSWORD:password}
   tenant: ${RUSTICI_TENANT:default}
@@ -48,7 +49,7 @@ azure:
     container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
     scorm-container: ${AZURE_STORAGE_SCORM_CONTAINER:rustici}
     connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=${azure.account.name};AccountKey=${azure.account.key};${azure.storage.blob-endpoint}}
-  scorm-cdn: ${SCORM_CDN_ENDPOINT:http://csl.local/azurite/devstoreaccount1/${azure.storage.scorm-container}}
+  scorm-cdn: "${rustici.url}/cdn"
 
 management:
   endpoints:
