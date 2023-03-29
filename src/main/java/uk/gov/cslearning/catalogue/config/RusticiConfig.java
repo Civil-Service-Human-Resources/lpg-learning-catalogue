@@ -10,7 +10,7 @@ import uk.gov.cslearning.catalogue.service.rustici.CSLToRusticiDataService;
 @Configuration
 public class RusticiConfig {
 
-    @Value("${rustici.url}")
+    @Value("${rustici.api-url}")
     private String rusticiUrl;
 
     @Value("${rustici.username}")
