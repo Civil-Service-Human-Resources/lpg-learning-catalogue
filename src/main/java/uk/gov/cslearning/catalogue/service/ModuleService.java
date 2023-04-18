@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ModuleService {
     private static final int PAGE_SIZE = 10000;
 
@@ -62,14 +64,17 @@ public class ModuleService {
     }
 
     public Course updateModule(String courseId, Module newModule) {
+        log.info(String.format("Updating module '%s' in course '%s'", newModule.getId(), courseId));
         Course course = courseService.getCourseById(courseId);
 
         Module oldModule = course.getModuleById(newModule.getId()).orElseThrow(ResourceNotFoundException::resourceNotFoundException);
         if (hasFileChanged(newModule, oldModule)) {
+            log.info("File has changed, removing existing blob");
             new Thread(() -> {
                 deleteFile(courseId, oldModule);
                 if (newModule.getModuleType().equals("elearning")) {
-                    rusticiEngineService.uploadElearningModule(courseId, newModule.getId(), newModule.getId());
+                    ELearningModule eLearningModule = (ELearningModule) newModule;
+                    rusticiEngineService.uploadElearningModule(courseId, newModule.getId(), eLearningModule.getMediaId());
                 }
             }).start();
         }
@@ -111,9 +116,9 @@ public class ModuleService {
 
     private boolean hasFileChanged(Module newModule, Module oldModule) {
         return newModule.getClass() != oldModule.getClass()
-                || (newModule instanceof FileModule && ((FileModule) newModule).getMediaId() != null && !((FileModule) newModule).getUrl().equals(((FileModule) oldModule).getUrl()))
+                || (newModule instanceof FileModule && ((FileModule) newModule).getMediaId() != null && !((FileModule) newModule).getMediaId().equals(((FileModule) oldModule).getMediaId()))
                 || (newModule instanceof VideoModule && ((VideoModule) newModule).getUrl() != null && !((VideoModule) newModule).getUrl().equals(((VideoModule) oldModule).getUrl()))
-                || (newModule instanceof ELearningModule && ((ELearningModule) newModule).getUrl() != null && !((ELearningModule) newModule).getUrl().equals(((ELearningModule) oldModule).getUrl()));
+                || (newModule instanceof ELearningModule && ((ELearningModule) newModule).getUrl() != null && !((ELearningModule) newModule).getMediaId().equals(((ELearningModule) oldModule).getMediaId()));
     }
 
     public Map<String, ModuleDto> getModuleMap() {
