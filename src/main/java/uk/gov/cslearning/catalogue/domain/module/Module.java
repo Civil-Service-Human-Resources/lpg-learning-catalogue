@@ -3,10 +3,14 @@ package uk.gov.cslearning.catalogue.domain.module;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.elasticsearch.common.UUIDs;
+import org.springframework.data.elasticsearch.annotations.Field;
 import uk.gov.cslearning.catalogue.domain.Status;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
@@ -37,13 +41,25 @@ public abstract class Module {
 
     private boolean associatedLearning;
 
+    private String type;
+
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdTimestamp;
+
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    private LocalDateTime updatedTimestamp;
+
     public Module() {
     }
 
-    public Module(@NotNull String title, @NotNull String description, @NotNull Long duration) {
+    public Module(@NotNull String title,
+                  @NotNull String description,
+                  @NotNull Long duration,
+                  @NotNull String type) {
         this.title = title;
         this.description = description;
         this.duration = duration;
+        this.type = type;
     }
 
     public String getId() {
@@ -110,29 +126,22 @@ public abstract class Module {
         this.associatedLearning = associatedLearning;
     }
 
-    public String getModuleType() {
-        String className = this.getClass().getName();
-
-        if (this instanceof FaceToFaceModule) {
-            return "face-to-face";
-        }
-
-        if (this instanceof LinkModule) {
-            return "link";
-        }
-
-        if (this instanceof VideoModule) {
-            return "video";
-        }
-
-        if (this instanceof ELearningModule) {
-            return "elearning";
-        }
-
-        if (this instanceof FileModule) {
-            return "file";
-        }
-
-        return className;
+    public LocalDateTime getCreatedTimestamp() {
+        return createdTimestamp;
     }
+
+    public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public LocalDateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public abstract String getModuleType();
+
 }

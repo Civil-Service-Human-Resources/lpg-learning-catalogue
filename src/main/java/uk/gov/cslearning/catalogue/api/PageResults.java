@@ -19,7 +19,7 @@ public class PageResults<T> {
         this.results = results;
     }
 
-    PageResults(Page<T> page, Pageable pageable) {
+    public PageResults(Page<T> page, Pageable pageable) {
         this.results = page.getContent();
         this.page = pageable.getPageNumber();
         this.size = pageable.getPageSize();

@@ -1,8 +1,10 @@
 package uk.gov.cslearning.catalogue.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
 
 import javax.validation.constraints.NotNull;
 import java.text.DecimalFormat;
@@ -10,7 +12,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@Document(indexName = "media", type = "media")
+import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
+
+@Document(indexName = "media")
 public class Media {
     @Id
     private String id;
@@ -22,12 +26,13 @@ public class Media {
     private String container;
 
     @NotNull
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateAdded;
 
     @NotNull
     private String path;
 
-    private Map<String, Object> metadata = new HashMap<>();
+    private Map<String, String> metadata = new HashMap<>();
 
     private long fileSizeKB;
     private String extension;
@@ -97,11 +102,16 @@ public class Media {
         this.path = path;
     }
 
-    public Map<String, Object> getMetadata() {
+    public Map<String, String> getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(Map<String, Object> metadata) {
+    public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
+    }
+
+    @JsonIgnore
+    public String getMetadataWithCustomKey(CustomMediaMetadata key) {
+        return this.metadata.get(key.getMetadataKey());
     }
 }

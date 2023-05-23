@@ -1,38 +1,5 @@
 package uk.gov.cslearning.catalogue.api;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
-
-import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
-
-import static org.apache.commons.collections4.CollectionUtils.containsAny;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.HttpStatus.OK;
-
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
-import uk.gov.cslearning.catalogue.domain.CivilServant.Interest;
-import uk.gov.cslearning.catalogue.domain.CivilServant.Profession;
-import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.domain.module.Audience;
-import uk.gov.cslearning.catalogue.domain.module.Event;
-import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
-import uk.gov.cslearning.catalogue.mapping.DaysMapper;
-import uk.gov.cslearning.catalogue.mapping.RoleMapping;
-import uk.gov.cslearning.catalogue.repository.CourseRepository;
-import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.EventService;
-import uk.gov.cslearning.catalogue.service.ModuleService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
-import uk.gov.cslearning.catalogue.service.upload.AudienceService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,16 +12,35 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.cslearning.catalogue.Utils;
+import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
+import uk.gov.cslearning.catalogue.domain.CivilServant.Interest;
+import uk.gov.cslearning.catalogue.domain.CivilServant.Profession;
+import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Status;
+import uk.gov.cslearning.catalogue.domain.module.Audience;
+import uk.gov.cslearning.catalogue.domain.module.Event;
+import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
+import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
+import uk.gov.cslearning.catalogue.mapping.DaysMapper;
+import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.CourseService;
+import uk.gov.cslearning.catalogue.service.EventService;
+import uk.gov.cslearning.catalogue.service.ModuleService;
+import uk.gov.cslearning.catalogue.service.RegistryService;
+import uk.gov.cslearning.catalogue.service.AudienceService;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.containsAny;
+import static org.springframework.http.HttpStatus.*;
+import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
 @RestController
 @RequestMapping("/courses")
@@ -234,17 +220,16 @@ public class CourseController {
     }
 
     @GetMapping(params = {"mandatory", "department"})
-    public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") String department,
+    public ResponseEntity<PageResults<Course>> listMandatory(@RequestParam("department") List<String> departments,
             @RequestParam(value = "status", defaultValue = "Published") String status,
             Pageable pageable) {
-        List<String> organisationParents = courseService.getOrganisationParents(department);
-        LOGGER.debug("Listing mandatory courses for department {} and its parent organisations {}", department, organisationParents);
-        List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(organisationParents, "Published", PageRequest.of(0, 10000));
+        LOGGER.debug("Listing mandatory courses for departments {}", departments);
+        List<Course> courses = courseRepository.findMandatoryOfMultipleDepts(departments, "Published", PageRequest.of(0, 10000));
         Set<String> courseIdSet = new HashSet<>();
         List<Course> coursesWithValidAudience = courses
                 .stream()
                 .filter(course -> courseIdSet.add(course.getId()))
-                .map(course -> getMandatoryCourseForDepartments(course, department, organisationParents))
+                .map(course -> getMandatoryCourseForDepartments(course, departments))
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(Course::getTitle))
                 .collect(toList());
@@ -252,33 +237,13 @@ public class CourseController {
         return ResponseEntity.ok(new PageResults<>(courseService.prepareCoursePage(pageable, coursesWithValidAudience), pageable));
     }
 
-    Course getMandatoryCourseForDepartments(Course course, String department, List<String> organisationParents) {
-        Optional<Audience> relevantAudience = course
-                .getAudiences()
-                .stream()
-                .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                .filter(audience -> audience.getRequiredBy() != null)
-                .filter(audience -> audience.getDepartments().contains(department))
-                .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
-
-        if (!relevantAudience.isPresent()) {
-            relevantAudience = course
-                    .getAudiences()
-                    .stream()
-                    .filter(audience -> audience.getType().name().equals("REQUIRED_LEARNING"))
-                    .filter(audience -> audience.getRequiredBy() != null)
-                    .filter(audience -> organisationParents
-                            .stream()
-                            .anyMatch(organisationalUnit -> audience.getDepartments().contains(organisationalUnit)))
-                    .min(Comparator.comparing(Audience::getRequiredBy).thenComparing(Audience::getId));
-        }
+    Course getMandatoryCourseForDepartments(Course course, List<String> departments) {
+        List<Audience> relevantAudiences = course.getMandatoryAudiencesForDepartments(departments);
 
         Course mandatoryCourse = null;
-        if (relevantAudience.isPresent()) {
-            Audience audience = relevantAudience.get();
+        if (!relevantAudiences.isEmpty()) {
             mandatoryCourse = course;
-            Set<Audience> audiences = new HashSet<>();
-            audiences.add(audience);
+            Set<Audience> audiences = new HashSet<>(relevantAudiences);
             mandatoryCourse.setAudiences(audiences);
         }
 
@@ -339,50 +304,36 @@ public class CourseController {
         return ResponseEntity.ok(requiredCoursesByOrgCode);
     }
 
-
-    @RoleMapping("ORGANISATION_AUTHOR")
     @GetMapping(value = "/management")
-    public ResponseEntity<PageResults<Course>> listForOrganisation(Pageable pageable) {
+    public ResponseEntity<PageResults<Course>> listForOrganisation(Authentication authentication,
+                                                                   Pageable pageable) {
+
         CivilServant civilServant = registryService.getCurrentCivilServant();
+        ResponseEntity<PageResults<Course>> response = new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK);
 
-        return civilServant.getOrganisationalUnitCode()
-                .map(organisationalUnitCode -> {
-                    Page<Course> results = courseService.findCoursesByOrganisationalUnit(organisationalUnitCode, pageable);
-                    return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
-                }).orElseGet(() -> new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK));
-    }
+        if (Utils.hasRoles(new String[]{"CSL_AUTHOR", "LEARNING_MANAGER"})) {
+            Page<Course> results = courseService.findAllCourses(pageable);
+            response = new ResponseEntity<>(new PageResults<>(results, pageable), OK);
+        } else if (Utils.hasRole("ORGANISATION_AUTHOR")) {
+            Optional<String> orgCodeOpt = civilServant.getOrganisationalUnitCode();
+            if (orgCodeOpt.isPresent()) {
+                Page<Course> results = courseService.findCoursesByOrganisationalUnit(orgCodeOpt.get(), pageable);
+                response = new ResponseEntity<>(new PageResults<>(results, pageable), OK);
+            }
+        } else if (Utils.hasRole("PROFESSION_AUTHOR")) {
+            Optional<Long> professionIdOpt = civilServant.getProfessionId();
+            if (professionIdOpt.isPresent()) {
+                Page<Course> results = courseService.findCoursesByProfession(professionIdOpt.toString(), pageable);
+                response = new ResponseEntity<>(new PageResults<>(results, pageable), OK);
+            }
+        } else if (Utils.hasRoles(new String[]{"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})) {
+            Page<Course> results = courseService.findCoursesBySupplier(authentication, pageable);
+            response = new ResponseEntity<>(new PageResults<>(results, pageable), OK);
+        } else {
+            response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
-    @RoleMapping("PROFESSION_AUTHOR")
-    @GetMapping(value = "/management")
-    public ResponseEntity<PageResults<Course>> listForProfession(Pageable pageable) {
-        CivilServant civilServant = registryService.getCurrentCivilServant();
-
-        return civilServant.getProfessionId()
-                .map(professionId -> {
-                    Page<Course> results = courseService.findCoursesByProfession(professionId.toString(), pageable);
-                    return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
-                }).orElseGet(() -> new ResponseEntity<>(new PageResults<>(Page.empty(), pageable), OK));
-    }
-
-    @RoleMapping({"KPMG_SUPPLIER_AUTHOR", "KORNFERRY_SUPPLIER_AUTHOR", "KNOWLEDGEPOOL_SUPPLIER_AUTHOR"})
-    @GetMapping(value = "/management")
-    public ResponseEntity<PageResults<Course>> listForSupplier(Pageable pageable, Authentication authentication) {
-        Page<Course> results = courseService.findCoursesBySupplier(authentication, pageable);
-        return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
-    }
-
-    @RoleMapping({"CSL_AUTHOR", "LEARNING_MANAGER"})
-    @GetMapping(value = "/management")
-    public ResponseEntity<PageResults<Course>> listForCslAuthorOrLearningManager(Pageable pageable) {
-        Page<Course> results = courseService.findAllCourses(pageable);
-
-        return new ResponseEntity<>(new PageResults<>(results, pageable), OK);
-    }
-
-    @GetMapping(value = "/management")
-    public ResponseEntity<PageResults<Course>> unauth(Principal principal) {
-        LOGGER.debug("Unauthorised. Required role not found in %s", principal);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        return response;
     }
 
     @GetMapping(params = "courseId")
@@ -444,7 +395,7 @@ public class CourseController {
     @PostMapping("/{courseId}/modules")
     @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_CREATE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity<Void> createModule(@PathVariable String courseId, @RequestBody Module module, UriComponentsBuilder builder) {
-        LOGGER.debug("Adding module to course with ID {}", courseId);
+        LOGGER.info("Adding module to course with ID {}", courseId);
 
         Module saved = moduleService.save(courseId, module);
 
@@ -523,7 +474,8 @@ public class CourseController {
         Optional<Course> result = courseRepository.findById(courseId);
 
         return result.map(course -> {
-            Module module = course.getModuleById(moduleId);
+            Module module = course.getModuleById(moduleId)
+                    .orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
             if (module instanceof FaceToFaceModule) {
                 FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
@@ -558,7 +510,7 @@ public class CourseController {
         Optional<Course> result = courseRepository.findById(courseId);
 
         return result.map(course -> {
-            Module module = course.getModuleById(moduleId);
+            Module module = course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
             if (module instanceof FaceToFaceModule) {
                 FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;

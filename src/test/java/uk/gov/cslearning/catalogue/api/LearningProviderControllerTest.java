@@ -1,6 +1,7 @@
 package uk.gov.cslearning.catalogue.api;
 
 import com.google.gson.Gson;
+import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.CancellationPolicy;
@@ -35,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(LearningProviderController.class)
 @WithMockUser()
+@ContextConfiguration(classes = {WebConfig.class, LearningProviderController.class})
 public class LearningProviderControllerTest {
 
     public static final String ID = "abc123";
