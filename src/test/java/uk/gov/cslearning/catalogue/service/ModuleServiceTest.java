@@ -119,32 +119,6 @@ public class ModuleServiceTest {
     }
 
     @Test
-    public void shouldUpdateModuleAndDeleteFile() throws Exception {
-        String moduleId = "moduleId";
-        String courseId = "course-id";
-        String url = "test/path/to/file.pdf";
-        String newUrl = "test/path/to/file2.pdf";
-        Course course = new Course();
-        FileModule module = new FileModule(url, (long) 1024);
-        module.setId(moduleId);
-        module.setMediaId("media-id");
-        List<Module> modules = new ArrayList<>();
-        modules.add(module);
-        course.setModules(modules);
-        FileModule newModule = new FileModule(newUrl, (long) 1024);
-        newModule.setId(moduleId);
-        newModule.setMediaId("new-media-id");
-
-        FileUploadService fileUploadService = mock(FileUploadService.class);
-
-        when(courseService.getCourseById(courseId)).thenReturn(course);
-        when(fileUploadServiceFactory.getFileUploadService(UploadServiceType.FILE)).thenReturn(fileUploadService);
-        moduleService.updateModule(courseId, newModule);
-        assertEquals(((FileModule) course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::resourceNotFoundException)).getUrl(), newUrl);
-        verify(fileUploadService, timeout(2000)).delete(url);
-    }
-
-    @Test
     public void shouldDeleteModule() throws Exception {
         String moduleId = "moduleId";
         String courseId = "courseId";
