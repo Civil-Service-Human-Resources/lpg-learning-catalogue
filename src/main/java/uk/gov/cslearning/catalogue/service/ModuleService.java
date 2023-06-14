@@ -78,7 +78,7 @@ public class ModuleService {
         new Thread(() -> deleteFile(courseId, module)).start();
 
         course.deleteModule(module);
-        courseRepository.save(course);
+        courseService.save(course);
     }
 
     private void deleteFile(String courseId, Module module) {

@@ -13,6 +13,7 @@ import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -65,6 +66,8 @@ public class Course {
     @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedTimestamp;
 
+    private BigDecimal cost = new BigDecimal(0);
+
     public Course() {
     }
 
@@ -102,6 +105,12 @@ public class Course {
         }
         setModules(mods);
     }
+
+    @JsonIgnore
+    public void setCostFromModules() {
+        setCost(BigDecimal.valueOf(modules.stream().mapToDouble(m -> m.getCost().doubleValue()).sum()));
+    }
+
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }
@@ -245,6 +254,10 @@ public class Course {
     public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
+
+    public BigDecimal getCost() { return cost; }
+
+    public void setCost(BigDecimal cost) { this.cost = cost; }
 
     @Override
     public boolean equals(Object object) {
