@@ -1,7 +1,8 @@
 package uk.gov.cslearning.catalogue.domain;
 
 import org.springframework.stereotype.Component;
-import uk.gov.cslearning.catalogue.dto.Upload;
+import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.Upload;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -10,18 +11,24 @@ import java.time.LocalDateTime;
 public class MediaFactory {
 
     public Media create(Upload upload) {
-
+        ProcessedFileUpload processedFileUpload = upload.getProcessedFileUpload();
+        String ext = processedFileUpload.getFileUpload().getExtension();
         Media media = new Media();
-        media.setId(upload.getProcessedFile().getFileUpload().getId());
-        media.setContainer(upload.getProcessedFile().getFileUpload().getContainer());
+        media.setId(processedFileUpload.getFileUpload().getId());
+        media.setContainer(processedFileUpload.getFileUpload().getContainer());
         media.setDateAdded(LocalDateTime.now(Clock.systemUTC()));
-        media.setExtension(upload.getProcessedFile().getFileUpload().getExtension());
-        media.setName(upload.getProcessedFile().getFileUpload().getName());
-        media.setPath(upload.getPath());
+        media.setExtension(ext);
+        media.setName(processedFileUpload.getFileUpload().getName());
+        String path = upload.getPath();
+        if (!ext.equals("zip")) {
+            path = String.format("%s/%s", upload.getPath(), processedFileUpload.getFileUpload().getName());
+        }
+        media.setPath(path);
         media.setFileSizeKB(upload.getSizeKB());
-        media.setMetadata(upload.getProcessedFile().getMetadata());
+        media.setMetadata(processedFileUpload.getMetadata());
 
         return media;
 
     }
+
 }

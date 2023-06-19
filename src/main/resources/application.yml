@@ -33,13 +33,23 @@ elasticsearch:
   password: ${ELASTICSEARCH_PASSWORD:changeme}
   readTimeout: ${ELASTICSEARCH_READ_TIMEOUT:10000}
 
+rustici:
+  e-learning-manifests: ${ELEARNING_MANIFESTS:imsmanifest.xml,tincan.xml}
+  url: ${RUSTICI_URL:http://csl.local/rustici}
+  api-url: "${rustici.url}/RusticiEngine/api/v2"
+  username: ${RUSTICI_USERNAME:apiuser}
+  password: ${RUSTICI_PASSWORD:password}
+  tenant: ${RUSTICI_TENANT:default}
+
 azure:
   account:
-    name: ${AZURE_ACCOUNT_NAME:lpgdev}
-    key: ${AZURE_ACCOUNT_KEY:changeme}
+    name: ${AZURE_ACCOUNT_NAME:devstoreaccount1}
+    key: ${AZURE_ACCOUNT_KEY:Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==}
   storage:
     container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
-    connection-string: "DefaultEndpointsProtocol=https;AccountName=${azure.account.name};AccountKey=${azure.account.key}"
+    scorm-container: ${AZURE_STORAGE_SCORM_CONTAINER:rustici}
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=${azure.account.name};AccountKey=${azure.account.key};${azure.storage.blob-endpoint}}
+  scorm-cdn: "${rustici.url}/cdn"
 
 management:
   endpoints:

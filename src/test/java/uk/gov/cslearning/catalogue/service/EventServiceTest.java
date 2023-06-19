@@ -15,8 +15,6 @@ import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
-import uk.gov.cslearning.catalogue.service.record.model.Booking;
-import uk.gov.cslearning.catalogue.service.record.model.BookingStatus;
 
 import java.util.*;
 
@@ -29,6 +27,9 @@ public class EventServiceTest {
 
     @Mock
     private CourseRepository courseRepository;
+
+    @Mock
+    private CourseService courseService;
 
     @Mock
     private EventDtoMapService eventDtoMapService;

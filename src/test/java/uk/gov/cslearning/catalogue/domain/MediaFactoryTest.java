@@ -2,10 +2,13 @@ package uk.gov.cslearning.catalogue.domain;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.cslearning.catalogue.dto.FileUpload;
-import uk.gov.cslearning.catalogue.dto.ProcessedFile;
-import uk.gov.cslearning.catalogue.dto.Upload;
+import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
+import uk.gov.cslearning.catalogue.dto.upload.Upload;
+import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -20,7 +23,7 @@ public class MediaFactoryTest {
     public void createReturnsMedia() {
         String id = "test-id";
         String container = "test-container";
-        String extension = "xxx";
+        String extension = "zip";
         String name = "file-name";
         String path = "test-path";
         long sizeKB = 13;
@@ -32,13 +35,12 @@ public class MediaFactoryTest {
         when(fileUpload.getExtension()).thenReturn(extension);
         when(fileUpload.getName()).thenReturn(name);
 
-        ProcessedFile processedFile = new ProcessedFile(fileUpload);
-        processedFile.setMetadata(metadata);
+        ProcessedFileUpload processedFileUpload = new ProcessedFileUpload(fileUpload, Collections.emptyList(), metadata);
+        UploadedFile uploadedFile = mock(UploadedFile.class);
+        when(uploadedFile.getSizeKB()).thenReturn(sizeKB);
+        List<UploadedFile> uploadedFileList = Collections.singletonList(uploadedFile);
 
-        Upload upload = mock(Upload.class);
-        when(upload.getProcessedFile()).thenReturn(processedFile);
-        when(upload.getPath()).thenReturn(path);
-        when(upload.getSizeKB()).thenReturn(sizeKB);
+        Upload upload = new Upload(processedFileUpload, uploadedFileList, path);
 
         Media media = mediaFactory.create(upload);
 

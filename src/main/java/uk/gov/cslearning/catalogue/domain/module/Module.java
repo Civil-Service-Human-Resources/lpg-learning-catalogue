@@ -3,10 +3,14 @@ package uk.gov.cslearning.catalogue.domain.module;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.elasticsearch.common.UUIDs;
+import org.springframework.data.elasticsearch.annotations.Field;
 import uk.gov.cslearning.catalogue.domain.Status;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
@@ -38,6 +42,12 @@ public abstract class Module {
     private boolean associatedLearning;
 
     private String type;
+
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdTimestamp;
+
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    private LocalDateTime updatedTimestamp;
 
     public Module() {
     }
@@ -114,6 +124,22 @@ public abstract class Module {
 
     public void setAssociatedLearning(boolean associatedLearning) {
         this.associatedLearning = associatedLearning;
+    }
+
+    public LocalDateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public LocalDateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
     }
 
     public abstract String getModuleType();

@@ -13,12 +13,14 @@ import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
-import static org.springframework.util.CollectionUtils.containsAny;
+import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 
 @Document(indexName = "courses")
 public class Course {
@@ -57,6 +59,12 @@ public class Course {
 
     private String topicId;
 
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdTimestamp;
+
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    private LocalDateTime updatedTimestamp;
+
     public Course() {
     }
 
@@ -75,14 +83,32 @@ public class Course {
                 .collect(Collectors.toList());
     }
 
+    @JsonIgnore
+    public void upsertModule(Module newModule) {
+        List<Module> mods = new ArrayList<>(getModules());
+        int indexToReplace = -1;
+        for (int i = 0; i < mods.size(); i++) {
+            if (newModule.getId().equals(mods.get(i).getId())) {
+                indexToReplace = i;
+                break;
+            }
+        }
+        newModule.setUpdatedTimestamp(LocalDateTime.now(Clock.systemUTC()));
+        if (indexToReplace > -1) {
+            mods.set(indexToReplace, newModule);
+        } else {
+            newModule.setCreatedTimestamp(LocalDateTime.now(Clock.systemUTC()));
+            mods.add(newModule);
+        }
+        setModules(mods);
+    }
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }
 
-    public Module getModuleById(String moduleId) {
-        List<Module> modules = getModules();
-        Optional<Module> module = modules.stream().filter(m -> m.getId().equals(moduleId)).findFirst();
-        return module.get();
+    @JsonIgnore
+    public Optional<Module> getModuleById(String moduleId) {
+        return getModules().stream().filter(m -> m.getId().equals(moduleId)).findFirst();
     }
 
     public void setModules(List<Module> modules) {
@@ -202,6 +228,22 @@ public class Course {
 
     public void setTopicId(String topicId) {
         this.topicId = topicId;
+    }
+
+    public LocalDateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public LocalDateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
     }
 
     @Override
