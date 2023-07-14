@@ -1,14 +1,11 @@
 package uk.gov.cslearning.catalogue.service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
 import uk.gov.cslearning.catalogue.domain.Course;
@@ -19,13 +16,11 @@ import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.CourseRequiredRepository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
@@ -56,6 +51,7 @@ public class CourseService {
     }
 
     public Course save(Course course) {
+        course.setCostFromModules();
         return courseRepository.save(course);
     }
 
@@ -67,6 +63,7 @@ public class CourseService {
         civilServant.setSupplier(authoritiesService.getSupplier(authentication));
 
         course.setOwner(ownerFactory.create(civilServant, course));
+        course.setCreatedTimestamp(LocalDateTime.now(Clock.systemUTC()));
 
         courseRepository.save(course);
 
@@ -84,6 +81,7 @@ public class CourseService {
         course.setStatus(newCourse.getStatus());
         course.setDescription(newCourse.getDescription());
         course.setTopicId(newCourse.getTopicId());
+        course.setUpdatedTimestamp(LocalDateTime.now(Clock.systemUTC()));
         Optional.ofNullable(newCourse.getLearningProvider()).ifPresent(course::setLearningProvider);
 
         courseRepository.save(course);
@@ -96,7 +94,7 @@ public class CourseService {
                 .map(this::getCourseEventsAvailability);
     }
 
-    public Course getCourseById(String courseId) {
+    public Course getCourseById(String courseId) throws IllegalStateException {
         return findById(courseId)
                 .orElseThrow((Supplier<IllegalStateException>) () -> {
                     throw new IllegalStateException(

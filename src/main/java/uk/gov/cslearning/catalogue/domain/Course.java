@@ -5,20 +5,25 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import uk.gov.cslearning.catalogue.domain.Owner.Owner;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
-import static org.springframework.util.CollectionUtils.containsAny;
+import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 
-@Document(indexName = "courses", type = "course")
+@Document(indexName = "courses")
 public class Course {
 
     @Id
@@ -41,6 +46,7 @@ public class Course {
 
     private LearningProvider learningProvider;
 
+    @Field(type = FieldType.Nested)
     private Set<Audience> audiences = new HashSet<>();
 
     private String preparation;
@@ -53,6 +59,14 @@ public class Course {
     private Status status = Status.DRAFT;
 
     private String topicId;
+
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdTimestamp;
+
+    @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
+    private LocalDateTime updatedTimestamp;
+
+    private BigDecimal cost = new BigDecimal(0);
 
     public Course() {
     }
@@ -72,14 +86,38 @@ public class Course {
                 .collect(Collectors.toList());
     }
 
+    @JsonIgnore
+    public void upsertModule(Module newModule) {
+        List<Module> mods = new ArrayList<>(getModules());
+        int indexToReplace = -1;
+        for (int i = 0; i < mods.size(); i++) {
+            if (newModule.getId().equals(mods.get(i).getId())) {
+                indexToReplace = i;
+                break;
+            }
+        }
+        newModule.setUpdatedTimestamp(LocalDateTime.now(Clock.systemUTC()));
+        if (indexToReplace > -1) {
+            mods.set(indexToReplace, newModule);
+        } else {
+            newModule.setCreatedTimestamp(LocalDateTime.now(Clock.systemUTC()));
+            mods.add(newModule);
+        }
+        setModules(mods);
+    }
+
+    @JsonIgnore
+    public void setCostFromModules() {
+        setCost(BigDecimal.valueOf(modules.stream().mapToDouble(m -> m.getCost().doubleValue()).sum()));
+    }
+
     public List<Module> getModules() {
         return unmodifiableList(modules);
     }
 
-    public Module getModuleById(String moduleId) {
-        List<Module> modules = getModules();
-        Optional<Module> module = modules.stream().filter(m -> m.getId().equals(moduleId)).findFirst();
-        return module.get();
+    @JsonIgnore
+    public Optional<Module> getModuleById(String moduleId) {
+        return getModules().stream().filter(m -> m.getId().equals(moduleId)).findFirst();
     }
 
     public void setModules(List<Module> modules) {
@@ -200,6 +238,26 @@ public class Course {
     public void setTopicId(String topicId) {
         this.topicId = topicId;
     }
+
+    public LocalDateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
+    public LocalDateTime getUpdatedTimestamp() {
+        return updatedTimestamp;
+    }
+
+    public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public BigDecimal getCost() { return cost; }
+
+    public void setCost(BigDecimal cost) { this.cost = cost; }
 
     @Override
     public boolean equals(Object object) {

@@ -10,6 +10,7 @@ public class ELearningModule extends Module {
     private String startPage;
 
     private String url;
+    private String mediaId;
 
     @JsonCreator
     public ELearningModule(@JsonProperty("startPage") String startPage, @JsonProperty("url") String url) {
@@ -30,5 +31,17 @@ public class ELearningModule extends Module {
     }
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getModuleType() {
+        return "elearning";
+    }
+
+    public String getMediaId() {
+        return mediaId;
+    }
+
+    public void setMediaId(String mediaId) {
+        this.mediaId = mediaId;
     }
 }

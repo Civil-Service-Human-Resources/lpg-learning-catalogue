@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,106 +12,92 @@ import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.domain.module.VideoModule;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.dto.factory.ModuleDtoFactory;
+import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.rustici.RusticiEngineService;
 import uk.gov.cslearning.catalogue.service.upload.FileUploadService;
+import uk.gov.cslearning.catalogue.service.upload.FileUploadServiceFactory;
+import uk.gov.cslearning.catalogue.service.upload.UploadServiceType;
 
-import java.util.*;
-import java.util.function.Supplier;
-
-import static java.util.stream.Collectors.toList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
+@Slf4j
 public class ModuleService {
     private static final int PAGE_SIZE = 10000;
 
     private final CourseRepository courseRepository;
-    private final FileUploadService fileUploadService;
+    private final CourseService courseService;
+    private final FileUploadServiceFactory fileUploadServiceFactory;
     private final ModuleDtoFactory moduleDtoFactory;
+    private final RusticiEngineService rusticiEngineService;
 
-    public ModuleService(CourseRepository courseRepository, FileUploadService fileUploadService, ModuleDtoFactory moduleDtoFactory) {
+    public ModuleService(CourseRepository courseRepository,
+                         CourseService courseService,
+                         FileUploadServiceFactory fileUploadServiceFactory,
+                         ModuleDtoFactory moduleDtoFactory,
+                         RusticiEngineService rusticiEngineService) {
         this.courseRepository = courseRepository;
-        this.fileUploadService = fileUploadService;
+        this.courseService = courseService;
+        this.fileUploadServiceFactory = fileUploadServiceFactory;
         this.moduleDtoFactory = moduleDtoFactory;
+        this.rusticiEngineService = rusticiEngineService;
     }
 
     public Module save(String courseId, Module module) {
-        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
-            throw new IllegalStateException(
-                    String.format("Unable to add module. Course does not exist: %s", courseId));
-        });
-
-        List<Module> modules = new ArrayList<>(course.getModules());
-        modules.add(module);
-        course.setModules(modules);
-        courseRepository.save(course);
-
+        Course course = courseService.getCourseById(courseId);
+        if (module.getModuleType().equals("elearning")) {
+            rusticiEngineService.uploadElearningModule(courseId, module.getId(), ((ELearningModule) module).getMediaId());
+        }
+        course.upsertModule(module);
+        courseService.save(course);
         return module;
     }
 
     public Optional<Module> find(String courseId, String moduleId) {
-        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
-            throw new IllegalStateException(
-                    String.format("Unable to find module: %s. Course does not exist: %s", moduleId, courseId));
-        });
-
-        return course.getModules().stream()
+        return courseService.getCourseById(courseId).getModules().stream()
                 .filter(m -> m.getId().equals(moduleId))
                 .findFirst();
     }
 
     public Course updateModule(String courseId, Module newModule) {
-        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
-            throw new IllegalStateException(
-                    String.format("Unable to add module. Course does not exist: %s", courseId));
-        });
-
-        Module oldModule = course.getModuleById(newModule.getId());
-        if (hasFileChanged(newModule, oldModule)) {
-            new Thread(() -> deleteFile(oldModule)).start();
-        }
-
-        List<Module> updatedModules = course.getModules().stream()
-                .map(m -> m.getId().equals(newModule.getId()) ? newModule : m)
-                .collect(toList());
-
-        course.setModules(updatedModules);
-        courseRepository.save(course);
-
+        log.info(String.format("Updating module '%s' in course '%s'", newModule.getId(), courseId));
+        Course course = courseService.getCourseById(courseId);
+        course.upsertModule(newModule);
+        courseService.save(course);
         return course;
     }
 
     public void deleteModule(String courseId, String moduleId) {
-        Course course = courseRepository.findById(courseId).orElseThrow((Supplier<IllegalStateException>) () -> {
-            throw new IllegalStateException(
-                    String.format("Unable to add module. Course does not exist: %s", courseId));
-        });
+        Course course = courseService.getCourseById(courseId);
+        Module module = course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::resourceNotFoundException);
 
-        Module module = course.getModuleById(moduleId);
-
-        new Thread(() -> deleteFile(module)).start();
+        new Thread(() -> deleteFile(courseId, module)).start();
 
         course.deleteModule(module);
-        courseRepository.save(course);
+        courseService.save(course);
     }
 
-    private void deleteFile(Module module) {
+    private void deleteFile(String courseId, Module module) {
+        FileUploadService fileUploadService;
         if (module instanceof FileModule) {
             String filePath = ((FileModule) module).getUrl();
+            fileUploadService = fileUploadServiceFactory.getFileUploadService(UploadServiceType.FILE);
             fileUploadService.delete(filePath);
         } else if (module instanceof VideoModule) {
             String filePath = ((VideoModule) module).getUrl().getPath();
+            fileUploadService = fileUploadServiceFactory.getFileUploadService(UploadServiceType.MP4);
             fileUploadService.delete(filePath);
         } else if (module instanceof ELearningModule) {
-            String filePath = ((ELearningModule) module).getUrl();
+            ELearningModule EMod = (ELearningModule) module;
+            String filePath = EMod.getUrl();
+            fileUploadService = fileUploadServiceFactory.getFileUploadService(UploadServiceType.SCORM);
             fileUploadService.deleteDirectory(filePath);
+            rusticiEngineService.deleteElearningModule(courseId, EMod.getId());
         }
-    }
-
-    private boolean hasFileChanged(Module newModule, Module oldModule) {
-        return newModule.getClass() != oldModule.getClass()
-                || (newModule instanceof FileModule && ((FileModule) newModule).getMediaId() != null && !((FileModule) newModule).getUrl().equals(((FileModule) oldModule).getUrl()))
-                || (newModule instanceof VideoModule && ((VideoModule) newModule).getUrl() != null && !((VideoModule) newModule).getUrl().equals(((VideoModule) oldModule).getUrl()))
-                || (newModule instanceof ELearningModule && ((ELearningModule) newModule).getUrl() != null && !((ELearningModule) newModule).getUrl().equals(((ELearningModule) oldModule).getUrl()));
     }
 
     public Map<String, ModuleDto> getModuleMap() {

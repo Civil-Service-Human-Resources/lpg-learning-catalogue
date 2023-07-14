@@ -10,8 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
+import uk.gov.cslearning.catalogue.Utils;
 import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.api.OwnerParameters;
 import uk.gov.cslearning.catalogue.api.ProfileParameters;
@@ -79,8 +80,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         if (filterParameters.hasCost()) {
             boolQuery = boolQuery
                     .must(QueryBuilders.boolQuery()
-                            .should(QueryBuilders.matchQuery("modules.cost", 0))
-                            .minimumShouldMatch(1));
+                            .should(QueryBuilders.matchQuery("cost", 0)));
         }
 
         List<String> statusList = new ArrayList<>();
@@ -111,14 +111,14 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         addOrFilter(filterQuery, profileParameters.getProfileAreasOfWork(), "audiences.areasOfWork");
         addOrFilter(filterQuery, profileParameters.getProfileInterests(), "audiences.interests");
 
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        Query searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withFilter(filterQuery)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
                 .withPageable(pageable)
                 .build();
 
-        return operations.queryForPage(searchQuery, Course.class);
+        return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
     }
 
     @Override
@@ -127,12 +127,12 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         boolQuery.must(QueryBuilders.matchQuery("owner.organisationalUnit", organisationalUnitCode));
 
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        Query searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withPageable(pageable)
                 .build();
 
-        return operations.queryForPage(searchQuery, Course.class);
+        return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
     }
 
     @Override
@@ -141,12 +141,12 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         boolQuery.must(QueryBuilders.matchQuery("owner.profession", professionId));
 
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        Query searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withPageable(pageable)
                 .build();
 
-        return operations.queryForPage(searchQuery, Course.class);
+        return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
     }
 
     @Override
@@ -155,12 +155,12 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         boolQuery.must(QueryBuilders.matchQuery("owner.supplier", supplier));
 
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+        Query searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withPageable(pageable)
                 .build();
 
-        return operations.queryForPage(searchQuery, Course.class);
+        return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
     }
 
 
