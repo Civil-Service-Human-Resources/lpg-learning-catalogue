@@ -51,6 +51,7 @@ public class CourseService {
     }
 
     public Course save(Course course) {
+        course.setCostFromModules();
         return courseRepository.save(course);
     }
 
