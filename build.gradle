@@ -73,6 +73,11 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.8.47'
     testImplementation 'com.jayway.jsonpath:json-path:2.4.0'
 
+    // Dependencies for Test Containers
+    testImplementation "org.testcontainers:testcontainers:1.19.1"
+    testImplementation 'org.testcontainers:elasticsearch:1.17.4'
+    testImplementation "org.testcontainers:testcontainers:1.17.5"
+
 }
 
 compileJava.dependsOn(processResources)
@@ -101,6 +106,10 @@ task integrationTest(type: Test) {
     }
 }
 
+task testContainerTests(type: Test){
+    include '**/*TCTest.*'
+}
+
 gradle.taskGraph.afterTask { Task task, TaskState taskState ->
     if (task.name == 'integrationTest') {
         stopElastic {
@@ -112,4 +121,5 @@ gradle.taskGraph.afterTask { Task task, TaskState taskState ->
 test {
     include '**/*Test.*'
     exclude '**/*IT.*'
+//    exclude '**/*TCTest.*'
 }

@@ -22,8 +22,11 @@ logging:
 
 elasticsearch:
   uri: ${ELASTICSEARCH_URI:127.0.0.1}
-  username: ${ELASTICSEARCH_USERNAME:elastic}
-  password: ${ELASTICSEARCH_PASSWORD:changeme}
+#  username: ${ELASTICSEARCH_USERNAME:elastic}
+#  password: ${ELASTICSEARCH_PASSWORD:changeme}
+  protocol: ${ES_PROTOCOL:http}
+  host: ${ES_HOST:localhost}
+  port: ${ES_PORT:9200}
 
 azure:
   account:
