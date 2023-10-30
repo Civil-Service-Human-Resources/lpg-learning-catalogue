@@ -51,15 +51,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     public Page<Course> search(CourseSearchParameters parameters, Pageable pageable) {
-        BoolQueryBuilder searchQuery = getSearchQuery(parameters.getSearchTerm());
-        if(parameters.costIsFree()) searchQuery.must(matchQuery("cost", 0).operator(Operator.AND));
-
-        if(parameters.hasAudienceFields()) {
-            searchQuery.must(getAudienceNestedQuery(
-                    parameters.getDepartments(),
-                    parameters.getAreasOfWork(),
-                    parameters.getInterests()));
-        }
+        BoolQueryBuilder searchQuery = getSearchQuery(parameters);
 
         NativeSearchQuery query = new NativeSearchQueryBuilder()
                 .withQuery(searchQuery)
@@ -71,18 +63,32 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
     }
 
-    private BoolQueryBuilder getSearchQuery(String searchTerm){
+    private BoolQueryBuilder getSearchQuery(CourseSearchParameters parameters){
         BoolQueryBuilder searchQuery = boolQuery();
-        searchQuery.must(multiMatchQuery(searchTerm)
-                .field("title", 8)
-                .field("shortDescription", 4)
-                .field("description", 2)
-                .field("learningOutcomes", 2)
-                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-                .fuzziness(Fuzziness.ONE)
-                .operator(Operator.AND));
+
+        if(!parameters.getSearchTerm().isEmpty()) {
+            searchQuery.must(multiMatchQuery(parameters.getSearchTerm())
+                    .field("title", 8)
+                    .field("shortDescription", 4)
+                    .field("description", 2)
+                    .field("learningOutcomes", 2)
+                    .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
+                    .fuzziness(Fuzziness.ONE)
+                    .operator(Operator.AND));
+        }
 
         searchQuery.must(matchQuery("status", "Published").operator(Operator.AND));
+
+        if(parameters.costIsFree()) searchQuery.must(matchQuery("cost", 0).operator(Operator.AND));
+
+        if(parameters.hasAudienceFields()) {
+            searchQuery.must(getAudienceNestedQuery(
+                    parameters.getDepartments(),
+                    parameters.getAreasOfWork(),
+                    parameters.getInterests()));
+        }
+
+
         return searchQuery;
     }
 
