@@ -104,10 +104,6 @@ public class CourseControllerTCTest {
 
     @Test
 
-//    elasticsearch:
-//  protocol: ${ES_PROTOCOL:http}
-//  host: ${ES_HOST:localhost}
-//  port: ${ES_PORT:9200}
     public void test1() throws Exception {
 
         populateElasticSearchContainer();
@@ -116,16 +112,16 @@ public class CourseControllerTCTest {
         parameters.setSearchTerm("googling");
 
         mockMvc.perform(get("/v2/courses/search")
-//                .content(objectMapper.writeValueAsString(parameters))
+               .content(objectMapper.writeValueAsString(parameters))
                 .with(csrf()));
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON));
+               .contentType(MediaType.APPLICATION_JSON)
+               .accept(MediaType.APPLICATION_JSON));
 
 
-//        SearchResponse searchResponse = performSearch();
-//
-//        assertTrue(searchResponse.getHits().getTotalHits().value > 0);
-//        assertEquals(2, searchResponse.getHits().getHits().length);
+       SearchResponse searchResponse = performSearch();
+
+       assertTrue(searchResponse.getHits().getTotalHits().value > 0);
+       assertEquals(2, searchResponse.getHits().getHits().length);
     }
 
 

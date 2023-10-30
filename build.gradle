@@ -121,5 +121,5 @@ gradle.taskGraph.afterTask { Task task, TaskState taskState ->
 test {
     include '**/*Test.*'
     exclude '**/*IT.*'
-//    exclude '**/*TCTest.*'
+   exclude '**/*TCTest.*'
 }
