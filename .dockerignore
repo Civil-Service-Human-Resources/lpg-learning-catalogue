@@ -6,3 +6,4 @@ src
 *.iml
 .idea
 .DS_Store
+README.md
