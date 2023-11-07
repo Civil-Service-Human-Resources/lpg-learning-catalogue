@@ -74,14 +74,14 @@ public class SearchController {
 
         return response;
     }
-//    @GetMapping("/courses")
-//    public ResponseEntity<SearchResults> search(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
-//        OwnerParameters ownerParameters = new OwnerParameters();
-//
-//        Pageable pageable = pageParameters.getPageRequest();
-//
-//        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
-//
-//        return ResponseEntity.ok(new SearchResults(searchPage, pageable));
-//    }
+    @GetMapping("/courses")
+    public ResponseEntity<SearchResults> search(@RequestParam(name = "status", defaultValue = "Published") String status, @RequestParam(name = "visibility", defaultValue = "PUBLIC") String visibility, String query, FilterParameters filterParameters, ProfileParameters profileParameters, PageParameters pageParameters) {
+        OwnerParameters ownerParameters = new OwnerParameters();
+
+        Pageable pageable = pageParameters.getPageRequest();
+
+        SearchPage searchPage = courseRepository.search(query, pageable, filterParameters, Arrays.stream(status.split(",")).map(Status::forValue).collect(Collectors.toList()), ownerParameters, profileParameters, visibility);
+
+        return ResponseEntity.ok(new SearchResults(searchPage, pageable));
+    }
 }
