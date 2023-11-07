@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.cslearning.catalogue.api.PageResults;
+import uk.gov.cslearning.catalogue.api.v2.model.CourseSearchParameters;
 import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
@@ -26,6 +27,12 @@ public class CourseControllerV2 {
     @GetMapping
     public ResponseEntity<PageResults<Course>> list(GetCoursesParameters parameters, Pageable pageable) {
         Page<Course> results = courseRepository.findSuggested(parameters, pageable);
+        return ResponseEntity.ok(new PageResults<>(results, pageable));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PageResults<Course>> search(CourseSearchParameters parameters, Pageable pageable){
+        Page<Course> results = courseRepository.search(parameters, pageable);
         return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
 }
