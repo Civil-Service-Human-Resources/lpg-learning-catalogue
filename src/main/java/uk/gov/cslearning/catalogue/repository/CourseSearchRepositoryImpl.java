@@ -81,8 +81,11 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         if(!parameters.getTypes().isEmpty()) {
             BoolQueryBuilder typesQuery = boolQuery();
-            parameters.getTypes().forEach(type -> typesQuery.should(matchQuery("modules.type", type)));
-            parameters.getTypes().forEach(type -> typesQuery.should(matchQuery("type", type)));
+            for(String type : parameters.getTypes()){
+                typesQuery
+                        .should(matchQuery("modules.type", type))
+                        .should(matchQuery("type", type));
+            }
 
             typesQuery.minimumShouldMatch(1);
             searchQuery.must(typesQuery);
