@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class CourseSearchParameters {
     String searchTerm = "";
-    List<String> learningTypes = Collections.emptyList();
+    List<String> types = Collections.emptyList();
     String cost;
     List<String> departments = Collections.emptyList();
     List<String> areasOfWork = Collections.emptyList();

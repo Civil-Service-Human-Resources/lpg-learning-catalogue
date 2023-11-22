@@ -79,6 +79,9 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
         searchQuery.must(matchQuery("status", "Published").operator(Operator.AND));
 
+        parameters.getTypes().forEach(type -> searchQuery.should(matchQuery("modules.type", type)));
+        parameters.getTypes().forEach(type -> searchQuery.should(matchQuery("type", type)));
+
         if(parameters.costIsFree()) searchQuery.must(matchQuery("cost", 0).operator(Operator.AND));
 
         if(parameters.hasAudienceFields()) {
