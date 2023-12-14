@@ -81,7 +81,7 @@ oauth:
   maxTotalConnections: 200
   defaultMaxConnectionsPerRoute: 100
   maxPerServiceUrl: 100
-  jwtKey: ${jwt_key}
+  jwtKey: ${jwt_key:dummy}
 
 retention:
   timeInDays: ${RETENTION_TIME_IN_DAYS:90}
