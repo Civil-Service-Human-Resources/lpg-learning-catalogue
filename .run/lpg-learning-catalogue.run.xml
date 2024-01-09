@@ -3,14 +3,28 @@
     <ExternalSystemSettings>
       <option name="env">
         <map>
+          <entry key="AZURE_ACCOUNT_KEY" value="Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" />
+          <entry key="AZURE_ACCOUNT_NAME" value="devstoreaccount1" />
+          <entry key="AZURE_STORAGE_CONTAINER" value="lpgdevcontent" />
+          <entry key="AZURE_STORAGE_SCORM_CONTAINER" value="rustici" />
+          <entry key="CLIENT_ID" value="9fbd4ae2-2db3-44c7-9544-88e80255b56e" />
+          <entry key="CLIENT_SECRET" value="test" />
+          <entry key="ELASTICSEARCH_USERNAME" value="elastic" />
+          <entry key="ELASTICSEARCH_PASSWORD" value="changeme" />
           <entry key="ES_HOST" value="localhost" />
           <entry key="ES_PORT" value="9200" />
           <entry key="ES_PROTOCOL" value="http" />
           <entry key="JAVA_HOME" value="C:\Program Files\Java\java-1.8.0" />
-          <entry key="LEARNER_RECORD_URL" value="http://localhost:9000" />
-          <entry key="OAUTH_SERVICE_URL" value="http://localhost:8080" />
-          <entry key="REGISTRY_SERVICE_URL" value="http://localhost:9002" />
           <entry key="jwt_key" value="key" />
+          <entry key="LEARNER_RECORD_URL" value="http://localhost:9000" />
+          <entry key="OAUTH_CHECK_TOKEN_ENDPOINT" value="/oauth2/introspect" />
+          <entry key="OAUTH_SERVICE_URL" value="http://localhost:9005" />
+          <entry key="OAUTH_TOKEN_ENDPOINT" value="/oauth2/token" />
+          <entry key="REGISTRY_SERVICE_URL" value="http://localhost:9002" />
+          <entry key="RUSTICI_PASSWORD" value="password" />
+          <entry key="RUSTICI_TENANT" value="default" />
+          <entry key="RUSTICI_URL" value="http://csl.local/rustici" />
+          <entry key="RUSTICI_USERNAME" value="apiuser" />
         </map>
       </option>
       <option name="executionName" />
