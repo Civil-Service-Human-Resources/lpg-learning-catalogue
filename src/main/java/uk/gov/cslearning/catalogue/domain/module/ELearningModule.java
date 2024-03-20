@@ -14,6 +14,7 @@ public class ELearningModule extends Module {
 
     @JsonCreator
     public ELearningModule(@JsonProperty("startPage") String startPage, @JsonProperty("url") String url) {
+        super("elearning");
         setStartPage(startPage);
         setUrl(url);
     }
@@ -33,9 +34,9 @@ public class ELearningModule extends Module {
         this.url = url;
     }
 
-    public String getModuleType() {
-        return "elearning";
-    }
+//    public String getModuleType() {
+//        return "elearning";
+//    }
 
     public String getMediaId() {
         return mediaId;

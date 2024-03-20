@@ -52,6 +52,10 @@ public abstract class Module {
     public Module() {
     }
 
+    public Module(String type){
+        this.type = type;
+    }
+
     public Module(@NotNull String title,
                   @NotNull String description,
                   @NotNull Long duration,
@@ -142,6 +146,14 @@ public abstract class Module {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public abstract String getModuleType();
+//    public abstract String getModuleType();
+
+    public String getType(){
+        return this.type;
+    }
+
+    public void setType(String type){
+        this.type = type;
+    }
 
 }

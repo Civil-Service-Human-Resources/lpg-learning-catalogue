@@ -18,7 +18,7 @@ public class ModuleDtoFactory {
         ModuleDto moduleDto = new ModuleDto();
         moduleDto.setId(module.getId());
         moduleDto.setTitle(module.getTitle());
-        moduleDto.setType(module.getModuleType());
+        moduleDto.setType(module.getType());
         moduleDto.setRequired(!module.isOptional());
         moduleDto.setCourse(courseDtoFactory.create(course));
         moduleDto.setAssociatedLearning(module.isAssociatedLearning());
