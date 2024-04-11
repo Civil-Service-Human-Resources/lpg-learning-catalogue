@@ -2,6 +2,8 @@ package uk.gov.cslearning.catalogue.domain.module;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.elasticsearch.annotations.Field;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -20,6 +22,7 @@ import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
         @JsonSubTypes.Type(VideoModule.class),
         @JsonSubTypes.Type(FileModule.class)
 })
+@Data
 public abstract class Module {
 
     private String id = UUIDs.randomBase64UUID();
@@ -61,87 +64,5 @@ public abstract class Module {
         this.duration = duration;
         this.type = type;
     }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Long duration) {
-        this.duration = duration;
-    }
-
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isAssociatedLearning() {
-        return associatedLearning;
-    }
-
-    public void setAssociatedLearning(boolean associatedLearning) {
-        this.associatedLearning = associatedLearning;
-    }
-
-    public LocalDateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-
-    public LocalDateTime getUpdatedTimestamp() {
-        return updatedTimestamp;
-    }
-
-    public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
-    }
-
-    public abstract String getModuleType();
 
 }

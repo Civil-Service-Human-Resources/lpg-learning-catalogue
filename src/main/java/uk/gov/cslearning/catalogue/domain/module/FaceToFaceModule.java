@@ -19,8 +19,10 @@ public class FaceToFaceModule extends Module {
 
     @JsonCreator
     public FaceToFaceModule(@JsonProperty("productCode") String productCode) {
+        setType("face-to-face");
         this.productCode = productCode;
         this.events = new HashSet<>();
+
     }
 
     public Event getEventById(String eventId){
@@ -52,7 +54,4 @@ public class FaceToFaceModule extends Module {
         this.productCode = productCode;
     }
 
-    public String getModuleType() {
-        return "face-to-face";
-    }
 }

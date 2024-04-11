@@ -13,6 +13,7 @@ public class VideoModule extends Module {
 
     @JsonCreator
     public VideoModule(@JsonProperty("url") URL url) {
+        setType("video");
         this.url = url;
     }
 
@@ -22,9 +23,5 @@ public class VideoModule extends Module {
 
     public void setUrl(URL url) {
         this.url = url;
-    }
-
-    public String getModuleType() {
-        return "video";
     }
 }
