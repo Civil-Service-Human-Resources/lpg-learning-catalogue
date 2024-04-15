@@ -65,7 +65,7 @@ public class EventDtoMapService {
 
     private List<FaceToFaceModule> getFaceToFaceModules(Course course) {
         return course.getModules().stream()
-                .filter(m -> m.getModuleType().equals("face-to-face"))
+                .filter(m -> m.getType().equals("face-to-face"))
                 .map(m -> (FaceToFaceModule) m)
                 .collect(Collectors.toList());
     }

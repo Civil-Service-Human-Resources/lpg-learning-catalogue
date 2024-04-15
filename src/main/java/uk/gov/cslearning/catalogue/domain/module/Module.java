@@ -142,6 +142,12 @@ public abstract class Module {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public abstract String getModuleType();
+    public String getType(){
+        return this.type;
+    }
+
+    public void setType(String type){
+        this.type = type;
+    }
 
 }
