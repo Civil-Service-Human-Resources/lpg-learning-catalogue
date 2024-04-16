@@ -150,4 +150,8 @@ public abstract class Module {
         this.type = type;
     }
 
+    public String getModuleType(){
+        return this.type;
+    }
+
 }
