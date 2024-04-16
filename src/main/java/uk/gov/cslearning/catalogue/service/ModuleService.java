@@ -49,7 +49,7 @@ public class ModuleService {
 
     public Module save(String courseId, Module module) {
         Course course = courseService.getCourseById(courseId);
-        if (module.getType().equals("elearning")) {
+        if (module.getModuleType().equals("elearning")) {
             rusticiEngineService.uploadElearningModule(courseId, module.getId(), ((ELearningModule) module).getMediaId());
         }
         course.upsertModule(module);
