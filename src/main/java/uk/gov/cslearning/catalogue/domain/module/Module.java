@@ -1,7 +1,9 @@
 package uk.gov.cslearning.catalogue.domain.module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Data;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.elasticsearch.annotations.Field;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -20,34 +22,36 @@ import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
         @JsonSubTypes.Type(VideoModule.class),
         @JsonSubTypes.Type(FileModule.class)
 })
+@Data
 public abstract class Module {
 
-    private String id = UUIDs.randomBase64UUID();
+    protected String id = UUIDs.randomBase64UUID();
 
     @NotNull
-    private String title;
+    protected String title;
 
     @NotNull
-    private String description;
+    protected String description;
 
     @NotNull
-    private Long duration;
+    protected Long duration;
 
-    private BigDecimal cost = new BigDecimal(0);
+    protected BigDecimal cost = new BigDecimal(0);
 
-    private boolean optional;
+    protected boolean optional;
 
-    private Status status;
+    protected Status status;
 
-    private boolean associatedLearning;
+    protected boolean associatedLearning;
 
-    private String type;
+    @JsonIgnore
+    protected String type;
 
     @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
-    private LocalDateTime createdTimestamp;
+    protected LocalDateTime createdTimestamp;
 
     @Field(type = Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss")
-    private LocalDateTime updatedTimestamp;
+    protected LocalDateTime updatedTimestamp;
 
     public Module() {
     }
@@ -62,14 +66,6 @@ public abstract class Module {
         this.type = type;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public boolean isOptional() {
         return optional;
     }
@@ -78,76 +74,12 @@ public abstract class Module {
         this.optional = optional;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Long duration) {
-        this.duration = duration;
-    }
-
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public boolean isAssociatedLearning() {
         return associatedLearning;
     }
 
     public void setAssociatedLearning(boolean associatedLearning) {
         this.associatedLearning = associatedLearning;
-    }
-
-    public LocalDateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-
-    public LocalDateTime getUpdatedTimestamp() {
-        return updatedTimestamp;
-    }
-
-    public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
-    }
-
-    public String getType(){
-        return this.type;
-    }
-
-    public void setType(String type){
-        this.type = type;
     }
 
     public String getModuleType(){
