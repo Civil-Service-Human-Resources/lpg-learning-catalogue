@@ -13,7 +13,7 @@ public class FileModule extends Module {
 
     @JsonCreator
     public FileModule(@JsonProperty("url") String url, @JsonProperty("fileSize") Long fileSize) {
-        setType("file");
+        this.type = "file";
         this.url = url;
         this.fileSize = fileSize;
     }
