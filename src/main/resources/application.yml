@@ -48,7 +48,7 @@ azure:
   storage:
     container: ${AZURE_STORAGE_CONTAINER:lpgdevcontent}
     scorm-container: ${AZURE_STORAGE_SCORM_CONTAINER:rustici}
-    connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=${azure.account.name};AccountKey=${azure.account.key};${azure.storage.blob-endpoint}}
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=${azure.account.name};AccountKey=${azure.account.key}}
   scorm-cdn: "${rustici.url}/cdn"
 
 management:

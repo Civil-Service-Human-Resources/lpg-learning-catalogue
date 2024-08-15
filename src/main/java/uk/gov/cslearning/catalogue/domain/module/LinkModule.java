@@ -16,7 +16,7 @@ public class LinkModule extends Module {
 
     @JsonCreator
     public LinkModule(@JsonProperty("url") URL url) {
-        setType("link");
+        this.type = "link";
         this.url = url;
     }
 
