@@ -79,6 +79,17 @@ public class Course {
     }
 
     @JsonIgnore
+    public List<String> getMandatoryDepartmentCodes() {
+        return getRequiredAudiences()
+                .stream().flatMap(audience -> audience.getDepartments().stream()).collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    public List<Audience> getRequiredAudiences() {
+        return getAudiences().stream().filter(Audience::isRequired).collect(Collectors.toList());
+    }
+
+    @JsonIgnore
     public List<Audience> getMandatoryAudiencesForDepartments(List<String> departmentCodes) {
         return getAudiences()
                 .stream()

@@ -22,6 +22,35 @@ public interface CourseRepository extends ElasticsearchRepository<Course, String
     List<Course> findAllRequiredLearning(String status, Pageable pageable);
 
     @Query("{\n" +
+            "    \"bool\": {\n" +
+            "        \"must\": [\n" +
+            "            {\n" +
+            "                \"match\": {\n" +
+            "                    \"status\": \"PUBLISHED\"\n" +
+            "                }\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"nested\": {\n" +
+            "                    \"path\": \"audiences\",\n" +
+            "                    \"query\": {\n" +
+            "                        \"bool\": {\n" +
+            "                            \"must\": [\n" +
+            "                                {\n" +
+            "                                    \"match\": {\n" +
+            "                                        \"audiences.type\": \"REQUIRED_LEARNING\"\n" +
+            "                                    }\n" +
+            "                                }\n" +
+            "                            ]\n" +
+            "                        }\n" +
+            "                    }\n" +
+            "                }\n" +
+            "            }\n" +
+            "        ]\n" +
+            "    }\n" +
+            "}")
+    List<Course> findAllPublishedRequiredLearning(Pageable pageable);
+
+    @Query("{\n" +
             "        \"bool\": {\n" +
             "            \"must\": [\n" +
             "                {\n" +
