@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import uk.gov.cslearning.catalogue.api.v2.model.RequiredLearningIdMap;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
 import uk.gov.cslearning.catalogue.domain.Course;
@@ -196,6 +197,20 @@ public class CourseService {
         }
 
         return groupedCourses;
+    }
+
+    public RequiredLearningIdMap getDepartmentCodeToCourseIdRequiredLearningMap() {
+        List<Course> allRequiredLearning = courseRepository.findAllPublishedRequiredLearning(PageRequest.of(0, 10000));
+        Map<String, List<String>> depCodeToCourseIdsMap = new HashMap<>();
+        allRequiredLearning.forEach(c -> c.getMandatoryDepartmentCodes().forEach(dep -> {
+            List<String> courseIds = depCodeToCourseIdsMap.get(dep);
+            if (courseIds == null) {
+                courseIds = new ArrayList<>();
+            }
+            courseIds.add(c.getId());
+            depCodeToCourseIdsMap.put(dep, courseIds);
+        }));
+        return new RequiredLearningIdMap(depCodeToCourseIdsMap);
     }
 
     public Page<Course> getRequiredCourses(String profession, String gradeCode, List<String>departments, List<String>otherAreasOfWork,  List<String>interests, String courseStatus,  Pageable pageable) {
