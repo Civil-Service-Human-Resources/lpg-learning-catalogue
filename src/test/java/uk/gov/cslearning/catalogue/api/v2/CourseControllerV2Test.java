@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.api.v2;
 
-import lombok.SneakyThrows;
 import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.api.v2.model.GetCoursesParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.CourseService;
 
 import java.util.Arrays;
 
@@ -42,6 +42,9 @@ public class CourseControllerV2Test {
 
     @MockBean
     private CourseRepository courseRepository;
+
+    @MockBean
+    private CourseService courseService;
 
     @Test
     public void testGetCoursesDefaultParameters() throws Exception {
