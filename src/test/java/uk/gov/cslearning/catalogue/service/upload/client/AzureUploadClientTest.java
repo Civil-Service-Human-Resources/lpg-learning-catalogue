@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.mock.web.MockMultipartFile;
 import uk.gov.cslearning.catalogue.dto.upload.UploadStatus;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
@@ -39,7 +40,14 @@ public class AzureUploadClientTest {
         UploadableFile uploadableFile = mock(UploadableFile.class);
         when(uploadableFile.getFullPath()).thenReturn(filePath);
         when(uploadableFile.getContentType()).thenReturn(contentType);
-        when(uploadableFile.getBytes()).thenReturn(new byte[fileSize]);
+
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "file",
+                filePath,
+                contentType,
+                new byte[fileSize]
+        );
+        when(uploadableFile.getMultipartFile()).thenReturn(mockMultipartFile);
         return uploadableFile;
     }
 

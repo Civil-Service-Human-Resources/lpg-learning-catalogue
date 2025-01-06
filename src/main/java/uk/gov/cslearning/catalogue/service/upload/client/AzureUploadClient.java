@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 @Slf4j
 public class AzureUploadClient implements UploadClient {
@@ -26,9 +27,9 @@ public class AzureUploadClient implements UploadClient {
     public UploadedFile upload(UploadableFile file) {
         log.debug(String.format("Uploading file %s", file.getFullPath()));
         String filePath = file.getFullPath();
-        int fileSizeBytes = file.getBytes().length;
+        long fileSizeBytes = file.getMultipartFile().getSize();
         long fileSizeInKB = fileSizeBytes / 1024;
-        try(InputStream byteInputStream = new ByteArrayInputStream(file.getBytes())) {
+        try(InputStream byteInputStream = file.getMultipartFile().getInputStream()) {
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.getProperties().setContentType(file.getContentType());
             blob.upload(byteInputStream, fileSizeBytes);

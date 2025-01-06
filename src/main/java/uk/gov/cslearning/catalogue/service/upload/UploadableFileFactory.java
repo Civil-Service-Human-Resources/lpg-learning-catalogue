@@ -3,6 +3,7 @@ package uk.gov.cslearning.catalogue.service.upload;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataParser;
@@ -25,10 +26,9 @@ public class UploadableFileFactory {
         this.metadataParser = metadataParser;
     }
 
-    private UploadableFile createFromZipEntry(String filename, String destination, InputStream inputStream) throws IOException {
-        byte[] bytes = IOUtils.toByteArray(inputStream);
-        String contentType = metadataParser.getContentType(new ByteArrayInputStream(bytes), filename);
-        return new UploadableFile(filename, destination, bytes, contentType);
+    private UploadableFile createFromZipEntry(String filename, String destination, MultipartFile multipartFile) throws IOException {
+        String contentType = metadataParser.getContentType(multipartFile.getInputStream(), filename);
+        return new UploadableFile(filename, destination, multipartFile, contentType);
     }
 
     public List<UploadableFile> createFromZip(FileUpload fileUpload) throws IOException {
@@ -38,7 +38,7 @@ public class UploadableFileFactory {
             while (zipEntry != null) {
                 if (!zipEntry.isDirectory()) {
                     String filename = zipEntry.getName();
-                    UploadableFile uploadableFile = createFromZipEntry(filename, fileUpload.getDestination(), inputStream);
+                    UploadableFile uploadableFile = createFromZipEntry(filename, fileUpload.getDestination(), fileUpload.getFile());
                     uploadableFiles.add(uploadableFile);
                 }
                 zipEntry = inputStream.getNextEntry();
@@ -48,10 +48,8 @@ public class UploadableFileFactory {
     }
 
     public UploadableFile createFromFileUpload(FileUpload fileUpload) throws IOException {
-        InputStream inputStream = fileUpload.getFile().getInputStream();
-        byte[] bytes = IOUtils.toByteArray(inputStream);
         return new UploadableFile(fileUpload.getName(),
-                fileUpload.getDestination(), bytes,
+                fileUpload.getDestination(), fileUpload.getFile(),
                 fileUpload.getFile().getContentType());
     }
 
