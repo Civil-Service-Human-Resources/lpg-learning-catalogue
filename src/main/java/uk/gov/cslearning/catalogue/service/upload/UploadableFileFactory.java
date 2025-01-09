@@ -27,14 +27,19 @@ public class UploadableFileFactory {
 
     private UploadableFile createFromZipEntry(String filename, String destination, InputStream inputStream) throws IOException {
         byte[] bytes = IOUtils.toByteArray(inputStream);
-        String contentType = metadataParser.getContentType(new ByteArrayInputStream(bytes), filename);
-        return new UploadableFile(filename, destination, bytes, contentType);
+        InputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+
+        int size = bytes.length;
+        String contentType = metadataParser.getContentType(byteArrayInputStream, filename);
+        return new UploadableFile(filename, destination, size, byteArrayInputStream, contentType);
     }
 
     public List<UploadableFile> createFromZip(FileUpload fileUpload) throws IOException {
         List<UploadableFile> uploadableFiles = new ArrayList<>();
         try (ZipInputStream inputStream = new ZipInputStream(fileUpload.getFile().getInputStream())) {
+            System.out.println("createFromZip: Got input stream");
             ZipEntry zipEntry = inputStream.getNextEntry();
+            System.out.println("createFromZip: Got next zip entry.");
             while (zipEntry != null) {
                 if (!zipEntry.isDirectory()) {
                     String filename = zipEntry.getName();
@@ -44,14 +49,16 @@ public class UploadableFileFactory {
                 zipEntry = inputStream.getNextEntry();
             }
         }
+        System.out.println("createFromZip: completed.");
         return uploadableFiles;
     }
 
     public UploadableFile createFromFileUpload(FileUpload fileUpload) throws IOException {
         InputStream inputStream = fileUpload.getFile().getInputStream();
-        byte[] bytes = IOUtils.toByteArray(inputStream);
         return new UploadableFile(fileUpload.getName(),
-                fileUpload.getDestination(), bytes,
+                fileUpload.getDestination(),
+                fileUpload.getFile().getSize(),
+                inputStream,
                 fileUpload.getFile().getContentType());
     }
 

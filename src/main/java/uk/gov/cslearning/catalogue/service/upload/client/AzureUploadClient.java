@@ -26,12 +26,18 @@ public class AzureUploadClient implements UploadClient {
     public UploadedFile upload(UploadableFile file) {
         log.debug(String.format("Uploading file %s", file.getFullPath()));
         String filePath = file.getFullPath();
-        int fileSizeBytes = file.getBytes().length;
+        System.out.println("File path: " + filePath);
+        long fileSizeBytes = file.getFileSize();
+        System.out.println("File Size: " + fileSizeBytes);
         long fileSizeInKB = fileSizeBytes / 1024;
-        try(InputStream byteInputStream = new ByteArrayInputStream(file.getBytes())) {
+        try(InputStream byteInputStream = file.getInputStream()) {
+            System.out.println("Got input stream");
+            System.out.println("Available: " + byteInputStream.available());
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.getProperties().setContentType(file.getContentType());
+            System.out.println("Uploading...");
             blob.upload(byteInputStream, fileSizeBytes);
+            System.out.println("Uploaded.");
             return UploadedFile.createSuccessfulUploadedFile(fileSizeInKB, filePath);
         } catch (StorageException | URISyntaxException | IOException e) {
             log.error(String.format("Encountered error uploading file: %s", e));
