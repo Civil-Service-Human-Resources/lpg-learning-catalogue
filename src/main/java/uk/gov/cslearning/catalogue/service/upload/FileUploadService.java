@@ -36,14 +36,10 @@ public abstract class FileUploadService {
     public Upload upload(FileUpload fileUpload) {
         log.info("Creating fileUpload");
         ProcessedFileUpload processedFileUpload = processor.process(fileUpload);
-        System.out.println("Processed");
         List<UploadableFile> uploadableFiles = processedFileUpload.getUploadableFiles();
-        System.out.println("Got " + uploadableFiles.size() + " uploadable files");
         List<UploadedFile> uploadedFiles = uploadableFiles
                 .stream().map(uploadClient::upload).collect(Collectors.toList());
-        System.out.println("Got " + uploadedFiles.size() + " uploaded files");
         List<Throwable> errors = extractErrorsFromUploads(uploadedFiles);
-        System.out.println("Got " + errors.size() + " errors");
         if (!errors.isEmpty()) {
             String errMsg = String.format(
                     "Error(s) uploading file %s: %s",

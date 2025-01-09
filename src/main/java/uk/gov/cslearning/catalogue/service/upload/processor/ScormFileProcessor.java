@@ -38,16 +38,11 @@ public class ScormFileProcessor implements FileProcessor {
 
     @Override
     public ProcessedFileUpload process(FileUpload fileUpload) throws FileProcessingException {
-        System.out.println("Starting process()...");
         List<UploadableFile> uploadableFiles;
         try {
             uploadableFiles = uploadableFileFactory.createFromZip(fileUpload);
-            System.out.println("Ran createFromZip()");
             String manifest = fetchManifest(uploadableFiles.stream().map(UploadableFile::getName).collect(Collectors.toList()));
-            System.out.println("Got manifest");
             Map<String, String> metadata = Collections.singletonMap(CustomMediaMetadata.ELEARNING_MANIFEST.getMetadataKey(), manifest);
-            System.out.println("Got metadata");
-            System.out.println("Done.");
             return new ProcessedFileUpload(fileUpload, uploadableFiles, metadata);
         } catch (IOException | InvalidScormException e) {
             log.error(String.format("Error processing SCORM package: %s", fileUpload), e);

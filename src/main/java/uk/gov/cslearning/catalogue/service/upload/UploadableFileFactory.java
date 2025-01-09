@@ -37,9 +37,7 @@ public class UploadableFileFactory {
     public List<UploadableFile> createFromZip(FileUpload fileUpload) throws IOException {
         List<UploadableFile> uploadableFiles = new ArrayList<>();
         try (ZipInputStream inputStream = new ZipInputStream(fileUpload.getFile().getInputStream())) {
-            System.out.println("createFromZip: Got input stream");
             ZipEntry zipEntry = inputStream.getNextEntry();
-            System.out.println("createFromZip: Got next zip entry.");
             while (zipEntry != null) {
                 if (!zipEntry.isDirectory()) {
                     String filename = zipEntry.getName();
@@ -49,7 +47,6 @@ public class UploadableFileFactory {
                 zipEntry = inputStream.getNextEntry();
             }
         }
-        System.out.println("createFromZip: completed.");
         return uploadableFiles;
     }
 
