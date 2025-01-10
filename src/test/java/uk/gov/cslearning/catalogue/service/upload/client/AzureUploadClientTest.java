@@ -12,6 +12,7 @@ import uk.gov.cslearning.catalogue.dto.upload.UploadStatus;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,13 +34,14 @@ public class AzureUploadClientTest {
 
     private final String filePath = "test-file-path/text.txt";
     private final String contentType = "application/octet-stream";
-    private final int fileSize = 2048;
+    private final long fileSize = 2048;
 
     private UploadableFile generateFileUpload() {
         UploadableFile uploadableFile = mock(UploadableFile.class);
         when(uploadableFile.getFullPath()).thenReturn(filePath);
         when(uploadableFile.getContentType()).thenReturn(contentType);
-        when(uploadableFile.getBytes()).thenReturn(new byte[fileSize]);
+        when(uploadableFile.getFileSize()).thenReturn(fileSize);
+        when(uploadableFile.getInputStream()).thenReturn(new ByteArrayInputStream(new byte[2048]));
         return uploadableFile;
     }
 
