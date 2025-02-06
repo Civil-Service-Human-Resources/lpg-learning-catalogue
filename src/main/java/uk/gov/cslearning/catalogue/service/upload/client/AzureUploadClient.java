@@ -26,9 +26,9 @@ public class AzureUploadClient implements UploadClient {
     public UploadedFile upload(UploadableFile file) {
         log.debug(String.format("Uploading file %s", file.getFullPath()));
         String filePath = file.getFullPath();
-        int fileSizeBytes = file.getBytes().length;
+        long fileSizeBytes = file.getFileSize();
         long fileSizeInKB = fileSizeBytes / 1024;
-        try(InputStream byteInputStream = new ByteArrayInputStream(file.getBytes())) {
+        try(InputStream byteInputStream = file.getInputStream()) {
             CloudBlockBlob blob = container.getBlockBlobReference(filePath);
             blob.getProperties().setContentType(file.getContentType());
             blob.upload(byteInputStream, fileSizeBytes);

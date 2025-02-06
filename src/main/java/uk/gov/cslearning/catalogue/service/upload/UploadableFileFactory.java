@@ -27,8 +27,11 @@ public class UploadableFileFactory {
 
     private UploadableFile createFromZipEntry(String filename, String destination, InputStream inputStream) throws IOException {
         byte[] bytes = IOUtils.toByteArray(inputStream);
-        String contentType = metadataParser.getContentType(new ByteArrayInputStream(bytes), filename);
-        return new UploadableFile(filename, destination, bytes, contentType);
+        InputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+
+        int size = bytes.length;
+        String contentType = metadataParser.getContentType(byteArrayInputStream, filename);
+        return new UploadableFile(filename, destination, size, byteArrayInputStream, contentType);
     }
 
     public List<UploadableFile> createFromZip(FileUpload fileUpload) throws IOException {
@@ -49,9 +52,10 @@ public class UploadableFileFactory {
 
     public UploadableFile createFromFileUpload(FileUpload fileUpload) throws IOException {
         InputStream inputStream = fileUpload.getFile().getInputStream();
-        byte[] bytes = IOUtils.toByteArray(inputStream);
         return new UploadableFile(fileUpload.getName(),
-                fileUpload.getDestination(), bytes,
+                fileUpload.getDestination(),
+                fileUpload.getFile().getSize(),
+                inputStream,
                 fileUpload.getFile().getContentType());
     }
 
