@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataParser;
+import uk.gov.cslearning.catalogue.service.util.InputStreamUtil;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,13 +27,11 @@ public class UploadableFileFactory {
         this.metadataParser = metadataParser;
     }
 
-    private UploadableFile createFromZipEntry(String filename, String destination, InputStream inputStream) throws IOException {
-        byte[] bytes = IOUtils.toByteArray(inputStream);
-        InputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+    private UploadableFile createFromZipEntry(String filename, String destination, Long size, InputStream inputStream) throws IOException {
+        File inputStreamAsFile = InputStreamUtil.saveInputStreamAsTempFile(inputStream);
 
-        int size = bytes.length;
-        String contentType = metadataParser.getContentType(byteArrayInputStream, filename);
-        return new UploadableFile(filename, destination, size, byteArrayInputStream, contentType);
+        String contentType = metadataParser.getContentType(InputStreamUtil.getInputStreamFromFile(inputStreamAsFile), filename);
+        return new UploadableFile(filename, destination, size, InputStreamUtil.getInputStreamFromFile(inputStreamAsFile), contentType);
     }
 
     public List<UploadableFile> createFromZip(FileUpload fileUpload) throws IOException {
@@ -41,7 +41,7 @@ public class UploadableFileFactory {
             while (zipEntry != null) {
                 if (!zipEntry.isDirectory()) {
                     String filename = zipEntry.getName();
-                    UploadableFile uploadableFile = createFromZipEntry(filename, fileUpload.getDestination(), inputStream);
+                    UploadableFile uploadableFile = createFromZipEntry(filename, fileUpload.getDestination(), zipEntry.getSize(), inputStream);
                     uploadableFiles.add(uploadableFile);
                 }
                 zipEntry = inputStream.getNextEntry();
