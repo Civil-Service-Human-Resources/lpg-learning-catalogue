@@ -14,7 +14,7 @@ public class CourseSearchParametersTest {
     public void testHasAudienceFieldReturnsFalseIfNoneOfAudienceFieldsIsPopulated() {
         boolean expectedResult = false;
         CourseSearchParameters parameters = new CourseSearchParameters();
-        parameters.setSearchTerm("corruption");
+        parameters.setQuery("corruption");
 
         boolean actualResult = parameters.hasAudienceFields();
 
@@ -25,7 +25,7 @@ public class CourseSearchParametersTest {
     public void testHasAudienceFieldReturnsTrueIfDepartmentsIsPopulated() {
         boolean expectedResult = true;
         CourseSearchParameters parameters = new CourseSearchParameters();
-        parameters.setSearchTerm("corruption");
+        parameters.setQuery("corruption");
         List<String> departments = new ArrayList<>();
         departments.add("co");
         parameters.setDepartments(departments);
