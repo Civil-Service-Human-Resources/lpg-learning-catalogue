@@ -53,7 +53,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
     private BoolQueryBuilder getSearchBuilderQuery(CourseSearchParameters parameters){
         BoolQueryBuilder searchQuery = boolQuery();
-        String query = parameters.getSearchTerm();
+        String query = parameters.getQuery();
 
         if (isNotBlank(query)) {
             searchQuery = searchQuery.must(multiMatchQuery(query)

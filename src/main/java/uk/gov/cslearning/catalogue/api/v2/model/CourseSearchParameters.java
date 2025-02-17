@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class CourseSearchParameters {
-    String searchTerm = "";
+    String query = "";
 
     Collection<Status> status = Collections.singletonList(Status.PUBLISHED);
     String visibility = "PUBLIC";
