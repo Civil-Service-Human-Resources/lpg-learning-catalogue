@@ -25,7 +25,7 @@ public class DataService {
 
     private final CourseRepository repository;
     private boolean bulkLoaded = false;
-
+    private List<Course> bulkCourses;
     public DataService(CourseRepository repository) {
         this.repository = repository;
     }
@@ -36,15 +36,15 @@ public class DataService {
     public void loadBulkCourses() {
         if (!bulkLoaded) {
             log.info("Loading bulk courses");
-            List<Course> courses = createBulkCourses();
-            repository.saveAll(courses);
+            bulkCourses = createBulkCourses();
+            repository.saveAll(bulkCourses);
             bulkLoaded = true;
         }
     }
 
     public void deleteBulkCourses() {
         log.info("Tearing down bulk courses");
-        repository.deleteAll();
+        repository.deleteAll(bulkCourses);
     }
 
     public List<Course> createBulkCourses() {
