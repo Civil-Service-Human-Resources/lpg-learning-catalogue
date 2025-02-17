@@ -1,0 +1,7 @@
+test:
+  integration:
+    useLocalElastic: true
+    elasticImage: "docker.elastic.co/elasticsearch/elasticsearch:8.4.2"
+logging:
+  level:
+    root: DEBUG

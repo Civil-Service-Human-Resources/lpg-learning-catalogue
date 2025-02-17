@@ -27,11 +27,7 @@ import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.mapping.DaysMapper;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
-import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.EventService;
-import uk.gov.cslearning.catalogue.service.ModuleService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
-import uk.gov.cslearning.catalogue.service.AudienceService;
+import uk.gov.cslearning.catalogue.service.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -152,8 +148,6 @@ public class CourseController {
 
         return ResponseEntity.ok(new PageResults<>(results, pageable));
     }
-
-
 
     @GetMapping(value = "/getrequiredlearning")
     public ResponseEntity<PageResults<Course>> listMandatory(@PageableDefault(size = 100) Pageable pageable) {

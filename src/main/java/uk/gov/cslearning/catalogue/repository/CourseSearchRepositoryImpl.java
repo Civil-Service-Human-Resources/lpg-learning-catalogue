@@ -8,22 +8,18 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.Utils;
-import uk.gov.cslearning.catalogue.api.FilterParameters;
 import uk.gov.cslearning.catalogue.api.OwnerParameters;
-import uk.gov.cslearning.catalogue.api.ProfileParameters;
+import uk.gov.cslearning.catalogue.api.SearchResults;
 import uk.gov.cslearning.catalogue.api.v2.model.CourseSearchParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.domain.Status;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -40,34 +36,27 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     }
 
     @Override
-    public SearchPage search(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters, ProfileParameters profileParameters, String visbility) {
-
-        Page<Course> coursePage = executeSearchQuery(query, pageable, filterParameters, statusCollection, ownerParameters, profileParameters, visbility);
-
-        SearchPage searchPage = new SearchPage();
-        searchPage.setCourses(coursePage);
-
-        return searchPage;
+    public SearchResults search(Pageable pageable, CourseSearchParameters courseSearchParameters) {
+        Query searchQuery = getSearchQuery(pageable, courseSearchParameters).build();
+        Page<Course> coursePage = Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
+        return new SearchResults(coursePage, pageable);
     }
 
-    public Page<Course> search(CourseSearchParameters parameters, Pageable pageable) {
-        BoolQueryBuilder searchQuery = getSearchQuery(parameters);
-
-        NativeSearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(searchQuery)
-                .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
-                .withPageable(pageable)
-                .build();
-
-        return Utils.searchPageToPage(operations.search(query, Course.class), pageable);
-
+    @Override
+    public SearchResults search(Pageable pageable, CourseSearchParameters courseSearchParameters, OwnerParameters ownerParameters) {
+        BoolQueryBuilder filterQuery = getOwnerFilter(ownerParameters);
+        Query searchQuery = getSearchQuery(pageable, courseSearchParameters)
+                .withFilter(filterQuery).build();
+        Page<Course> coursePage = Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
+        return new SearchResults(coursePage, pageable);
     }
 
-    private BoolQueryBuilder getSearchQuery(CourseSearchParameters parameters){
+    private BoolQueryBuilder getSearchBuilderQuery(CourseSearchParameters parameters){
         BoolQueryBuilder searchQuery = boolQuery();
+        String query = parameters.getSearchTerm();
 
-        if(!parameters.getSearchTerm().isEmpty()) {
-            searchQuery.must(multiMatchQuery(parameters.getSearchTerm())
+        if (isNotBlank(query)) {
+            searchQuery = searchQuery.must(multiMatchQuery(query)
                     .field("title", 8)
                     .field("shortDescription", 4)
                     .field("description", 2)
@@ -77,32 +66,38 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
                     .operator(Operator.AND));
         }
 
-        searchQuery.must(matchQuery("status", "Published").operator(Operator.AND));
-        searchQuery.must(matchQuery("visibility", "PUBLIC").operator(Operator.AND));
-
-        if(!parameters.getTypes().isEmpty()) {
-            BoolQueryBuilder typesQuery = boolQuery();
-            for(String type : parameters.getTypes()){
-                typesQuery
-                        .should(matchQuery("modules.type", type))
-                        .should(matchQuery("type", type));
-            }
-
-            typesQuery.minimumShouldMatch(1);
+        if (parameters.hasModuleTypes()) {
+            BoolQueryBuilder typesQuery = getModuleTypeBoolQuery(parameters.getTypes());
             searchQuery.must(typesQuery);
         }
 
-        if(parameters.costIsFree()) searchQuery.must(matchQuery("cost", 0).operator(Operator.AND));
+        if (parameters.costIsFree()) {
+            searchQuery.must(matchQuery("cost", 0).operator(Operator.AND));
+        }
 
-        if(parameters.hasAudienceFields()) {
+        if (parameters.hasAudienceFields()) {
             searchQuery.must(getAudienceNestedQuery(
                     parameters.getDepartments(),
                     parameters.getAreasOfWork(),
                     parameters.getInterests()));
         }
 
+        List<String> statusList = parameters.getStatus().stream().map(Status::getValue).collect(Collectors.toList());
+        searchQuery = addFilter(searchQuery, statusList, "status");
 
         return searchQuery;
+    }
+
+    private BoolQueryBuilder getModuleTypeBoolQuery(List<String> moduleTypes) {
+        BoolQueryBuilder typesQuery = boolQuery();
+        for(String type : moduleTypes){
+            typesQuery
+                    .should(matchQuery("modules.type", type))
+                    .should(matchQuery("type", type));
+        }
+
+        typesQuery.minimumShouldMatch(1);
+        return typesQuery;
     }
 
     private NestedQueryBuilder getAudienceNestedQuery(List<String> departments, List<String> areasOfWork, List<String> interests){
@@ -112,48 +107,10 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         areasOfWork.forEach(areaOfWork -> audiencesBoolQuery.must(matchQuery("audiences.areasOfWork", areaOfWork).operator(Operator.AND)));
         interests.forEach(interest -> audiencesBoolQuery.must(matchQuery("audiences.interests", interest).operator(Operator.AND)));
 
-        NestedQueryBuilder audiencesQuery = nestedQuery("audiences", audiencesBoolQuery, ScoreMode.Avg);
-        return audiencesQuery;
+        return nestedQuery("audiences", audiencesBoolQuery, ScoreMode.Avg);
     }
 
-    private Page<Course> executeSearchQuery(String query, Pageable pageable, FilterParameters filterParameters, Collection<Status> statusCollection, OwnerParameters ownerParameters, ProfileParameters profileParameters, String visibility) {
-        BoolQueryBuilder boolQuery = boolQuery();
-
-        if (isNotBlank(query)) {
-            boolQuery = boolQuery.must(multiMatchQuery(query)
-                    .field("title", 8)
-                    .field("shortDescription", 4)
-                    .field("description", 2)
-                    .field("learningOutcomes", 2)
-                    .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-                    .fuzziness(Fuzziness.ONE));
-        }
-
-        if (filterParameters.hasTypes()) {
-            BoolQueryBuilder filterQuery = QueryBuilders.boolQuery();
-            for (String type : filterParameters.getTypes()) {
-                filterQuery = filterQuery
-                        .should(matchQuery("modules.type", type))
-                        .should(matchQuery("type", type));
-            }
-            filterQuery.minimumShouldMatch(1);
-            boolQuery = boolQuery.must(filterQuery);
-        }
-
-        boolQuery = addFilter(boolQuery, filterParameters.getAreasOfWork(), "audiences.areasOfWork");
-        boolQuery = addFilter(boolQuery, filterParameters.getDepartments(), "audiences.departments");
-        boolQuery = addFilter(boolQuery, filterParameters.getInterests(), "audiences.interests");
-
-        if (filterParameters.hasCost()) {
-            boolQuery = boolQuery
-                    .must(QueryBuilders.boolQuery()
-                            .should(matchQuery("cost", 0)));
-        }
-
-        List<String> statusList = new ArrayList<>();
-        statusCollection.forEach(s -> statusList.add(s.getValue()));
-
-        boolQuery = addFilter(boolQuery, statusList, "status");
+    private BoolQueryBuilder getOwnerFilter(OwnerParameters ownerParameters) {
 
         BoolQueryBuilder filterQuery = boolQuery();
 
@@ -169,23 +126,22 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             filterQuery.must(matchQuery("owner.supplier", ownerParameters.getSupplier()));
         }
 
-        if (visibility.equals("PUBLIC")) {
+        return filterQuery;
+    }
+
+    private NativeSearchQueryBuilder getSearchQuery(Pageable pageable, CourseSearchParameters courseSearchParameters) {
+        BoolQueryBuilder boolQuery = getSearchBuilderQuery(courseSearchParameters);
+        BoolQueryBuilder filterQuery = boolQuery();
+
+        if (courseSearchParameters.getVisibility().equals("PUBLIC")) {
             filterQuery.should(matchQuery("visibility", "PUBLIC"));
         }
 
-        addOrFilter(filterQuery, profileParameters.getProfileDepartments(), "audiences.departments");
-        addOrFilter(filterQuery, profileParameters.getProfileGrades(), "audiences.grades");
-        addOrFilter(filterQuery, profileParameters.getProfileAreasOfWork(), "audiences.areasOfWork");
-        addOrFilter(filterQuery, profileParameters.getProfileInterests(), "audiences.interests");
-
-        Query searchQuery = new NativeSearchQueryBuilder()
+        return new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withFilter(filterQuery)
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
-                .withPageable(pageable)
-                .build();
-
-        return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
+                .withPageable(pageable);
     }
 
     @Override
@@ -245,13 +201,4 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return boolQuery;
     }
 
-    private BoolQueryBuilder addOrFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
-        if (values != null && !values.isEmpty()) {
-            for (String value : values) {
-                boolQuery.should(QueryBuilders.matchPhraseQuery(key, value));
-            }
-        }
-
-        return boolQuery;
-    }
 }
