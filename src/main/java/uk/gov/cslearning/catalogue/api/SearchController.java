@@ -1,7 +1,5 @@
 package uk.gov.cslearning.catalogue.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,8 +18,6 @@ import uk.gov.cslearning.catalogue.service.RegistryService;
 @RestController
 @RequestMapping("/search")
 public class SearchController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
 
     private CourseRepository courseRepository;
 
