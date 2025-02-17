@@ -1,7 +1,8 @@
 test:
   integration:
-    useLocalElastic: ${INTEGRATION_TEST_USE_LOCAL_ELASTIC:false}
-    elasticImage: "docker.elastic.co/elasticsearch/elasticsearch:8.4.2"
+    elastic:
+      useLocalElastic: ${INTEGRATION_TEST_USE_LOCAL_ELASTIC:false}
+      elasticImage: "docker.elastic.co/elasticsearch/elasticsearch:8.4.2"
 logging:
   level:
     root: DEBUG
