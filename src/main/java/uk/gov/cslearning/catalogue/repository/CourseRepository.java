@@ -17,9 +17,6 @@ import java.util.List;
 @Repository
 public interface CourseRepository extends ElasticsearchRepository<Course, String>, CourseSearchRepository, CourseSuggestionsRepository {
 
-    @Query("{\"bool\": {\"must\": [{\"match\": {\"audiences.type\": \"REQUIRED_LEARNING\"}},{\"match\": {\"status\": \"?0\"}}]}}")
-    List<Course> findAllRequiredLearning(String status, Pageable pageable);
-
     @Query("{\n" +
             "    \"bool\": {\n" +
             "        \"must\": [\n" +

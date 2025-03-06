@@ -32,7 +32,6 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -372,7 +371,7 @@ public class CourseServiceTest {
         course4.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, twoDays));
         courses.add(course4);
 
-        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), any(Pageable.class))).thenReturn(courses);
+        when(courseRepository.findAllPublishedRequiredLearning(any(Pageable.class))).thenReturn(courses);
 
         List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(ImmutableList.of(1L, 7L, 30L));
 
