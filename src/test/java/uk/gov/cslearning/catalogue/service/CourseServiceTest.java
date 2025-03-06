@@ -1,44 +1,6 @@
 package uk.gov.cslearning.catalogue.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
-import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
-import uk.gov.cslearning.catalogue.domain.CivilServant.Profession;
-import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.LearningProvider;
-import uk.gov.cslearning.catalogue.domain.Owner.Owner;
-import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
-import uk.gov.cslearning.catalogue.domain.Scope;
-import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.domain.Visibility;
-import uk.gov.cslearning.catalogue.domain.module.Audience;
-import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.LinkModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
-import uk.gov.cslearning.catalogue.repository.CourseRepository;
-
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -49,8 +11,29 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
+import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
+import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
+import uk.gov.cslearning.catalogue.domain.CivilServant.Profession;
+import uk.gov.cslearning.catalogue.domain.*;
+import uk.gov.cslearning.catalogue.domain.Owner.Owner;
+import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
+import uk.gov.cslearning.catalogue.domain.module.Audience;
+import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
+import uk.gov.cslearning.catalogue.domain.module.LinkModule;
+import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
-import com.google.common.collect.ImmutableList;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CourseServiceTest {
@@ -359,64 +342,6 @@ public class CourseServiceTest {
     }
 
     @Test
-    public void shouldFilterCoursesByAudiences() {
-        List<Course> courses = new ArrayList<>();
-
-        Course course1 = new Course();
-        course1.setId(COURSE_ID_1);
-        course1.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, null));
-        courses.add(course1);
-
-        Course course2 = new Course();
-        course2.setId(COURSE_ID_2);
-        course2.setAudiences(prepareAudiences(TEST_DEPARTMENT_1, Instant.now()));
-        courses.add(course2);
-
-        Course course3 = new Course();
-        course3.setId(COURSE_ID_3);
-        course3.setAudiences(prepareAudiences(TEST_DEPARTMENT_2, Instant.now()));
-        courses.add(course3);
-
-        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), any(Pageable.class))).thenReturn(courses);
-
-        List<Course> mandatoryCourses = courseService.fetchMandatoryCourses(Status.PUBLISHED.getValue(), TEST_DEPARTMENT_1);
-
-        assertEquals(mandatoryCourses.size(), 1);
-        assertEquals(mandatoryCourses.get(0).getId(), COURSE_ID_2);
-        assertEquals(mandatoryCourses.get(0).getAudiences().size(), 1);
-    }
-
-    @Test
-    public void shouldNotThrowNullPointerExceptionsWhenFilteringCourses() {
-        List<Course> courses = new ArrayList<>();
-
-        Course course1 = new Course();
-        course1.setId(COURSE_ID_1);
-        course1.setAudiences(prepareAudiences(null, null));
-        courses.add(course1);
-
-        Course course2 = new Course();
-        course2.setId(COURSE_ID_2);
-        course2.setAudiences(null);
-        courses.add(course2);
-
-        Course course3 = new Course();
-        course3.setId(COURSE_ID_3);
-        Audience audience = new Audience();
-        audience.setDepartments(null);
-        Set<Audience> audiences = new HashSet<>();
-        audiences.add(audience);
-        course3.setAudiences(audiences);
-        courses.add(course3);
-
-        when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), any(Pageable.class))).thenReturn(courses);
-
-        List<Course> mandatoryCourses = courseService.fetchMandatoryCourses(Status.PUBLISHED.getValue(), TEST_DEPARTMENT_1);
-
-        assertEquals(mandatoryCourses.size(), 0);
-    }
-
-    @Test
     public void shouldFilterCoursesByAudiencesAndRequiredBy() {
         List<Course> courses = new ArrayList<>();
         Instant oneDay = prepareInstantWithDayDifference(1);
@@ -449,7 +374,7 @@ public class CourseServiceTest {
 
         when(courseRepository.findAllRequiredLearning(eq(Status.PUBLISHED.getValue()), any(Pageable.class))).thenReturn(courses);
 
-        List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(Status.PUBLISHED.getValue(), ImmutableList.of(1L, 7L, 30L));
+        List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(ImmutableList.of(1L, 7L, 30L));
 
         assertEquals(mandatoryCourses.size(), 3);
         assertTrue(mandatoryCourses.contains(course1));
