@@ -245,10 +245,9 @@ public class CourseController {
     }
 
     @GetMapping(params = {"mandatory", "days"})
-    public ResponseEntity<Map<String, List<Course>>> listMandatoryByDueDays(@RequestParam(value = "status", defaultValue = "Published") String status,
-            @RequestParam(value = "days", defaultValue = "1") String days) {
+    public ResponseEntity<Map<String, List<Course>>> listMandatoryByDueDays(@RequestParam(value = "days", defaultValue = "1") String days) {
         LOGGER.debug("Listing mandatory courses");
-        List<Course> courses = courseService.fetchMandatoryCoursesByDueDate(status, DaysMapper.convertDaysFromTextToNumeric(days));
+        List<Course> courses = courseService.fetchMandatoryCoursesByDueDate(DaysMapper.convertDaysFromTextToNumeric(days));
 
         return ResponseEntity.ok(courseService.groupByOrganisationCode(courses));
     }

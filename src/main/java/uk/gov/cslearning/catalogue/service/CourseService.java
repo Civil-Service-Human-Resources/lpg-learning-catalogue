@@ -150,22 +150,12 @@ public class CourseService {
                 .anyMatch(audience -> requiredByService.isAudienceRequiredWithinRange(audience, Instant.now(), from, to));
     }
 
-    public List<Course> fetchMandatoryCourses(String status, String department) { ;
-        List<Course> mandatoryCoursesWithValidAudience = new ArrayList<>();
-
-        courseRepository.findAllRequiredLearning(status, DEFAULT_PAGEABLE)
-            .forEach(course -> course.getAudiences()
-                .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, department, mandatoryCoursesWithValidAudience)));
-
-        return mandatoryCoursesWithValidAudience;
-    }
-
-    public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days) {
+    public List<Course> fetchMandatoryCoursesByDueDate(Collection<Long> days) {
         LocalDate now = LocalDate.now();
 
         Map<Course, Set<Audience>> alterAudienceList = new HashMap();
 
-        courseRepository.findAllRequiredLearning(status, DEFAULT_PAGEABLE)
+        courseRepository.findAllPublishedRequiredLearning(DEFAULT_PAGEABLE)
             .forEach(course -> course.getAudiences()
                 .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, alterAudienceList, days, now)));
 
@@ -229,12 +219,6 @@ public class CourseService {
         }
     }
 
-    private void addCourseIfAudienceIsRequired(Course course, Audience audience, String department, List<Course> mandatoryCoursesWithValidAudience) {
-        if (isAudienceRequired(audience, department)) {
-            mandatoryCoursesWithValidAudience.add(course);
-        }
-    }
-
     private void addCourseIfAudienceIsRequired(Course course,
             Audience audience,
             Map<Course, Set<Audience>> alterAudienceList,
@@ -249,12 +233,6 @@ public class CourseService {
                 alterAudienceList.put(course, newAudienceList);
             }
         }
-    }
-
-    private boolean isAudienceRequired(Audience audience, String department) {
-        return audience.getRequiredBy() != null
-            && audience.getDepartments() != null
-            && audience.getDepartments().contains(department);
     }
 
     private boolean isAudienceRequired(Audience audience, Collection<Long> days, LocalDate now) {
