@@ -1,14 +1,11 @@
 package uk.gov.cslearning.catalogue.api;
 
-import org.elasticsearch.common.text.Text;
-import org.elasticsearch.search.suggest.Suggest.Suggestion.Entry.Option;
 import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -16,16 +13,15 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.cslearning.catalogue.api.v2.model.CourseSearchParameters;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.SearchPage;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -33,12 +29,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class OptImpl extends Option {
-
-    public OptImpl(Text text, float score) {
-        super(text, score);
-    }
-}
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(SearchController.class)
@@ -65,22 +55,13 @@ public class SearchControllerTest {
     @Test
     @WithMockUser(username = "user", authorities = {"ORGANISATION_AUTHOR"})
     public void shouldReturnSearchPageOfCoursesForOrganisationAuthor() throws Exception {
-        ArrayList<Course> courseArrayList = new ArrayList<>();
-        Course course = new Course();
-        courseArrayList.add(course);
-        Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
-
-        SearchPage searchPage = new SearchPage();
-        Option suggestion = new OptImpl(new Text("test-suggestion"), 0.1f);
-        searchPage.setTopScoringSuggestion(suggestion);
-        searchPage.setCourses(coursePage);
-
+        PageImpl<Course> page = new PageImpl<>(Collections.emptyList());
+        SearchResults searchResults = new SearchResults(page, new PageParameters().getPageRequest());
         CivilServant civilServant = mock(CivilServant.class);
 
         when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
-
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class), any(ProfileParameters.class), any(String.class)))
-                .thenReturn(searchPage);
+        when(courseRepository.search(any(Pageable.class), any(CourseSearchParameters.class), any(OwnerParameters.class)))
+                .thenReturn(searchResults);
 
         mockMvc.perform(
                 get("/search/management/courses")
@@ -94,22 +75,13 @@ public class SearchControllerTest {
     @Test
     @WithMockUser(username = "user", authorities = {"PROFESSION_AUTHOR"})
     public void shouldReturnSearchPageOfCoursesForProfessionAuthor() throws Exception {
-        ArrayList<Course> courseArrayList = new ArrayList<>();
-        Course course = new Course();
-        courseArrayList.add(course);
-        Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
-
-        SearchPage searchPage = new SearchPage();
-        Option suggestion = new OptImpl(new Text("test-suggestion"), 0.1f);
-        searchPage.setTopScoringSuggestion(suggestion);
-        searchPage.setCourses(coursePage);
-
+        PageImpl<Course> page = new PageImpl<>(Collections.emptyList());
+        SearchResults searchResults = new SearchResults(page, new PageParameters().getPageRequest());
         CivilServant civilServant = mock(CivilServant.class);
 
         when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
-
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class), any(ProfileParameters.class), any(String.class)))
-                .thenReturn(searchPage);
+        when(courseRepository.search(any(Pageable.class), any(CourseSearchParameters.class), any(OwnerParameters.class)))
+                .thenReturn(searchResults);
 
         mockMvc.perform(
                 get("/search/management/courses")
@@ -123,22 +95,13 @@ public class SearchControllerTest {
     @Test
     @WithMockUser(username = "user", authorities = {"KPMG_SUPPLIER_AUTHOR"})
     public void shouldReturnSearchPageOfCoursesForSupplierAuthor() throws Exception {
-        ArrayList<Course> courseArrayList = new ArrayList<>();
-        Course course = new Course();
-        courseArrayList.add(course);
-        Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
-
-        SearchPage searchPage = new SearchPage();
-        Option suggestion = new OptImpl(new Text("test-suggestion"), 0.1f);
-        searchPage.setTopScoringSuggestion(suggestion);
-        searchPage.setCourses(coursePage);
-
+        PageImpl<Course> page = new PageImpl<>(Collections.emptyList());
+        SearchResults searchResults = new SearchResults(page, new PageParameters().getPageRequest());
         CivilServant civilServant = mock(CivilServant.class);
 
         when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
-
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class), any(ProfileParameters.class), any(String.class)))
-                .thenReturn(searchPage);
+        when(courseRepository.search(any(Pageable.class), any(CourseSearchParameters.class), any(OwnerParameters.class)))
+                .thenReturn(searchResults);
 
         mockMvc.perform(
                 get("/search/management/courses")
@@ -150,18 +113,13 @@ public class SearchControllerTest {
     @Test
     @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
     public void shouldReturnSearchPageOfCoursesForCslAuthor() throws Exception {
-        ArrayList<Course> courseArrayList = new ArrayList<>();
-        Course course = new Course();
-        courseArrayList.add(course);
-        Page<Course> coursePage = new PageImpl<>(new ArrayList<>());
+        PageImpl<Course> page = new PageImpl<>(Collections.emptyList());
+        SearchResults searchResults = new SearchResults(page, new PageParameters().getPageRequest());
+        CivilServant civilServant = mock(CivilServant.class);
 
-        SearchPage searchPage = new SearchPage();
-        Option suggestion = new OptImpl(new Text("test-suggestion"), 0.1f);
-        searchPage.setTopScoringSuggestion(suggestion);
-        searchPage.setCourses(coursePage);
-
-        when(courseRepository.search(any(String.class), any(Pageable.class), any(FilterParameters.class), any(Collection.class), any(OwnerParameters.class), any(ProfileParameters.class), any(String.class)))
-                .thenReturn(searchPage);
+        when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
+        when(courseRepository.search(any(Pageable.class), any(CourseSearchParameters.class)))
+                .thenReturn(searchResults);
 
         mockMvc.perform(
                 get("/search/management/courses")
