@@ -474,7 +474,8 @@ public class CourseController {
                 FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
 
                 Event event = faceToFaceModule.getEventById(eventId);
-
+                event.setStatus(newEvent.getStatus());
+                event.setCancellationReason(newEvent.getCancellationReason());
                 event.setDateRanges(newEvent.getDateRanges());
                 event.setJoiningInstructions(newEvent.getJoiningInstructions());
 

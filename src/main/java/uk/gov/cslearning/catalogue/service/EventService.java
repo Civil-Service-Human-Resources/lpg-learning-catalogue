@@ -126,7 +126,6 @@ public class EventService {
             uk.gov.cslearning.catalogue.service.record.model.Event lrEvent = lrEventMap.get(e.getId());
             if (lrEvent != null) {
                 e.getVenue().setAvailability(e.getVenue().getCapacity() - lrEvent.getActiveBookingCount());
-                e.setStatus(EventStatus.forValue(lrEvent.getStatus()));
             }
         });
         return events;
