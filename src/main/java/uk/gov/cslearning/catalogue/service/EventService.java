@@ -56,6 +56,7 @@ public class EventService {
             newEvents.add(e);
         }
 
+        event.setStatus(EventStatus.ACTIVE);
         newEvents.add(event);
 
         module.setEvents(newEvents);
