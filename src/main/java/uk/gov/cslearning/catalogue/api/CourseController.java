@@ -347,7 +347,7 @@ public class CourseController {
 
     @GetMapping("/{courseId}")
     public ResponseEntity<Course> get(@PathVariable("courseId") String courseId,
-                                      @RequestParam(value = "courseId", required = false, defaultValue = "false") boolean includeAvailability) {
+                                      @RequestParam(value = "includeAvailability", required = false, defaultValue = "false") boolean includeAvailability) {
         LOGGER.debug("Getting course with ID {}", courseId);
 
         Optional<Course> result = courseService.findById(courseId, includeAvailability);
