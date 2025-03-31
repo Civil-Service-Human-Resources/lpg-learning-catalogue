@@ -509,7 +509,7 @@ public class CourseControllerTest {
 
         Course course = createCourse();
 
-        when(courseService.findById("1"))
+        when(courseService.findById("1", false))
                 .thenReturn(Optional.of(course));
 
         mockMvc.perform(

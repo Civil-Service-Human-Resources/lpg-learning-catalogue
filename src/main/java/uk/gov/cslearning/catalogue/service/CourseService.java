@@ -91,12 +91,26 @@ public class CourseService {
     }
 
     public Optional<Course> findById(String courseId) {
+        return this.findById(courseId, false);
+    }
+
+    public Optional<Course> findById(String courseId, boolean includeAvailability) {
         return courseRepository.findById(courseId)
-                .map(this::getCourseEventsAvailability);
+                .map(c -> {
+                    if (includeAvailability) {
+                        return getCourseEventsAvailability(c);
+                    } else {
+                        return c;
+                    }
+                });
     }
 
     public Course getCourseById(String courseId) throws IllegalStateException {
-        return findById(courseId)
+        return this.getCourseById(courseId, false);
+    }
+
+    public Course getCourseById(String courseId, boolean includeAvailability) throws IllegalStateException {
+        return findById(courseId, includeAvailability)
                 .orElseThrow((Supplier<IllegalStateException>) () -> {
                     throw new IllegalStateException(
                             String.format("Unable to find course. Course does not exist: %s", courseId));
