@@ -72,6 +72,20 @@ public class CourseControllerTest extends IntegrationTestBase {
     }
 
     @Test
+    @Order(2)
+    public void testGetMandatoryLearning() throws Exception {
+
+        mvc.perform(get("/courses?mandatory=true&days=7&size=1000000000")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.HMRC[0].title").value("Required course 2"))
+                .andExpect(jsonPath("$.HMRC[0].shortDescription").value("Required course 2 short description"))
+                .andExpect(jsonPath("$.HMRC[0].description").value("Required course 2 long description"))
+                .andExpect(jsonPath("$.HMRC[0].status").value("Published"));
+
+    }
+
+    @Test
     @Order(3)
     @WithMockUser(value = "spring", authorities = {"CSL_AUTHOR"})
     public void testCreateModule() throws Exception {

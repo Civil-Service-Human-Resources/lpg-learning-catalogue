@@ -1,62 +1,9 @@
 package uk.gov.cslearning.catalogue.api;
 
-import static java.util.Collections.singletonList;
-import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import uk.gov.cslearning.catalogue.domain.CivilServant.*;
-import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.domain.Visibility;
-import uk.gov.cslearning.catalogue.domain.module.Audience;
-import uk.gov.cslearning.catalogue.domain.module.DateRange;
-import uk.gov.cslearning.catalogue.domain.module.Event;
-import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
-import uk.gov.cslearning.catalogue.domain.module.LinkModule;
-import uk.gov.cslearning.catalogue.domain.module.Module;
-import uk.gov.cslearning.catalogue.domain.module.Venue;
-import uk.gov.cslearning.catalogue.repository.CourseRepository;
-import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.EventService;
-import uk.gov.cslearning.catalogue.service.ModuleService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
-import uk.gov.cslearning.catalogue.service.AudienceService;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.collect.ImmutableMap;
 import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,11 +21,31 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.cslearning.catalogue.domain.CivilServant.*;
+import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Status;
+import uk.gov.cslearning.catalogue.domain.Visibility;
+import uk.gov.cslearning.catalogue.domain.module.*;
+import uk.gov.cslearning.catalogue.repository.CourseRepository;
+import uk.gov.cslearning.catalogue.service.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.collect.ImmutableMap;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
+
+import static java.util.Collections.singletonList;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static uk.gov.cslearning.catalogue.exception.ResourceNotFoundException.resourceNotFoundException;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -411,47 +378,6 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
     }
 
-
-    @Test
-    public void shouldListMandatoryCourses() throws Exception {
-        String department = "department1";
-
-        Course course = new Course();
-        List<Course> courses = new ArrayList<>(Collections.singletonList(course));
-
-        when(courseService.fetchMandatoryCourses(any(String.class), any(String.class))).thenReturn(courses);
-        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
-        when(courseService.prepareCoursePage(any(Pageable.class), any(List.class))).thenReturn(new PageImpl<>(courses));
-        mockMvc.perform(
-                get("/courses/")
-                        .param("department", "department1")
-                        .param("mandatory", "true")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-    }
-
-    @Test
-    public void shouldListMandatoryCoursesByDays() throws Exception {
-        String department = "department1";
-        String days = "1,7,30";
-
-        Course course = new Course();
-        List<Course> courses = new ArrayList<>(Collections.singletonList(course));
-
-        when(courseService.fetchMandatoryCoursesByDueDate(any(String.class), any(Collection.class)))
-            .thenReturn(new ArrayList<>(Collections.singletonList(course)));
-        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
-        when(courseService.groupByOrganisationCode(any(List.class))).thenReturn(ImmutableMap.of(department, courses));
-        mockMvc.perform(
-            get("/courses/")
-                .param("mandatory", "true")
-                .param("days", days)
-                .with(csrf()))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.department1[0].id", equalTo(course.getId())));
-    }
-
     @Test
     public void shouldGetRequiredLearningByOrgCodeMap() throws Exception {
         Map<String, List<String>> organisationalUnitsParentMap = new HashMap<>();
@@ -479,29 +405,6 @@ public class CourseControllerTest {
                         .param("days", "7")
                         .with(csrf()))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    public void shouldListMandatoryCoursesWithMultipleParameters() throws Exception {
-        String department = "department1,department2";
-
-        Course course = new Course();
-        List<Course> courses = new ArrayList<>(Collections.singletonList(course));
-
-        when(courseService.fetchMandatoryCourses(any(String.class), any(String.class)))
-                .thenReturn(new ArrayList<>(Collections.singletonList(course)));
-        when(courseService.getOrganisationParents(eq(department))).thenReturn(new ArrayList<>(Collections.singletonList(department)));
-        when(courseService.prepareCoursePage(any(Pageable.class), any(List.class))).thenReturn(new PageImpl<>(courses));
-
-        mockMvc.perform(
-                get("/courses/")
-                        .param("department", "department1", "department2")
-                        .param("status", "Draft", "Published")
-                        .param("mandatory", "true")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
-
     }
 
     @Test
@@ -606,7 +509,7 @@ public class CourseControllerTest {
 
         Course course = createCourse();
 
-        when(courseService.findById("1"))
+        when(courseService.findById("1", false))
                 .thenReturn(Optional.of(course));
 
         mockMvc.perform(

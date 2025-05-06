@@ -50,8 +50,6 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     }
 
     private boolean hasScope(Authentication auth, String id) {
-        CivilServant civilServant = registryService.getCurrentCivilServant();
-        civilServant.setSupplier(authoritiesService.getSupplier(auth));
 
         Course course = courseService.findById(id).orElseThrow((Supplier<IllegalStateException>) () -> {
             throw new IllegalStateException(
@@ -62,6 +60,8 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
             return false;
         }
 
+        CivilServant civilServant = null;
+
         for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
             LOGGER.info("User has authority: {}", grantedAuth.getAuthority());
 
@@ -71,11 +71,18 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
             if (grantedAuth.getAuthority().equals(Roles.LEARNING_MANAGER)) {
                 return true;
             }
-            if (grantedAuth.getAuthority().equals(Roles.ORGANISATION_AUTHOR) && authoritiesService.isOrganisationalUnitCodeEqual(civilServant, course.getOwner())) {
-                return true;
+
+            if (grantedAuth.getAuthority().equals(Roles.ORGANISATION_AUTHOR)) {
+                if (civilServant == null) civilServant = registryService.getCurrentCivilServant();
+                if (authoritiesService.isOrganisationalUnitCodeEqual(civilServant, course.getOwner())) {
+                    return true;
+                }
             }
-            if (grantedAuth.getAuthority().equals(Roles.PROFESSION_AUTHOR) && authoritiesService.isProfessionIdEqual(civilServant, course.getOwner())) {
-                return true;
+            if (grantedAuth.getAuthority().equals(Roles.PROFESSION_AUTHOR)) {
+                if (civilServant == null)  civilServant = registryService.getCurrentCivilServant();
+                if (authoritiesService.isProfessionIdEqual(civilServant, course.getOwner())) {
+                    return true;
+                }
             }
             if ((grantedAuth.getAuthority().equals(Roles.KPMG_SUPPLIER_AUTHOR)
                     || grantedAuth.getAuthority().equals(Roles.KORNFERRY_SUPPLIER_AUTHOR)

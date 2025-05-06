@@ -89,9 +89,6 @@ public class CustomPermissionEvaluatorTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionIfCourseIsNotPresent() {
-        CivilServant civilServant = new CivilServant();
-
-        when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
         when(courseService.findById(any())).thenReturn(Optional.empty());
 
         customPermissionEvaluator.hasPermission(authentication, COURSE_ID, WRITE_PERMISSION);
@@ -101,10 +98,6 @@ public class CustomPermissionEvaluatorTest {
     @Test
     public void shouldReturnFalseIfCourseHasNoOwner() {
         Course course = new Course();
-
-        CivilServant civilServant = new CivilServant();
-
-        when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
         when(courseService.findById(any())).thenReturn(Optional.of(course));
 
         boolean hasPermission = customPermissionEvaluator.hasPermission(authentication, COURSE_ID, WRITE_PERMISSION);
@@ -118,9 +111,6 @@ public class CustomPermissionEvaluatorTest {
         Owner owner = new Owner();
         course.setOwner(owner);
 
-        CivilServant civilServant = new CivilServant();
-
-        when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
         when(courseService.findById(any())).thenReturn(Optional.of(course));
 
         boolean hasPermission = customPermissionEvaluator.hasPermission(authentication, COURSE_ID, WRITE_PERMISSION);
@@ -131,8 +121,6 @@ public class CustomPermissionEvaluatorTest {
 
     @Test
     public void shouldReturnTrueIfUserHasCslAuthor() {
-        CivilServant civilServant = new CivilServant();
-
         Course course = new Course();
         Owner owner = new Owner();
         course.setOwner(owner);
@@ -141,7 +129,6 @@ public class CustomPermissionEvaluatorTest {
         authorities.add(new SimpleGrantedAuthority(Roles.CSL_AUTHOR));
 
         doReturn(authorities).when(authentication).getAuthorities();
-        when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
         when(courseService.findById(any())).thenReturn(Optional.of(course));
 
         boolean hasPermission = customPermissionEvaluator.hasPermission(authentication, COURSE_ID, WRITE_PERMISSION);
@@ -151,7 +138,6 @@ public class CustomPermissionEvaluatorTest {
 
     @Test
     public void shouldReturnTrueIfUserHasLearningManager() {
-        CivilServant civilServant = new CivilServant();
 
         Course course = new Course();
         Owner owner = new Owner();
@@ -161,7 +147,6 @@ public class CustomPermissionEvaluatorTest {
         authorities.add(new SimpleGrantedAuthority(Roles.LEARNING_MANAGER));
 
         doReturn(authorities).when(authentication).getAuthorities();
-        when(registryService.getCurrentCivilServant()).thenReturn(civilServant);
         when(courseService.findById(any())).thenReturn(Optional.of(course));
 
         boolean hasPermission = customPermissionEvaluator.hasPermission(authentication, COURSE_ID, WRITE_PERMISSION);

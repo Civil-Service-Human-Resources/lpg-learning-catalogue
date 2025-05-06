@@ -17,7 +17,7 @@ public enum CancellationReason {
     @JsonCreator
     public static CancellationReason forValue(String value) {
         return Arrays.stream(CancellationReason.values())
-        .filter(v -> v.value.equalsIgnoreCase(value))
+        .filter(v -> v.value.equalsIgnoreCase(value) || v.toString().equalsIgnoreCase(value))
         .findAny()
         .orElseThrow(() -> new Error("Error, unknown status: " + value));
     }

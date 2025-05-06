@@ -14,6 +14,7 @@ import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -60,8 +61,10 @@ public class DataService {
         courses.add(requiredCourse1);
 
         Course requiredCourse2 = createCourse("Required course 2");
+        Audience requiredAudience = createRequiredLearningAudience(Set.of("HMRC"));
+        requiredAudience.setRequiredBy(Instant.now().plus(7L, ChronoUnit.DAYS));
         requiredCourse2.setAudiences(Set.of(
-                createRequiredLearningAudience(Set.of("HMRC")),
+                requiredAudience,
                 createAudience(Set.of("CO"), Collections.emptySet(), Collections.emptySet(), Collections.emptySet())
         ));
         courses.add(requiredCourse2);

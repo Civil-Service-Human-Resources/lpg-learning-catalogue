@@ -245,10 +245,9 @@ public class CourseController {
     }
 
     @GetMapping(params = {"mandatory", "days"})
-    public ResponseEntity<Map<String, List<Course>>> listMandatoryByDueDays(@RequestParam(value = "status", defaultValue = "Published") String status,
-            @RequestParam(value = "days", defaultValue = "1") String days) {
+    public ResponseEntity<Map<String, List<Course>>> listMandatoryByDueDays(@RequestParam(value = "days", defaultValue = "1") String days) {
         LOGGER.debug("Listing mandatory courses");
-        List<Course> courses = courseService.fetchMandatoryCoursesByDueDate(status, DaysMapper.convertDaysFromTextToNumeric(days));
+        List<Course> courses = courseService.fetchMandatoryCoursesByDueDate(DaysMapper.convertDaysFromTextToNumeric(days));
 
         return ResponseEntity.ok(courseService.groupByOrganisationCode(courses));
     }
@@ -347,10 +346,11 @@ public class CourseController {
 
 
     @GetMapping("/{courseId}")
-    public ResponseEntity<Course> get(@PathVariable("courseId") String courseId) {
+    public ResponseEntity<Course> get(@PathVariable("courseId") String courseId,
+                                      @RequestParam(value = "includeAvailability", required = false, defaultValue = "false") boolean includeAvailability) {
         LOGGER.debug("Getting course with ID {}", courseId);
 
-        Optional<Course> result = courseService.findById(courseId);
+        Optional<Course> result = courseService.findById(courseId, includeAvailability);
 
         return result
                 .map(course -> new ResponseEntity<>(course, OK))
@@ -475,7 +475,8 @@ public class CourseController {
                 FaceToFaceModule faceToFaceModule = (FaceToFaceModule) module;
 
                 Event event = faceToFaceModule.getEventById(eventId);
-
+                event.setStatus(newEvent.getStatus());
+                event.setCancellationReason(newEvent.getCancellationReason());
                 event.setDateRanges(newEvent.getDateRanges());
                 event.setJoiningInstructions(newEvent.getJoiningInstructions());
 

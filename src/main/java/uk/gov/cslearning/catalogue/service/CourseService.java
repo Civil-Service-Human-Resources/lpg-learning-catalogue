@@ -91,12 +91,26 @@ public class CourseService {
     }
 
     public Optional<Course> findById(String courseId) {
+        return this.findById(courseId, false);
+    }
+
+    public Optional<Course> findById(String courseId, boolean includeAvailability) {
         return courseRepository.findById(courseId)
-                .map(this::getCourseEventsAvailability);
+                .map(c -> {
+                    if (includeAvailability) {
+                        return getCourseEventsAvailability(c);
+                    } else {
+                        return c;
+                    }
+                });
     }
 
     public Course getCourseById(String courseId) throws IllegalStateException {
-        return findById(courseId)
+        return this.getCourseById(courseId, false);
+    }
+
+    public Course getCourseById(String courseId, boolean includeAvailability) throws IllegalStateException {
+        return findById(courseId, includeAvailability)
                 .orElseThrow((Supplier<IllegalStateException>) () -> {
                     throw new IllegalStateException(
                             String.format("Unable to find course. Course does not exist: %s", courseId));
@@ -150,22 +164,12 @@ public class CourseService {
                 .anyMatch(audience -> requiredByService.isAudienceRequiredWithinRange(audience, Instant.now(), from, to));
     }
 
-    public List<Course> fetchMandatoryCourses(String status, String department) { ;
-        List<Course> mandatoryCoursesWithValidAudience = new ArrayList<>();
-
-        courseRepository.findAllRequiredLearning(status, DEFAULT_PAGEABLE)
-            .forEach(course -> course.getAudiences()
-                .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, department, mandatoryCoursesWithValidAudience)));
-
-        return mandatoryCoursesWithValidAudience;
-    }
-
-    public List<Course> fetchMandatoryCoursesByDueDate(String status, Collection<Long> days) {
+    public List<Course> fetchMandatoryCoursesByDueDate(Collection<Long> days) {
         LocalDate now = LocalDate.now();
 
         Map<Course, Set<Audience>> alterAudienceList = new HashMap();
 
-        courseRepository.findAllRequiredLearning(status, DEFAULT_PAGEABLE)
+        courseRepository.findAllPublishedRequiredLearning(DEFAULT_PAGEABLE)
             .forEach(course -> course.getAudiences()
                 .forEach(audience -> addCourseIfAudienceIsRequired(course, audience, alterAudienceList, days, now)));
 
@@ -229,12 +233,6 @@ public class CourseService {
         }
     }
 
-    private void addCourseIfAudienceIsRequired(Course course, Audience audience, String department, List<Course> mandatoryCoursesWithValidAudience) {
-        if (isAudienceRequired(audience, department)) {
-            mandatoryCoursesWithValidAudience.add(course);
-        }
-    }
-
     private void addCourseIfAudienceIsRequired(Course course,
             Audience audience,
             Map<Course, Set<Audience>> alterAudienceList,
@@ -249,12 +247,6 @@ public class CourseService {
                 alterAudienceList.put(course, newAudienceList);
             }
         }
-    }
-
-    private boolean isAudienceRequired(Audience audience, String department) {
-        return audience.getRequiredBy() != null
-            && audience.getDepartments() != null
-            && audience.getDepartments().contains(department);
     }
 
     private boolean isAudienceRequired(Audience audience, Collection<Long> days, LocalDate now) {
