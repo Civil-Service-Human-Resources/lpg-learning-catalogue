@@ -1,6 +1,7 @@
 package uk.gov.cslearning.catalogue.util;
 
 import com.google.common.collect.Lists;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.common.collect.Set;
@@ -24,28 +25,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DataService {
 
+    @Getter
     private final CourseRepository repository;
-    private boolean bulkLoaded = false;
-    private List<Course> bulkCourses;
     public DataService(CourseRepository repository) {
         this.repository = repository;
     }
-    public CourseRepository getRepository() {
-        return repository;
-    }
 
     public void loadBulkCourses() {
-        if (!bulkLoaded) {
-            log.info("Loading bulk courses");
-            bulkCourses = createBulkCourses();
-            repository.saveAll(bulkCourses);
-            bulkLoaded = true;
-        }
+        log.info("Loading bulk courses");
+        repository.saveAll(createBulkCourses());
     }
 
     public void deleteBulkCourses() {
         log.info("Tearing down bulk courses");
-        repository.deleteAll(bulkCourses);
+        repository.deleteAll();
     }
 
     public List<Course> createBulkCourses() {

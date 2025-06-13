@@ -4,8 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.cslearning.catalogue.api.v2.model.RequiredLearningIdMap;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
@@ -14,6 +16,7 @@ import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
+import uk.gov.cslearning.catalogue.domain.validation.CourseValidator;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.CourseRequiredRepository;
 
@@ -39,9 +42,14 @@ public class CourseService {
 
     private final AuthoritiesService authoritiesService;
 
-    private RequiredByService requiredByService;
+    private final RequiredByService requiredByService;
 
-    public CourseService(CourseRepository courseRepository, CourseRequiredRepository courseRequiredRepository, EventService eventService, RegistryService registryService, OwnerFactory ownerFactory, AuthoritiesService authoritiesService, RequiredByService requiredByService) {
+    private final CourseValidator courseValidator;
+
+    public CourseService(CourseRepository courseRepository, CourseRequiredRepository courseRequiredRepository,
+                         EventService eventService, RegistryService registryService, OwnerFactory ownerFactory,
+                         AuthoritiesService authoritiesService, RequiredByService requiredByService,
+                         CourseValidator courseValidator) {
         this.courseRepository = courseRepository;
         this.courseRequiredRepository = courseRequiredRepository;
         this.eventService = eventService;
@@ -49,6 +57,7 @@ public class CourseService {
         this.ownerFactory = ownerFactory;
         this.authoritiesService = authoritiesService;
         this.requiredByService = requiredByService;
+        this.courseValidator = courseValidator;
     }
 
     public Course save(Course course) {
@@ -71,7 +80,13 @@ public class CourseService {
         return course;
     }
 
+    public void updateCourse(String courseId, Course newCourse) {
+        courseRepository.findById(courseId).map(existing -> updateCourse(existing, newCourse))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
     public Course updateCourse(Course course, Course newCourse) {
+        courseValidator.validate(course, newCourse);
         course.setTitle(newCourse.getTitle());
         course.setShortDescription(newCourse.getShortDescription());
         course.setLearningOutcomes(newCourse.getLearningOutcomes());
@@ -84,9 +99,7 @@ public class CourseService {
         course.setTopicId(newCourse.getTopicId());
         course.setUpdatedTimestamp(LocalDateTime.now(Clock.systemUTC()));
         Optional.ofNullable(newCourse.getLearningProvider()).ifPresent(course::setLearningProvider);
-
         courseRepository.save(course);
-
         return course;
     }
 

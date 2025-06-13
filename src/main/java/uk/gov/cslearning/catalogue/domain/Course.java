@@ -1,6 +1,8 @@
 package uk.gov.cslearning.catalogue.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.data.annotation.Id;
@@ -23,7 +25,9 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 
-@Document(indexName = "courses")
+@Getter
+@Setter
+@Document(indexName = "#{@esRepositoryConfiguration.getCourseIndexName()}")
 public class Course {
 
     @Id
@@ -139,56 +143,7 @@ public class Course {
     }
 
     public void deleteModule(Module module) {
-        for (Iterator<Module> it = modules.iterator(); it.hasNext(); ) {
-            Module m = it.next();
-            if (m.getId().equals(module.getId())) {
-                it.remove();
-            }
-        }
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLearningOutcomes() {
-        return learningOutcomes;
-    }
-
-    public void setLearningOutcomes(String learningOutcomes) {
-        this.learningOutcomes = learningOutcomes;
-    }
-
-    public void setLearningProvider(LearningProvider learningProvider) {
-        this.learningProvider = learningProvider;
+        modules.removeIf(m -> m.getId().equals(module.getId()));
     }
 
     public Set<Audience> getAudiences() {
@@ -206,69 +161,6 @@ public class Course {
         audiences.remove(audience);
     }
 
-    public String getPreparation() {
-        return preparation;
-    }
-
-    public void setPreparation(String preparation) {
-        this.preparation = preparation;
-    }
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public LearningProvider getLearningProvider() {
-        return learningProvider;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Owner owner) {
-        this.owner = owner;
-    }
-
-    public String getTopicId() {
-        return topicId;
-    }
-
-    public void setTopicId(String topicId) {
-        this.topicId = topicId;
-    }
-
-    public LocalDateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-
-    public LocalDateTime getUpdatedTimestamp() {
-        return updatedTimestamp;
-    }
-
-    public void setUpdatedTimestamp(LocalDateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
-    }
-
-    public BigDecimal getCost() { return cost; }
-
-    public void setCost(BigDecimal cost) { this.cost = cost; }
 
     @Override
     public boolean equals(Object object) {

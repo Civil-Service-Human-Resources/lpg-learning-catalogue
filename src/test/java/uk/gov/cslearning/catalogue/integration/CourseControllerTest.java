@@ -9,12 +9,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -122,6 +123,41 @@ public class CourseControllerTest extends IntegrationTestBase {
 
         dataService.getRepository().delete(tempCourse);
 
+    }
+
+    @Test
+    @Order(4)
+    @WithMockUser(value = "spring", authorities = {"LEARNING_UNARCHIVE"})
+    public void testUnarchiveCourse() throws Exception {
+        Course tempCourse = dataService.createCourse("archiveCourse");
+        tempCourse.setStatus(Status.ARCHIVED);
+        dataService.getRepository().save(tempCourse);
+
+        Course update = dataService.getRepository().findById(tempCourse.getId()).get();
+        update.setStatus(Status.DRAFT);
+        mvc.perform(put(String.format("/courses/%s", tempCourse.getId()))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(update)))
+                .andExpect(status().isOk());
+        assertEquals(Status.DRAFT, dataService.getRepository().findById(tempCourse.getId()).get().getStatus());
+    }
+
+    @Test
+    @Order(5)
+    @WithMockUser(value = "spring", authorities = {"LEARNING_PUBLISH"})
+    public void testUnarchiveCourseIncorrectPermission() throws Exception {
+        Course tempCourse = dataService.createCourse("archiveCourse");
+        tempCourse.setStatus(Status.ARCHIVED);
+        dataService.getRepository().save(tempCourse);
+
+        Course update = dataService.getRepository().findById(tempCourse.getId()).get();
+        update.setStatus(Status.DRAFT);
+        mvc.perform(put(String.format("/courses/%s", tempCourse.getId()))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(update)))
+                .andExpect(status().isForbidden());
     }
 
 }

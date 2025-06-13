@@ -15,4 +15,5 @@ public class Roles {
     public static final String KPMG_SUPPLIER_REPORTER = "KPMG_SUPPLIER_REPORTER";
     public static final String KORNFERRY_SUPPLIER_AUTHOR = "KORNFERRY_SUPPLIER_AUTHOR";
     public static final String KNOWLEDGEPOOL_SUPPLIER_AUTHOR = "KNOWLEDGEPOOL_SUPPLIER_AUTHOR";
+    public static final String LEARNING_UNARCHIVE = "LEARNING_UNARCHIVE";
 }
