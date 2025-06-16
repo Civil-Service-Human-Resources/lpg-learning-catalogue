@@ -376,6 +376,13 @@ public class CourseController {
         return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}").build(courseId, saved.getId())).build();
     }
 
+    @PutMapping("/{courseId}/modules")
+    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_EDIT, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    public ResponseEntity<Void> updateCourseModules(@PathVariable String courseId, @RequestBody List<Module> modules) {
+        courseService.updateCourseModules(courseId, modules);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{courseId}/modules/{moduleId}")
     public ResponseEntity<Module> getModule(@PathVariable String courseId, @PathVariable String moduleId) {
         LOGGER.debug("Getting module {} of course {}", moduleId, courseId);

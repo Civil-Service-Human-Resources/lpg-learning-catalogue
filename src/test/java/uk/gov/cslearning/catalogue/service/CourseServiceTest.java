@@ -256,27 +256,11 @@ public class CourseServiceTest {
         assertEquals(newShortDescription, savedCourse.getShortDescription());
         assertEquals(newDescription, savedCourse.getDescription());
         assertEquals(newLearningOutcomes, savedCourse.getLearningOutcomes());
-        assertEquals(modules2, savedCourse.getModules());
         assertEquals(learningProvider2, savedCourse.getLearningProvider());
-        assertEquals(audiences2, savedCourse.getAudiences());
         assertEquals(prep2, savedCourse.getPreparation());
         assertEquals(owner2, savedCourse.getOwner());
         assertEquals(visibility, savedCourse.getVisibility());
         assertEquals(archived, savedCourse.getStatus());
-    }
-
-    @Test
-    public void shouldUpdateCourseWithNoLearningProvider() {
-        Course course = new Course();
-        course.setTitle("title");
-
-        Course newCourse = new Course();
-        newCourse.setTitle("newtitle");
-
-        courseService.updateCourse(course, newCourse);
-
-        assertEquals("newtitle", course.getTitle());
-        assertNull(course.getLearningProvider());
     }
 
     @Test

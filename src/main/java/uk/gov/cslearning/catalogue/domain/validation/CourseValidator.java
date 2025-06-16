@@ -23,5 +23,8 @@ public class CourseValidator {
         STATUS_VALIDATION_RULES.forEach(rule -> rule.validate(existingCourse.getStatus(), newCourse.getStatus()));
         COURSE_DETAILS_VALIDATOR_RULE.validate(existingCourse.getTitle(), newCourse.getTitle());
         COURSE_DETAILS_VALIDATOR_RULE.validate(existingCourse.getDescription(), newCourse.getDescription());
+        COURSE_DETAILS_VALIDATOR_RULE.validate(existingCourse.getShortDescription(), newCourse.getShortDescription());
+        COURSE_DETAILS_VALIDATOR_RULE.validate(existingCourse.getLearningOutcomes(), newCourse.getLearningOutcomes());
+        COURSE_DETAILS_VALIDATOR_RULE.validate(existingCourse.getPreparation(), newCourse.getPreparation());
     }
 }
