@@ -377,7 +377,7 @@ public class CourseController {
     }
 
     @PutMapping("/{courseId}/modules")
-    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_EDIT, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    @PreAuthorize("(hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_EDIT, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
     public ResponseEntity<Void> updateCourseModules(@PathVariable String courseId, @RequestBody List<Module> modules) {
         courseService.updateCourseModules(courseId, modules);
         return ResponseEntity.ok().build();

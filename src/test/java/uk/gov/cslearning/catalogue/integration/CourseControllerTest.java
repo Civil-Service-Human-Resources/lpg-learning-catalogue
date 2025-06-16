@@ -1,5 +1,6 @@
 package uk.gov.cslearning.catalogue.integration;
 
+import org.elasticsearch.common.collect.List;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
+import uk.gov.cslearning.catalogue.domain.module.ELearningModule;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
 import static org.junit.Assert.assertEquals;
@@ -158,6 +160,28 @@ public class CourseControllerTest extends IntegrationTestBase {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(update)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Order(6)
+    @WithMockUser(value = "spring", authorities = {"LEARNING_EDIT"})
+    public void testOrderModules() throws Exception {
+        Course tempCourse = dataService.createCourse("orderModules");
+        ELearningModule m1 = dataService.createELearningModule();
+        m1.setId("FIRST");
+        ELearningModule m2 = dataService.createELearningModule();
+        m2.setId("SECOND");
+        tempCourse.setModules(List.of(m1, m2));
+        dataService.getRepository().save(tempCourse);
+
+        mvc.perform(put(String.format("/courses/%s/modules", tempCourse.getId()))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("[{\"startPage\":\"http://startPage\",\"url\":\"http://url.com\",\"id\":\"SECOND\",\"title\":\"ELearning module\",\"description\":\"An ELearning module\",\"duration\":100,\"cost\":0.0,\"optional\":false,\"status\":null,\"associatedLearning\":false,\"createdTimestamp\":null,\"updatedTimestamp\":null,\"mediaId\":null,\"moduleType\":\"elearning\",\"type\":\"elearning\"},{\"startPage\":\"http://startPage\",\"url\":\"http://url.com\",\"id\":\"FIRST\",\"title\":\"ELearning module\",\"description\":\"An ELearning module\",\"duration\":100,\"cost\":0.0,\"optional\":false,\"status\":null,\"associatedLearning\":false,\"createdTimestamp\":null,\"updatedTimestamp\":null,\"mediaId\":null,\"moduleType\":\"elearning\",\"type\":\"elearning\"}]"))
+                .andExpect(status().isOk());
+        Course result = dataService.getRepository().findById(tempCourse.getId()).get();
+        assertEquals("SECOND", result.getModules().get(0).getId());
+        assertEquals("FIRST", result.getModules().get(1).getId());
     }
 
 }
