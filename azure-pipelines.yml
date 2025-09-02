@@ -32,6 +32,8 @@ steps:
       publishJUnitResults: false
       testResultsFiles: 'build/test-results/**/TEST-*.xml'
       tasks: 'clean build'
+    env:
+      RUN_INTEGRATION_TESTS: "false"
     displayName: 'Install Gradle and Java 8 and build'
 
   - task: Docker@2

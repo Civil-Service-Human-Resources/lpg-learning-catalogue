@@ -15,7 +15,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchBlank() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results.length()").value(10))
@@ -27,7 +27,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchBasicQuery() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                         .with(csrf())
                         .param("query", "Course"))
                 .andExpect(status().isOk())
@@ -40,7 +40,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchBasicPage() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                 .with(csrf())
                 .param("query", "Course")
                 .param("page", "1")
@@ -55,7 +55,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchBasicSize() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                 .with(csrf())
                 .param("query", "Course")
                 .param("page", "0")
@@ -70,7 +70,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchDepartments() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                 .with(csrf())
                 .param("departments", "COD")
                 .param("query", "Course"))
@@ -83,7 +83,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchAreasOfWork() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                 .with(csrf())
                 .param("areasOfWork", "Analysis")
                 .param("query", "Course"))
@@ -96,7 +96,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchInterests() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                 .with(csrf())
                 .param("interests", "EU")
                 .param("query", "Course"))
@@ -109,7 +109,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchMultiple() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                 .with(csrf())
                 .param("departments", "COD")
                 .param("areasOfWork", "Finance")
@@ -123,7 +123,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchFree() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                 .with(csrf())
                 .param("cost", "free")
                 .param("query", "Course"))
@@ -136,7 +136,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @Test
     public void testSearchModuleTypes() throws Exception {
 
-        submitRequest(get("/search")
+        mvc.perform(get("/search")
                 .with(csrf())
                 .param("types", "elearning")
                 .param("types", "file")
@@ -153,7 +153,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
     public void testSearchAdmin() throws Exception {
 
-        submitRequest(get("/search/management/courses")
+        mvc.perform(get("/search/management/courses")
                 .with(csrf())
                 .param("query", "Course"))
                 .andExpect(status().isOk())
@@ -166,7 +166,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
     public void testSearchAdminArchived() throws Exception {
 
-        submitRequest(get("/search/management/courses")
+        mvc.perform(get("/search/management/courses")
                 .with(csrf())
                 .param("query", "Course")
                 .param("status", "ARCHIVED")
@@ -181,7 +181,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @WithMockUser(username = "user", authorities = {"CSL_AUTHOR"})
     public void testSearchAdminPrivate() throws Exception {
 
-        submitRequest(get("/search/management/courses")
+        mvc.perform(get("/search/management/courses")
                 .with(csrf())
                 .param("query", "Course")
                 .param("visibility", "PRIVATE")
@@ -196,7 +196,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     @WithMockUser(username = "user", authorities = {"KPMG_SUPPLIER_AUTHOR"})
     public void testSearchAdminKpmgSupplierAuthor() throws Exception {
 
-        submitRequest(get("/search/management/courses")
+        mvc.perform(get("/search/management/courses")
                 .with(csrf())
                 .param("query", "Course"))
                 .andExpect(status().isOk())

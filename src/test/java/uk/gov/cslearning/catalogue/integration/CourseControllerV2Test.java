@@ -10,7 +10,7 @@ public class CourseControllerV2Test extends IntegrationTestBase {
 
     @Test
     public void testGetRequiredLearningDepartmentMap() throws Exception {
-        submitRequest(get("/v2/courses/required-learning-map")
+        mvc.perform(get("/v2/courses/required-learning-map")
                 .with(csrf()))
                 .andExpect(jsonPath("$.departmentCodeMap.HMRC[0]").value("Required course 1"))
                 .andExpect(jsonPath("$.departmentCodeMap.HMRC[1]").value("Required course 2"))

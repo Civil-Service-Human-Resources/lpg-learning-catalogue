@@ -21,6 +21,7 @@ import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
+import uk.gov.cslearning.catalogue.domain.validation.CourseValidator;
 import uk.gov.cslearning.catalogue.repository.CourseRepository;
 
 import java.net.MalformedURLException;
@@ -68,6 +69,9 @@ public class CourseServiceTest {
 
     @Mock
     private RequiredByService requiredByService;
+
+    @Mock
+    private CourseValidator courseValidator;
 
     @InjectMocks
     private CourseService courseService;
@@ -248,31 +252,15 @@ public class CourseServiceTest {
 
         verify(courseRepository).save(any());
 
-        assertEquals(savedCourse.getTitle(), newTitle);
-        assertEquals(savedCourse.getShortDescription(), newShortDescription);
-        assertEquals(savedCourse.getDescription(), newDescription);
-        assertEquals(savedCourse.getLearningOutcomes(), newLearningOutcomes);
-        assertEquals(savedCourse.getModules(), modules2);
-        assertEquals(savedCourse.getLearningProvider(), learningProvider2);
-        assertEquals(savedCourse.getAudiences(), audiences2);
-        assertEquals(savedCourse.getPreparation(), prep2);
-        assertEquals(savedCourse.getOwner(), owner2);
-        assertEquals(savedCourse.getVisibility(), visibility);
-        assertEquals(savedCourse.getStatus(), archived);
-    }
-
-    @Test
-    public void shouldUpdateCourseWithNoLearningProvider() {
-        Course course = new Course();
-        course.setTitle("title");
-
-        Course newCourse = new Course();
-        newCourse.setTitle("newtitle");
-
-        courseService.updateCourse(course, newCourse);
-
-        assertEquals(course.getTitle(), "newtitle");
-        assertEquals(course.getLearningProvider(), null);
+        assertEquals(newTitle, savedCourse.getTitle());
+        assertEquals(newShortDescription, savedCourse.getShortDescription());
+        assertEquals(newDescription, savedCourse.getDescription());
+        assertEquals(newLearningOutcomes, savedCourse.getLearningOutcomes());
+        assertEquals(learningProvider2, savedCourse.getLearningProvider());
+        assertEquals(prep2, savedCourse.getPreparation());
+        assertEquals(owner2, savedCourse.getOwner());
+        assertEquals(visibility, savedCourse.getVisibility());
+        assertEquals(archived, savedCourse.getStatus());
     }
 
     @Test

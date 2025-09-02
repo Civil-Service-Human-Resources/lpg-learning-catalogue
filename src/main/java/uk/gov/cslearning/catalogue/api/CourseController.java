@@ -357,34 +357,12 @@ public class CourseController {
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
-    /**
-     * Adding individual endpoints for edit, publish and archive to ensure we can preauthorise publish, archive and edit separately.
-     * This edit endpoint will be used for updating course title and details.
-     */
     @PutMapping(path = "/{courseId}")
-    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_EDIT, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
-    public ResponseEntity update(@PathVariable("courseId") String courseId, @RequestBody Course newCourse) {
-        return updateCourse(courseId, newCourse);
+    public ResponseEntity<Void> update(@PathVariable("courseId") String courseId, @RequestBody Course newCourse) {
+        LOGGER.debug("Updating course {}", newCourse);
+        courseService.updateCourse(courseId, newCourse);
+        return ResponseEntity.ok(null);
     }
-
-    /**
-     * This endpoint will be used for publishing courses.
-     */
-    @PutMapping(path = "/{courseId}/publish")
-    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_PUBLISH, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
-    public ResponseEntity publishCourse(@PathVariable("courseId") String courseId, @RequestBody Course newCourse) {
-        return updateCourse(courseId, newCourse);
-    }
-
-    /**
-     * This endpoint will be used for archiving courses.
-     */
-    @PutMapping(path = "/{courseId}/archive")
-    @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_ARCHIVE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
-    public ResponseEntity archiveCourse(@PathVariable("courseId") String courseId, @RequestBody Course newCourse) {
-        return updateCourse(courseId, newCourse);
-    }
-
 
     @PostMapping("/{courseId}/modules")
     @PreAuthorize("(hasPermission(#courseId, 'write') and hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_CREATE, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
@@ -396,6 +374,13 @@ public class CourseController {
         LOGGER.info("Saved module {}", saved);
 
         return ResponseEntity.created(builder.path("/courses/{courseId}/modules/{moduleId}").build(courseId, saved.getId())).build();
+    }
+
+    @PutMapping("/{courseId}/modules")
+    @PreAuthorize("(hasAnyAuthority(T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_EDIT, T(uk.gov.cslearning.catalogue.domain.Roles).LEARNING_MANAGER, T(uk.gov.cslearning.catalogue.domain.Roles).CSL_AUTHOR))")
+    public ResponseEntity<Void> updateCourseModules(@PathVariable String courseId, @RequestBody List<Module> modules) {
+        courseService.updateCourseModules(courseId, modules);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{courseId}/modules/{moduleId}")
@@ -584,17 +569,6 @@ public class CourseController {
                 .orElseThrow(() -> resourceNotFoundException());
 
         return ResponseEntity.noContent().build();
-    }
-
-    private ResponseEntity updateCourse(@PathVariable("courseId") String courseId, @RequestBody Course newCourse) {
-        LOGGER.debug("Updating course {}", newCourse);
-
-        return courseService.findById(courseId)
-                .map(course -> {
-                    courseService.updateCourse(course, newCourse);
-                    return new ResponseEntity<>(NO_CONTENT);
-                })
-                .orElseGet(() -> new ResponseEntity<>(BAD_REQUEST));
     }
 
     private List<String> listWithNone(List<String> list) {
