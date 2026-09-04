@@ -26,6 +26,6 @@ public class LearningTagHyperlinkDto {
 
     @NotBlank
     @Size(max = 255)
-    @Pattern(regexp = "^https://.*", message = "href must be an HTTPS URL")
-    private String href;
+    @Pattern(regexp = "^https://.*", message = "url must be an HTTPS URL")
+    private String url;
 }

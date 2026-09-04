@@ -96,7 +96,7 @@ public class LearningTagServiceTest {
         assertEquals(Long.valueOf(100L), result.getContent().get(0).getId());
         assertEquals("BBC", result.getContent().get(0).getTitle());
         assertEquals("BBC Desc", result.getContent().get(0).getDescription());
-        assertEquals("https://bbc.co.uk", result.getContent().get(0).getHref());
+        assertEquals("https://bbc.co.uk", result.getContent().get(0).getUrl());
         assertEquals(1, result.getTotalResults());
 
         verify(learningTagHyperlinkRepository).findByLearningTagIdOrderByTitleAsc(tagId, pageable);
@@ -123,7 +123,7 @@ public class LearningTagServiceTest {
         assertEquals(Long.valueOf(100L), result.getId());
         assertEquals("BBC", result.getTitle());
         assertEquals("BBC Desc", result.getDescription());
-        assertEquals("https://bbc.co.uk", result.getHref());
+        assertEquals("https://bbc.co.uk", result.getUrl());
 
         verify(learningTagRepository).findById(tagId);
         verify(learningTagFactory).createHyperlink(inputDto, tag);
