@@ -353,7 +353,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
     @Test
     @Transactional
     public void testCreateLearningTagHyperlink() throws Exception {
-        mvc.perform(post("/learning-tags/1/hyperlink")
+        mvc.perform(post("/learning-tags/1/hyperlinks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
                 .andExpect(status().isCreated())
@@ -366,7 +366,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
     @Test
     @Transactional
     public void testCreateLearningTagHyperlinkWithoutDescription() throws Exception {
-        mvc.perform(post("/learning-tags/1/hyperlink")
+        mvc.perform(post("/learning-tags/1/hyperlinks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\"}"))
                 .andExpect(status().isCreated())
@@ -378,7 +378,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
 
     @Test
     public void testCreateLearningTagHyperlinkWithHttpUrl() throws Exception {
-        mvc.perform(post("/learning-tags/1/hyperlink")
+        mvc.perform(post("/learning-tags/1/hyperlinks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"Link title\", \"url\": \"http://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
                 .andExpect(status().isBadRequest());
@@ -386,7 +386,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
 
     @Test
     public void testCreateLearningTagHyperlinkWithInvalidUrl() throws Exception {
-        mvc.perform(post("/learning-tags/1/hyperlink")
+        mvc.perform(post("/learning-tags/1/hyperlinks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"Link title\", \"url\": \"not-a-url\", \"description\": \"Lorem ipsum...\"}"))
                 .andExpect(status().isBadRequest());
@@ -394,7 +394,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
 
     @Test
     public void testCreateLearningTagHyperlinkWithMissingTitle() throws Exception {
-        mvc.perform(post("/learning-tags/1/hyperlink")
+        mvc.perform(post("/learning-tags/1/hyperlinks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
                 .andExpect(status().isBadRequest());
@@ -402,9 +402,37 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
 
     @Test
     public void testCreateLearningTagHyperlinkWhenTagNotFound() throws Exception {
-        mvc.perform(post("/learning-tags/99999/hyperlink")
+        mvc.perform(post("/learning-tags/99999/hyperlinks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    public void testGetHyperlink() throws Exception {
+        mvc.perform(get("/learning-tags/1/hyperlinks/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.title").value("Fake site"))
+                .andExpect(jsonPath("$.url").value("https://www.fake-site.co.uk"))
+                .andExpect(jsonPath("$.description").value("A fake website"));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlink() throws Exception {
+        LearningTag tag1 = learningTagRepository.findById(1L).get();
+        LearningTagHyperlink h1 = learningTagHyperlinkRepository.save(new LearningTagHyperlink(tag1, "https://news.sky.com/uk", "Sky news", "Sky news website"));
+
+        mvc.perform(put("/learning-tags/1/hyperlinks/" + h1.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.title").value("Link title"))
+                .andExpect(jsonPath("$.url").value("https://bbc.co.uk"))
+                .andExpect(jsonPath("$.description").value("Lorem ipsum..."));
     }
 }
