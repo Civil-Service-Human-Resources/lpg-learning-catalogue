@@ -38,6 +38,11 @@ public class LearningTagFactory {
         );
     }
 
+    public LearningTagHyperlink createHyperlink(LearningTagHyperlinkDto dto, LearningTag learningTag) {
+        LocalDateTime now = utilService.getNowDateTime();
+        return new LearningTagHyperlink(null, learningTag, dto.getUrl(), dto.getTitle(), dto.getDescription(), now, now);
+    }
+
     public LearningTag create(LearningTagDto learningTagDto) {
         LocalDateTime now = utilService.getNowDateTime();
         return new LearningTag(learningTagDto.getName(), learningTagDto.getDescription(), learningTagDto.getCode(),
