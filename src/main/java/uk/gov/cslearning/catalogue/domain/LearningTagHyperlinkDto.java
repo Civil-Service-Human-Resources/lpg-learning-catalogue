@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -26,6 +26,6 @@ public class LearningTagHyperlinkDto {
 
     @NotBlank
     @Size(max = 255)
-    @Pattern(regexp = "^https://.*", message = "url must be an HTTPS URL")
+    @URL(protocol = "https", message = "url must be an HTTPS URL")
     private String url;
 }
