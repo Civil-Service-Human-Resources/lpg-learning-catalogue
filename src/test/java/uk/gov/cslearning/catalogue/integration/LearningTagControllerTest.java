@@ -1,15 +1,42 @@
 package uk.gov.cslearning.catalogue.integration;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.LearningTag;
+import uk.gov.cslearning.catalogue.domain.LearningTagHyperlink;
+import uk.gov.cslearning.catalogue.domain.Status;
+import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
+import uk.gov.cslearning.catalogue.repository.sql.*;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LearningTagControllerTest extends MySQLIntegrationTestBase {
+
+    @Autowired
+    private ICourseRepository courseRepository;
+
+    @Autowired
+    private ICourseStatusRepository courseStatusRepository;
+
+    @Autowired
+    private ILearningTagRepository learningTagRepository;
+
+    @Autowired
+    private ILearningTagHyperlinkRepository learningTagHyperlinkRepository;
+
+    @Autowired
+    private ICourseTagRepository courseTagRepository;
+
+    @Autowired
+    private CourseRepository elasticCourseRepository;
 
     @Test
     public void testGetLearningTags() throws Exception {
@@ -25,6 +52,8 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(jsonPath("$.content[0].parentName").isEmpty())
                 .andExpect(jsonPath("$.content[0].archived").value(false))
                 .andExpect(jsonPath("$.content[0].category").value(true))
+                .andExpect(jsonPath("$.content[0].courseCount").value(3))
+                .andExpect(jsonPath("$.content[0].linkCount").value(2))
                 .andExpect(jsonPath("$.content[1].name").value("Tech"))
                 .andExpect(jsonPath("$.content[1].description").value("Technical skills"))
                 .andExpect(jsonPath("$.content[1].code").value("TECH"))
@@ -167,6 +196,34 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
 
     @Test
     @Transactional
+    public void testGetCoursesByLearningTag() throws Exception {
+
+        mvc.perform(get("/learning-tags/1/courses?page=0&size=2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].title").value("Course ABC"))
+                .andExpect(jsonPath("$.content[0].id").value("ABC"))
+                .andExpect(jsonPath("$.content[0].shortDescription").value("Course ABC short description"))
+                .andExpect(jsonPath("$.content[0].status").value("Published"))
+                .andExpect(jsonPath("$.content[1].title").value("Course DEF"))
+                .andExpect(jsonPath("$.content[1].id").value("DEF"))
+                .andExpect(jsonPath("$.content[1].shortDescription").value("Course DEF short description"))
+                .andExpect(jsonPath("$.content[1].status").value("Published"))
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.size").value(2))
+                .andExpect(jsonPath("$.totalResults").value(3))
+                .andExpect(jsonPath("$.totalPages").value(2))
+                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.numberOfElements").value(2))
+                .andExpect(jsonPath("$.first").value(true))
+                .andExpect(jsonPath("$.last").value(false))
+                .andExpect(jsonPath("$.empty").value(false))
+                .andExpect(jsonPath("$.pageable").exists())
+                .andExpect(jsonPath("$.number").value(0));
+    }
+
+    @Test
+    @Transactional
     public void testUpdateLearningTagState() throws Exception {
 
         mvc.perform(put("/learning-tags/state")
@@ -176,5 +233,206 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(jsonPath("$.successfulUpdates[0]").value(1))
                 .andExpect(jsonPath("$.successfulUpdates[1]").value(2))
                 .andExpect(jsonPath("$.failedUpdates").isEmpty());
+    }
+
+    @Test
+    @Transactional
+    public void testRemoveCoursesFromLearningTag() throws Exception {
+        mvc.perform(delete("/learning-tags/1/courses")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\": [\"ABC\", \"DEF\", \"non-existent\"]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.successfulIds", hasSize(2)))
+                .andExpect(jsonPath("$.successfulIds[0]").value("ABC"))
+                .andExpect(jsonPath("$.successfulIds[1]").value("DEF"))
+                .andExpect(jsonPath("$.failedIds", hasSize(1)))
+                .andExpect(jsonPath("$.failedIds[0]").value("non-existent"));
+    }
+
+    @Test
+    @Transactional
+    public void testAssignCoursesToTag() throws Exception {
+
+        Course elasticCourse = new Course();
+        elasticCourse.setId("uid-new");
+        elasticCourse.setTitle("New Course");
+        elasticCourse.setShortDescription("New Course short description");
+        elasticCourse.setStatus(Status.DRAFT);
+
+        when(elasticCourseRepository.findById("uid-new")).thenReturn(java.util.Optional.of(elasticCourse));
+        when(elasticCourseRepository.findById("uid-missing")).thenReturn(java.util.Optional.empty());
+
+        String requestBody = "{" +
+                "\"learningTagIds\": [1, 2]," +
+                "\"courseIds\": [\"ABC\", \"DEF\", \"uid-new\", \"uid-missing\"]" +
+                "}";
+
+        mvc.perform(post("/learning-tags/courses")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.successfulIds[0].learningTagId").value("1"))
+                .andExpect(jsonPath("$.successfulIds[0].successfulIds[0]").value("4"))
+                .andExpect(jsonPath("$.successfulIds[1].learningTagId").value("2"))
+                .andExpect(jsonPath("$.successfulIds[1].successfulIds[0]").value("1"))
+                .andExpect(jsonPath("$.successfulIds[1].successfulIds[1]").value("2"))
+                .andExpect(jsonPath("$.successfulIds[1].successfulIds[2]").value("4"));
+
+
+    }
+
+    @Test
+    @Transactional
+    public void testGetHyperlinksByLearningTag() throws Exception {
+        LearningTag tag1 = learningTagRepository.findById(1L).get();
+
+        learningTagHyperlinkRepository.save(new LearningTagHyperlink(tag1, "https://www.bbc.co.uk/news", "BBC news", "BBC news website"));
+
+        mvc.perform(get("/learning-tags/1/hyperlinks?page=0&size=2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].title").value("Another fake site"))
+                .andExpect(jsonPath("$.content[0].url").value("https://www.another-fake-site.co.uk"))
+                .andExpect(jsonPath("$.content[0].description").value("Another fake website"))
+                .andExpect(jsonPath("$.content[0].id").isNumber())
+                .andExpect(jsonPath("$.content[1].title").value("BBC news"))
+                .andExpect(jsonPath("$.content[1].url").value("https://www.bbc.co.uk/news"))
+                .andExpect(jsonPath("$.content[1].description").value("BBC news website"))
+                .andExpect(jsonPath("$.content[1].id").isNumber())
+                .andExpect(jsonPath("$.size").value(2))
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.number").value(0))
+                .andExpect(jsonPath("$.numberOfElements").value(2))
+                .andExpect(jsonPath("$.totalPages").value(2))
+                .andExpect(jsonPath("$.totalResults").value(3))
+                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.first").value(true))
+                .andExpect(jsonPath("$.last").value(false))
+                .andExpect(jsonPath("$.empty").value(false))
+                .andExpect(jsonPath("$.pageable").exists());
+
+        mvc.perform(get("/learning-tags/1/hyperlinks?page=1&size=2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].title").value("Fake site"))
+                .andExpect(jsonPath("$.content[0].url").value("https://www.fake-site.co.uk"))
+                .andExpect(jsonPath("$.content[0].description").value("A fake website"))
+                .andExpect(jsonPath("$.size").value(2))
+                .andExpect(jsonPath("$.page").value(1))
+                .andExpect(jsonPath("$.number").value(1))
+                .andExpect(jsonPath("$.numberOfElements").value(1))
+                .andExpect(jsonPath("$.totalPages").value(2))
+                .andExpect(jsonPath("$.totalResults").value(3))
+                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.first").value(false))
+                .andExpect(jsonPath("$.last").value(true))
+                .andExpect(jsonPath("$.empty").value(false))
+                .andExpect(jsonPath("$.pageable").exists());
+    }
+
+    @Test
+    @Transactional
+    public void testRemoveHyperlinksFromLearningTag() throws Exception {
+        LearningTag tag1 = learningTagRepository.findById(1L).get();
+
+        LearningTagHyperlink h1 = learningTagHyperlinkRepository.save(new LearningTagHyperlink(tag1, "https://news.sky.com/uk", "Sky news", "Sky news website"));
+        LearningTagHyperlink h2 = learningTagHyperlinkRepository.save(new LearningTagHyperlink(tag1, "https://www.bbc.co.uk/news", "BBC news", "BBC news website"));
+
+        mvc.perform(delete("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(String.format("{\"ids\": [%d, %d, 99999]}", h1.getId(), h2.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.successfulIds", hasSize(2)))
+                .andExpect(jsonPath("$.successfulIds[0]").value(h1.getId()))
+                .andExpect(jsonPath("$.successfulIds[1]").value(h2.getId()))
+                .andExpect(jsonPath("$.failedIds", hasSize(1)))
+                .andExpect(jsonPath("$.failedIds[0]").value(99999));
+    }
+
+    @Test
+    @Transactional
+    public void testCreateLearningTagHyperlink() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.title").value("Link title"))
+                .andExpect(jsonPath("$.url").value("https://bbc.co.uk"))
+                .andExpect(jsonPath("$.description").value("Lorem ipsum..."));
+    }
+
+    @Test
+    @Transactional
+    public void testCreateLearningTagHyperlinkWithoutDescription() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.title").value("Link title"))
+                .andExpect(jsonPath("$.url").value("https://bbc.co.uk"))
+                .andExpect(jsonPath("$.description").isEmpty());
+    }
+
+    @Test
+    public void testCreateLearningTagHyperlinkWithHttpUrl() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"http://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testCreateLearningTagHyperlinkWithInvalidUrl() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"not-a-url\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testCreateLearningTagHyperlinkWithMissingTitle() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testCreateLearningTagHyperlinkWhenTagNotFound() throws Exception {
+        mvc.perform(post("/learning-tags/99999/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    public void testGetHyperlink() throws Exception {
+        mvc.perform(get("/learning-tags/1/hyperlinks/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.title").value("Fake site"))
+                .andExpect(jsonPath("$.url").value("https://www.fake-site.co.uk"))
+                .andExpect(jsonPath("$.description").value("A fake website"));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlink() throws Exception {
+        LearningTag tag1 = learningTagRepository.findById(1L).get();
+        LearningTagHyperlink h1 = learningTagHyperlinkRepository.save(new LearningTagHyperlink(tag1, "https://news.sky.com/uk", "Sky news", "Sky news website"));
+
+        mvc.perform(put("/learning-tags/1/hyperlinks/" + h1.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.title").value("Link title"))
+                .andExpect(jsonPath("$.url").value("https://bbc.co.uk"))
+                .andExpect(jsonPath("$.description").value("Lorem ipsum..."));
     }
 }
