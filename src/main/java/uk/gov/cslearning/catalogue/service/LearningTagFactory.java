@@ -43,6 +43,15 @@ public class LearningTagFactory {
         return new LearningTagHyperlink(null, learningTag, dto.getUrl(), dto.getTitle(), dto.getDescription(), now, now);
     }
 
+    public LearningTagHyperlink updateHyperlink(LearningTagHyperlink link, LearningTagHyperlinkDto dto) {
+        LocalDateTime now = utilService.getNowDateTime();
+        link.setDescription(dto.getDescription());
+        link.setTitle(dto.getTitle());
+        link.setHref(dto.getUrl());
+        link.setUpdatedTimestamp(now);
+        return link;
+    }
+
     public LearningTag create(LearningTagDto learningTagDto) {
         LocalDateTime now = utilService.getNowDateTime();
         return new LearningTag(learningTagDto.getName(), learningTagDto.getDescription(), learningTagDto.getCode(),

@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import uk.gov.cslearning.catalogue.api.models.*;
 import uk.gov.cslearning.catalogue.domain.LearningTagBulkStateDto;
 import uk.gov.cslearning.catalogue.domain.LearningTagDto;
-import uk.gov.cslearning.catalogue.domain.LearningTagHyperlinkDto;
 import uk.gov.cslearning.catalogue.dto.BulkUpdateDto;
 import uk.gov.cslearning.catalogue.service.LearningTagService;
 
@@ -37,25 +36,11 @@ public class LearningTagController {
         return learningTagService.getCoursesByLearningTagId(learningTagId, pageable.getAsPageable());
     }
 
-    @GetMapping("/{learningTagId}/hyperlinks")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public SimplePage<LearningTagHyperlinkDto> getHyperlinksByTag(@PathVariable Long learningTagId, PageableParams pageable) {
-        return learningTagService.getHyperlinksByLearningTagId(learningTagId, pageable.getAsPageable());
-    }
-
     @PostMapping
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
     public LearningTagDto createTag(@Valid @RequestBody LearningTagDto learningTag) {
         return learningTagService.createLearningTag(learningTag);
-    }
-
-    @PostMapping("/{learningTagId}/hyperlink")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.CREATED)
-    public LearningTagHyperlinkDto createHyperlink(@PathVariable Long learningTagId, @Valid @RequestBody LearningTagHyperlinkDto dto) {
-        return learningTagService.createLearningTagHyperlink(learningTagId, dto);
     }
 
     @PutMapping("/{learningTagId}")
@@ -77,13 +62,6 @@ public class LearningTagController {
     @ResponseStatus(HttpStatus.OK)
     public BulkUpdateResponse<String> removeCoursesFromTag(@PathVariable Long learningTagId, @RequestBody IdsDto<String> courseIdsDto) {
         return learningTagService.removeCoursesFromLearningTag(learningTagId, courseIdsDto);
-    }
-
-    @DeleteMapping("/{learningTagId}/hyperlinks")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public BulkUpdateResponse<Long> removeHyperlinksFromTag(@PathVariable Long learningTagId, @RequestBody IdsDto<Long> hyperlinkIdsDto) {
-        return learningTagService.removeHyperlinksFromLearningTag(learningTagId, hyperlinkIdsDto);
     }
 
     @PostMapping("/courses")

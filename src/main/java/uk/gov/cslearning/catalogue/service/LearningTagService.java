@@ -57,6 +57,14 @@ public class LearningTagService {
         return learningTagFactory.createHyperlinkDto(hyperlink);
     }
 
+    public LearningTagHyperlinkDto updateLearningTagHyperlink(Long learningTagId, Long hyperlinkId, @Valid LearningTagHyperlinkDto dto) {
+        LearningTagHyperlink hyperlink = learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, learningTagId)
+                .map(link -> learningTagFactory.updateHyperlink(link, dto))
+                .orElseThrow(ResourceNotFoundException::new);
+        learningTagHyperlinkRepository.save(hyperlink);
+        return learningTagFactory.createHyperlinkDto(hyperlink);
+    }
+
     public SimplePage<LearningTagDto> getLearningTags(Pageable pageable) {
         Page<LearningTag> page = learningTagRepository.findAll(pageable);
         return new SimplePage<>(page.getContent().stream().map(learningTagFactory::createDto).collect(Collectors.toList()),
@@ -217,5 +225,11 @@ public class LearningTagService {
         Collection<LearningTagCourseUpdateResponse> successfulUpdates = learningTagsToCoursesMap
                 .entrySet().stream().map(longCollectionEntry -> new LearningTagCourseUpdateResponse(longCollectionEntry.getValue(), Collections.emptyList(), longCollectionEntry.getKey())).collect(Collectors.toList());
         return new BulkUpdateResponse<>(successfulUpdates, Collections.emptyList());
+    }
+
+    public LearningTagHyperlinkDto getLearningTagHyperlink(Long learningTagId, Long hyperlinkId) {
+        return learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, learningTagId)
+                .map(learningTagFactory::createHyperlinkDto)
+                .orElseThrow(ResourceNotFoundException::new);
     }
 }
