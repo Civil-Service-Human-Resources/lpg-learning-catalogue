@@ -12,6 +12,7 @@ import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.*;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,9 @@ public class LearningTagService {
 
     public LearningTagHyperlinkDto createLearningTagHyperlink(Long learningTagId, @Valid LearningTagHyperlinkDto dto) {
         LearningTag learningTag = getLearningTagById(learningTagId);
+        if (learningTagHyperlinkRepository.existsByLearningTagIdAndHref(learningTagId, dto.getUrl())) {
+            throw new ValidationException(String.format("Hyperlink with URL '%s' already exists for Learning tag with ID %s", dto.getUrl(), learningTagId));
+        }
         LearningTagHyperlink hyperlink = learningTagFactory.createHyperlink(dto, learningTag);
         learningTagHyperlinkRepository.save(hyperlink);
         return learningTagFactory.createHyperlinkDto(hyperlink);

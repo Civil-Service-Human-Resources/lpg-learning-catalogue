@@ -18,6 +18,8 @@ import uk.gov.cslearning.catalogue.domain.LearningTag;
 import uk.gov.cslearning.catalogue.domain.LearningTagHyperlink;
 import uk.gov.cslearning.catalogue.domain.LearningTagHyperlinkDto;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
+
+import javax.validation.ValidationException;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseStatusRepository;
@@ -114,6 +116,7 @@ public class LearningTagServiceTest {
         LearningTagHyperlinkDto expectedResultDto = new LearningTagHyperlinkDto(100L, "BBC", "BBC Desc", "https://bbc.co.uk");
 
         when(learningTagRepository.findById(tagId)).thenReturn(Optional.of(tag));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk")).thenReturn(false);
         when(learningTagFactory.createHyperlink(inputDto, tag)).thenReturn(createdEntity);
         when(learningTagHyperlinkRepository.save(createdEntity)).thenReturn(createdEntity);
         when(learningTagFactory.createHyperlinkDto(createdEntity)).thenReturn(expectedResultDto);
@@ -126,9 +129,24 @@ public class LearningTagServiceTest {
         assertEquals("https://bbc.co.uk", result.getUrl());
 
         verify(learningTagRepository).findById(tagId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk");
         verify(learningTagFactory).createHyperlink(inputDto, tag);
         verify(learningTagHyperlinkRepository).save(createdEntity);
         verify(learningTagFactory).createHyperlinkDto(createdEntity);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testCreateLearningTagHyperlinkWhenAlreadyExists() {
+        Long tagId = 1L;
+        LearningTag tag = new LearningTag();
+        tag.setId(tagId);
+
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(null, "BBC", "BBC Desc", "https://bbc.co.uk");
+
+        when(learningTagRepository.findById(tagId)).thenReturn(Optional.of(tag));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk")).thenReturn(true);
+
+        learningTagService.createLearningTagHyperlink(tagId, inputDto);
     }
 
     @Test(expected = ResourceNotFoundException.class)

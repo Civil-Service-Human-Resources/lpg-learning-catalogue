@@ -410,6 +410,18 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
 
     @Test
     @Transactional
+    public void testCreateLearningTagHyperlinkWhenAlreadyExists() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with ID 1"));
+    }
+
+    @Test
+    @Transactional
     public void testGetHyperlink() throws Exception {
         mvc.perform(get("/learning-tags/1/hyperlinks/1")
                         .contentType(MediaType.APPLICATION_JSON))
