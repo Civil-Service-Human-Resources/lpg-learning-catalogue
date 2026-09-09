@@ -53,6 +53,9 @@ public class LearningTagService {
 
     public LearningTagHyperlinkDto createLearningTagHyperlink(Long learningTagId, @Valid LearningTagHyperlinkDto dto) {
         LearningTag learningTag = getLearningTagById(learningTagId);
+        if (learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(learningTagId, dto.getTitle())) {
+            throw new ValidationException(String.format("Hyperlink with title '%s' already exists for Learning tag with ID %s", dto.getTitle(), learningTagId));
+        }
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndHref(learningTagId, dto.getUrl())) {
             throw new ValidationException(String.format("Hyperlink with URL '%s' already exists for Learning tag with ID %s", dto.getUrl(), learningTagId));
         }

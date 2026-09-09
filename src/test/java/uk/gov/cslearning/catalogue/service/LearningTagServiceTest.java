@@ -116,6 +116,7 @@ public class LearningTagServiceTest {
         LearningTagHyperlinkDto expectedResultDto = new LearningTagHyperlinkDto(100L, "BBC", "BBC Desc", "https://bbc.co.uk");
 
         when(learningTagRepository.findById(tagId)).thenReturn(Optional.of(tag));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(tagId, "BBC")).thenReturn(false);
         when(learningTagHyperlinkRepository.existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk")).thenReturn(false);
         when(learningTagFactory.createHyperlink(inputDto, tag)).thenReturn(createdEntity);
         when(learningTagHyperlinkRepository.save(createdEntity)).thenReturn(createdEntity);
@@ -129,6 +130,7 @@ public class LearningTagServiceTest {
         assertEquals("https://bbc.co.uk", result.getUrl());
 
         verify(learningTagRepository).findById(tagId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk");
         verify(learningTagFactory).createHyperlink(inputDto, tag);
         verify(learningTagHyperlinkRepository).save(createdEntity);
@@ -136,7 +138,7 @@ public class LearningTagServiceTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void testCreateLearningTagHyperlinkWhenAlreadyExists() {
+    public void testCreateLearningTagHyperlinkWhenTitleAlreadyExists() {
         Long tagId = 1L;
         LearningTag tag = new LearningTag();
         tag.setId(tagId);
@@ -144,6 +146,21 @@ public class LearningTagServiceTest {
         LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(null, "BBC", "BBC Desc", "https://bbc.co.uk");
 
         when(learningTagRepository.findById(tagId)).thenReturn(Optional.of(tag));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(tagId, "BBC")).thenReturn(true);
+
+        learningTagService.createLearningTagHyperlink(tagId, inputDto);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testCreateLearningTagHyperlinkWhenHrefAlreadyExists() {
+        Long tagId = 1L;
+        LearningTag tag = new LearningTag();
+        tag.setId(tagId);
+
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(null, "BBC", "BBC Desc", "https://bbc.co.uk");
+
+        when(learningTagRepository.findById(tagId)).thenReturn(Optional.of(tag));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(tagId, "BBC")).thenReturn(false);
         when(learningTagHyperlinkRepository.existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk")).thenReturn(true);
 
         learningTagService.createLearningTagHyperlink(tagId, inputDto);
