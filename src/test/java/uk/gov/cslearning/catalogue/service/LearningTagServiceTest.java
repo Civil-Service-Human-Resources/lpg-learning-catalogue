@@ -203,8 +203,7 @@ public class LearningTagServiceTest {
             learningTagService.createLearningTagHyperlink(tagId, inputDto);
             fail("Expected ValidationException to be thrown");
         } catch (ValidationException e) {
-            String expected = "Hyperlink with title 'BBC' already exists for Learning tag with name Tag1\n" +
-                    "Hyperlink with URL 'https://bbc.co.uk' already exists for Learning tag with name Tag1";
+            String expected = "Hyperlink with title 'BBC' and URL 'https://bbc.co.uk' already exists for Learning tag with name Tag1";
             assertEquals(expected, e.getMessage());
         }
 
@@ -330,8 +329,7 @@ public class LearningTagServiceTest {
             learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
             fail("Expected ValidationException to be thrown");
         } catch (ValidationException e) {
-            String expected = "Hyperlink with title 'New Title' already exists for Learning tag with name Tag1\n" +
-                    "Hyperlink with URL 'https://new.co.uk' already exists for Learning tag with name Tag1";
+            String expected = "Hyperlink with title 'New Title' and URL 'https://new.co.uk' already exists for Learning tag with name Tag1";
             assertEquals(expected, e.getMessage());
         }
 

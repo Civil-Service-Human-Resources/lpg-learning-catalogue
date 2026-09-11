@@ -54,17 +54,17 @@ public class LearningTagService {
 
     public LearningTagHyperlinkDto createLearningTagHyperlink(Long learningTagId, @Valid LearningTagHyperlinkDto dto) {
         LearningTag learningTag = getLearningTagById(learningTagId);
-        List<String> errors = new ArrayList<>();
-        if (learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(learningTagId, dto.getTitle())) {
+        boolean titleExists = learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(learningTagId, dto.getTitle());
+        boolean hrefExists = learningTagHyperlinkRepository.existsByLearningTagIdAndHref(learningTagId, dto.getUrl());
+        if (titleExists && hrefExists) {
+            log.warn("Hyperlink with title '{}' and URL '{}' already exists for Learning tag with name {} and ID {}", dto.getTitle(), dto.getUrl(), learningTag.getName(), learningTagId);
+            throw new ValidationException(String.format("Hyperlink with title '%s' and URL '%s' already exists for Learning tag with name %s", dto.getTitle(), dto.getUrl(), learningTag.getName()));
+        } else if (titleExists) {
             log.warn("Hyperlink with title '{}' already exists for Learning tag with name {} and ID {}", dto.getTitle(), learningTag.getName(), learningTagId);
-            errors.add(String.format("Hyperlink with title '%s' already exists for Learning tag with name %s", dto.getTitle(), learningTag.getName()));
-        }
-        if (learningTagHyperlinkRepository.existsByLearningTagIdAndHref(learningTagId, dto.getUrl())) {
+            throw new ValidationException(String.format("Hyperlink with title '%s' already exists for Learning tag with name %s", dto.getTitle(), learningTag.getName()));
+        } else if (hrefExists) {
             log.warn("Hyperlink with URL '{}' already exists for Learning tag with name {} and ID {}", dto.getUrl(), learningTag.getName(), learningTagId);
-            errors.add(String.format("Hyperlink with URL '%s' already exists for Learning tag with name %s", dto.getUrl(), learningTag.getName()));
-        }
-        if (!errors.isEmpty()) {
-            throw new ValidationException(String.join("\n", errors));
+            throw new ValidationException(String.format("Hyperlink with URL '%s' already exists for Learning tag with name %s", dto.getUrl(), learningTag.getName()));
         }
         LearningTagHyperlink hyperlink = learningTagFactory.createHyperlink(dto, learningTag);
         learningTagHyperlinkRepository.save(hyperlink);
@@ -75,17 +75,17 @@ public class LearningTagService {
     public LearningTagHyperlinkDto updateLearningTagHyperlink(Long learningTagId, Long hyperlinkId, @Valid LearningTagHyperlinkDto dto) {
         LearningTagHyperlink hyperlink = learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, learningTagId)
                 .orElseThrow(ResourceNotFoundException::new);
-        List<String> errors = new ArrayList<>();
-        if (learningTagHyperlinkRepository.existsByLearningTagIdAndTitleAndIdNot(learningTagId, dto.getTitle(), hyperlinkId)) {
+        boolean titleExists = learningTagHyperlinkRepository.existsByLearningTagIdAndTitleAndIdNot(learningTagId, dto.getTitle(), hyperlinkId);
+        boolean hrefExists = learningTagHyperlinkRepository.existsByLearningTagIdAndHrefAndIdNot(learningTagId, dto.getUrl(), hyperlinkId);
+        if (titleExists && hrefExists) {
+            log.warn("Hyperlink with title '{}' and URL '{}' already exists for Learning tag with name {} and ID {}", dto.getTitle(), dto.getUrl(), hyperlink.getLearningTag().getName(), learningTagId);
+            throw new ValidationException(String.format("Hyperlink with title '%s' and URL '%s' already exists for Learning tag with name %s", dto.getTitle(), dto.getUrl(), hyperlink.getLearningTag().getName()));
+        } else if (titleExists) {
             log.warn("Hyperlink with title '{}' already exists for Learning tag with name {} and ID {}", dto.getTitle(), hyperlink.getLearningTag().getName(), learningTagId);
-            errors.add(String.format("Hyperlink with title '%s' already exists for Learning tag with name %s", dto.getTitle(), hyperlink.getLearningTag().getName()));
-        }
-        if (learningTagHyperlinkRepository.existsByLearningTagIdAndHrefAndIdNot(learningTagId, dto.getUrl(), hyperlinkId)) {
+            throw new ValidationException(String.format("Hyperlink with title '%s' already exists for Learning tag with name %s", dto.getTitle(), hyperlink.getLearningTag().getName()));
+        } else if (hrefExists) {
             log.warn("Hyperlink with URL '{}' already exists for Learning tag with name {} and ID {}", dto.getUrl(), hyperlink.getLearningTag().getName(), learningTagId);
-            errors.add(String.format("Hyperlink with URL '%s' already exists for Learning tag with name %s", dto.getUrl(), hyperlink.getLearningTag().getName()));
-        }
-        if (!errors.isEmpty()) {
-            throw new ValidationException(String.join("\n", errors));
+            throw new ValidationException(String.format("Hyperlink with URL '%s' already exists for Learning tag with name %s", dto.getUrl(), hyperlink.getLearningTag().getName()));
         }
         LearningTagHyperlink updatedHyperlink = learningTagFactory.updateHyperlink(hyperlink, dto);
         learningTagHyperlinkRepository.save(updatedHyperlink);

@@ -441,7 +441,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' already exists for Learning tag with name Project management\nHyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
+                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' and URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
     }
 
     @Test
@@ -518,7 +518,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' already exists for Learning tag with name Project management\nHyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
+                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' and URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
     }
 
     @Test
