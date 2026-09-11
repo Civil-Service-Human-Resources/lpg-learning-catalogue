@@ -43,6 +43,7 @@ public class LearningTagService {
 
     public SimplePage<LearningTagHyperlinkDto> getHyperlinksByLearningTagId(Long learningTagId, Pageable pageable) {
         Page<LearningTagHyperlink> page = learningTagHyperlinkRepository.findByLearningTagIdOrderByTitleAsc(learningTagId, pageable);
+        log.debug("Fetched hyperlinks from DB for learning tag id {}: page: {}", learningTagId, page);
         return new SimplePage<>(
                 page.getContent().stream()
                         .map(learningTagFactory::createHyperlinkDto)
@@ -53,23 +54,43 @@ public class LearningTagService {
 
     public LearningTagHyperlinkDto createLearningTagHyperlink(Long learningTagId, @Valid LearningTagHyperlinkDto dto) {
         LearningTag learningTag = getLearningTagById(learningTagId);
+        List<String> errors = new ArrayList<>();
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(learningTagId, dto.getTitle())) {
-            throw new ValidationException(String.format("Hyperlink with title '%s' already exists for Learning tag with ID %s", dto.getTitle(), learningTagId));
+            log.warn("Hyperlink with title '{}' already exists for Learning tag with name {} and ID {}", dto.getTitle(), learningTag.getName(), learningTagId);
+            errors.add(String.format("Hyperlink with title '%s' already exists for Learning tag with name %s", dto.getTitle(), learningTag.getName()));
         }
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndHref(learningTagId, dto.getUrl())) {
-            throw new ValidationException(String.format("Hyperlink with URL '%s' already exists for Learning tag with ID %s", dto.getUrl(), learningTagId));
+            log.warn("Hyperlink with URL '{}' already exists for Learning tag with name {} and ID {}", dto.getUrl(), learningTag.getName(), learningTagId);
+            errors.add(String.format("Hyperlink with URL '%s' already exists for Learning tag with name %s", dto.getUrl(), learningTag.getName()));
+        }
+        if (!errors.isEmpty()) {
+            throw new ValidationException(String.join("\n", errors));
         }
         LearningTagHyperlink hyperlink = learningTagFactory.createHyperlink(dto, learningTag);
         learningTagHyperlinkRepository.save(hyperlink);
+        log.info("Hyperlink '{}' created for Learning tag with name {} and ID {}", hyperlink, learningTag.getName(), learningTagId);
         return learningTagFactory.createHyperlinkDto(hyperlink);
     }
 
     public LearningTagHyperlinkDto updateLearningTagHyperlink(Long learningTagId, Long hyperlinkId, @Valid LearningTagHyperlinkDto dto) {
         LearningTagHyperlink hyperlink = learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, learningTagId)
-                .map(link -> learningTagFactory.updateHyperlink(link, dto))
                 .orElseThrow(ResourceNotFoundException::new);
-        learningTagHyperlinkRepository.save(hyperlink);
-        return learningTagFactory.createHyperlinkDto(hyperlink);
+        List<String> errors = new ArrayList<>();
+        if (learningTagHyperlinkRepository.existsByLearningTagIdAndTitleAndIdNot(learningTagId, dto.getTitle(), hyperlinkId)) {
+            log.warn("Hyperlink with title '{}' already exists for Learning tag with name {} and ID {}", dto.getTitle(), hyperlink.getLearningTag().getName(), learningTagId);
+            errors.add(String.format("Hyperlink with title '%s' already exists for Learning tag with name %s", dto.getTitle(), hyperlink.getLearningTag().getName()));
+        }
+        if (learningTagHyperlinkRepository.existsByLearningTagIdAndHrefAndIdNot(learningTagId, dto.getUrl(), hyperlinkId)) {
+            log.warn("Hyperlink with URL '{}' already exists for Learning tag with name {} and ID {}", dto.getUrl(), hyperlink.getLearningTag().getName(), learningTagId);
+            errors.add(String.format("Hyperlink with URL '%s' already exists for Learning tag with name %s", dto.getUrl(), hyperlink.getLearningTag().getName()));
+        }
+        if (!errors.isEmpty()) {
+            throw new ValidationException(String.join("\n", errors));
+        }
+        LearningTagHyperlink updatedHyperlink = learningTagFactory.updateHyperlink(hyperlink, dto);
+        learningTagHyperlinkRepository.save(updatedHyperlink);
+        log.info("Updated Hyperlink '{}' for Learning tag with ID {}", updatedHyperlink, learningTagId);
+        return learningTagFactory.createHyperlinkDto(updatedHyperlink);
     }
 
     public SimplePage<LearningTagDto> getLearningTags(Pageable pageable) {

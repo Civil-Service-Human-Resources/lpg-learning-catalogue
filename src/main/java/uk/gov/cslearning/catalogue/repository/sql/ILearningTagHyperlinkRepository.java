@@ -17,4 +17,8 @@ public interface ILearningTagHyperlinkRepository extends JpaRepository<LearningT
     boolean existsByLearningTagIdAndTitle(Long learningTagId, String title);
 
     boolean existsByLearningTagIdAndHref(Long learningTagId, String href);
+
+    boolean existsByLearningTagIdAndTitleAndIdNot(Long learningTagId, String title, Long id);
+
+    boolean existsByLearningTagIdAndHrefAndIdNot(Long learningTagId, String href, Long id);
 }

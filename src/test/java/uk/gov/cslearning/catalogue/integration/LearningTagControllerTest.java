@@ -417,7 +417,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' already exists for Learning tag with ID 1"));
+                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' already exists for Learning tag with name Project management"));
     }
 
     @Test
@@ -429,7 +429,19 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with ID 1"));
+                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
+    }
+
+    @Test
+    @Transactional
+    public void testCreateLearningTagHyperlinkWhenBothTitleAndHrefAlreadyExist() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Fake site\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' already exists for Learning tag with name Project management\nHyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
     }
 
     @Test
@@ -458,5 +470,62 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(jsonPath("$.title").value("Link title"))
                 .andExpect(jsonPath("$.url").value("https://bbc.co.uk"))
                 .andExpect(jsonPath("$.description").value("Lorem ipsum..."));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlinkKeepSameTitleAndUrl() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Fake site\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Updated description\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Fake site"))
+                .andExpect(jsonPath("$.url").value("https://www.fake-site.co.uk"))
+                .andExpect(jsonPath("$.description").value("Updated description"));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlinkWhenTitleAlreadyExists() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Fake site\", \"url\": \"https://www.another-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' already exists for Learning tag with name Project management"));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlinkWhenHrefAlreadyExists() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Unique title\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlinkWhenBothTitleAndHrefAlreadyExist() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Fake site\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' already exists for Learning tag with name Project management\nHyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
+    }
+
+    @Test
+    public void testEditHyperlinkWhenNotFound() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/99999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isNotFound());
     }
 }

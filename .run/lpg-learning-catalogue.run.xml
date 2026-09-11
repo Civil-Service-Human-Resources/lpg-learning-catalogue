@@ -34,6 +34,7 @@
           <entry key="RUSTICI_URL" value="http://csl.local/rustici" />
           <entry key="RUSTICI_USERNAME" value="apiuser" />
           <entry key="TIME_ZONE_ID" value="UTC" />
+          <entry key="UK_GOV_CSLEARNING_LOGGING_LEVEL" value="DEBUG" />
         </map>
       </option>
       <option name="executionName" />
