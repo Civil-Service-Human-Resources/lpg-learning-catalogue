@@ -35,7 +35,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<Object> handleConstraintViolationExcetpion(ConstraintViolationException e) {
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e) {
         log.error("Bad Request: ", e);
         List<String> errors = e.getConstraintViolations().stream().map(ConstraintViolation::getMessage).sorted().collect(Collectors.toList());
         return errorDtoFactory.create(BAD_REQUEST, errors, "Validation error").getAsResponseEntity();
@@ -49,7 +49,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
-        return errorDtoFactory.createWithErrorFields(BAD_REQUEST, result.getFieldErrors()).getAsResponseEntity();
+        return errorDtoFactory.createWithErrorFields(BAD_REQUEST, result.getFieldErrors(), "Validation error").getAsResponseEntity();
     }
 
     @ExceptionHandler(ValidationException.class)

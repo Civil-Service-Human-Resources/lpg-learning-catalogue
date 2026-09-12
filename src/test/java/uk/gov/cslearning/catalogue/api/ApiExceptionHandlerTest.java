@@ -71,7 +71,7 @@ public class ApiExceptionHandlerTest {
         when(errorDtoFactory.create(HttpStatus.BAD_REQUEST, sortedErrors, "Validation error")).thenReturn(errorDto);
         when(errorDto.getAsResponseEntity()).thenReturn(expectedResponse);
 
-        ResponseEntity<Object> response = apiExceptionHandler.handleConstraintViolationExcetpion(exception);
+        ResponseEntity<Object> response = apiExceptionHandler.handleConstraintViolationException(exception);
 
         assertNotNull(response);
         assertEquals(expectedResponse, response);
@@ -99,14 +99,14 @@ public class ApiExceptionHandlerTest {
         ErrorDto errorDto = mock(ErrorDto.class);
         ResponseEntity<Object> expectedResponse = ResponseEntity.badRequest().body(errorDto);
 
-        when(errorDtoFactory.createWithErrorFields(HttpStatus.BAD_REQUEST, fieldErrors)).thenReturn(errorDto);
+        when(errorDtoFactory.createWithErrorFields(HttpStatus.BAD_REQUEST, fieldErrors, "Validation error")).thenReturn(errorDto);
         when(errorDto.getAsResponseEntity()).thenReturn(expectedResponse);
 
         ResponseEntity<Object> response = apiExceptionHandler.handleMethodArgumentNotValid(exception);
 
         assertNotNull(response);
         assertEquals(expectedResponse, response);
-        verify(errorDtoFactory).createWithErrorFields(HttpStatus.BAD_REQUEST, fieldErrors);
+        verify(errorDtoFactory).createWithErrorFields(HttpStatus.BAD_REQUEST, fieldErrors, "Validation error");
     }
 
     @Test
