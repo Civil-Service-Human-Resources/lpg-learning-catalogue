@@ -160,7 +160,7 @@ public class LearningTagServiceTest {
             assertEquals(1, bindingResult.getErrorCount());
             FieldError error = bindingResult.getFieldError("title");
             org.junit.Assert.assertNotNull(error);
-            assertEquals("A link with the title 'BBC' already exists for the tag with the name Tag1", error.getDefaultMessage());
+            assertEquals("A link with this title already exists for the tag", error.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -188,7 +188,7 @@ public class LearningTagServiceTest {
             assertEquals(1, bindingResult.getErrorCount());
             FieldError error = bindingResult.getFieldError("url");
             org.junit.Assert.assertNotNull(error);
-            assertEquals("A link with the URL 'https://bbc.co.uk' already exists for the tag with the name Tag1", error.getDefaultMessage());
+            assertEquals("A link with this URL already exists for the tag", error.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -216,10 +216,10 @@ public class LearningTagServiceTest {
             assertEquals(2, bindingResult.getErrorCount());
             FieldError titleError = bindingResult.getFieldError("title");
             org.junit.Assert.assertNotNull(titleError);
-            assertEquals("A link with the title 'BBC' already exists for the tag with the name Tag1", titleError.getDefaultMessage());
+            assertEquals("A link with this title already exists for the tag", titleError.getDefaultMessage());
             FieldError urlError = bindingResult.getFieldError("url");
             org.junit.Assert.assertNotNull(urlError);
-            assertEquals("A link with the URL 'https://bbc.co.uk' already exists for the tag with the name Tag1", urlError.getDefaultMessage());
+            assertEquals("A link with this URL already exists for the tag", urlError.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -294,7 +294,7 @@ public class LearningTagServiceTest {
             assertEquals(1, bindingResult.getErrorCount());
             FieldError error = bindingResult.getFieldError("title");
             org.junit.Assert.assertNotNull(error);
-            assertEquals("A link with the title 'New Title' already exists for the tag with the name Tag1", error.getDefaultMessage());
+            assertEquals("A link with this title already exists for the tag", error.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
@@ -325,7 +325,7 @@ public class LearningTagServiceTest {
             assertEquals(1, bindingResult.getErrorCount());
             FieldError error = bindingResult.getFieldError("url");
             org.junit.Assert.assertNotNull(error);
-            assertEquals("A link with the URL 'https://new.co.uk' already exists for the tag with the name Tag1", error.getDefaultMessage());
+            assertEquals("A link with this URL already exists for the tag", error.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
@@ -356,10 +356,10 @@ public class LearningTagServiceTest {
             assertEquals(2, bindingResult.getErrorCount());
             FieldError titleError = bindingResult.getFieldError("title");
             org.junit.Assert.assertNotNull(titleError);
-            assertEquals("A link with the title 'New Title' already exists for the tag with the name Tag1", titleError.getDefaultMessage());
+            assertEquals("A link with this title already exists for the tag", titleError.getDefaultMessage());
             FieldError urlError = bindingResult.getFieldError("url");
             org.junit.Assert.assertNotNull(urlError);
-            assertEquals("A link with the URL 'https://new.co.uk' already exists for the tag with the name Tag1", urlError.getDefaultMessage());
+            assertEquals("A link with this URL already exists for the tag", urlError.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);

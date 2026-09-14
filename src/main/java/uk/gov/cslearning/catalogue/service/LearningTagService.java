@@ -74,11 +74,11 @@ public class LearningTagService {
         BindingResult bindingResult = new BeanPropertyBindingResult(dto, "learningTagHyperlinkDto");
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(learningTagId, dto.getTitle())) {
             log.warn("A link with the title '{}' already exists for the tag with the name {} and ID {}", dto.getTitle(), learningTag.getName(), learningTagId);
-            bindingResult.rejectValue("title", "alreadyExists", String.format("A link with the title '%s' already exists for the tag with the name %s", dto.getTitle(), learningTag.getName()));
+            bindingResult.rejectValue("title", "alreadyExists", "A link with this title already exists for the tag");
         }
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndHref(learningTagId, dto.getUrl())) {
             log.warn("A link with the URL '{}' already exists for the tag with the name {} and ID {}", dto.getUrl(), learningTag.getName(), learningTagId);
-            bindingResult.rejectValue("url", "alreadyExists", String.format("A link with the URL '%s' already exists for the tag with the name %s", dto.getUrl(), learningTag.getName()));
+            bindingResult.rejectValue("url", "alreadyExists", "A link with this URL already exists for the tag");
         }
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(CREATE_HYPERLINK_PARAM, bindingResult);
@@ -95,11 +95,11 @@ public class LearningTagService {
         BindingResult bindingResult = new BeanPropertyBindingResult(dto, "learningTagHyperlinkDto");
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndTitleAndIdNot(learningTagId, dto.getTitle(), hyperlinkId)) {
             log.warn("A link with the title '{}' already exists for the tag with the name {} and ID {}", dto.getTitle(), hyperlink.getLearningTag().getName(), learningTagId);
-            bindingResult.rejectValue("title", "alreadyExists", String.format("A link with the title '%s' already exists for the tag with the name %s", dto.getTitle(), hyperlink.getLearningTag().getName()));
+            bindingResult.rejectValue("title", "alreadyExists", "A link with this title already exists for the tag");
         }
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndHrefAndIdNot(learningTagId, dto.getUrl(), hyperlinkId)) {
             log.warn("A link with the URL '{}' already exists for the tag with the name {} and ID {}", dto.getUrl(), hyperlink.getLearningTag().getName(), learningTagId);
-            bindingResult.rejectValue("url", "alreadyExists", String.format("A link with the URL '%s' already exists for the tag with the name %s", dto.getUrl(), hyperlink.getLearningTag().getName()));
+            bindingResult.rejectValue("url", "alreadyExists", "A link with this URL already exists for the tag");
         }
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(UPDATE_HYPERLINK_PARAM, bindingResult);
