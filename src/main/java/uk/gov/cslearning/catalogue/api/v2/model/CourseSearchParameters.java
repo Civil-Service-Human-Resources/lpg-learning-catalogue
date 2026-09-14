@@ -19,8 +19,8 @@ import java.util.List;
 public class CourseSearchParameters {
     String query = "";
 
-    Collection<Status> status = Collections.singletonList(Status.PUBLISHED);
-    Collection<Visibility> visibility = Collections.singletonList(Visibility.PUBLIC);
+    Collection<Status> status = Collections.emptyList();
+    Collection<Visibility> visibility = Collections.emptyList();
     List<String> types = Collections.emptyList();
     String cost;
 
