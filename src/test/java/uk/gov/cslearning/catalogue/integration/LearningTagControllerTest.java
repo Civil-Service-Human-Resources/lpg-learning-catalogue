@@ -417,7 +417,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' already exists for Learning tag with name Project management"));
+                .andExpect(jsonPath("$.errors[0]").value("Field title is invalid: A link with the title 'Fake site' already exists for the tag with the name Project management"));
     }
 
     @Test
@@ -429,7 +429,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
+                .andExpect(jsonPath("$.errors[0]").value("Field url is invalid: A link with the URL 'https://www.fake-site.co.uk' already exists for the tag with the name Project management"));
     }
 
     @Test
@@ -441,7 +441,9 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' and URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
+                .andExpect(jsonPath("$.errors", hasSize(2)))
+                .andExpect(jsonPath("$.errors[0]").value("Field title is invalid: A link with the title 'Fake site' already exists for the tag with the name Project management"))
+                .andExpect(jsonPath("$.errors[1]").value("Field url is invalid: A link with the URL 'https://www.fake-site.co.uk' already exists for the tag with the name Project management"));
     }
 
     @Test
@@ -494,7 +496,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' already exists for Learning tag with name Project management"));
+                .andExpect(jsonPath("$.errors[0]").value("Field title is invalid: A link with the title 'Fake site' already exists for the tag with the name Project management"));
     }
 
     @Test
@@ -506,7 +508,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
+                .andExpect(jsonPath("$.errors[0]").value("Field url is invalid: A link with the URL 'https://www.fake-site.co.uk' already exists for the tag with the name Project management"));
     }
 
     @Test
@@ -518,7 +520,9 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation error"))
-                .andExpect(jsonPath("$.errors[0]").value("Hyperlink with title 'Fake site' and URL 'https://www.fake-site.co.uk' already exists for Learning tag with name Project management"));
+                .andExpect(jsonPath("$.errors", hasSize(2)))
+                .andExpect(jsonPath("$.errors[0]").value("Field title is invalid: A link with the title 'Fake site' already exists for the tag with the name Project management"))
+                .andExpect(jsonPath("$.errors[1]").value("Field url is invalid: A link with the URL 'https://www.fake-site.co.uk' already exists for the tag with the name Project management"));
     }
 
     @Test

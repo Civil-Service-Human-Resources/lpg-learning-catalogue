@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.cslearning.catalogue.api.models.BulkUpdateResponse;
 import uk.gov.cslearning.catalogue.api.models.IdsDto;
@@ -42,7 +43,7 @@ public class LearningTagHyperlinkController {
     @PostMapping
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
-    public LearningTagHyperlinkDto createHyperlink(@PathVariable Long learningTagId, @Valid @RequestBody LearningTagHyperlinkDto dto) {
+    public LearningTagHyperlinkDto createHyperlink(@PathVariable Long learningTagId, @Valid @RequestBody LearningTagHyperlinkDto dto) throws MethodArgumentNotValidException {
         log.debug("Request received to create hyperlink for learning tag with id {} with LearningTagHyperlinkDto {}", learningTagId, dto);
         return learningTagService.createLearningTagHyperlink(learningTagId, dto);
     }
@@ -51,7 +52,7 @@ public class LearningTagHyperlinkController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public LearningTagHyperlinkDto updateHyperlink(@PathVariable Long learningTagId, @PathVariable Long hyperlinkId,
-                                                   @Valid @RequestBody LearningTagHyperlinkDto dto) {
+                                                   @Valid @RequestBody LearningTagHyperlinkDto dto) throws MethodArgumentNotValidException {
         log.debug("Request received to update hyperlink with id {} for learning tag with id {} with LearningTagHyperlinkDto {}", hyperlinkId, learningTagId, dto);
         return learningTagService.updateLearningTagHyperlink(learningTagId, hyperlinkId, dto);
     }

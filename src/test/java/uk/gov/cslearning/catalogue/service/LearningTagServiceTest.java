@@ -18,8 +18,9 @@ import uk.gov.cslearning.catalogue.domain.LearningTag;
 import uk.gov.cslearning.catalogue.domain.LearningTagHyperlink;
 import uk.gov.cslearning.catalogue.domain.LearningTagHyperlinkDto;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
-
-import javax.validation.ValidationException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseStatusRepository;
@@ -107,7 +108,7 @@ public class LearningTagServiceTest {
     }
 
     @Test
-    public void testCreateLearningTagHyperlink() {
+    public void testCreateLearningTagHyperlink() throws Exception {
         Long tagId = 1L;
         LearningTag tag = new LearningTag();
         tag.setId(tagId);
@@ -153,9 +154,13 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.createLearningTagHyperlink(tagId, inputDto);
-            fail("Expected ValidationException to be thrown");
-        } catch (ValidationException e) {
-            assertEquals("Hyperlink with title 'BBC' already exists for Learning tag with name Tag1", e.getMessage());
+            fail("Expected MethodArgumentNotValidException to be thrown");
+        } catch (MethodArgumentNotValidException e) {
+            BindingResult bindingResult = e.getBindingResult();
+            assertEquals(1, bindingResult.getErrorCount());
+            FieldError error = bindingResult.getFieldError("title");
+            org.junit.Assert.assertNotNull(error);
+            assertEquals("A link with the title 'BBC' already exists for the tag with the name Tag1", error.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -177,9 +182,13 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.createLearningTagHyperlink(tagId, inputDto);
-            fail("Expected ValidationException to be thrown");
-        } catch (ValidationException e) {
-            assertEquals("Hyperlink with URL 'https://bbc.co.uk' already exists for Learning tag with name Tag1", e.getMessage());
+            fail("Expected MethodArgumentNotValidException to be thrown");
+        } catch (MethodArgumentNotValidException e) {
+            BindingResult bindingResult = e.getBindingResult();
+            assertEquals(1, bindingResult.getErrorCount());
+            FieldError error = bindingResult.getFieldError("url");
+            org.junit.Assert.assertNotNull(error);
+            assertEquals("A link with the URL 'https://bbc.co.uk' already exists for the tag with the name Tag1", error.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -201,10 +210,16 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.createLearningTagHyperlink(tagId, inputDto);
-            fail("Expected ValidationException to be thrown");
-        } catch (ValidationException e) {
-            String expected = "Hyperlink with title 'BBC' and URL 'https://bbc.co.uk' already exists for Learning tag with name Tag1";
-            assertEquals(expected, e.getMessage());
+            fail("Expected MethodArgumentNotValidException to be thrown");
+        } catch (MethodArgumentNotValidException e) {
+            BindingResult bindingResult = e.getBindingResult();
+            assertEquals(2, bindingResult.getErrorCount());
+            FieldError titleError = bindingResult.getFieldError("title");
+            org.junit.Assert.assertNotNull(titleError);
+            assertEquals("A link with the title 'BBC' already exists for the tag with the name Tag1", titleError.getDefaultMessage());
+            FieldError urlError = bindingResult.getFieldError("url");
+            org.junit.Assert.assertNotNull(urlError);
+            assertEquals("A link with the URL 'https://bbc.co.uk' already exists for the tag with the name Tag1", urlError.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -212,7 +227,7 @@ public class LearningTagServiceTest {
     }
 
     @Test(expected = ResourceNotFoundException.class)
-    public void testCreateLearningTagHyperlinkWhenTagNotFound() {
+    public void testCreateLearningTagHyperlinkWhenTagNotFound() throws Exception {
         Long tagId = 999L;
         LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(null, "BBC", "BBC Desc", "https://bbc.co.uk");
 
@@ -222,7 +237,7 @@ public class LearningTagServiceTest {
     }
 
     @Test
-    public void testUpdateLearningTagHyperlink() {
+    public void testUpdateLearningTagHyperlink() throws Exception {
         Long tagId = 1L;
         Long hyperlinkId = 100L;
         LearningTag tag = new LearningTag();
@@ -273,9 +288,13 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
-            fail("Expected ValidationException to be thrown");
-        } catch (ValidationException e) {
-            assertEquals("Hyperlink with title 'New Title' already exists for Learning tag with name Tag1", e.getMessage());
+            fail("Expected MethodArgumentNotValidException to be thrown");
+        } catch (MethodArgumentNotValidException e) {
+            BindingResult bindingResult = e.getBindingResult();
+            assertEquals(1, bindingResult.getErrorCount());
+            FieldError error = bindingResult.getFieldError("title");
+            org.junit.Assert.assertNotNull(error);
+            assertEquals("A link with the title 'New Title' already exists for the tag with the name Tag1", error.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
@@ -300,9 +319,13 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
-            fail("Expected ValidationException to be thrown");
-        } catch (ValidationException e) {
-            assertEquals("Hyperlink with URL 'https://new.co.uk' already exists for Learning tag with name Tag1", e.getMessage());
+            fail("Expected MethodArgumentNotValidException to be thrown");
+        } catch (MethodArgumentNotValidException e) {
+            BindingResult bindingResult = e.getBindingResult();
+            assertEquals(1, bindingResult.getErrorCount());
+            FieldError error = bindingResult.getFieldError("url");
+            org.junit.Assert.assertNotNull(error);
+            assertEquals("A link with the URL 'https://new.co.uk' already exists for the tag with the name Tag1", error.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
@@ -327,10 +350,16 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
-            fail("Expected ValidationException to be thrown");
-        } catch (ValidationException e) {
-            String expected = "Hyperlink with title 'New Title' and URL 'https://new.co.uk' already exists for Learning tag with name Tag1";
-            assertEquals(expected, e.getMessage());
+            fail("Expected MethodArgumentNotValidException to be thrown");
+        } catch (MethodArgumentNotValidException e) {
+            BindingResult bindingResult = e.getBindingResult();
+            assertEquals(2, bindingResult.getErrorCount());
+            FieldError titleError = bindingResult.getFieldError("title");
+            org.junit.Assert.assertNotNull(titleError);
+            assertEquals("A link with the title 'New Title' already exists for the tag with the name Tag1", titleError.getDefaultMessage());
+            FieldError urlError = bindingResult.getFieldError("url");
+            org.junit.Assert.assertNotNull(urlError);
+            assertEquals("A link with the URL 'https://new.co.uk' already exists for the tag with the name Tag1", urlError.getDefaultMessage());
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
@@ -339,7 +368,7 @@ public class LearningTagServiceTest {
     }
 
     @Test(expected = ResourceNotFoundException.class)
-    public void testUpdateLearningTagHyperlinkWhenNotFound() {
+    public void testUpdateLearningTagHyperlinkWhenNotFound() throws Exception {
         Long tagId = 1L;
         Long hyperlinkId = 999L;
         LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(hyperlinkId, "New Title", "New Desc", "https://new.co.uk");
