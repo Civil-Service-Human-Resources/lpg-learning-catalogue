@@ -24,6 +24,6 @@ public class LearningTagHyperlinkDto {
 
     @NotBlank
     @Size(max = 255)
-    @URL(protocol = "https", message = "URL must be an HTTPS URL")
+    @URL(protocol = "https", message = "URL must start with https://")
     private String url;
 }
