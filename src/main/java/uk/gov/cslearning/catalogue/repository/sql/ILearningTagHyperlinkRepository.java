@@ -13,4 +13,12 @@ public interface ILearningTagHyperlinkRepository extends JpaRepository<LearningT
     Page<LearningTagHyperlink> findByLearningTagIdOrderByTitleAsc(Long learningTagId, Pageable pageable);
 
     Optional<LearningTagHyperlink> findByIdAndLearningTagId(Long id, Long learningTagId);
+
+    boolean existsByLearningTagIdAndTitle(Long learningTagId, String title);
+
+    boolean existsByLearningTagIdAndHref(Long learningTagId, String href);
+
+    boolean existsByLearningTagIdAndTitleAndIdNot(Long learningTagId, String title, Long id);
+
+    boolean existsByLearningTagIdAndHrefAndIdNot(Long learningTagId, String href, Long id);
 }

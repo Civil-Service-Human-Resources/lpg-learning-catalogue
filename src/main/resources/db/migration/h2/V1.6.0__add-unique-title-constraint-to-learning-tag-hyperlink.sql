@@ -1,0 +1,1 @@
+ALTER TABLE learning_tag_hyperlink ADD CONSTRAINT uq_learning_tag_hyperlink_learning_tag_id_title UNIQUE (learning_tag_id, title);

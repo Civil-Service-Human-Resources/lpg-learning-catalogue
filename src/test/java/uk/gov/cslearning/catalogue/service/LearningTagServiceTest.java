@@ -17,6 +17,7 @@ import uk.gov.cslearning.catalogue.domain.CourseLearningTagId;
 import uk.gov.cslearning.catalogue.domain.LearningTag;
 import uk.gov.cslearning.catalogue.domain.LearningTagHyperlink;
 import uk.gov.cslearning.catalogue.domain.LearningTagHyperlinkDto;
+import uk.gov.cslearning.catalogue.exception.CustomValidationException;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
@@ -32,6 +33,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -104,7 +106,7 @@ public class LearningTagServiceTest {
     }
 
     @Test
-    public void testCreateLearningTagHyperlink() {
+    public void testCreateLearningTagHyperlink() throws Exception {
         Long tagId = 1L;
         LearningTag tag = new LearningTag();
         tag.setId(tagId);
@@ -114,6 +116,8 @@ public class LearningTagServiceTest {
         LearningTagHyperlinkDto expectedResultDto = new LearningTagHyperlinkDto(100L, "BBC", "BBC Desc", "https://bbc.co.uk");
 
         when(learningTagRepository.findById(tagId)).thenReturn(Optional.of(tag));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(tagId, "BBC")).thenReturn(false);
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk")).thenReturn(false);
         when(learningTagFactory.createHyperlink(inputDto, tag)).thenReturn(createdEntity);
         when(learningTagHyperlinkRepository.save(createdEntity)).thenReturn(createdEntity);
         when(learningTagFactory.createHyperlinkDto(createdEntity)).thenReturn(expectedResultDto);
@@ -126,19 +130,234 @@ public class LearningTagServiceTest {
         assertEquals("https://bbc.co.uk", result.getUrl());
 
         verify(learningTagRepository).findById(tagId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk");
         verify(learningTagFactory).createHyperlink(inputDto, tag);
         verify(learningTagHyperlinkRepository).save(createdEntity);
         verify(learningTagFactory).createHyperlinkDto(createdEntity);
     }
 
+    @Test
+    public void testCreateLearningTagHyperlinkWhenTitleAlreadyExists() {
+        Long tagId = 1L;
+        LearningTag tag = new LearningTag();
+        tag.setId(tagId);
+        tag.setName("Tag1");
+
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(null, "BBC", "BBC Desc", "https://bbc.co.uk");
+
+        when(learningTagRepository.findById(tagId)).thenReturn(Optional.of(tag));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(tagId, "BBC")).thenReturn(true);
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk")).thenReturn(false);
+
+        try {
+            learningTagService.createLearningTagHyperlink(tagId, inputDto);
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(1, errors.size());
+            assertEquals("Field title is invalid: A link with this title already exists for the tag", errors.get(0));
+        }
+
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk");
+    }
+
+    @Test
+    public void testCreateLearningTagHyperlinkWhenHrefAlreadyExists() {
+        Long tagId = 1L;
+        LearningTag tag = new LearningTag();
+        tag.setId(tagId);
+        tag.setName("Tag1");
+
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(null, "BBC", "BBC Desc", "https://bbc.co.uk");
+
+        when(learningTagRepository.findById(tagId)).thenReturn(Optional.of(tag));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(tagId, "BBC")).thenReturn(false);
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk")).thenReturn(true);
+
+        try {
+            learningTagService.createLearningTagHyperlink(tagId, inputDto);
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(1, errors.size());
+            assertEquals("Field url is invalid: A link with this URL already exists for the tag", errors.get(0));
+        }
+
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk");
+    }
+
+    @Test
+    public void testCreateLearningTagHyperlinkWhenBothTitleAndHrefAlreadyExist() {
+        Long tagId = 1L;
+        LearningTag tag = new LearningTag();
+        tag.setId(tagId);
+        tag.setName("Tag1");
+
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(null, "BBC", "BBC Desc", "https://bbc.co.uk");
+
+        when(learningTagRepository.findById(tagId)).thenReturn(Optional.of(tag));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(tagId, "BBC")).thenReturn(true);
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk")).thenReturn(true);
+
+        try {
+            learningTagService.createLearningTagHyperlink(tagId, inputDto);
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(2, errors.size());
+            assertTrue(errors.contains("Field title is invalid: A link with this title already exists for the tag"));
+            assertTrue(errors.contains("Field url is invalid: A link with this URL already exists for the tag"));
+        }
+
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk");
+    }
+
     @Test(expected = ResourceNotFoundException.class)
-    public void testCreateLearningTagHyperlinkWhenTagNotFound() {
+    public void testCreateLearningTagHyperlinkWhenTagNotFound() throws Exception {
         Long tagId = 999L;
         LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(null, "BBC", "BBC Desc", "https://bbc.co.uk");
 
         when(learningTagRepository.findById(tagId)).thenReturn(Optional.empty());
 
         learningTagService.createLearningTagHyperlink(tagId, inputDto);
+    }
+
+    @Test
+    public void testUpdateLearningTagHyperlink() throws Exception {
+        Long tagId = 1L;
+        Long hyperlinkId = 100L;
+        LearningTag tag = new LearningTag();
+        tag.setId(tagId);
+        tag.setName("Tag1");
+
+        LearningTagHyperlink existingEntity = new LearningTagHyperlink(hyperlinkId, tag, "https://old.co.uk", "Old Title", "Old Desc", null, null);
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(hyperlinkId, "New Title", "New Desc", "https://new.co.uk");
+        LearningTagHyperlink updatedEntity = new LearningTagHyperlink(hyperlinkId, tag, "https://new.co.uk", "New Title", "New Desc", null, null);
+        LearningTagHyperlinkDto expectedResultDto = new LearningTagHyperlinkDto(hyperlinkId, "New Title", "New Desc", "https://new.co.uk");
+
+        when(learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, tagId)).thenReturn(Optional.of(existingEntity));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitleAndIdNot(tagId, "New Title", hyperlinkId)).thenReturn(false);
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHrefAndIdNot(tagId, "https://new.co.uk", hyperlinkId)).thenReturn(false);
+        when(learningTagFactory.updateHyperlink(existingEntity, inputDto)).thenReturn(updatedEntity);
+        when(learningTagHyperlinkRepository.save(updatedEntity)).thenReturn(updatedEntity);
+        when(learningTagFactory.createHyperlinkDto(updatedEntity)).thenReturn(expectedResultDto);
+
+        LearningTagHyperlinkDto result = learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
+
+        assertEquals(Long.valueOf(100L), result.getId());
+        assertEquals("New Title", result.getTitle());
+        assertEquals("New Desc", result.getDescription());
+        assertEquals("https://new.co.uk", result.getUrl());
+
+        verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitleAndIdNot(tagId, "New Title", hyperlinkId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHrefAndIdNot(tagId, "https://new.co.uk", hyperlinkId);
+        verify(learningTagFactory).updateHyperlink(existingEntity, inputDto);
+        verify(learningTagHyperlinkRepository).save(updatedEntity);
+        verify(learningTagFactory).createHyperlinkDto(updatedEntity);
+    }
+
+    @Test
+    public void testUpdateLearningTagHyperlinkWhenTitleAlreadyExists() {
+        Long tagId = 1L;
+        Long hyperlinkId = 100L;
+        LearningTag tag = new LearningTag();
+        tag.setId(tagId);
+        tag.setName("Tag1");
+
+        LearningTagHyperlink existingEntity = new LearningTagHyperlink(hyperlinkId, tag, "https://old.co.uk", "Old Title", "Old Desc", null, null);
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(hyperlinkId, "New Title", "New Desc", "https://new.co.uk");
+
+        when(learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, tagId)).thenReturn(Optional.of(existingEntity));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitleAndIdNot(tagId, "New Title", hyperlinkId)).thenReturn(true);
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHrefAndIdNot(tagId, "https://new.co.uk", hyperlinkId)).thenReturn(false);
+
+        try {
+            learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(1, errors.size());
+            assertEquals("Field title is invalid: A link with this title already exists for the tag", errors.get(0));
+        }
+
+        verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitleAndIdNot(tagId, "New Title", hyperlinkId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHrefAndIdNot(tagId, "https://new.co.uk", hyperlinkId);
+    }
+
+    @Test
+    public void testUpdateLearningTagHyperlinkWhenHrefAlreadyExists() {
+        Long tagId = 1L;
+        Long hyperlinkId = 100L;
+        LearningTag tag = new LearningTag();
+        tag.setId(tagId);
+        tag.setName("Tag1");
+
+        LearningTagHyperlink existingEntity = new LearningTagHyperlink(hyperlinkId, tag, "https://old.co.uk", "Old Title", "Old Desc", null, null);
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(hyperlinkId, "New Title", "New Desc", "https://new.co.uk");
+
+        when(learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, tagId)).thenReturn(Optional.of(existingEntity));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitleAndIdNot(tagId, "New Title", hyperlinkId)).thenReturn(false);
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHrefAndIdNot(tagId, "https://new.co.uk", hyperlinkId)).thenReturn(true);
+
+        try {
+            learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(1, errors.size());
+            assertEquals("Field url is invalid: A link with this URL already exists for the tag", errors.get(0));
+        }
+
+        verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitleAndIdNot(tagId, "New Title", hyperlinkId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHrefAndIdNot(tagId, "https://new.co.uk", hyperlinkId);
+    }
+
+    @Test
+    public void testUpdateLearningTagHyperlinkWhenBothTitleAndHrefAlreadyExist() {
+        Long tagId = 1L;
+        Long hyperlinkId = 100L;
+        LearningTag tag = new LearningTag();
+        tag.setId(tagId);
+        tag.setName("Tag1");
+
+        LearningTagHyperlink existingEntity = new LearningTagHyperlink(hyperlinkId, tag, "https://old.co.uk", "Old Title", "Old Desc", null, null);
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(hyperlinkId, "New Title", "New Desc", "https://new.co.uk");
+
+        when(learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, tagId)).thenReturn(Optional.of(existingEntity));
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndTitleAndIdNot(tagId, "New Title", hyperlinkId)).thenReturn(true);
+        when(learningTagHyperlinkRepository.existsByLearningTagIdAndHrefAndIdNot(tagId, "https://new.co.uk", hyperlinkId)).thenReturn(true);
+
+        try {
+            learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(2, errors.size());
+            assertTrue(errors.contains("Field title is invalid: A link with this title already exists for the tag"));
+            assertTrue(errors.contains("Field url is invalid: A link with this URL already exists for the tag"));
+        }
+
+        verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitleAndIdNot(tagId, "New Title", hyperlinkId);
+        verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHrefAndIdNot(tagId, "https://new.co.uk", hyperlinkId);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testUpdateLearningTagHyperlinkWhenNotFound() throws Exception {
+        Long tagId = 1L;
+        Long hyperlinkId = 999L;
+        LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(hyperlinkId, "New Title", "New Desc", "https://new.co.uk");
+
+        when(learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, tagId)).thenReturn(Optional.empty());
+
+        learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
     }
 
     @Test

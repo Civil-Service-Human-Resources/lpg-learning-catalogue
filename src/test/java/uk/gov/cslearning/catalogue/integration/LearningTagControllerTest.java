@@ -410,6 +410,44 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
 
     @Test
     @Transactional
+    public void testCreateLearningTagHyperlinkWhenTitleAlreadyExists() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Fake site\", \"url\": \"https://www.another-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors[0]").value("Field title is invalid: A link with this title already exists for the tag"));
+    }
+
+    @Test
+    @Transactional
+    public void testCreateLearningTagHyperlinkWhenHrefAlreadyExists() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors[0]").value("Field url is invalid: A link with this URL already exists for the tag"));
+    }
+
+    @Test
+    @Transactional
+    public void testCreateLearningTagHyperlinkWhenBothTitleAndHrefAlreadyExist() throws Exception {
+        mvc.perform(post("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Fake site\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors", hasSize(2)))
+                .andExpect(jsonPath("$.errors[0]").value("Field title is invalid: A link with this title already exists for the tag"))
+                .andExpect(jsonPath("$.errors[1]").value("Field url is invalid: A link with this URL already exists for the tag"));
+    }
+
+    @Test
+    @Transactional
     public void testGetHyperlink() throws Exception {
         mvc.perform(get("/learning-tags/1/hyperlinks/1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -434,5 +472,64 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(jsonPath("$.title").value("Link title"))
                 .andExpect(jsonPath("$.url").value("https://bbc.co.uk"))
                 .andExpect(jsonPath("$.description").value("Lorem ipsum..."));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlinkKeepSameTitleAndUrl() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Fake site\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Updated description\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Fake site"))
+                .andExpect(jsonPath("$.url").value("https://www.fake-site.co.uk"))
+                .andExpect(jsonPath("$.description").value("Updated description"));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlinkWhenTitleAlreadyExists() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Fake site\", \"url\": \"https://www.another-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors[0]").value("Field title is invalid: A link with this title already exists for the tag"));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlinkWhenHrefAlreadyExists() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Unique title\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors[0]").value("Field url is invalid: A link with this URL already exists for the tag"));
+    }
+
+    @Test
+    @Transactional
+    public void testEditHyperlinkWhenBothTitleAndHrefAlreadyExist() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Fake site\", \"url\": \"https://www.fake-site.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation error"))
+                .andExpect(jsonPath("$.errors", hasSize(2)))
+                .andExpect(jsonPath("$.errors[0]").value("Field title is invalid: A link with this title already exists for the tag"))
+                .andExpect(jsonPath("$.errors[1]").value("Field url is invalid: A link with this URL already exists for the tag"));
+    }
+
+    @Test
+    public void testEditHyperlinkWhenNotFound() throws Exception {
+        mvc.perform(put("/learning-tags/1/hyperlinks/99999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
+                .andExpect(status().isNotFound());
     }
 }
