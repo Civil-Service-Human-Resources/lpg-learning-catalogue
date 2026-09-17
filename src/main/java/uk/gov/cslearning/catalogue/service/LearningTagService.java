@@ -1,16 +1,13 @@
 package uk.gov.cslearning.catalogue.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import uk.gov.cslearning.catalogue.api.models.*;
 import uk.gov.cslearning.catalogue.domain.*;
 import uk.gov.cslearning.catalogue.dto.BulkUpdateDto;
+import uk.gov.cslearning.catalogue.exception.CustomValidationException;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.*;
@@ -22,20 +19,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class LearningTagService {
-
-    private static final MethodParameter CREATE_HYPERLINK_PARAM;
-    private static final MethodParameter UPDATE_HYPERLINK_PARAM;
-
-    static {
-        try {
-            CREATE_HYPERLINK_PARAM = new MethodParameter(
-                    LearningTagService.class.getDeclaredMethod("createLearningTagHyperlink", Long.class, LearningTagHyperlinkDto.class), 1);
-            UPDATE_HYPERLINK_PARAM = new MethodParameter(
-                    LearningTagService.class.getDeclaredMethod("updateLearningTagHyperlink", Long.class, Long.class, LearningTagHyperlinkDto.class), 2);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private final ILearningTagRepository learningTagRepository;
     private final ICourseTagRepository courseTagRepository;
@@ -69,19 +52,19 @@ public class LearningTagService {
                 pageable);
     }
 
-    public LearningTagHyperlinkDto createLearningTagHyperlink(Long learningTagId, @Valid LearningTagHyperlinkDto dto) throws MethodArgumentNotValidException {
+    public LearningTagHyperlinkDto createLearningTagHyperlink(Long learningTagId, @Valid LearningTagHyperlinkDto dto) {
         LearningTag learningTag = getLearningTagById(learningTagId);
-        BindingResult bindingResult = new BeanPropertyBindingResult(dto, "learningTagHyperlinkDto");
+        List<String> errors = new ArrayList<>();
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndTitle(learningTagId, dto.getTitle())) {
             log.warn("A link with the title '{}' already exists for the tag with the name {} and ID {}", dto.getTitle(), learningTag.getName(), learningTagId);
-            bindingResult.rejectValue("title", "alreadyExists", "A link with this title already exists for the tag");
+            errors.add("Field title is invalid: A link with this title already exists for the tag");
         }
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndHref(learningTagId, dto.getUrl())) {
             log.warn("A link with the URL '{}' already exists for the tag with the name {} and ID {}", dto.getUrl(), learningTag.getName(), learningTagId);
-            bindingResult.rejectValue("url", "alreadyExists", "A link with this URL already exists for the tag");
+            errors.add("Field url is invalid: A link with this URL already exists for the tag");
         }
-        if (bindingResult.hasErrors()) {
-            throw new MethodArgumentNotValidException(CREATE_HYPERLINK_PARAM, bindingResult);
+        if (!errors.isEmpty()) {
+            throw new CustomValidationException(errors);
         }
         LearningTagHyperlink hyperlink = learningTagFactory.createHyperlink(dto, learningTag);
         learningTagHyperlinkRepository.save(hyperlink);
@@ -89,20 +72,20 @@ public class LearningTagService {
         return learningTagFactory.createHyperlinkDto(hyperlink);
     }
 
-    public LearningTagHyperlinkDto updateLearningTagHyperlink(Long learningTagId, Long hyperlinkId, @Valid LearningTagHyperlinkDto dto) throws MethodArgumentNotValidException {
+    public LearningTagHyperlinkDto updateLearningTagHyperlink(Long learningTagId, Long hyperlinkId, @Valid LearningTagHyperlinkDto dto) {
         LearningTagHyperlink hyperlink = learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, learningTagId)
                 .orElseThrow(ResourceNotFoundException::new);
-        BindingResult bindingResult = new BeanPropertyBindingResult(dto, "learningTagHyperlinkDto");
+        List<String> errors = new ArrayList<>();
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndTitleAndIdNot(learningTagId, dto.getTitle(), hyperlinkId)) {
             log.warn("A link with the title '{}' already exists for the tag with the name {} and ID {}", dto.getTitle(), hyperlink.getLearningTag().getName(), learningTagId);
-            bindingResult.rejectValue("title", "alreadyExists", "A link with this title already exists for the tag");
+            errors.add("Field title is invalid: A link with this title already exists for the tag");
         }
         if (learningTagHyperlinkRepository.existsByLearningTagIdAndHrefAndIdNot(learningTagId, dto.getUrl(), hyperlinkId)) {
             log.warn("A link with the URL '{}' already exists for the tag with the name {} and ID {}", dto.getUrl(), hyperlink.getLearningTag().getName(), learningTagId);
-            bindingResult.rejectValue("url", "alreadyExists", "A link with this URL already exists for the tag");
+            errors.add("Field url is invalid: A link with this URL already exists for the tag");
         }
-        if (bindingResult.hasErrors()) {
-            throw new MethodArgumentNotValidException(UPDATE_HYPERLINK_PARAM, bindingResult);
+        if (!errors.isEmpty()) {
+            throw new CustomValidationException(errors);
         }
         LearningTagHyperlink updatedHyperlink = learningTagFactory.updateHyperlink(hyperlink, dto);
         learningTagHyperlinkRepository.save(updatedHyperlink);

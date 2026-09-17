@@ -17,10 +17,8 @@ import uk.gov.cslearning.catalogue.domain.CourseLearningTagId;
 import uk.gov.cslearning.catalogue.domain.LearningTag;
 import uk.gov.cslearning.catalogue.domain.LearningTagHyperlink;
 import uk.gov.cslearning.catalogue.domain.LearningTagHyperlinkDto;
+import uk.gov.cslearning.catalogue.exception.CustomValidationException;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseStatusRepository;
@@ -154,13 +152,11 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.createLearningTagHyperlink(tagId, inputDto);
-            fail("Expected MethodArgumentNotValidException to be thrown");
-        } catch (MethodArgumentNotValidException e) {
-            BindingResult bindingResult = e.getBindingResult();
-            assertEquals(1, bindingResult.getErrorCount());
-            FieldError error = bindingResult.getFieldError("title");
-            org.junit.Assert.assertNotNull(error);
-            assertEquals("A link with this title already exists for the tag", error.getDefaultMessage());
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(1, errors.size());
+            assertEquals("Field title is invalid: A link with this title already exists for the tag", errors.get(0));
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -182,13 +178,11 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.createLearningTagHyperlink(tagId, inputDto);
-            fail("Expected MethodArgumentNotValidException to be thrown");
-        } catch (MethodArgumentNotValidException e) {
-            BindingResult bindingResult = e.getBindingResult();
-            assertEquals(1, bindingResult.getErrorCount());
-            FieldError error = bindingResult.getFieldError("url");
-            org.junit.Assert.assertNotNull(error);
-            assertEquals("A link with this URL already exists for the tag", error.getDefaultMessage());
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(1, errors.size());
+            assertEquals("Field url is invalid: A link with this URL already exists for the tag", errors.get(0));
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -210,16 +204,12 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.createLearningTagHyperlink(tagId, inputDto);
-            fail("Expected MethodArgumentNotValidException to be thrown");
-        } catch (MethodArgumentNotValidException e) {
-            BindingResult bindingResult = e.getBindingResult();
-            assertEquals(2, bindingResult.getErrorCount());
-            FieldError titleError = bindingResult.getFieldError("title");
-            org.junit.Assert.assertNotNull(titleError);
-            assertEquals("A link with this title already exists for the tag", titleError.getDefaultMessage());
-            FieldError urlError = bindingResult.getFieldError("url");
-            org.junit.Assert.assertNotNull(urlError);
-            assertEquals("A link with this URL already exists for the tag", urlError.getDefaultMessage());
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(2, errors.size());
+            assertTrue(errors.contains("Field title is invalid: A link with this title already exists for the tag"));
+            assertTrue(errors.contains("Field url is invalid: A link with this URL already exists for the tag"));
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -288,13 +278,11 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
-            fail("Expected MethodArgumentNotValidException to be thrown");
-        } catch (MethodArgumentNotValidException e) {
-            BindingResult bindingResult = e.getBindingResult();
-            assertEquals(1, bindingResult.getErrorCount());
-            FieldError error = bindingResult.getFieldError("title");
-            org.junit.Assert.assertNotNull(error);
-            assertEquals("A link with this title already exists for the tag", error.getDefaultMessage());
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(1, errors.size());
+            assertEquals("Field title is invalid: A link with this title already exists for the tag", errors.get(0));
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
@@ -319,13 +307,11 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
-            fail("Expected MethodArgumentNotValidException to be thrown");
-        } catch (MethodArgumentNotValidException e) {
-            BindingResult bindingResult = e.getBindingResult();
-            assertEquals(1, bindingResult.getErrorCount());
-            FieldError error = bindingResult.getFieldError("url");
-            org.junit.Assert.assertNotNull(error);
-            assertEquals("A link with this URL already exists for the tag", error.getDefaultMessage());
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(1, errors.size());
+            assertEquals("Field url is invalid: A link with this URL already exists for the tag", errors.get(0));
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
@@ -350,16 +336,12 @@ public class LearningTagServiceTest {
 
         try {
             learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
-            fail("Expected MethodArgumentNotValidException to be thrown");
-        } catch (MethodArgumentNotValidException e) {
-            BindingResult bindingResult = e.getBindingResult();
-            assertEquals(2, bindingResult.getErrorCount());
-            FieldError titleError = bindingResult.getFieldError("title");
-            org.junit.Assert.assertNotNull(titleError);
-            assertEquals("A link with this title already exists for the tag", titleError.getDefaultMessage());
-            FieldError urlError = bindingResult.getFieldError("url");
-            org.junit.Assert.assertNotNull(urlError);
-            assertEquals("A link with this URL already exists for the tag", urlError.getDefaultMessage());
+            fail("Expected CustomValidationException to be thrown");
+        } catch (CustomValidationException e) {
+            List<String> errors = e.getErrors();
+            assertEquals(2, errors.size());
+            assertTrue(errors.contains("Field title is invalid: A link with this title already exists for the tag"));
+            assertTrue(errors.contains("Field url is invalid: A link with this URL already exists for the tag"));
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);

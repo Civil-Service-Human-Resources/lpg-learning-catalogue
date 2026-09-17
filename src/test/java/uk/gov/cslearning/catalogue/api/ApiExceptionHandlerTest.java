@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import uk.gov.cslearning.catalogue.domain.ErrorDtoFactory;
 import uk.gov.cslearning.catalogue.dto.ErrorDto;
+import uk.gov.cslearning.catalogue.exception.CustomValidationException;
 import uk.gov.cslearning.catalogue.exception.ForbiddenException;
 import uk.gov.cslearning.catalogue.exception.GenericServerException;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
@@ -107,6 +108,24 @@ public class ApiExceptionHandlerTest {
         assertNotNull(response);
         assertEquals(expectedResponse, response);
         verify(errorDtoFactory).createWithErrorFields(HttpStatus.BAD_REQUEST, fieldErrors, "Validation error");
+    }
+
+    @Test
+    public void shouldHandleCustomValidationException() {
+        List<String> errors = Collections.singletonList("Field field is invalid: defaultMessage");
+        CustomValidationException exception = new CustomValidationException(errors);
+
+        ErrorDto errorDto = mock(ErrorDto.class);
+        ResponseEntity<Object> expectedResponse = ResponseEntity.badRequest().body(errorDto);
+
+        when(errorDtoFactory.create(HttpStatus.BAD_REQUEST, errors, "Validation error")).thenReturn(errorDto);
+        when(errorDto.getAsResponseEntity()).thenReturn(expectedResponse);
+
+        ResponseEntity<Object> response = apiExceptionHandler.handleCustomValidationException(exception);
+
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(errorDtoFactory).create(HttpStatus.BAD_REQUEST, errors, "Validation error");
     }
 
     @Test

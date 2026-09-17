@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import uk.gov.cslearning.catalogue.domain.ErrorDtoFactory;
+import uk.gov.cslearning.catalogue.exception.CustomValidationException;
 import uk.gov.cslearning.catalogue.exception.ForbiddenException;
 import uk.gov.cslearning.catalogue.exception.GenericServerException;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
@@ -50,6 +51,11 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
         return errorDtoFactory.createWithErrorFields(BAD_REQUEST, result.getFieldErrors(), "Validation error").getAsResponseEntity();
+    }
+
+    @ExceptionHandler(CustomValidationException.class)
+    public ResponseEntity<Object> handleCustomValidationException(CustomValidationException ex) {
+        return errorDtoFactory.create(BAD_REQUEST, ex.getErrors(), "Validation error").getAsResponseEntity();
     }
 
     @ExceptionHandler(ValidationException.class)
