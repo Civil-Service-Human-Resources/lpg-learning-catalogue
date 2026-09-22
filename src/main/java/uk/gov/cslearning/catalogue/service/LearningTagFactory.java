@@ -1,9 +1,7 @@
 package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.stereotype.Service;
-import uk.gov.cslearning.catalogue.domain.LearningTag;
-import uk.gov.cslearning.catalogue.domain.LearningTagDto;
-import uk.gov.cslearning.catalogue.domain.LearningTagState;
+import uk.gov.cslearning.catalogue.domain.*;
 import uk.gov.cslearning.catalogue.service.util.IUtilService;
 
 import java.time.LocalDateTime;
@@ -26,8 +24,32 @@ public class LearningTagFactory {
         return new LearningTagDto(
                 tag.getId(), tag.getName(), tag.getDescription(), tag.getCode(),
                 tag.getUrlSlug(), tag.isCategory(), tag.isArchived(), parentId, parentName,
-                tag.getCreatedTimestamp(), tag.getUpdatedTimestamp(), tag.getArchivedTimestamp()
+                tag.getCreatedTimestamp(), tag.getUpdatedTimestamp(), tag.getArchivedTimestamp(),
+                tag.getCourses().size(), tag.getHyperlinks().size()
         );
+    }
+
+    public LearningTagHyperlinkDto createHyperlinkDto(LearningTagHyperlink hyperlink) {
+        return new LearningTagHyperlinkDto(
+                hyperlink.getId(),
+                hyperlink.getTitle(),
+                hyperlink.getDescription(),
+                hyperlink.getHref()
+        );
+    }
+
+    public LearningTagHyperlink createHyperlink(LearningTagHyperlinkDto dto, LearningTag learningTag) {
+        LocalDateTime now = utilService.getNowDateTime();
+        return new LearningTagHyperlink(null, learningTag, dto.getUrl(), dto.getTitle(), dto.getDescription(), now, now);
+    }
+
+    public LearningTagHyperlink updateHyperlink(LearningTagHyperlink link, LearningTagHyperlinkDto dto) {
+        LocalDateTime now = utilService.getNowDateTime();
+        link.setDescription(dto.getDescription());
+        link.setTitle(dto.getTitle());
+        link.setHref(dto.getUrl());
+        link.setUpdatedTimestamp(now);
+        return link;
     }
 
     public LearningTag create(LearningTagDto learningTagDto) {

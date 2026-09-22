@@ -3,8 +3,7 @@ package uk.gov.cslearning.catalogue.api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.cslearning.catalogue.api.models.PageableParams;
-import uk.gov.cslearning.catalogue.api.models.SimplePage;
+import uk.gov.cslearning.catalogue.api.models.*;
 import uk.gov.cslearning.catalogue.domain.LearningTagBulkStateDto;
 import uk.gov.cslearning.catalogue.domain.LearningTagDto;
 import uk.gov.cslearning.catalogue.dto.BulkUpdateDto;
@@ -30,6 +29,13 @@ public class LearningTagController {
         return learningTagService.getLearningTags(pageable.getAsPageable());
     }
 
+    @GetMapping("/{learningTagId}/courses")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public SimplePage<CourseLearningTagResponse> getCoursesByTag(@PathVariable Long learningTagId, PageableParams pageable) {
+        return learningTagService.getCoursesByLearningTagId(learningTagId, pageable.getAsPageable());
+    }
+
     @PostMapping
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
@@ -51,5 +57,16 @@ public class LearningTagController {
         return learningTagService.updateLearningTagState(dto);
     }
 
+    @DeleteMapping("/{learningTagId}/courses")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public BulkUpdateResponse<String> removeCoursesFromTag(@PathVariable Long learningTagId, @RequestBody IdsDto<String> courseIdsDto) {
+        return learningTagService.removeCoursesFromLearningTag(learningTagId, courseIdsDto);
+    }
 
+    @PostMapping("/courses")
+    @ResponseStatus(HttpStatus.CREATED)
+    public BulkUpdateResponse<LearningTagCourseUpdateResponse> assignCoursesToTag(@Valid @RequestBody LearningTagCourseBulkRequest request) {
+        return learningTagService.assignCoursesToTag(request);
+    }
 }
