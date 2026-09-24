@@ -4,9 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.LearningTag;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ILearningTagRepository extends JpaRepository<LearningTag, Long> {
     Optional<LearningTag> findByCode(String code);
+    Optional<LearningTag> findByUrlSlug(String urlSlug);
+    List<LearningTag> findByParentId(Long parentId);
 }

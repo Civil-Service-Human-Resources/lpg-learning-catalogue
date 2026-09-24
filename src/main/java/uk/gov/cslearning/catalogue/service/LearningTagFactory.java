@@ -21,11 +21,13 @@ public class LearningTagFactory {
         LearningTag parent = tag.getParent();
         Long parentId = parent != null ? parent.getId() : null;
         String parentName = parent != null ? parent.getName() : null;
+        int courseCount = tag.getCourses() != null ? tag.getCourses().size() : 0;
+        int linkCount = tag.getHyperlinks() != null ? tag.getHyperlinks().size() : 0;
         return new LearningTagDto(
                 tag.getId(), tag.getName(), tag.getDescription(), tag.getCode(),
                 tag.getUrlSlug(), tag.isCategory(), tag.isArchived(), parentId, parentName,
                 tag.getCreatedTimestamp(), tag.getUpdatedTimestamp(), tag.getArchivedTimestamp(),
-                tag.getCourses().size(), tag.getHyperlinks().size()
+                courseCount, linkCount
         );
     }
 

@@ -11,6 +11,7 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.*;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -531,5 +532,98 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"Link title\", \"url\": \"https://bbc.co.uk\", \"description\": \"Lorem ipsum...\"}"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    public void testNestedTagHierarchyAndCounts() throws Exception {
+        // 1. Create a Tier 2 tag under Tech (id: 2)
+        String tier2Json = "{\"name\": \"Cloud Computing\", \"urlSlug\": \"cloud-computing\", \"code\": \"CLOUD\", \"parentId\": 2, \"category\": true}";
+        String tier2Response = mvc.perform(post("/learning-tags")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(tier2Json))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Cloud Computing"))
+                .andExpect(jsonPath("$.parentId").value(2))
+                .andExpect(jsonPath("$.parentName").value("Tech"))
+                .andExpect(jsonPath("$.courseCount").value(0))
+                .andExpect(jsonPath("$.linkCount").value(0))
+                .andReturn().getResponse().getContentAsString();
+
+        // Parse id from tier2 response
+        Number tier2IdNum = com.jayway.jsonpath.JsonPath.read(tier2Response, "$.id");
+        Long tier2Id = tier2IdNum.longValue();
+
+        // 2. Create a Tier 3 tag under Cloud Computing
+        String tier3Json = String.format("{\"name\": \"AWS Architectures\", \"urlSlug\": \"aws-architectures\", \"code\": \"AWS\", \"parentId\": %d, \"category\": false}", tier2Id);
+        String tier3Response = mvc.perform(post("/learning-tags")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(tier3Json))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("AWS Architectures"))
+                .andExpect(jsonPath("$.parentId").value(tier2Id))
+                .andExpect(jsonPath("$.parentName").value("Cloud Computing"))
+                .andExpect(jsonPath("$.category").value(false))
+                .andExpect(jsonPath("$.courseCount").value(0))
+                .andExpect(jsonPath("$.linkCount").value(0))
+                .andReturn().getResponse().getContentAsString();
+
+        Number tier3IdNum = com.jayway.jsonpath.JsonPath.read(tier3Response, "$.id");
+        Long tier3Id = tier3IdNum.longValue();
+
+        // 3. Add a hyperlink to Tier 3 tag
+        mvc.perform(post(String.format("/learning-tags/%d/hyperlinks", tier3Id))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"AWS Documentation\", \"url\": \"https://docs.aws.amazon.com\", \"description\": \"Official AWS docs\"}"))
+                .andExpect(status().isCreated());
+
+        // 4. Assign course to Tier 3 tag
+        String assignRequest = String.format("{\"learningTagIds\": [%d], \"courseIds\": [\"ABC\"]}", tier3Id);
+        mvc.perform(post("/learning-tags/courses")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(assignRequest)
+                        .with(csrf()))
+                .andExpect(status().isCreated());
+
+        // 5. Verify getLearningTags returns accurate counts for all tags
+        mvc.perform(get("/learning-tags?size=50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[?(@.id == " + tier3Id + ")].courseCount", contains(1)))
+                .andExpect(jsonPath("$.content[?(@.id == " + tier3Id + ")].linkCount", contains(1)))
+                .andExpect(jsonPath("$.content[?(@.id == " + tier3Id + ")].parentId", contains(tier2Id.intValue())))
+                .andExpect(jsonPath("$.content[?(@.id == " + tier3Id + ")].parentName", contains("Cloud Computing")))
+                .andExpect(jsonPath("$.content[?(@.id == " + tier3Id + ")].category", contains(false)))
+                .andExpect(jsonPath("$.content[?(@.id == " + tier2Id + ")].courseCount", contains(0)))
+                .andExpect(jsonPath("$.content[?(@.id == " + tier2Id + ")].linkCount", contains(0)));
+    }
+
+    @Test
+    @Transactional
+    public void testCourseAndHyperlinkCountSyncOnRemoval() throws Exception {
+        // Tag 1 (Project management) initially has 3 courses (ABC, DEF, GHI) and 2 links (Fake site, Another fake site)
+        mvc.perform(get("/learning-tags?size=50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[?(@.id == 1)].courseCount", contains(3)))
+                .andExpect(jsonPath("$.content[?(@.id == 1)].linkCount", contains(2)));
+
+        // Remove 1 course (ABC) from Tag 1
+        mvc.perform(delete("/learning-tags/1/courses")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\": [\"ABC\"]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.successfulIds", hasSize(1)));
+
+        // Remove 1 hyperlink (id 1) from Tag 1
+        mvc.perform(delete("/learning-tags/1/hyperlinks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ids\": [1]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.successfulIds", hasSize(1)));
+
+        // Verify counts are decremented
+        mvc.perform(get("/learning-tags?size=50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[?(@.id == 1)].courseCount", contains(2)))
+                .andExpect(jsonPath("$.content[?(@.id == 1)].linkCount", contains(1)));
     }
 }

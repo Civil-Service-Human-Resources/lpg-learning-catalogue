@@ -68,6 +68,9 @@ public class LearningTagService {
         }
         LearningTagHyperlink hyperlink = learningTagFactory.createHyperlink(dto, learningTag);
         learningTagHyperlinkRepository.save(hyperlink);
+        if (learningTag.getHyperlinks() != null) {
+            learningTag.getHyperlinks().add(hyperlink);
+        }
         log.info("Hyperlink '{}' created for Learning tag with name {} and ID {}", hyperlink, learningTag.getName(), learningTagId);
         return learningTagFactory.createHyperlinkDto(hyperlink);
     }
@@ -179,6 +182,9 @@ public class LearningTagService {
                 CourseLearningTagId id = new CourseLearningTagId(learningTag.getId(), course.getId());
                 if (courseTagRepository.existsById(id)) {
                     courseTagRepository.deleteById(id);
+                    if (learningTag.getCourses() != null) {
+                        learningTag.getCourses().removeIf(c -> c.getCourse() != null && c.getCourse().getId().equals(course.getId()));
+                    }
                     successful.add(courseUid);
                 } else {
                     log.error("Course with UID {} is not linked with the Learning tag with ID {}", courseUid, learningTagId);
@@ -206,6 +212,9 @@ public class LearningTagService {
                                 return new ResourceNotFoundException(String.format("Hyperlink with ID %s not found for Learning tag with ID %s", hyperlinkId, learningTagId));
                             });
                     learningTagHyperlinkRepository.delete(hyperlink);
+                    if (learningTag.getHyperlinks() != null) {
+                        learningTag.getHyperlinks().remove(hyperlink);
+                    }
                     successful.add(hyperlinkId);
                 } catch (Exception e) {
                     failed.add(hyperlinkId);
@@ -246,7 +255,10 @@ public class LearningTagService {
                     log.info("CourseId {} is already assigned to learningTagId {}. Skipping", course.getId(), learningTag.getId());
                     return;
                 }
-                courseTagRepository.save(new CourseLearningTagEntity(learningTag, course));
+                CourseLearningTagEntity courseTagEntity = courseTagRepository.save(new CourseLearningTagEntity(learningTag, course));
+                if (learningTag.getCourses() != null) {
+                    learningTag.getCourses().add(courseTagEntity);
+                }
                 learningTagsToCoursesMap.computeIfAbsent(learningTag.getId(), k -> new ArrayList<>()).add(course.getId());
             });
         });
