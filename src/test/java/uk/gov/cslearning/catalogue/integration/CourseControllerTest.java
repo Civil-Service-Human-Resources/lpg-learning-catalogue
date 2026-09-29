@@ -100,10 +100,10 @@ public class CourseControllerTest extends IntegrationTestBase {
                 .put("url", "http://url.com")
                 .put("title", "Link module")
                 .put("description", "A link module")
-                .put("duration",  100)
-                .put("cost",  0)
-                .put("optional",  false)
-                .put("associatedLearning",  false)
+                .put("duration", 100)
+                .put("cost", 0)
+                .put("optional", false)
+                .put("associatedLearning", false)
                 .put("type", "link")
                 .toString();
 

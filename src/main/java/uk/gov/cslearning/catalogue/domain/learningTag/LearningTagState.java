@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.domain;
+package uk.gov.cslearning.catalogue.domain.learningTag;
 
 import lombok.Getter;
 

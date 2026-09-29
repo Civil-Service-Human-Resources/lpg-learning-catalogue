@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.api.models.*;
 import uk.gov.cslearning.catalogue.domain.*;
+import uk.gov.cslearning.catalogue.domain.learningTag.*;
 import uk.gov.cslearning.catalogue.dto.BulkUpdateDto;
 import uk.gov.cslearning.catalogue.exception.CustomValidationException;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
@@ -259,5 +260,14 @@ public class LearningTagService {
         return learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, learningTagId)
                 .map(learningTagFactory::createHyperlinkDto)
                 .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    public Map<String, Collection<LearningTagPartialDto>> getPartialLearningTagsForCourseUids(Collection<String> courseUids) {
+        Map<String, Collection<LearningTagPartialDto>> response = new HashMap<>();
+        courseTagRepository.findByCourse_UidIn(courseUids).forEach(entity ->
+                response.computeIfAbsent(entity.getCourse().getUid(), k -> new ArrayList<>())
+                        .add(learningTagFactory.createPartialDto(entity.getLearningTag()))
+        );
+        return response;
     }
 }

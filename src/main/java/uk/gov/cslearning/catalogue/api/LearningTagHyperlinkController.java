@@ -7,7 +7,7 @@ import uk.gov.cslearning.catalogue.api.models.BulkUpdateResponse;
 import uk.gov.cslearning.catalogue.api.models.IdsDto;
 import uk.gov.cslearning.catalogue.api.models.PageableParams;
 import uk.gov.cslearning.catalogue.api.models.SimplePage;
-import uk.gov.cslearning.catalogue.domain.LearningTagHyperlinkDto;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagHyperlinkDto;
 import uk.gov.cslearning.catalogue.service.LearningTagService;
 
 import javax.validation.Valid;

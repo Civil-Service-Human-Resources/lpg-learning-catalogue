@@ -14,27 +14,22 @@ import uk.gov.cslearning.catalogue.api.models.IdsDto;
 import uk.gov.cslearning.catalogue.api.models.SimplePage;
 import uk.gov.cslearning.catalogue.domain.CourseEntity;
 import uk.gov.cslearning.catalogue.domain.CourseLearningTagId;
-import uk.gov.cslearning.catalogue.domain.LearningTag;
-import uk.gov.cslearning.catalogue.domain.LearningTagHyperlink;
-import uk.gov.cslearning.catalogue.domain.LearningTagHyperlinkDto;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTag;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagHyperlink;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagHyperlinkDto;
 import uk.gov.cslearning.catalogue.exception.CustomValidationException;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
-import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
-import uk.gov.cslearning.catalogue.repository.sql.ICourseStatusRepository;
-import uk.gov.cslearning.catalogue.repository.sql.ICourseTagRepository;
-import uk.gov.cslearning.catalogue.repository.sql.ILearningTagHyperlinkRepository;
-import uk.gov.cslearning.catalogue.repository.sql.ILearningTagRepository;
+import uk.gov.cslearning.catalogue.repository.sql.*;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LearningTagServiceTest {

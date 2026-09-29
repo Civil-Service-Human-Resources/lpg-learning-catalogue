@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.LearningTag;
-import uk.gov.cslearning.catalogue.domain.LearningTagHyperlink;
 import uk.gov.cslearning.catalogue.domain.Status;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTag;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagHyperlink;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.*;
 
@@ -52,7 +52,7 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(jsonPath("$.content[0].parentName").isEmpty())
                 .andExpect(jsonPath("$.content[0].archived").value(false))
                 .andExpect(jsonPath("$.content[0].category").value(true))
-                .andExpect(jsonPath("$.content[0].courseCount").value(3))
+                .andExpect(jsonPath("$.content[0].courseCount").value(4))
                 .andExpect(jsonPath("$.content[0].linkCount").value(2))
                 .andExpect(jsonPath("$.content[1].name").value("Tech"))
                 .andExpect(jsonPath("$.content[1].description").value("Technical skills"))
@@ -211,9 +211,9 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(jsonPath("$.content[1].status").value("Published"))
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.size").value(2))
-                .andExpect(jsonPath("$.totalResults").value(3))
+                .andExpect(jsonPath("$.totalResults").value(4))
                 .andExpect(jsonPath("$.totalPages").value(2))
-                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.totalElements").value(4))
                 .andExpect(jsonPath("$.numberOfElements").value(2))
                 .andExpect(jsonPath("$.first").value(true))
                 .andExpect(jsonPath("$.last").value(false))
@@ -273,11 +273,11 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                         .with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.successfulIds[0].learningTagId").value("1"))
-                .andExpect(jsonPath("$.successfulIds[0].successfulIds[0]").value("4"))
+                .andExpect(jsonPath("$.successfulIds[0].successfulIds[0]").value("5"))
                 .andExpect(jsonPath("$.successfulIds[1].learningTagId").value("2"))
                 .andExpect(jsonPath("$.successfulIds[1].successfulIds[0]").value("1"))
                 .andExpect(jsonPath("$.successfulIds[1].successfulIds[1]").value("2"))
-                .andExpect(jsonPath("$.successfulIds[1].successfulIds[2]").value("4"));
+                .andExpect(jsonPath("$.successfulIds[1].successfulIds[2]").value("5"));
 
 
     }
