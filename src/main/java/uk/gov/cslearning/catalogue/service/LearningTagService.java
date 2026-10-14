@@ -264,10 +264,12 @@ public class LearningTagService {
 
     public Map<String, Collection<LearningTagPartialDto>> getPartialLearningTagsForCourseUids(Collection<String> courseUids) {
         Map<String, Collection<LearningTagPartialDto>> response = new HashMap<>();
-        courseTagRepository.findByCourse_UidIn(courseUids).forEach(entity ->
-                response.computeIfAbsent(entity.getCourse().getUid(), k -> new ArrayList<>())
-                        .add(learningTagFactory.createPartialDto(entity.getLearningTag()))
-        );
+        courseTagRepository.findByCourse_UidIn(courseUids)
+                .stream().filter(entity -> !entity.getLearningTag().isArchived() && entity.getLearningTag().isCategory())
+                .forEach(entity ->
+                        response.computeIfAbsent(entity.getCourse().getUid(), k -> new ArrayList<>())
+                                .add(learningTagFactory.createPartialDto(entity.getLearningTag()))
+                );
         return response;
     }
 }
