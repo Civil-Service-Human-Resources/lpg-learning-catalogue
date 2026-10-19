@@ -1,9 +1,10 @@
-package uk.gov.cslearning.catalogue.domain;
+package uk.gov.cslearning.catalogue.domain.learningTag;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.cslearning.catalogue.domain.CourseLearningTagEntity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

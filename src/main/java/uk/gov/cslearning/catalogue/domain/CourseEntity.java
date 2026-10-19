@@ -3,8 +3,10 @@ package uk.gov.cslearning.catalogue.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTag;
 
 import jakarta.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Getter
@@ -30,11 +32,8 @@ public class CourseEntity {
     @JoinColumn(name = "status_id", nullable = false)
     private CourseStatusEntity status;
 
-    public CourseEntity(String uid, String title, String shortDescription) {
-        this.uid = uid;
-        this.title = title;
-        this.shortDescription = shortDescription;
-    }
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Collection<LearningTag> learningTags;
 
     public CourseEntity(String uid, String title, String shortDescription, CourseStatusEntity status) {
         this.uid = uid;
