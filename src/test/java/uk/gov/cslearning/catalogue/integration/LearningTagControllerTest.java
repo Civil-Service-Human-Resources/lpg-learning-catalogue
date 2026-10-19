@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.integration;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -195,7 +194,6 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
                 .andExpect(jsonPath("$.category").value(true));
     }
 
-    @Ignore
     @Test
     @Transactional
     public void testGetCoursesByLearningTag() throws Exception {
@@ -284,7 +282,6 @@ public class LearningTagControllerTest extends MySQLIntegrationTestBase {
 
     }
 
-    @Ignore
     @Test
     @Transactional
     public void testGetHyperlinksByLearningTag() throws Exception {

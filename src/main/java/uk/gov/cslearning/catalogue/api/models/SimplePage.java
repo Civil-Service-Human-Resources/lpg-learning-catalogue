@@ -1,7 +1,6 @@
 package uk.gov.cslearning.catalogue.api.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -11,11 +10,6 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@JsonIgnoreProperties({
-        "pageable",
-        "number",
-        "numberOfElements"
-})
 public class SimplePage<T> extends PageImpl<T> {
 
     @JsonCreator
