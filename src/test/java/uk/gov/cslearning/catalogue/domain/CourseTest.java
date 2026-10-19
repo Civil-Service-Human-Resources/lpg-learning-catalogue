@@ -7,14 +7,12 @@ import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import java.math.BigDecimal;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 @Transactional
 public class CourseTest {
@@ -25,38 +23,38 @@ public class CourseTest {
     @Test
     public void shouldRemoveModuleFromCourse() throws Exception {
         Course course = createCourse();
-        Module module1 = new LinkModule(new URL(URL));
+        Module module1 = new LinkModule(URI.create(URL).toURL());
         module1.setId(MODULE_ID);
 
         List<Module> moduleList = new ArrayList<>();
         moduleList.add(module1);
         course.setModules(moduleList);
 
-        assertThat(course.getModules().size(), equalTo(1));
+        assertEquals(1, course.getModules().size());
 
         course.deleteModule(module1);
 
-        assertThat(course.getModules().size(), equalTo(0));
+        assertEquals(0, course.getModules().size());
     }
 
     @Test
     public void shouldNotRemoveModuleFromCourseIfDoesntExist() throws Exception {
         Course course = createCourse();
-        Module module1 = new LinkModule(new URL(URL));
+        Module module1 = new LinkModule(URI.create(URL).toURL());
         module1.setId(MODULE_ID);
 
-        Module module2 = new LinkModule(new URL(URL));
+        Module module2 = new LinkModule(URI.create(URL).toURL());
         module1.setId("module-id-2");
 
         List<Module> moduleList = new ArrayList<>();
         moduleList.add(module1);
         course.setModules(moduleList);
 
-        assertThat(course.getModules().size(), equalTo(1));
+        assertEquals(1, course.getModules().size());
 
         course.deleteModule(module2);
 
-        assertThat(course.getModules().size(), equalTo(1));
+        assertEquals(1, course.getModules().size());
     }
 
     @Test

@@ -1,11 +1,10 @@
 package uk.gov.cslearning.catalogue.integration;
 
-import org.elasticsearch.common.collect.List;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Order;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
@@ -13,6 +12,8 @@ import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.ELearningModule;
 import uk.gov.cslearning.catalogue.service.RegistryService;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -23,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class CourseControllerTest extends IntegrationTestBase {
 
-    @MockBean
+    @MockitoBean
     private RegistryService mockRegistryService;
 
     @Before
@@ -94,7 +95,7 @@ public class CourseControllerTest extends IntegrationTestBase {
     public void testCreateModule() throws Exception {
 
         Course tempCourse = dataService.createCourse("CreateModule");
-        dataService.getRepository().save(tempCourse);
+        dataService.repository().save(tempCourse);
 
         String json = new JSONObject()
                 .put("url", "http://url.com")
@@ -123,7 +124,7 @@ public class CourseControllerTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$.modules[0].type").value("link"))
                 .andExpect(jsonPath("$.modules[0].optional").value(false));
 
-        dataService.getRepository().delete(tempCourse);
+        dataService.repository().delete(tempCourse);
 
     }
 
@@ -133,16 +134,16 @@ public class CourseControllerTest extends IntegrationTestBase {
     public void testUnarchiveCourse() throws Exception {
         Course tempCourse = dataService.createCourse("archiveCourse");
         tempCourse.setStatus(Status.ARCHIVED);
-        dataService.getRepository().save(tempCourse);
+        dataService.repository().save(tempCourse);
 
-        Course update = dataService.getRepository().findById(tempCourse.getId()).get();
+        Course update = dataService.repository().findById(tempCourse.getId()).get();
         update.setStatus(Status.DRAFT);
         mvc.perform(put(String.format("/courses/%s", tempCourse.getId()))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(update)))
                 .andExpect(status().isOk());
-        assertEquals(Status.DRAFT, dataService.getRepository().findById(tempCourse.getId()).get().getStatus());
+        assertEquals(Status.DRAFT, dataService.repository().findById(tempCourse.getId()).get().getStatus());
     }
 
     @Test
@@ -151,9 +152,9 @@ public class CourseControllerTest extends IntegrationTestBase {
     public void testUnarchiveCourseIncorrectPermission() throws Exception {
         Course tempCourse = dataService.createCourse("archiveCourse");
         tempCourse.setStatus(Status.ARCHIVED);
-        dataService.getRepository().save(tempCourse);
+        dataService.repository().save(tempCourse);
 
-        Course update = dataService.getRepository().findById(tempCourse.getId()).get();
+        Course update = dataService.repository().findById(tempCourse.getId()).get();
         update.setStatus(Status.DRAFT);
         mvc.perform(put(String.format("/courses/%s", tempCourse.getId()))
                         .with(csrf())
@@ -172,14 +173,14 @@ public class CourseControllerTest extends IntegrationTestBase {
         ELearningModule m2 = dataService.createELearningModule();
         m2.setId("SECOND");
         tempCourse.setModules(List.of(m1, m2));
-        dataService.getRepository().save(tempCourse);
+        dataService.repository().save(tempCourse);
 
         mvc.perform(put(String.format("/courses/%s/modules", tempCourse.getId()))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("[{\"startPage\":\"http://startPage\",\"url\":\"http://url.com\",\"id\":\"SECOND\",\"title\":\"ELearning module\",\"description\":\"An ELearning module\",\"duration\":100,\"cost\":0.0,\"optional\":false,\"status\":null,\"associatedLearning\":false,\"createdTimestamp\":null,\"updatedTimestamp\":null,\"mediaId\":null,\"moduleType\":\"elearning\",\"type\":\"elearning\"},{\"startPage\":\"http://startPage\",\"url\":\"http://url.com\",\"id\":\"FIRST\",\"title\":\"ELearning module\",\"description\":\"An ELearning module\",\"duration\":100,\"cost\":0.0,\"optional\":false,\"status\":null,\"associatedLearning\":false,\"createdTimestamp\":null,\"updatedTimestamp\":null,\"mediaId\":null,\"moduleType\":\"elearning\",\"type\":\"elearning\"}]"))
                 .andExpect(status().isOk());
-        Course result = dataService.getRepository().findById(tempCourse.getId()).get();
+        Course result = dataService.repository().findById(tempCourse.getId()).get();
         assertEquals("SECOND", result.getModules().get(0).getId());
         assertEquals("FIRST", result.getModules().get(1).getId());
     }
@@ -196,7 +197,7 @@ public class CourseControllerTest extends IntegrationTestBase {
         course.setStatus(Status.DRAFT);
         course.setHasBeenPublished(false);
 
-        dataService.getRepository().save(course);
+        dataService.repository().save(course);
 
         String json = new JSONObject()
                 .put("id", courseId)
@@ -232,7 +233,7 @@ public class CourseControllerTest extends IntegrationTestBase {
         course.setStatus(Status.PUBLISHED);
         course.setHasBeenPublished(true);
 
-        dataService.getRepository().save(course);
+        dataService.repository().save(course);
 
         String json = new JSONObject()
                 .put("id", courseId)
@@ -264,7 +265,7 @@ public class CourseControllerTest extends IntegrationTestBase {
         course.setStatus(Status.DRAFT);
         course.setHasBeenPublished(false);
 
-        dataService.getRepository().save(course);
+        dataService.repository().save(course);
 
         mvc.perform(delete(String.format("/courses/%s", course.getId()))
                         .with(csrf())
@@ -290,7 +291,7 @@ public class CourseControllerTest extends IntegrationTestBase {
         course.setStatus(Status.DRAFT);
         course.setHasBeenPublished(true);
 
-        dataService.getRepository().save(course);
+        dataService.repository().save(course);
 
         mvc.perform(delete(String.format("/courses/%s", course.getId()))
                         .with(csrf())

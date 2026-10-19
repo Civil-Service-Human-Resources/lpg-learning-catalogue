@@ -4,34 +4,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableMap;
-import org.glassfish.jersey.servlet.WebConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.ErrorDtoFactory;
 import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.service.CourseService;
 import uk.gov.cslearning.catalogue.service.ModuleService;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -39,22 +36,28 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(ModuleController.class)
+@WebMvcTest(
+        controllers = ModuleController.class,
+        properties = {
+                "spring.main.allow-bean-definition-overriding=true",
+                "spring.autoconfigure.exclude=org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration"
+        }
+)
 @WithMockUser(username = "user")
-@ContextConfiguration(classes = {WebConfig.class, ModuleController.class})
-@EnableSpringDataWebSupport
 public class ModuleControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private CourseService courseService;
 
-    @MockBean
+    @MockitoBean
     private ModuleService moduleService;
+
+    @MockitoBean
+    private ErrorDtoFactory errorDtoFactory;
 
     private ObjectMapper objectMapper;
 
@@ -77,7 +80,7 @@ public class ModuleControllerTest {
         when(moduleService.save(eq(courseId), any(Module.class))).thenReturn(module);
 
         mockMvc.perform(
-                        post(String.format("/courses/%s/modules/", courseId)).with(csrf())
+                        post(String.format("/courses/%s/modules", courseId)).with(csrf())
                                 .content(json)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
@@ -89,9 +92,9 @@ public class ModuleControllerTest {
     public void shouldFindModule() throws Exception {
         String courseId = "course-id";
         String moduleId = "module-id";
-        String url = "http://example.org";
+        String url = "https://example.org";
 
-        Module module = new LinkModule(new URL(url));
+        Module module = new LinkModule(URI.create(url).toURL());
 
         when(moduleService.find(courseId, moduleId)).thenReturn(Optional.of(module));
 
@@ -139,11 +142,11 @@ public class ModuleControllerTest {
         Course course = new Course();
         Course updatedCourse = new Course();
 
-        Module module = new LinkModule(new URL(url));
+        Module module = new LinkModule(URI.create(url).toURL());
         module.setId(moduleId);
         module.setTitle(title);
 
-        Module updatedModule = new LinkModule(new URL(url));
+        Module updatedModule = new LinkModule(URI.create(url).toURL());
         updatedModule.setId(moduleId);
         updatedModule.setTitle(updatedTitle);
 
@@ -165,9 +168,9 @@ public class ModuleControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        assertThat(updatedCourse.getModules().isEmpty(), is(false));
-        assertThat(updatedCourse.getModules().size(), is(1));
-        assertThat(updatedCourse.getModules().get(0).getTitle(), is(updatedTitle));
+        assertFalse(updatedCourse.getModules().isEmpty());
+        assertEquals(1, updatedCourse.getModules().size());
+        assertEquals(updatedTitle, updatedCourse.getModules().getFirst().getTitle());
     }
 
 }

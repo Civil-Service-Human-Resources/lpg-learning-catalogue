@@ -1,11 +1,9 @@
 package uk.gov.cslearning.catalogue.evaluators;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -49,11 +47,6 @@ public class CustomPermissionEvaluatorTest {
     @InjectMocks
     private CustomPermissionEvaluator customPermissionEvaluator;
 
-    @Before
-    public void setupMock() {
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
     public void shouldReturnFalseIfAuthIsNull() {
         boolean hasPermission = customPermissionEvaluator.hasPermission(null, COURSE_ID, WRITE_PERMISSION);
@@ -63,9 +56,7 @@ public class CustomPermissionEvaluatorTest {
 
     @Test
     public void shouldReturnFalseIfCourseIdIsNull() {
-        String courseId = null;
-
-        boolean hasPermission = customPermissionEvaluator.hasPermission(authentication, courseId, WRITE_PERMISSION);
+        boolean hasPermission = customPermissionEvaluator.hasPermission(authentication, null, WRITE_PERMISSION);
 
         assertFalse(hasPermission);
     }

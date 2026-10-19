@@ -3,11 +3,6 @@ database:
   name: ${DATABASE_NAME:learning_catalogue}
   use-ssl: ${DATABASE_USESSL:false}
 spring:
-  jackson:
-    serialization:
-      write_dates_as_timestamps: false
-  resources:
-    add-mappings: false
   datasource:
     url: ${DATASOURCE_URL:${database.host}/${database.name}?useSSL=${database.use-ssl}&requireSSL=false}
     username: ${DATASOURCE_USERNAME:root}
@@ -23,6 +18,9 @@ spring:
     multipart:
       max-file-size: 5120MB
       max-request-size: 5120MB
+  web:
+    resources:
+      add-mappings: false
 time:
   zoneId: ${TIME_ZONE_ID:UTC}
 server:

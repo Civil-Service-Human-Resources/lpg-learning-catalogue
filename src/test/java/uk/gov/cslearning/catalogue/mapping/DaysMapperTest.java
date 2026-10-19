@@ -17,23 +17,23 @@ public class DaysMapperTest {
     @Test
     public void shouldMapStringValuesToLongValues() {
         List<Long> values = DaysMapper.convertDaysFromTextToNumeric(PROPER_VALUES);
-        assertEquals(values.size(), 3);
-        assertEquals(values.get(0), new Long(1));
-        assertEquals(values.get(1), new Long(7));
-        assertEquals(values.get(2), new Long(30));
+        assertEquals(3, values.size());
+        assertEquals(Long.valueOf(1), values.get(0));
+        assertEquals(Long.valueOf(7), values.get(1));
+        assertEquals(Long.valueOf(30), values.get(2));
     }
 
     @Test
     public void shouldMapOneStringValueToLongValue() {
         List<Long> values = DaysMapper.convertDaysFromTextToNumeric(ONE_VALUE);
-        assertEquals(values.size(), 1);
-        assertEquals(values.get(0), new Long(1));
+        assertEquals(1, values.size());
+        assertEquals(Long.valueOf(1), values.getFirst());
     }
 
     @Test
     public void shouldMapEmptyStringToEmptyList() {
         List<Long> values = DaysMapper.convertDaysFromTextToNumeric(StringUtils.EMPTY);
-        assertEquals(values.size(), 0);
+        assertEquals(0, values.size());
     }
 
     @Test(expected = IllegalArgumentException.class)

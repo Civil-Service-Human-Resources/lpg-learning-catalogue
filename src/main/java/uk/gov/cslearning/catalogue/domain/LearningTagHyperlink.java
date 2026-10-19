@@ -2,7 +2,7 @@ package uk.gov.cslearning.catalogue.domain;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity

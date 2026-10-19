@@ -29,7 +29,8 @@ public class RusticiEngineClientTest {
     @Test(expected = RusticiEngineException.class)
     public void testFailedCreateCourse() {
         CreateCourse createCourse = mock(CreateCourse.class);
-        ResponseEntity<CreateCourseResponse> response = mock(ResponseEntity.class);
+        @SuppressWarnings("unchecked")
+        ResponseEntity<CreateCourseResponse> response = (ResponseEntity<CreateCourseResponse>) mock(ResponseEntity.class);
         when(response.getStatusCode()).thenReturn(HttpStatus.CONFLICT);
         when(restTemplate.postForEntity(ArgumentMatchers.<String>any(),
                 ArgumentMatchers.<RequestEntity<CreateCourse>>any(),

@@ -1,11 +1,9 @@
 package uk.gov.cslearning.catalogue.service.upload;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
@@ -47,11 +45,6 @@ public class AudienceServiceTest {
 
     @InjectMocks
     private AudienceService audienceService;
-
-    @Before
-    public void setupMock() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void shouldSave() {
@@ -126,7 +119,7 @@ public class AudienceServiceTest {
     public void shouldReturnTrueIfIsCslAuthor() {
         when(authoritiesService.isCslAuthor(authentication)).thenReturn(true);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), true);
+        assertTrue(audienceService.isPermitted(COURSE_ID, authentication));
 
         verify(courseService, times(0)).getCourseById(COURSE_ID);
     }
@@ -136,7 +129,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isCslAuthor(authentication)).thenReturn(false);
         when(authoritiesService.isLearningManager(authentication)).thenReturn(true);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), true);
+        assertTrue(audienceService.isPermitted(COURSE_ID, authentication));
 
         verify(courseService, times(0)).getCourseById(COURSE_ID);
     }
@@ -150,7 +143,7 @@ public class AudienceServiceTest {
 
         when(courseService.getCourseById(any())).thenReturn(course);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), false);
+        assertFalse(audienceService.isPermitted(COURSE_ID, authentication));
 
         verify(registryService, times(0)).getCurrentCivilServant();
     }
@@ -171,7 +164,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isOrgAuthor(authentication)).thenReturn(false);
         when(authoritiesService.isProfessionAuthor(authentication)).thenReturn(false);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), false);
+        assertFalse(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test
@@ -192,7 +185,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isOrganisationalUnitCodeEqual(civilServant, course.getOwner())).thenReturn(false);
         when(authoritiesService.isProfessionAuthor(authentication)).thenReturn(false);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), false);
+        assertFalse(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test
@@ -212,7 +205,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isOrgAuthor(authentication)).thenReturn(true);
         when(authoritiesService.isOrganisationalUnitCodeEqual(civilServant, course.getOwner())).thenReturn(true);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), true);
+        assertTrue(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test
@@ -233,7 +226,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isProfessionAuthor(authentication)).thenReturn(true);
         when(authoritiesService.isProfessionIdEqual(civilServant, course.getOwner())).thenReturn(false);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), false);
+        assertFalse(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test
@@ -254,7 +247,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isProfessionAuthor(authentication)).thenReturn(true);
         when(authoritiesService.isProfessionIdEqual(civilServant, course.getOwner())).thenReturn(true);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), true);
+        assertTrue(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test

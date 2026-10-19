@@ -1,4 +1,4 @@
-FROM gradle:6.8-jdk8 as debug
+FROM gradle:jdk25 as debug
 
 WORKDIR /workspace/app
 
@@ -16,7 +16,7 @@ RUN gradle wrapper assemble \
 
 CMD java -jar /workspace/app/build/libs/learning-catalogue.jar
 
-FROM openjdk:8-jre-alpine as production
+FROM openjdk:25-jre-alpine as production
 
 ARG JAR_DIR=/workspace/app/build/libs
 

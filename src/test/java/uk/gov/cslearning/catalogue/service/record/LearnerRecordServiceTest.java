@@ -14,13 +14,13 @@ import java.util.List;
 
 public class LearnerRecordServiceTest {
 
-    private RestTemplate restTemplate = Mockito.mock(RestTemplate.class);
-    private RequestEntityFactory requestEntityFactory = Mockito.mock(RequestEntityFactory.class);
-    private String eventUrlFormat = "testhost:9000/event/%s";
-    private String bookingUrlFormat = "testhost:9000/event/%s/booking";
-    private String bulkEventsUrl = "testhost:9000/events-list";
+    private final RestTemplate restTemplate = Mockito.mock(RestTemplate.class);
+    private final RequestEntityFactory requestEntityFactory = Mockito.mock(RequestEntityFactory.class);
+    private final String eventUrlFormat = "testHost:9000/event/%s";
+    private final String bookingUrlFormat = "testHost:9000/event/%s/booking";
+    private final String bulkEventsUrl = "testHost:9000/events-list";
 
-    private LearnerRecordService learnerRecordService = new LearnerRecordService(restTemplate, requestEntityFactory, eventUrlFormat, bookingUrlFormat, bulkEventsUrl);
+    private final LearnerRecordService learnerRecordService = new LearnerRecordService(restTemplate, requestEntityFactory, eventUrlFormat, bookingUrlFormat, bulkEventsUrl);
 
     @Test
     public void shouldReturnEventBookings(){
@@ -38,7 +38,8 @@ public class LearnerRecordServiceTest {
         bookings.add(booking2);
 
         RequestEntity requestEntity = Mockito.mock(RequestEntity.class);
-        ResponseEntity<List<Booking>> responseEntity = Mockito.mock(ResponseEntity.class);
+        @SuppressWarnings("unchecked")
+        ResponseEntity<List<Booking>> responseEntity = (ResponseEntity<List<Booking>>) Mockito.mock(ResponseEntity.class);
 
         Mockito.when(requestEntityFactory.createGetRequest(String.format(bookingUrlFormat, eventId))).thenReturn(requestEntity);
         Mockito.when(restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<Booking>>(){})).thenReturn(responseEntity);

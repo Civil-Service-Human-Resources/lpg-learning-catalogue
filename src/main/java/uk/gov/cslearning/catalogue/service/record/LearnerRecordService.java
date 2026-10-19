@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,7 @@ public class LearnerRecordService {
     public Integer getEventActiveBookingsCount(String eventId) {
         try{
             Integer count = 0;
-            URI uri = UriComponentsBuilder.fromHttpUrl(String.format(eventUrlFormat, eventId))
+            URI uri = UriComponentsBuilder.fromUriString(String.format(eventUrlFormat, eventId))
                     .queryParam("getBookingCount", true)
                     .build().toUri();
             RequestEntity request = requestEntityFactory.createGetRequest(uri);
@@ -58,7 +57,7 @@ public class LearnerRecordService {
             }
             return count;
         } catch (RequestEntityException | RestClientException e) {
-            log.error(String.format("Could not get booking count from learner record: %s", e.getLocalizedMessage()));
+            log.error("Could not get booking count from learner record: {}", e.getLocalizedMessage());
             return 0;
         }
     }
@@ -66,10 +65,10 @@ public class LearnerRecordService {
     public List<Booking> getEventBookings(String eventId) {
         try{
             RequestEntity requestEntity = requestEntityFactory.createGetRequest(String.format(bookingUrlFormat, eventId));
-            ResponseEntity<List<Booking>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<Booking>>(){});
+            ResponseEntity<List<Booking>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<>() {});
             return responseEntity.getBody();
         } catch (RequestEntityException | RestClientException e) {
-            log.error("Could not get bookings from learner record: ", e.getLocalizedMessage());
+            log.error("Could not get bookings from learner record: {}", e.getLocalizedMessage());
             return null;
         }
     }
@@ -80,9 +79,10 @@ public class LearnerRecordService {
             ResponseEntity<Event> responseEntity = restTemplate.exchange(requestEntity, Event.class);
 
             Event event = responseEntity.getBody();
+            assert event != null;
             return EventStatus.forValue(event.getStatus());
         } catch (RequestEntityException | RestClientException e) {
-            log.error("Could not get event from learner record: ", e.getLocalizedMessage());
+            log.error("Could not get event from learner record: {}", e.getLocalizedMessage());
             return null;
         }
     }
@@ -93,9 +93,10 @@ public class LearnerRecordService {
             ResponseEntity<Event> responseEntity = restTemplate.exchange(requestEntity, Event.class);
 
             Event event = responseEntity.getBody();
+            assert event != null;
             return CancellationReason.forValue(event.getCancellationReason());
         } catch (RequestEntityException | RestClientException e) {
-            log.error("Could not get event from learner record: %s", e.getLocalizedMessage());
+            log.error("Could not get event from learner record: {}", e.getLocalizedMessage());
             return null;
         }
     }
@@ -105,7 +106,7 @@ public class LearnerRecordService {
         List<List<String>> batchedUids = Lists.partition(moduleEventUids, 20);
         try {
             batchedUids.forEach(batch -> {
-                URI uri = UriComponentsBuilder.fromHttpUrl(bulkEventsUrl)
+                URI uri = UriComponentsBuilder.fromUriString(bulkEventsUrl)
                         .queryParam("uids", batch.toArray())
                         .queryParam("getBookingCount", getBookingCount)
                         .build().toUri();
@@ -116,7 +117,7 @@ public class LearnerRecordService {
                 }
             });
         } catch (RequestEntityException | RestClientException e) {
-            log.error(String.format("Could not get events from learner record: %s", e.getLocalizedMessage()));
+            log.error("Could not get events from learner record: {}", e.getLocalizedMessage());
             return null;
         }
         return events;

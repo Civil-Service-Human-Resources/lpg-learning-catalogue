@@ -17,7 +17,7 @@ import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.Collections;
 
 @RestController

@@ -9,6 +9,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.dto.CourseDto;
 import uk.gov.cslearning.catalogue.dto.EventDto;
@@ -18,6 +19,7 @@ import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,7 +66,7 @@ public class EventServiceTest {
 
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
 
-        Assert.assertEquals(eventService.save(courseId, moduleId, newEvent), newEvent);
+        assertEquals(eventService.save(courseId, moduleId, newEvent), newEvent);
 
         verify(courseRepository).findById(courseId);
         verify(courseRepository).save(course);
@@ -103,7 +105,7 @@ public class EventServiceTest {
 
         Optional<Event> result = eventService.find(courseId, moduleId, savedEvent.getId());
 
-        Assert.assertEquals(result, Optional.of(savedEvent));
+        assertEquals(result, Optional.of(savedEvent));
         Assert.assertTrue(result.get().getVenue().getAvailability() == availability);
 
         verify(courseRepository).findById(courseId);
@@ -118,7 +120,7 @@ public class EventServiceTest {
 
         when(learnerRecordService.getEventStatus(eventId)).thenReturn(eventStatus);
 
-        Assert.assertEquals(eventService.getStatus(eventId), eventStatus);
+        assertEquals(eventService.getStatus(eventId), eventStatus);
 
         verify(learnerRecordService).getEventStatus(eventId);
     }
@@ -131,7 +133,7 @@ public class EventServiceTest {
 
         when(learnerRecordService.getCancellationReason(eventId)).thenReturn(cancellationReason);
 
-        Assert.assertEquals(eventService.getCancellationReason(eventId), cancellationReason);
+        assertEquals(cancellationReason, eventService.getCancellationReason(eventId));
 
         verify(learnerRecordService).getCancellationReason(eventId);
     }
@@ -168,7 +170,7 @@ public class EventServiceTest {
         stringEventDtoMap.put(eventId, eventDto);
 
         when(eventDtoMapService.getStringEventDtoMap(courses)).thenReturn(stringEventDtoMap);
-        Assert.assertEquals(eventService.getEventMap(), stringEventDtoMap);
+        assertEquals(eventService.getEventMap(), stringEventDtoMap);
     }
 
     @Test
@@ -208,6 +210,6 @@ public class EventServiceTest {
         when(eventDtoMapService.getStringEventDtoMapForSupplier(courses)).thenReturn(stringEventDtoMap);
 
 
-        Assert.assertEquals(eventService.getEventMapBySupplier(supplier, unpaged), stringEventDtoMap);
+        assertEquals(eventService.getEventMapBySupplier(supplier, unpaged), stringEventDtoMap);
     }
 }

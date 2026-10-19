@@ -12,7 +12,6 @@ import uk.gov.cslearning.catalogue.api.v2.model.CourseSearchParameters;
 import uk.gov.cslearning.catalogue.api.v2.model.RequiredLearningIdMap;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.CourseEntity;
 import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
@@ -193,7 +192,7 @@ public class CourseService {
     public List<Course> fetchMandatoryCoursesByDueDate(Collection<Long> days) {
         LocalDate now = LocalDate.now();
 
-        Map<Course, Set<Audience>> alterAudienceList = new HashMap();
+        Map<Course, Set<Audience>> alterAudienceList = new HashMap<>();
 
         courseRepository.findAllPublishedRequiredLearning(DEFAULT_PAGEABLE)
                 .forEach(course -> course.getAudiences()
@@ -203,7 +202,7 @@ public class CourseService {
             course.setAudiences(alterAudienceList.get(course));
         }
 
-        return new ArrayList(alterAudienceList.keySet());
+        return new ArrayList<>(alterAudienceList.keySet());
     }
 
     public Map<String, List<Course>> groupByOrganisationCode(List<Course> courses) {
@@ -234,7 +233,7 @@ public class CourseService {
 
     public Course deleteCourseById(String courseId) {
         Course course = getCourseById(courseId);
-        Boolean courseCanBeDeleted = course.getHasBeenPublished() != null && !course.getHasBeenPublished();
+        boolean courseCanBeDeleted = course.getHasBeenPublished() != null && !course.getHasBeenPublished();
 
         if (courseCanBeDeleted) {
             courseRepository.delete(course);
@@ -266,7 +265,7 @@ public class CourseService {
             if (alterAudienceList.containsKey(course)) {
                 alterAudienceList.get(course).add(audience);
             } else {
-                Set<Audience> newAudienceList = new HashSet();
+                Set<Audience> newAudienceList = new HashSet<>();
                 newAudienceList.add(audience);
                 alterAudienceList.put(course, newAudienceList);
             }
