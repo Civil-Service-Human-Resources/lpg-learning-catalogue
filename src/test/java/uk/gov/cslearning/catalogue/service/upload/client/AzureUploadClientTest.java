@@ -3,7 +3,7 @@ package uk.gov.cslearning.catalogue.service.upload.client;
 import com.microsoft.azure.storage.ResultSegment;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import uk.gov.cslearning.catalogue.dto.upload.UploadStatus;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
 import uk.gov.cslearning.catalogue.dto.upload.UploadedFile;
@@ -13,8 +13,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 public class AzureUploadClientTest {

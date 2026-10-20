@@ -1,11 +1,12 @@
 package uk.gov.cslearning.catalogue.service;
 
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.DateRange;
 import uk.gov.cslearning.catalogue.domain.module.Event;
@@ -21,10 +22,10 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class EventDtoMapServiceTest {
 
     private final long retentionTimeInDays = 90;
@@ -37,7 +38,7 @@ public class EventDtoMapServiceTest {
 
     private EventDtoMapService eventDtoMapService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eventDtoMapService = new EventDtoMapService(eventDateService, eventDtoFactory, retentionTimeInDays);
     }

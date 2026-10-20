@@ -1,7 +1,7 @@
 package uk.gov.cslearning.catalogue.service.record;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
@@ -54,7 +54,7 @@ public class LearnerRecordServiceTest {
         Mockito.when(restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<Booking>>(){})).thenReturn(responseEntity);
         Mockito.when(responseEntity.getBody()).thenReturn(bookings);
 
-        Assert.assertEquals(learnerRecordService.getEventBookings(eventId), bookings);
+        Assertions.assertEquals(learnerRecordService.getEventBookings(eventId), bookings);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class LearnerRecordServiceTest {
         URI uri = UriComponentsBuilder.fromUriString(String.format(bookingUrlFormat, eventId)).build().toUri();
         Mockito.when(requestEntityFactory.createGetRequest(uri)).thenThrow(new RequestEntityException(new Exception("error")));
 
-        Assert.assertNull(learnerRecordService.getEventBookings(eventId));
+        Assertions.assertNull(learnerRecordService.getEventBookings(eventId));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class LearnerRecordServiceTest {
         Mockito.when(restTemplate.exchange(requestEntity, Event.class)).thenReturn(responseEntity);
         Mockito.when(responseEntity.getBody()).thenReturn(event);
 
-        Assert.assertEquals(EventStatus.ACTIVE, learnerRecordService.getEventStatus(eventId));
+        Assertions.assertEquals(EventStatus.ACTIVE, learnerRecordService.getEventStatus(eventId));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class LearnerRecordServiceTest {
 
         Mockito.when(requestEntityFactory.createGetRequest(uri)).thenThrow(new RestClientException("error"));
 
-        Assert.assertNull(learnerRecordService.getEventStatus(eventId));
+        Assertions.assertNull(learnerRecordService.getEventStatus(eventId));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class LearnerRecordServiceTest {
         Mockito.when(restTemplate.exchange(requestEntity, Event.class)).thenReturn(responseEntity);
         Mockito.when(responseEntity.getBody()).thenReturn(event);
 
-        Assert.assertEquals(CancellationReason.UNAVAILABLE, learnerRecordService.getCancellationReason(eventId));
+        Assertions.assertEquals(CancellationReason.UNAVAILABLE, learnerRecordService.getCancellationReason(eventId));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class LearnerRecordServiceTest {
 
         Mockito.when(requestEntityFactory.createGetRequest(uri)).thenThrow(new RestClientException("error"));
 
-        Assert.assertNull(learnerRecordService.getCancellationReason(eventId));
+        Assertions.assertNull(learnerRecordService.getCancellationReason(eventId));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class LearnerRecordServiceTest {
         Mockito.when(restTemplate.exchange(requestEntity, Event.class)).thenReturn(responseEntity);
         Mockito.when(responseEntity.getBody()).thenReturn(event);
 
-        Assert.assertEquals(Integer.valueOf(5), learnerRecordService.getEventActiveBookingsCount(eventId));
+        Assertions.assertEquals(Integer.valueOf(5), learnerRecordService.getEventActiveBookingsCount(eventId));
     }
 
     @Test
@@ -165,6 +165,6 @@ public class LearnerRecordServiceTest {
         Mockito.when(restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<Event>>(){})).thenReturn(responseEntity);
         Mockito.when(responseEntity.getBody()).thenReturn(events);
 
-        Assert.assertEquals(events, learnerRecordService.getEvents(uids, false));
+        Assertions.assertEquals(events, learnerRecordService.getEvents(uids, false));
     }
 }

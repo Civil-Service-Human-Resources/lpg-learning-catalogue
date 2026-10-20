@@ -1,11 +1,12 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import uk.gov.cslearning.catalogue.domain.Course;
@@ -19,12 +20,12 @@ import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class EventServiceTest {
 
     @Mock
@@ -106,7 +107,7 @@ public class EventServiceTest {
         Optional<Event> result = eventService.find(courseId, moduleId, savedEvent.getId());
 
         assertEquals(result, Optional.of(savedEvent));
-        Assert.assertTrue(result.get().getVenue().getAvailability() == availability);
+        Assertions.assertTrue(result.get().getVenue().getAvailability() == availability);
 
         verify(courseRepository).findById(courseId);
         verify(learnerRecordService).getEventActiveBookingsCount(savedEvent.getId());

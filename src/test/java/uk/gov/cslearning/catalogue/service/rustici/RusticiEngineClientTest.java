@@ -1,11 +1,12 @@
 package uk.gov.cslearning.catalogue.service.rustici;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,11 @@ import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourse;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourseResponse;
 import uk.gov.cslearning.catalogue.exception.RusticiEngineException;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RusticiEngineClientTest {
 
     @Mock
@@ -26,7 +28,7 @@ public class RusticiEngineClientTest {
     @InjectMocks
     private RusticiEngineClient client;
 
-    @Test(expected = RusticiEngineException.class)
+    @Test
     public void testFailedCreateCourse() {
         CreateCourse createCourse = mock(CreateCourse.class);
         @SuppressWarnings("unchecked")
@@ -35,7 +37,7 @@ public class RusticiEngineClientTest {
         when(restTemplate.postForEntity(ArgumentMatchers.<String>any(),
                 ArgumentMatchers.<RequestEntity<CreateCourse>>any(),
                 ArgumentMatchers.<Class<CreateCourseResponse>>any())).thenReturn(response);
-        client.createCourse(createCourse, "test.test");
+        assertThrows(RusticiEngineException.class, () -> client.createCourse(createCourse, "test.test"));
     }
 
 }

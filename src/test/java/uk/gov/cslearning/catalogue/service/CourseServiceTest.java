@@ -1,11 +1,12 @@
 package uk.gov.cslearning.catalogue.service;
 
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import com.google.common.collect.ImmutableList;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -36,12 +37,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CourseServiceTest {
     private static final String COURSE_ID_1 = "courseId-1";
     private static final String COURSE_ID_2 = "courseId-2";
@@ -113,11 +113,11 @@ public class CourseServiceTest {
         assertEquals(courseService.getCourseById(courseId), course);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldThrowExceptionIfCourseDoesntExist() {
         when(courseRepository.findById(COURSE_ID_1)).thenReturn(Optional.empty());
 
-        courseService.getCourseById(COURSE_ID_1);
+        assertThrows(IllegalStateException.class, () -> courseService.getCourseById(COURSE_ID_1));
     }
 
     @Test

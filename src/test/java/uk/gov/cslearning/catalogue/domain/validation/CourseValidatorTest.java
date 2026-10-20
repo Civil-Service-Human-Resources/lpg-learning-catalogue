@@ -1,6 +1,6 @@
 package uk.gov.cslearning.catalogue.domain.validation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import uk.gov.cslearning.catalogue.Utils;
@@ -9,13 +9,14 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.exception.ForbiddenException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 public class CourseValidatorTest {
 
     CourseValidator validator = new CourseValidator();
 
-    @Test(expected = ForbiddenException.class)
+    @Test
     public void validateInvalidPermission() {
         // Use Mockito's MockedStatic in a try-with-resources block to automatically deregister it
         try (MockedStatic<Utils> mockedUtils = Mockito.mockStatic(Utils.class)) {
@@ -26,7 +27,7 @@ public class CourseValidatorTest {
             Course newCourse = new Course();
             newCourse.setStatus(Status.PUBLISHED);
 
-            validator.validate(existingCourse, newCourse);
+            assertThrows(ForbiddenException.class, () -> validator.validate(existingCourse, newCourse));
         }
     }
 

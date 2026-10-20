@@ -90,7 +90,7 @@ public abstract class IntegrationTestBase {
         dataService.loadBulkCourses();
     }
 
-//    @After
+//    @AfterEach
 //    public void afterAll() {
 //        Runtime.getRuntime().addShutdownHook(new Thread(() -> dataService.deleteBulkCourses()));
 //    }

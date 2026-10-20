@@ -1,11 +1,11 @@
 package uk.gov.cslearning.catalogue.domain.CivilServant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class CivilServantTest {

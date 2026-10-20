@@ -1,6 +1,6 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,15 +22,15 @@ public class ImageFileValidatorTest {
 
     private final ImageFileValidator imageFileValidator = new ImageFileValidator();
 
-    @Test(expected = FileValidationException.class)
+    @Test
     public void testValidateImageSize() {
         FileUpload fileUpload = mock(FileUpload.class);
 
         when(fileUpload.getSizeKB()).thenReturn(5121L);
-        imageFileValidator.validate(fileUpload);
+        assertThrows(FileValidationException.class, () -> imageFileValidator.validate(fileUpload));
     }
 
-    @Test(expected = FileValidationException.class)
+    @Test
     public void testValidateImageDimensions() throws IOException {
         try (MockedStatic<ImageIO> mockedImageIO = Mockito.mockStatic(ImageIO.class)) {
             FileUpload fileUpload = mock(FileUpload.class);
@@ -43,7 +44,7 @@ public class ImageFileValidatorTest {
             when(fileUpload.getSizeKB()).thenReturn(5100L);
             when(file.getInputStream()).thenReturn(inputStream);
             when(fileUpload.getFile()).thenReturn(file);
-            imageFileValidator.validate(fileUpload);
+            assertThrows(FileValidationException.class, () -> imageFileValidator.validate(fileUpload));
         }
     }
 }

@@ -1,13 +1,13 @@
 package uk.gov.cslearning.catalogue.mapping;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 public class DaysMapperTest {
     private static final String PROPER_VALUES = "1,7,30";
     private static final String ONE_VALUE = "1";
@@ -36,13 +36,13 @@ public class DaysMapperTest {
         assertEquals(0, values.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotMapTextValues() {
-        DaysMapper.convertDaysFromTextToNumeric(TEXT_VALUES);
+        assertThrows(IllegalArgumentException.class, () -> DaysMapper.convertDaysFromTextToNumeric(TEXT_VALUES));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotMapPartialTextValues() {
-        DaysMapper.convertDaysFromTextToNumeric(PARTIAL_TEXT_VALUES);
+        assertThrows(IllegalArgumentException.class, () -> DaysMapper.convertDaysFromTextToNumeric(PARTIAL_TEXT_VALUES));
     }
 }
