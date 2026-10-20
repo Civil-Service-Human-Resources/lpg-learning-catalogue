@@ -31,8 +31,8 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.40'
-    annotationProcessor 'org.projectlombok:lombok:1.18.40'
+    compileOnly 'org.projectlombok:lombok:1.18.48'
+    annotationProcessor 'org.projectlombok:lombok:1.18.48'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
@@ -75,8 +75,8 @@ dependencies {
     testImplementation 'com.h2database:h2:2.2.224'
     testImplementation 'com.google.code.gson:gson:2.10.1'
 
-    testCompileOnly 'org.projectlombok:lombok:1.18.40'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.40'
+    testCompileOnly 'org.projectlombok:lombok:1.18.48'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.48'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
@@ -88,6 +88,11 @@ dependencies {
     testImplementation 'net.bytebuddy:byte-buddy:1.18.15'
     testImplementation 'com.jayway.jsonpath:json-path:2.9.0'
     testImplementation 'org.testcontainers:elasticsearch:1.21.4'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 compileJava.dependsOn(processResources)

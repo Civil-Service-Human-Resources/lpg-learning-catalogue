@@ -7,16 +7,14 @@ import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
@@ -29,7 +27,6 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 @ActiveProfiles("integration-test")
-@RunWith(SpringRunner.class)
 @Import({IntegrationTestConfig.class, DisableBlobStorage.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -51,9 +48,9 @@ public abstract class IntegrationTestBase {
     static boolean runIntegrationTests = Boolean.parseBoolean(System.getenv("RUN_INTEGRATION_TESTS"));
     static boolean useLocalElastic = Boolean.parseBoolean(System.getenv("INTEGRATION_TEST_USE_LOCAL_ELASTIC"));
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
-        Assume.assumeTrue("RUN_INTEGRATION_TESTS is false, skipping integration tests", runIntegrationTests);
+        Assumptions.assumeTrue(runIntegrationTests, "RUN_INTEGRATION_TESTS is false, skipping integration tests");
     }
 
     /**
@@ -87,7 +84,7 @@ public abstract class IntegrationTestBase {
         }
     }
 
-    @Before
+    @BeforeEach
     public void beforeAll() {
         dataService.deleteBulkCourses();
         dataService.loadBulkCourses();

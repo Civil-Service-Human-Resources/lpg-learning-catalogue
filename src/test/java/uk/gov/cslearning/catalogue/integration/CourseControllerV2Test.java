@@ -1,6 +1,6 @@
 package uk.gov.cslearning.catalogue.integration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import uk.gov.cslearning.catalogue.domain.Course;
 

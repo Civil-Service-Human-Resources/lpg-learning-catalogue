@@ -1,8 +1,8 @@
 package uk.gov.cslearning.catalogue.integration;
 
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Order;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
@@ -27,7 +27,7 @@ public class CourseControllerTest extends IntegrationTestBase {
     @MockitoBean
     private RegistryService mockRegistryService;
 
-    @Before
+    @BeforeEach
     public void before() {
         // Any endpoint annotated with @PreAuthorize will call CsrsService to get the current civil servant.
         // We should mock this call out with wiremock but until then let's just mock the method out
