@@ -6,6 +6,9 @@ elasticsearch:
     courses:
       indexName: "testcourses"
 spring:
+  jackson:
+    deserialization:
+      fail-on-null-for-primitives: false
   flyway:
     locations: classpath:db/migration/{vendor}
   jpa:

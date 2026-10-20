@@ -154,7 +154,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         SortOrder esSortOrder = direction.isAscending() ? SortOrder.Asc : SortOrder.Desc;
         String scriptSource = String.format("doc['%s.keyword'].value.toLowerCase()", fieldName);
 
-        Script inlineScript = Script.of(s -> s.source(scriptSource));
+        Script inlineScript = Script.of(s -> s.source(ss -> ss.scriptString(scriptSource)));
 
         SortOptions sortOptions = SortOptions.of(s -> s
                 .script(ss -> ss
