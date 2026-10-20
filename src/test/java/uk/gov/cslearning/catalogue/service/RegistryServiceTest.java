@@ -34,7 +34,7 @@ public class RegistryServiceTest {
     @Test
     public void getCurrentCivilServant() {
         CivilServant civilServant = new CivilServant();
-        RequestEntity requestEntity = mock(RequestEntity.class);
+        RequestEntity<Void> requestEntity = mock();
         ResponseEntity<CivilServant> responseEntity = new ResponseEntity<>(civilServant, OK);
 
         when(requestEntityFactory.createGetRequest((URI) any())).thenReturn(requestEntity);

@@ -2,7 +2,6 @@ package uk.gov.cslearning.catalogue.config;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.SneakyThrows;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -108,7 +107,7 @@ public class ElasticRestClientConfig extends ElasticsearchConfiguration {
 
         @SneakyThrows
         @Override
-        public URL convert(@NotNull @NonNull String source) {
+        public URL convert(@NotNull String source) {
             return URI.create(source).toURL();
         }
     }

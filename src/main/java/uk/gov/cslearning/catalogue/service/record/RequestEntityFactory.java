@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 @Component
 public class RequestEntityFactory {
 
-    public RequestEntity<?> createGetRequest(URI uri) {
+    public RequestEntity<Void> createGetRequest(URI uri) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String tokenValue = "";
 
@@ -27,7 +27,7 @@ public class RequestEntityFactory {
         return new RequestEntity<>(headers, HttpMethod.GET, uri);
     }
 
-    public RequestEntity<?> createGetRequest(String uri) {
+    public RequestEntity<Void> createGetRequest(String uri) {
         try {
             return createGetRequest(new URI(uri));
         } catch (URISyntaxException e) {

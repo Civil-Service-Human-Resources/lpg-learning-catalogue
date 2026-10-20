@@ -44,7 +44,7 @@ public class LearnerRecordServiceTest {
         bookings.add(booking1);
         bookings.add(booking2);
 
-        RequestEntity requestEntity = Mockito.mock(RequestEntity.class);
+        RequestEntity<Void> requestEntity = Mockito.mock();
         @SuppressWarnings("unchecked")
         ResponseEntity<List<Booking>> responseEntity = (ResponseEntity<List<Booking>>) Mockito.mock(ResponseEntity.class);
 
@@ -72,7 +72,7 @@ public class LearnerRecordServiceTest {
         Event event = new Event();
         event.setStatus("Active");
 
-        RequestEntity requestEntity = Mockito.mock(RequestEntity.class);
+        RequestEntity<Void> requestEntity = Mockito.mock();
         @SuppressWarnings("unchecked")
         ResponseEntity<Event> responseEntity = (ResponseEntity<Event>) Mockito.mock(ResponseEntity.class);
 
@@ -101,7 +101,7 @@ public class LearnerRecordServiceTest {
         Event event = new Event();
         event.setCancellationReason("Unavailable");
 
-        RequestEntity requestEntity = Mockito.mock(RequestEntity.class);
+        RequestEntity<Void> requestEntity = Mockito.mock();
         @SuppressWarnings("unchecked")
         ResponseEntity<Event> responseEntity = (ResponseEntity<Event>) Mockito.mock(ResponseEntity.class);
 
@@ -130,7 +130,7 @@ public class LearnerRecordServiceTest {
         Event event = new Event();
         event.setActiveBookingCount(5);
 
-        RequestEntity requestEntity = Mockito.mock(RequestEntity.class);
+        RequestEntity<Void> requestEntity = Mockito.mock();
         @SuppressWarnings("unchecked")
         ResponseEntity<Event> responseEntity = (ResponseEntity<Event>) Mockito.mock(ResponseEntity.class);
 
@@ -152,7 +152,7 @@ public class LearnerRecordServiceTest {
         Event event2 = new Event();
         List<Event> events = Arrays.asList(event1, event2);
 
-        RequestEntity requestEntity = Mockito.mock(RequestEntity.class);
+        RequestEntity<Void> requestEntity = Mockito.mock();
         @SuppressWarnings("unchecked")
         ResponseEntity<List<Event>> responseEntity = (ResponseEntity<List<Event>>) Mockito.mock(ResponseEntity.class);
 
