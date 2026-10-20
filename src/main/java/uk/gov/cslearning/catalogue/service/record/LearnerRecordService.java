@@ -64,7 +64,9 @@ public class LearnerRecordService {
 
     public List<Booking> getEventBookings(String eventId) {
         try{
-            RequestEntity requestEntity = requestEntityFactory.createGetRequest(String.format(bookingUrlFormat, eventId));
+            URI uri = UriComponentsBuilder.fromUriString(String.format(bookingUrlFormat, eventId))
+                    .build().toUri();
+            RequestEntity requestEntity = requestEntityFactory.createGetRequest(uri);
             ResponseEntity<List<Booking>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<>() {});
             return responseEntity.getBody();
         } catch (RequestEntityException | RestClientException e) {
@@ -75,7 +77,9 @@ public class LearnerRecordService {
 
     public EventStatus getEventStatus(String eventId) {
         try{
-            RequestEntity requestEntity = requestEntityFactory.createGetRequest(String.format(eventUrlFormat, eventId));
+            URI uri = UriComponentsBuilder.fromUriString(String.format(eventUrlFormat, eventId))
+                    .build().toUri();
+            RequestEntity requestEntity = requestEntityFactory.createGetRequest(uri);
             ResponseEntity<Event> responseEntity = restTemplate.exchange(requestEntity, Event.class);
 
             Event event = responseEntity.getBody();
@@ -89,7 +93,9 @@ public class LearnerRecordService {
 
     public CancellationReason getCancellationReason(String eventId) {
         try{
-            RequestEntity requestEntity = requestEntityFactory.createGetRequest(String.format(eventUrlFormat, eventId));
+            URI uri = UriComponentsBuilder.fromUriString(String.format(eventUrlFormat, eventId))
+                    .build().toUri();
+            RequestEntity requestEntity = requestEntityFactory.createGetRequest(uri);
             ResponseEntity<Event> responseEntity = restTemplate.exchange(requestEntity, Event.class);
 
             Event event = responseEntity.getBody();
