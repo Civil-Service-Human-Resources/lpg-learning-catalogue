@@ -28,7 +28,12 @@ import java.time.temporal.ChronoUnit;
 
 @ActiveProfiles("integration-test")
 @Import({IntegrationTestConfig.class, DisableBlobStorage.class})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {
+                "spring.main.allow-bean-definition-overriding=true"
+        }
+)
 @AutoConfigureMockMvc
 @Slf4j
 public abstract class IntegrationTestBase {
@@ -88,6 +93,14 @@ public abstract class IntegrationTestBase {
     public void beforeAll() {
         dataService.deleteBulkCourses();
         dataService.loadBulkCourses();
+    }
+
+    @org.springframework.test.context.DynamicPropertySource
+    static void setElasticProperties(org.springframework.test.context.DynamicPropertyRegistry registry) {
+        if (runIntegrationTests && !useLocalElastic && ELASTICSEARCH_CONTAINER != null) {
+            registry.add("elasticsearch.host", ELASTICSEARCH_CONTAINER::getHost);
+            registry.add("elasticsearch.port", () -> ELASTICSEARCH_CONTAINER.getMappedPort(9200));
+        }
     }
 
 //    @AfterEach

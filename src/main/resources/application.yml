@@ -3,6 +3,8 @@ database:
   name: ${DATABASE_NAME:learning_catalogue}
   use-ssl: ${DATABASE_USESSL:false}
 spring:
+  main:
+    allow-bean-definition-overriding: true
   jackson:
     deserialization:
       fail-on-null-for-primitives: false

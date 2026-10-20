@@ -6,6 +6,8 @@ elasticsearch:
     courses:
       indexName: "testcourses"
 spring:
+  main:
+    allow-bean-definition-overriding: true
   jackson:
     deserialization:
       fail-on-null-for-primitives: false
