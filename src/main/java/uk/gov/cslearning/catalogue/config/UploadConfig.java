@@ -46,6 +46,12 @@ public class UploadConfig {
     }
 
     @Bean
+    @SneakyThrows
+    public CloudStorageAccount cloudStorageAccount(@Value("${azure.storage.connection-string}") String connectionString) {
+        return CloudStorageAccount.parse(connectionString);
+    }
+
+    @Bean
     public CloudBlobClient storageClient(CloudStorageAccount cloudStorageAccount) {
         return cloudStorageAccount.createCloudBlobClient();
     }

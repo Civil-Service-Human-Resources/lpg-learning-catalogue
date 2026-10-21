@@ -12,6 +12,7 @@ import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import co.elastic.clients.transport.TransportOptions;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 
@@ -50,13 +51,27 @@ public class ElasticRestClientConfig extends ElasticsearchConfiguration {
         ClientConfiguration.MaybeSecureClientConfigurationBuilder builder = ClientConfiguration.builder()
                 .connectedTo(host + ":" + port);
 
+        ClientConfiguration.TerminalClientConfigurationBuilder terminalBuilder;
         if ("https".equalsIgnoreCase(protocol)) {
-            builder.usingSsl();
+            terminalBuilder = builder.usingSsl();
+        } else {
+            terminalBuilder = builder;
         }
 
-        return builder
-                .withBasicAuth(username, password)
+        if (username != null && !username.isBlank() && password != null && !password.isBlank()) {
+            terminalBuilder = (ClientConfiguration.TerminalClientConfigurationBuilder) terminalBuilder.withBasicAuth(username, password);
+        }
+
+        return terminalBuilder
                 .withSocketTimeout(Duration.ofMillis(readTimeout))
+                .build();
+    }
+
+    @Override
+    public TransportOptions transportOptions() {
+        return super.transportOptions().toBuilder()
+                .setHeader("Accept", "application/vnd.elasticsearch+json;compatible-with=8")
+                .setHeader("Content-Type", "application/vnd.elasticsearch+json;compatible-with=8")
                 .build();
     }
 

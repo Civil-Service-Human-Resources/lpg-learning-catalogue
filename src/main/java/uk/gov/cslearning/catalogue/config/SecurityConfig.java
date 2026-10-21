@@ -11,8 +11,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.client.RestTemplate;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -26,6 +31,13 @@ public class SecurityConfig {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(OAuthProperties oAuthProperties) {
+        return NimbusJwtDecoder.withSecretKey(
+                new SecretKeySpec(oAuthProperties.getJwtKey().getBytes(StandardCharsets.UTF_8), "HMACSHA256")
+        ).build();
     }
 
     @Bean

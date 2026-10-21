@@ -14,6 +14,13 @@ public class UploadConfigTest {
     private final UploadConfig config = new UploadConfig();
 
     @Test
+    public void cloudStorageAccountShouldReturnCloudStorageAccount() {
+        String connectionString = "UseDevelopmentStorage=true";
+        CloudStorageAccount account = config.cloudStorageAccount(connectionString);
+        assertNotNull(account);
+    }
+
+    @Test
     public void storageClientShouldReturnCloudBlobClient() {
         CloudStorageAccount cloudStorageAccount = Mockito.mock(CloudStorageAccount.class);
         CloudBlobClient cloudBlobClient = Mockito.mock(CloudBlobClient.class);
