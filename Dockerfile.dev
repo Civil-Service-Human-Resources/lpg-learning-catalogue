@@ -1,4 +1,4 @@
-FROM gradle:6.8-jdk8 as debug
+FROM gradle:jdk25 as debug
 
 WORKDIR /workspace/app
 
@@ -16,7 +16,7 @@ RUN gradle wrapper assemble \
 
 CMD java -jar /workspace/app/build/libs/learning-catalogue.jar
 
-FROM openjdk:8-jre-alpine as production
+FROM openjdk:25-jre-alpine as production
 
 ARG JAR_DIR=/workspace/app/build/libs
 
@@ -27,6 +27,6 @@ COPY --from=build ${JAR_DIR}/learning-catalogue.jar /data/app.jar
 
 # Add AppInsights config and agent jar
 ADD lib/AI-Agent.xml /opt/appinsights/AI-Agent.xml
-ADD https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.0.3/applicationinsights-agent-3.0.3.jar /opt/appinsights/applicationinsights-agent-3.0.3.jar
+ADD https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.7.10/applicationinsights-agent-3.7.10.jar /opt/appinsights/applicationinsights-agent-3.7.10.jar
 
-CMD java -javaagent:/opt/appinsights/applicationinsights-agent-3.0.3.jar -jar /data/app.jar
+CMD java -javaagent:/opt/appinsights/applicationinsights-agent-3.7.10.jar -jar /data/app.jar

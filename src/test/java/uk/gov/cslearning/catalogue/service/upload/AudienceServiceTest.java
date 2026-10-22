@@ -1,12 +1,11 @@
 package uk.gov.cslearning.catalogue.service.upload;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
@@ -23,11 +22,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AudienceServiceTest {
     private static final String COURSE_ID = "abc123";
     private static final String ORGANISATIONAL_UNIT_CODE = "code";
@@ -47,11 +46,6 @@ public class AudienceServiceTest {
 
     @InjectMocks
     private AudienceService audienceService;
-
-    @Before
-    public void setupMock() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void shouldSave() {
@@ -126,7 +120,7 @@ public class AudienceServiceTest {
     public void shouldReturnTrueIfIsCslAuthor() {
         when(authoritiesService.isCslAuthor(authentication)).thenReturn(true);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), true);
+        assertTrue(audienceService.isPermitted(COURSE_ID, authentication));
 
         verify(courseService, times(0)).getCourseById(COURSE_ID);
     }
@@ -136,7 +130,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isCslAuthor(authentication)).thenReturn(false);
         when(authoritiesService.isLearningManager(authentication)).thenReturn(true);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), true);
+        assertTrue(audienceService.isPermitted(COURSE_ID, authentication));
 
         verify(courseService, times(0)).getCourseById(COURSE_ID);
     }
@@ -150,7 +144,7 @@ public class AudienceServiceTest {
 
         when(courseService.getCourseById(any())).thenReturn(course);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), false);
+        assertFalse(audienceService.isPermitted(COURSE_ID, authentication));
 
         verify(registryService, times(0)).getCurrentCivilServant();
     }
@@ -171,7 +165,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isOrgAuthor(authentication)).thenReturn(false);
         when(authoritiesService.isProfessionAuthor(authentication)).thenReturn(false);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), false);
+        assertFalse(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test
@@ -192,7 +186,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isOrganisationalUnitCodeEqual(civilServant, course.getOwner())).thenReturn(false);
         when(authoritiesService.isProfessionAuthor(authentication)).thenReturn(false);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), false);
+        assertFalse(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test
@@ -212,7 +206,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isOrgAuthor(authentication)).thenReturn(true);
         when(authoritiesService.isOrganisationalUnitCodeEqual(civilServant, course.getOwner())).thenReturn(true);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), true);
+        assertTrue(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test
@@ -233,7 +227,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isProfessionAuthor(authentication)).thenReturn(true);
         when(authoritiesService.isProfessionIdEqual(civilServant, course.getOwner())).thenReturn(false);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), false);
+        assertFalse(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test
@@ -254,7 +248,7 @@ public class AudienceServiceTest {
         when(authoritiesService.isProfessionAuthor(authentication)).thenReturn(true);
         when(authoritiesService.isProfessionIdEqual(civilServant, course.getOwner())).thenReturn(true);
 
-        assertEquals(audienceService.isPermitted(COURSE_ID, authentication), true);
+        assertTrue(audienceService.isPermitted(COURSE_ID, authentication));
     }
 
     @Test

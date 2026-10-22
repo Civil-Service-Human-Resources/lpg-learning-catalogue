@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.elasticsearch.common.UUIDs;
+import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -14,8 +14,8 @@ import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagPartialDto;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 public class Course {
 
     @Id
-    private String id = UUIDs.randomBase64UUID();
+    private String id = UUID.randomUUID().toString();
 
     @NotNull
     private String title;

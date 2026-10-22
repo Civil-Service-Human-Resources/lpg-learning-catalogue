@@ -26,7 +26,7 @@ steps:
   - task: Gradle@3
     inputs:
       gradleWrapperFile: 'gradlew'
-      jdkVersionOption: '1.8'
+      jdkVersionOption: '25'
       javaHomeOption: 'JDKVersion'
       jdkArchitectureOption: 'x64'
       publishJUnitResults: false
@@ -34,7 +34,7 @@ steps:
       tasks: 'clean build'
     env:
       RUN_INTEGRATION_TESTS: "false"
-    displayName: 'Install Gradle and Java 8 and build'
+    displayName: 'Install Gradle and Java 25 and build'
 
   - task: Docker@2
     inputs:

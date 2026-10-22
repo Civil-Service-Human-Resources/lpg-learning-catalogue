@@ -1,13 +1,13 @@
 package uk.gov.cslearning.catalogue.mapping;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 public class DaysMapperTest {
     private static final String PROPER_VALUES = "1,7,30";
     private static final String ONE_VALUE = "1";
@@ -17,32 +17,32 @@ public class DaysMapperTest {
     @Test
     public void shouldMapStringValuesToLongValues() {
         List<Long> values = DaysMapper.convertDaysFromTextToNumeric(PROPER_VALUES);
-        assertEquals(values.size(), 3);
-        assertEquals(values.get(0), new Long(1));
-        assertEquals(values.get(1), new Long(7));
-        assertEquals(values.get(2), new Long(30));
+        assertEquals(3, values.size());
+        assertEquals(Long.valueOf(1), values.get(0));
+        assertEquals(Long.valueOf(7), values.get(1));
+        assertEquals(Long.valueOf(30), values.get(2));
     }
 
     @Test
     public void shouldMapOneStringValueToLongValue() {
         List<Long> values = DaysMapper.convertDaysFromTextToNumeric(ONE_VALUE);
-        assertEquals(values.size(), 1);
-        assertEquals(values.get(0), new Long(1));
+        assertEquals(1, values.size());
+        assertEquals(Long.valueOf(1), values.getFirst());
     }
 
     @Test
     public void shouldMapEmptyStringToEmptyList() {
         List<Long> values = DaysMapper.convertDaysFromTextToNumeric(StringUtils.EMPTY);
-        assertEquals(values.size(), 0);
+        assertEquals(0, values.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotMapTextValues() {
-        DaysMapper.convertDaysFromTextToNumeric(TEXT_VALUES);
+        assertThrows(IllegalArgumentException.class, () -> DaysMapper.convertDaysFromTextToNumeric(TEXT_VALUES));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotMapPartialTextValues() {
-        DaysMapper.convertDaysFromTextToNumeric(PARTIAL_TEXT_VALUES);
+        assertThrows(IllegalArgumentException.class, () -> DaysMapper.convertDaysFromTextToNumeric(PARTIAL_TEXT_VALUES));
     }
 }

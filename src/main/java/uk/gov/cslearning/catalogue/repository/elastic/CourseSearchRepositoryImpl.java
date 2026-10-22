@@ -1,33 +1,26 @@
 package uk.gov.cslearning.catalogue.repository.elastic;
 
-import org.apache.lucene.search.join.ScoreMode;
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.*;
-import org.elasticsearch.script.Script;
-import org.elasticsearch.search.sort.ScriptSortBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
+import co.elastic.clients.elasticsearch._types.Script;
+import co.elastic.clients.elasticsearch._types.ScriptSortType;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.Utils;
 import uk.gov.cslearning.catalogue.api.OwnerParameters;
 import uk.gov.cslearning.catalogue.api.SearchResults;
 import uk.gov.cslearning.catalogue.api.v2.model.CourseSearchParameters;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.Status;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Repository
 public class CourseSearchRepositoryImpl implements CourseSearchRepository {
@@ -41,148 +34,211 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
     @Override
     public SearchResults search(Pageable pageable, CourseSearchParameters courseSearchParameters, String sortField, Sort.Direction sortDirection) {
-        Query searchQuery = getSearchQuery(pageable, courseSearchParameters, sortField, sortDirection).build();
+        NativeQuery searchQuery = getSearchQuery(pageable, courseSearchParameters, sortField, sortDirection);
         Page<Course> coursePage = Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
         return new SearchResults(coursePage, pageable);
     }
 
     @Override
     public SearchResults search(Pageable pageable, CourseSearchParameters courseSearchParameters) {
-        Query searchQuery = getSearchQuery(pageable, courseSearchParameters).build();
+        NativeQuery searchQuery = getSearchQuery(pageable, courseSearchParameters);
         Page<Course> coursePage = Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
         return new SearchResults(coursePage, pageable);
     }
 
     @Override
     public SearchResults search(Pageable pageable, CourseSearchParameters courseSearchParameters, OwnerParameters ownerParameters) {
-        BoolQueryBuilder filterQuery = getOwnerFilter(ownerParameters);
-        Query searchQuery = getSearchQuery(pageable, courseSearchParameters)
-                .withFilter(filterQuery).build();
+        Query filterQuery = getOwnerFilter(ownerParameters);
+
+        NativeQuery searchQuery = NativeQuery.builder()
+                .withQuery(getSearchBuilderQuery(courseSearchParameters))
+                .withFilter(filterQuery)
+                .withPageable(pageable)
+                .build();
+
         Page<Course> coursePage = Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
         return new SearchResults(coursePage, pageable);
     }
 
-    private BoolQueryBuilder getSearchBuilderQuery(CourseSearchParameters parameters) {
-        BoolQueryBuilder searchQuery = boolQuery();
-        String query = parameters.getQuery();
+    private Query getSearchBuilderQuery(CourseSearchParameters parameters) {
+        BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder();
 
-        if (isNotBlank(query)) {
-            searchQuery = searchQuery.must(multiMatchQuery(query)
-                    .field("title", 8)
-                    .field("shortDescription", 4)
-                    .field("description", 2)
-                    .field("learningOutcomes", 2)
-                    .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-                    .fuzziness(Fuzziness.ONE)
-                    .operator(Operator.AND));
+        String queryStr = parameters.getQuery();
+        if (isNotBlank(queryStr)) {
+            boolQueryBuilder.must(QueryBuilders.multiMatch(m -> m
+                    .query(queryStr)
+                    // Weights are now appended directly to the field name using the caret (^) symbol
+                    .fields("title^8", "shortDescription^4", "description^2", "learningOutcomes^2")
+                    .type(TextQueryType.BestFields)
+                    .fuzziness("1")
+                    .operator(Operator.And)
+            ));
         }
 
         if (parameters.getTitleStartsWith() != null) {
-            searchQuery.must(new PrefixQueryBuilder("title.keyword", parameters.getTitleStartsWith().trim()).caseInsensitive(true));
-        }
-
-        if (parameters.hasModuleTypes()) {
-            BoolQueryBuilder typesQuery = getModuleTypeBoolQuery(parameters.getTypes());
-            searchQuery.must(typesQuery);
+            boolQueryBuilder.must(QueryBuilders.prefix(p -> p
+                    .field("title.keyword")
+                    .value(parameters.getTitleStartsWith().trim())
+                    .caseInsensitive(true)
+            ));
         }
 
         if (parameters.costIsFree()) {
-            searchQuery.must(matchQuery("cost", 0).operator(Operator.AND));
+            boolQueryBuilder.must(QueryBuilders.match(m -> m
+                    .field("cost")
+                    .query("0")
+                    .operator(Operator.And)
+            ));
+        }
+
+        if (parameters.hasModuleTypes()) {
+            boolQueryBuilder.must(getModuleTypeBoolQuery(parameters.getTypes()));
         }
 
         if (parameters.hasAudienceFields()) {
-            searchQuery.must(getAudienceNestedQuery(
-                    parameters.getDepartments(),
-                    parameters.getAreasOfWork(),
-                    parameters.getInterests()));
+            boolQueryBuilder.must(getAudienceNestedQuery(parameters.getDepartments(), parameters.getAreasOfWork(), parameters.getInterests()));
         }
 
-        List<String> statusList = parameters.getStatus().stream().map(Status::getValue).collect(Collectors.toList());
-        searchQuery = addFilter(searchQuery, statusList, "status");
-
-        if (!parameters.getCourseIds().isEmpty()) {
-            searchQuery.filter(idsQuery().addIds(parameters.getCourseIds().toArray(new String[]{})));
+        if (parameters.getCourseIds() != null && !parameters.getCourseIds().isEmpty()) {
+            boolQueryBuilder.must(QueryBuilders.ids(i -> i.values(parameters.getCourseIds())));
         }
 
-        return searchQuery;
+        if (parameters.getStatus() != null && !parameters.getStatus().isEmpty()) {
+            BoolQuery.Builder statusBool = new BoolQuery.Builder();
+            parameters.getStatus().forEach(s -> statusBool.should(QueryBuilders.match(m -> m.field("status").query(s.toString()))));
+            statusBool.minimumShouldMatch("1");
+            boolQueryBuilder.filter(Query.of(q -> q.bool(statusBool.build())));
+        }
+
+        if (parameters.getVisibility() != null && !parameters.getVisibility().isEmpty()) {
+            BoolQuery.Builder visibilityBool = new BoolQuery.Builder();
+            parameters.getVisibility().forEach(v -> visibilityBool.should(QueryBuilders.match(m -> m.field("visibility").query(v.toString()))));
+            visibilityBool.minimumShouldMatch("1");
+            boolQueryBuilder.filter(Query.of(q -> q.bool(visibilityBool.build())));
+        }
+
+        return Query.of(q -> q.bool(boolQueryBuilder.build()));
     }
 
-    private BoolQueryBuilder getModuleTypeBoolQuery(List<String> moduleTypes) {
-        BoolQueryBuilder typesQuery = boolQuery();
+    private Query getModuleTypeBoolQuery(List<String> moduleTypes) {
+        BoolQuery.Builder typesQuery = new BoolQuery.Builder();
+
         for (String type : moduleTypes) {
             typesQuery
-                    .should(matchQuery("modules.type", type))
-                    .should(matchQuery("type", type));
+                    .should(QueryBuilders.match(m -> m.field("modules.type").query(type)))
+                    .should(QueryBuilders.match(m -> m.field("type").query(type)));
         }
 
-        typesQuery.minimumShouldMatch(1);
-        return typesQuery;
+        typesQuery.minimumShouldMatch("1");
+        return Query.of(q -> q.bool(typesQuery.build()));
     }
 
-    private NestedQueryBuilder getAudienceNestedQuery(List<String> departments, List<String> areasOfWork, List<String> interests) {
-        BoolQueryBuilder audiencesBoolQuery = boolQuery();
+    private Query getAudienceNestedQuery(List<String> departments, List<String> areasOfWork, List<String> interests) {
+        BoolQuery.Builder audiencesBoolQuery = new BoolQuery.Builder();
 
-        departments.forEach(department -> audiencesBoolQuery.must(matchQuery("audiences.departments", department).operator(Operator.AND)));
-        areasOfWork.forEach(areaOfWork -> audiencesBoolQuery.must(matchQuery("audiences.areasOfWork", areaOfWork).operator(Operator.AND)));
-        interests.forEach(interest -> audiencesBoolQuery.must(matchQuery("audiences.interests", interest).operator(Operator.AND)));
+        if (departments != null) {
+            departments.forEach(department -> audiencesBoolQuery.must(
+                    QueryBuilders.match(m -> m.field("audiences.departments").query(department).operator(Operator.And))));
+        }
 
-        return nestedQuery("audiences", audiencesBoolQuery, ScoreMode.Avg);
+        if (areasOfWork != null) {
+            areasOfWork.forEach(areaOfWork -> audiencesBoolQuery.must(
+                    QueryBuilders.match(m -> m.field("audiences.areasOfWork").query(areaOfWork).operator(Operator.And))));
+        }
+
+        if (interests != null) {
+            interests.forEach(interest -> audiencesBoolQuery.must(
+                    QueryBuilders.match(m -> m.field("audiences.interests").query(interest).operator(Operator.And))));
+        }
+
+        return QueryBuilders.nested(n -> n
+                .path("audiences")
+                .query(q -> q.bool(audiencesBoolQuery.build()))
+                .scoreMode(ChildScoreMode.Avg)
+        );
     }
 
-    private BoolQueryBuilder getOwnerFilter(OwnerParameters ownerParameters) {
-
-        BoolQueryBuilder filterQuery = boolQuery();
+    private Query getOwnerFilter(OwnerParameters ownerParameters) {
+        BoolQuery.Builder filterQuery = new BoolQuery.Builder();
 
         if (ownerParameters.hasOrganisationalUnitCode()) {
-            filterQuery.must(matchQuery("owner.organisationalUnit", ownerParameters.getOrganisationalUnitCode()));
+            filterQuery.must(QueryBuilders.match(m -> m
+                    .field("owner.organisationalUnit")
+                    .query(ownerParameters.getOrganisationalUnitCode())));
         }
 
         if (ownerParameters.hasProfession()) {
-            filterQuery.must(matchQuery("owner.profession", ownerParameters.getProfession()));
+            filterQuery.must(QueryBuilders.match(m -> m
+                    .field("owner.profession")
+                    .query(ownerParameters.getProfession().toString())));
         }
 
         if (ownerParameters.hasSupplier()) {
-            filterQuery.must(matchQuery("owner.supplier", ownerParameters.getSupplier()));
+            filterQuery.must(QueryBuilders.match(m -> m
+                    .field("owner.supplier")
+                    .query(ownerParameters.getSupplier())));
         }
 
-        return filterQuery;
+        return Query.of(q -> q.bool(filterQuery.build()));
     }
 
-    private NativeSearchQueryBuilder getSearchQuery(Pageable pageable, CourseSearchParameters courseSearchParameters, String fieldName,
-                                                    Sort.Direction direction) {
-        Script lowercase = new Script(String.format("doc['%s.keyword'].value.toLowerCase()", fieldName));
-        SortBuilder<ScriptSortBuilder> sortBuilder = SortBuilders
-                .scriptSort(lowercase, ScriptSortBuilder.ScriptSortType.STRING)
-                .order(SortOrder.fromString(direction.name()));
-        return getSearchQuery(courseSearchParameters)
-                .withSort(sortBuilder)
-                .withPageable(pageable);
+    private NativeQuery getSearchQuery(Pageable pageable, CourseSearchParameters courseSearchParameters, String fieldName, Sort.Direction direction) {
+        SortOrder esSortOrder = direction.isAscending() ? SortOrder.Asc : SortOrder.Desc;
+        String scriptSource = String.format("doc['%s.keyword'].value.toLowerCase()", fieldName);
+
+        Script inlineScript = Script.of(s -> s.source(ss -> ss.scriptString(scriptSource)));
+
+        SortOptions sortOptions = SortOptions.of(s -> s
+                .script(ss -> ss
+                        .script(inlineScript)
+                        .type(ScriptSortType.String)
+                        .order(esSortOrder)
+                )
+        );
+
+        return NativeQuery.builder()
+                .withQuery(getSearchBuilderQuery(courseSearchParameters))
+                .withSort(sortOptions)
+                .withPageable(pageable)
+                .build();
     }
 
-    private NativeSearchQueryBuilder getSearchQuery(CourseSearchParameters courseSearchParameters) {
-        BoolQueryBuilder boolQuery = getSearchBuilderQuery(courseSearchParameters);
-        BoolQueryBuilder filterQuery = boolQuery();
+    private NativeQuery getSearchQuery(CourseSearchParameters courseSearchParameters) {
+        Query mainQuery = getSearchBuilderQuery(courseSearchParameters);
 
-        courseSearchParameters.getVisibility().forEach(v -> filterQuery.should(matchQuery("visibility", v.toString())));
+        BoolQuery.Builder filterQueryBuilder = new BoolQuery.Builder();
+        courseSearchParameters.getVisibility().forEach(v ->
+                filterQueryBuilder.should(QueryBuilders.match(m -> m
+                        .field("visibility")
+                        .query(v.toString())
+                ))
+        );
 
-        return new NativeSearchQueryBuilder()
-                .withQuery(boolQuery)
-                .withFilter(filterQuery);
+        return NativeQuery.builder()
+                .withQuery(mainQuery)
+                .withFilter(Query.of(q -> q.bool(filterQueryBuilder.build())))
+                .build();
     }
 
-    private NativeSearchQueryBuilder getSearchQuery(Pageable pageable, CourseSearchParameters courseSearchParameters) {
-        return getSearchQuery(courseSearchParameters)
-                .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
-                .withPageable(pageable);
+    private NativeQuery getSearchQuery(Pageable pageable, CourseSearchParameters courseSearchParameters) {
+        SortOptions scoreSort = SortOptions.of(s -> s.score(score -> score));
+
+        return NativeQuery.builder()
+                .withQuery(getSearchBuilderQuery(courseSearchParameters))
+                .withSort(scoreSort)
+                .withPageable(pageable)
+                .build();
     }
 
     @Override
     public Page<Course> findAllByOrganisationCode(String organisationalUnitCode, Pageable pageable) {
-        BoolQueryBuilder boolQuery = boolQuery();
+        Query boolQuery = Query.of(q -> q.bool(b -> b
+                .must(QueryBuilders.match(m -> m
+                        .field("owner.organisationalUnit")
+                        .query(organisationalUnitCode)))
+        ));
 
-        boolQuery.must(matchQuery("owner.organisationalUnit", organisationalUnitCode));
-
-        Query searchQuery = new NativeSearchQueryBuilder()
+        NativeQuery searchQuery = NativeQuery.builder()
                 .withQuery(boolQuery)
                 .withPageable(pageable)
                 .build();
@@ -192,11 +248,13 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
     @Override
     public Page<Course> findAllBySupplier(String supplier, Pageable pageable) {
-        BoolQueryBuilder boolQuery = boolQuery();
+        Query boolQuery = Query.of(q -> q.bool(b -> b
+                .must(QueryBuilders.match(m -> m
+                        .field("owner.supplier")
+                        .query(supplier)))
+        ));
 
-        boolQuery.must(matchQuery("owner.supplier", supplier));
-
-        Query searchQuery = new NativeSearchQueryBuilder()
+        NativeQuery searchQuery = NativeQuery.builder()
                 .withQuery(boolQuery)
                 .withPageable(pageable)
                 .build();
@@ -204,19 +262,18 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         return Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
     }
 
-
-    private BoolQueryBuilder addFilter(BoolQueryBuilder boolQuery, List<String> values, String key) {
+    private void addFilter(BoolQuery.Builder boolQuery, List<String> values, String key) {
         if (values != null && !values.isEmpty()) {
-            BoolQueryBuilder filterQuery = QueryBuilders.boolQuery();
+            BoolQuery.Builder filterQuery = new BoolQuery.Builder();
 
             for (String department : values) {
-                filterQuery = filterQuery
-                        .should(QueryBuilders.matchPhraseQuery(key, department));
+                filterQuery.should(QueryBuilders.matchPhrase(m -> m
+                        .field(key)
+                        .query(department)));
             }
-            filterQuery.minimumShouldMatch(1);
-            return boolQuery.must(filterQuery);
+            filterQuery.minimumShouldMatch("1");
+            boolQuery.must(Query.of(q -> q.bool(filterQuery.build())));
         }
-        return boolQuery;
     }
 
 }

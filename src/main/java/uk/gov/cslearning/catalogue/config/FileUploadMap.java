@@ -3,7 +3,7 @@ package uk.gov.cslearning.catalogue.config;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.service.upload.UploadServiceType;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

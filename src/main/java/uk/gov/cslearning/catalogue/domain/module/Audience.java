@@ -2,7 +2,7 @@ package uk.gov.cslearning.catalogue.domain.module;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.elasticsearch.common.UUIDs;
+import java.util.UUID;
 import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.time.Instant;
@@ -20,7 +20,7 @@ public class Audience {
         REQUIRED_LEARNING
     }
 
-    private String id = UUIDs.randomBase64UUID();
+    private String id = UUID.randomUUID().toString();
 
     private String name;
 

@@ -3,20 +3,25 @@ database:
   name: ${DATABASE_NAME:learning_catalogue}
   use-ssl: ${DATABASE_USESSL:false}
 spring:
+  main:
+    allow-bean-definition-overriding: true
   jackson:
-    serialization:
-      write_dates_as_timestamps: false
-  resources:
-    add-mappings: false
+    deserialization:
+      fail-on-null-for-primitives: false
+  web:
+    resources:
+      add-mappings: false
   datasource:
     url: ${DATASOURCE_URL:${database.host}/${database.name}?useSSL=${database.use-ssl}&requireSSL=false}
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:my-secret-pw}
-    platform: mysql
     hikari:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+  sql:
+    init:
+      platform: mysql
   flyway:
     locations: classpath:db/migration/{vendor}
   servlet:
@@ -100,7 +105,7 @@ oauth:
   maxTotalConnections: 200
   defaultMaxConnectionsPerRoute: 100
   maxPerServiceUrl: 100
-  jwtKey: ${jwt_key}
+  jwtKey: ${JWT_KEY:jwt_key}
 
 retention:
   timeInDays: ${RETENTION_TIME_IN_DAYS:90}

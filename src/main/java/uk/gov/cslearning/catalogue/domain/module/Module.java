@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
-import org.elasticsearch.common.UUIDs;
+import java.util.UUID;
 import org.springframework.data.elasticsearch.annotations.Field;
 import uk.gov.cslearning.catalogue.domain.Status;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -25,7 +25,7 @@ import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 @Data
 public abstract class Module {
 
-    protected String id = UUIDs.randomBase64UUID();
+    protected String id = UUID.randomUUID().toString();
 
     @NotNull
     protected String title;
