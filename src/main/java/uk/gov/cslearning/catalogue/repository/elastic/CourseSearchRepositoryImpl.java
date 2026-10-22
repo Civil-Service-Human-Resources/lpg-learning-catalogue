@@ -34,8 +34,8 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
     @Override
     public SearchResults search(Pageable pageable, CourseSearchParameters courseSearchParameters, String sortField, Sort.Direction sortDirection) {
-        Query searchQuery = getSearchQuery(pageable, courseSearchParameters, sortField, sortDirection).getQuery();
-        Page<Course> coursePage = Utils.searchPageToPage(operations.search((org.springframework.data.elasticsearch.core.query.Query) searchQuery, Course.class), pageable);
+        NativeQuery searchQuery = getSearchQuery(pageable, courseSearchParameters, sortField, sortDirection);
+        Page<Course> coursePage = Utils.searchPageToPage(operations.search(searchQuery, Course.class), pageable);
         return new SearchResults(coursePage, pageable);
     }
 
@@ -91,6 +91,32 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
             ));
         }
 
+        if (parameters.hasModuleTypes()) {
+            boolQueryBuilder.must(getModuleTypeBoolQuery(parameters.getTypes()));
+        }
+
+        if (parameters.hasAudienceFields()) {
+            boolQueryBuilder.must(getAudienceNestedQuery(parameters.getDepartments(), parameters.getAreasOfWork(), parameters.getInterests()));
+        }
+
+        if (parameters.getCourseIds() != null && !parameters.getCourseIds().isEmpty()) {
+            boolQueryBuilder.must(QueryBuilders.ids(i -> i.values(parameters.getCourseIds())));
+        }
+
+        if (parameters.getStatus() != null && !parameters.getStatus().isEmpty()) {
+            BoolQuery.Builder statusBool = new BoolQuery.Builder();
+            parameters.getStatus().forEach(s -> statusBool.should(QueryBuilders.match(m -> m.field("status").query(s.toString()))));
+            statusBool.minimumShouldMatch("1");
+            boolQueryBuilder.filter(Query.of(q -> q.bool(statusBool.build())));
+        }
+
+        if (parameters.getVisibility() != null && !parameters.getVisibility().isEmpty()) {
+            BoolQuery.Builder visibilityBool = new BoolQuery.Builder();
+            parameters.getVisibility().forEach(v -> visibilityBool.should(QueryBuilders.match(m -> m.field("visibility").query(v.toString()))));
+            visibilityBool.minimumShouldMatch("1");
+            boolQueryBuilder.filter(Query.of(q -> q.bool(visibilityBool.build())));
+        }
+
         return Query.of(q -> q.bool(boolQueryBuilder.build()));
     }
 
@@ -110,14 +136,20 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     private Query getAudienceNestedQuery(List<String> departments, List<String> areasOfWork, List<String> interests) {
         BoolQuery.Builder audiencesBoolQuery = new BoolQuery.Builder();
 
-        departments.forEach(department -> audiencesBoolQuery.must(
-                QueryBuilders.match(m -> m.field("audiences.departments").query(department).operator(Operator.And))));
+        if (departments != null) {
+            departments.forEach(department -> audiencesBoolQuery.must(
+                    QueryBuilders.match(m -> m.field("audiences.departments").query(department).operator(Operator.And))));
+        }
 
-        areasOfWork.forEach(areaOfWork -> audiencesBoolQuery.must(
-                QueryBuilders.match(m -> m.field("audiences.areasOfWork").query(areaOfWork).operator(Operator.And))));
+        if (areasOfWork != null) {
+            areasOfWork.forEach(areaOfWork -> audiencesBoolQuery.must(
+                    QueryBuilders.match(m -> m.field("audiences.areasOfWork").query(areaOfWork).operator(Operator.And))));
+        }
 
-        interests.forEach(interest -> audiencesBoolQuery.must(
-                QueryBuilders.match(m -> m.field("audiences.interests").query(interest).operator(Operator.And))));
+        if (interests != null) {
+            interests.forEach(interest -> audiencesBoolQuery.must(
+                    QueryBuilders.match(m -> m.field("audiences.interests").query(interest).operator(Operator.And))));
+        }
 
         return QueryBuilders.nested(n -> n
                 .path("audiences")

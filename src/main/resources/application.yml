@@ -8,24 +8,26 @@ spring:
   jackson:
     deserialization:
       fail-on-null-for-primitives: false
+  web:
+    resources:
+      add-mappings: false
   datasource:
     url: ${DATASOURCE_URL:${database.host}/${database.name}?useSSL=${database.use-ssl}&requireSSL=false}
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:my-secret-pw}
-    platform: mysql
     hikari:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+  sql:
+    init:
+      platform: mysql
   flyway:
     locations: classpath:db/migration/{vendor}
   servlet:
     multipart:
       max-file-size: 5120MB
       max-request-size: 5120MB
-  web:
-    resources:
-      add-mappings: false
 time:
   zoneId: ${TIME_ZONE_ID:UTC}
 server:

@@ -4,6 +4,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,6 +35,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public JwtDecoder jwtDecoder(OAuthProperties oAuthProperties) {
         return NimbusJwtDecoder.withSecretKey(
                 new SecretKeySpec(oAuthProperties.getJwtKey().getBytes(StandardCharsets.UTF_8), "HMACSHA256")
@@ -41,6 +43,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean(SecurityFilterChain.class)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
