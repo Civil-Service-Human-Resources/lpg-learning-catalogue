@@ -12,6 +12,8 @@ apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'jacoco'
 
+ext['tomcat.version'] = '11.0.25'
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
