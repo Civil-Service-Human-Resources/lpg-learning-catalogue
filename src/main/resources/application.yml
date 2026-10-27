@@ -98,9 +98,9 @@ oauth:
   serviceUrl: ${OAUTH_SERVICE_URL:http://localhost:8080}
   clientId: ${CLIENT_ID:9fbd4ae2-2db3-44c7-9544-88e80255b56e}
   clientSecret: ${CLIENT_SECRET:test}
-  checkTokenEndpoint: ${OAUTH_CHECK_TOKEN_ENDPOINT:/oauth/check_token}
+  checkTokenEndpoint: ${OAUTH_CHECK_TOKEN_ENDPOINT:/oauth2/introspect}
   checkTokenUrl: "${oauth.serviceUrl}${oauth.checkTokenEndpoint}"
-  tokenEndpoint: ${OAUTH_TOKEN_ENDPOINT:/oauth/token}
+  tokenEndpoint: ${OAUTH_TOKEN_ENDPOINT:/oauth2/token}
   tokenUrl: "${oauth.serviceUrl}${oauth.tokenEndpoint}"
   maxTotalConnections: 200
   defaultMaxConnectionsPerRoute: 100
