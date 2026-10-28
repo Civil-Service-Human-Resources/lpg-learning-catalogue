@@ -25,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Repository
 public class CourseSearchRepositoryImpl implements CourseSearchRepository {
 
-    private ElasticsearchOperations operations;
+    private final ElasticsearchOperations operations;
 
     public CourseSearchRepositoryImpl(ElasticsearchOperations operations) {
         checkArgument(operations != null);
@@ -49,7 +49,6 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     @Override
     public SearchResults search(Pageable pageable, CourseSearchParameters courseSearchParameters, OwnerParameters ownerParameters) {
         Query filterQuery = getOwnerFilter(ownerParameters);
-
         NativeQuery searchQuery = NativeQuery.builder()
                 .withQuery(getSearchBuilderQuery(courseSearchParameters))
                 .withFilter(filterQuery)
@@ -170,7 +169,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         if (ownerParameters.hasProfession()) {
             filterQuery.must(QueryBuilders.match(m -> m
                     .field("owner.profession")
-                    .query(ownerParameters.getProfession().toString())));
+                    .query(ownerParameters.getProfession())));
         }
 
         if (ownerParameters.hasSupplier()) {
@@ -185,9 +184,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
     private NativeQuery getSearchQuery(Pageable pageable, CourseSearchParameters courseSearchParameters, String fieldName, Sort.Direction direction) {
         SortOrder esSortOrder = direction.isAscending() ? SortOrder.Asc : SortOrder.Desc;
         String scriptSource = String.format("doc['%s.keyword'].value.toLowerCase()", fieldName);
-
         Script inlineScript = Script.of(s -> s.source(ss -> ss.scriptString(scriptSource)));
-
         SortOptions sortOptions = SortOptions.of(s -> s
                 .script(ss -> ss
                         .script(inlineScript)

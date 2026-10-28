@@ -1,9 +1,7 @@
 package uk.gov.cslearning.catalogue.service;
 
-
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -53,13 +51,13 @@ public class EventServiceTest {
         Course course = new Course();
         course.setId(courseId);
 
-        Module module = new FaceToFaceModule("product-code");
+        FaceToFaceModule module = new FaceToFaceModule("product-code");
         module.setId(moduleId);
 
         Event savedEvent = new Event();
         Collection<Event> events = new HashSet<>();
         events.add(savedEvent);
-        ((FaceToFaceModule) module).setEvents(events);
+        module.setEvents(events);
 
         List<Module> modules = new ArrayList<>();
         modules.add(module);
@@ -81,7 +79,7 @@ public class EventServiceTest {
         Course course = new Course();
         course.setId(courseId);
 
-        Module module = new FaceToFaceModule("product-code");
+        FaceToFaceModule module = new FaceToFaceModule("product-code");
         module.setId(moduleId);
 
         Event savedEvent = new Event();
@@ -91,7 +89,7 @@ public class EventServiceTest {
 
         Collection<Event> events = new HashSet<>();
         events.add(savedEvent);
-        ((FaceToFaceModule) module).setEvents(events);
+        module.setEvents(events);
 
         List<Module> modules = new ArrayList<>();
         modules.add(module);
@@ -107,7 +105,7 @@ public class EventServiceTest {
         Optional<Event> result = eventService.find(courseId, moduleId, savedEvent.getId());
 
         assertEquals(result, Optional.of(savedEvent));
-        Assertions.assertTrue(result.get().getVenue().getAvailability() == availability);
+        assertEquals((int) result.get().getVenue().getAvailability(), availability);
 
         verify(courseRepository).findById(courseId);
         verify(learnerRecordService).getEventActiveBookingsCount(savedEvent.getId());
@@ -121,7 +119,7 @@ public class EventServiceTest {
 
         when(learnerRecordService.getEventStatus(eventId)).thenReturn(eventStatus);
 
-        assertEquals(eventService.getStatus(eventId), eventStatus);
+        assertEquals(eventStatus, eventService.getStatus(eventId));
 
         verify(learnerRecordService).getEventStatus(eventId);
     }

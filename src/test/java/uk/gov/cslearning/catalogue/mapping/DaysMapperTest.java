@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.mapping;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

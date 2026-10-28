@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.dto.factory;
 
-
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Test;
@@ -53,7 +52,7 @@ public class EventDtoFactoryTest {
         assertNotNull(eventDto.getId());
         assertEquals(event.getId(), eventDto.getId());
         assertEquals(event.getVenue().getLocation(), eventDto.getLocation());
-        if (event.getDateRanges().size() > 0) {
+        if (!event.getDateRanges().isEmpty()) {
             assertEquals(eventDtoFactory.getEventDatesFromDateRanges(event.getDateRanges()), eventDto.getEventDate());
         }
     }
