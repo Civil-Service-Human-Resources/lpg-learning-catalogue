@@ -12,6 +12,10 @@ apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'jacoco'
 
+/*
+    The Apache Tomcat 11.0.24 is included in the Spring Boot 4.1.1 which has a vulnerability CVE-2026-32990 (Improper Input Validation).
+    To fix it is recommended to upgrade to version 11.0.25. In future when Spring Boot version is upgraded then below line can be removed.
+*/
 ext['tomcat.version'] = '11.0.25'
 
 java {
