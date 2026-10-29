@@ -78,7 +78,7 @@ public class AppInsightsTelemetryInitializerTest {
     @Test
     public void shouldTruncateRequestUrlIfExceedsMaxCharacters() throws Exception {
         RequestTelemetry telemetry = new RequestTelemetry();
-        StringBuilder sb = new StringBuilder("http://learning-resources-testlocal-abc-xyz.localhost:9001/?q=");
+        StringBuilder sb = new StringBuilder("https://learning-resources.environment.learn.domain-abc-xyz-localhost:9001/?q=");
         while (sb.length() < 3000) {
             sb.append("abcdefghijklmnopqrstuvwxyz0123456789");
         }
