@@ -16,7 +16,6 @@ import co.elastic.clients.transport.TransportOptions;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 
-import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -122,8 +121,9 @@ public class ElasticRestClientConfig extends ElasticsearchConfiguration {
 
         @SneakyThrows
         @Override
+        @SuppressWarnings("deprecation")
         public URL convert(@NotNull String source) {
-            return URI.create(source).toURL();
+            return new URL(source);
         }
     }
 
