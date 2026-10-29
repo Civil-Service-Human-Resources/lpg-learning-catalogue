@@ -19,6 +19,8 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+  jpa:
+    open-in-view: ${JPA_OPEN_IN_VIEW:true}
   sql:
     init:
       platform: mysql
@@ -109,3 +111,9 @@ oauth:
 
 retention:
   timeInDays: ${RETENTION_TIME_IN_DAYS:90}
+
+springdoc:
+  api-docs:
+    enabled: ${SPRINGDOC_API_DOCS_ENABLED:false}
+  swagger-ui:
+    enabled: ${SPRINGDOC_SWAGGER_UI_ENABLED:false}
