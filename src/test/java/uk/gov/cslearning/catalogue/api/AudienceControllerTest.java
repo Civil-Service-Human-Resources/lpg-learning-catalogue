@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import uk.gov.cslearning.catalogue.service.CourseService;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -70,7 +70,7 @@ public class AudienceControllerTest {
         Audience audience = mock(Audience.class);
         when(audience.getId()).thenReturn(audienceId);
 
-        String courseId = UUID.randomUUID().toString();
+        String courseId = RandomStringUtils.secure().nextAlphanumeric(22);
 
         when(audienceService.isPermitted(any(), any())).thenReturn(true);
         when(audienceService.setDefaults(any(), any())).thenReturn(audience);
