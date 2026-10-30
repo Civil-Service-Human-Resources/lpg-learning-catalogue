@@ -32,7 +32,6 @@ public class FileUpload {
     LocalDateTime timestamp;
 
     public static FileUpload createFromMetadata(MultipartFile file, String container, String filename) {
-        // Generates a 22-character secure alphanumeric ID to satisfy test length constraints
         String id = RandomStringUtils.secure().nextAlphanumeric(22);
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         String name = (null != filename) ? filename : file.getOriginalFilename();

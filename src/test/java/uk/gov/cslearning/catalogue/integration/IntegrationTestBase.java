@@ -1,6 +1,5 @@
 package uk.gov.cslearning.catalogue.integration;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
@@ -11,8 +10,8 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -58,11 +57,6 @@ public abstract class IntegrationTestBase {
         Assumptions.assumeTrue(runIntegrationTests, "RUN_INTEGRATION_TESTS is false, skipping integration tests");
     }
 
-    /**
-     * TestContainers takes a very long time to spin up which is causing timeouts in the integration tests. Assuming
-     * this will be fixed if we upgraded to Java 17 so lets comment this out until then.
-     */
-
     protected static String elasticImage = "docker.elastic.co/elasticsearch/elasticsearch:8.4.2";
 
     static ElasticsearchContainer ELASTICSEARCH_CONTAINER;
@@ -102,10 +96,4 @@ public abstract class IntegrationTestBase {
             registry.add("elasticsearch.port", () -> ELASTICSEARCH_CONTAINER.getMappedPort(9200));
         }
     }
-
-//    @AfterEach
-//    public void afterAll() {
-//        Runtime.getRuntime().addShutdownHook(new Thread(() -> dataService.deleteBulkCourses()));
-//    }
-
 }

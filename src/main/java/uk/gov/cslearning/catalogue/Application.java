@@ -8,13 +8,9 @@ import org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsear
 /**
  * Main Spring application configuration and entry point.
  */
-@SpringBootApplication(exclude = {
-        DataElasticsearchRepositoriesAutoConfiguration.class,
-        DataElasticsearchAutoConfiguration.class
-})
+@SpringBootApplication(exclude = {DataElasticsearchRepositoriesAutoConfiguration.class, DataElasticsearchAutoConfiguration.class})
 public class Application {
-
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }

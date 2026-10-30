@@ -36,4 +36,5 @@ public class RegistryService {
         ResponseEntity<CivilServant> response = restTemplate.exchange(requestEntity, CivilServant.class);
         return response.getBody();
     }
+
 }

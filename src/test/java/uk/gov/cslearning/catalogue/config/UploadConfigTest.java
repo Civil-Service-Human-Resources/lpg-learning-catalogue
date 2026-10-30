@@ -30,9 +30,11 @@ public class UploadConfigTest {
         assertEquals(cloudBlobClient, config.storageClient(cloudStorageAccount));
     }
 
+
     @Test
     public void tikaShouldReturnTika() {
         Tika tika = config.tika();
         assertNotNull(tika);
     }
+
 }
