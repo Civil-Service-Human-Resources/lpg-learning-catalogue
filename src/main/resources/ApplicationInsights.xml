@@ -18,6 +18,7 @@
         <Add type="com.microsoft.applicationinsights.web.extensibility.initializers.WebSessionTelemetryInitializer"/>
         <Add type="com.microsoft.applicationinsights.web.extensibility.initializers.WebUserTelemetryInitializer"/>
         <Add type="com.microsoft.applicationinsights.web.extensibility.initializers.WebUserAgentTelemetryInitializer"/>
+        <Add type="uk.gov.cslearning.catalogue.config.AppInsightsTelemetryInitializer"/>
     </TelemetryInitializers>
 
 </ApplicationInsights>

@@ -4,20 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableMap;
-import org.glassfish.jersey.servlet.WebConfig;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.ErrorDtoFactory;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 import uk.gov.cslearning.catalogue.service.AudienceService;
@@ -26,38 +23,41 @@ import uk.gov.cslearning.catalogue.service.CourseService;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(AudienceController.class)
+@WebMvcTest(
+        controllers = AudienceController.class,
+        properties = {
+                "spring.main.allow-bean-definition-overriding=true",
+                "spring.autoconfigure.exclude=org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration"
+        }
+)
 @WithMockUser(username = "user")
-@ContextConfiguration(classes = {WebConfig.class, AudienceController.class})
-@EnableSpringDataWebSupport
 public class AudienceControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private CourseService courseService;
 
-    @MockBean
+    @MockitoBean
     private AudienceService audienceService;
+
+    @MockitoBean
+    private ErrorDtoFactory errorDtoFactory;
 
     private ObjectMapper objectMapper;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -70,14 +70,14 @@ public class AudienceControllerTest {
         Audience audience = mock(Audience.class);
         when(audience.getId()).thenReturn(audienceId);
 
-        String courseId = UUID.randomUUID().toString();
+        String courseId = RandomStringUtils.secure().nextAlphanumeric(22);
 
         when(audienceService.isPermitted(any(), any())).thenReturn(true);
         when(audienceService.setDefaults(any(), any())).thenReturn(audience);
         when(audienceService.save(any(), any())).thenReturn(new Course());
 
         mockMvc.perform(
-                        post(String.format("/courses/%s/audiences/", courseId)).with(csrf())
+                        post(String.format("/courses/%s/audiences", courseId)).with(csrf())
                                 .content(objectMapper.writeValueAsString(ImmutableMap.of("id", audienceId, "name", "Audience name")))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
@@ -147,13 +147,12 @@ public class AudienceControllerTest {
         when(audienceService.isPermitted(any(), any())).thenReturn(true);
         when(courseService.save(course)).thenReturn(course);
 
-        assertThat(course.getAudiences().isEmpty(), is(not(true)));
+        assertFalse(course.getAudiences().isEmpty());
 
         mockMvc.perform(
                         delete(String.format("/courses/%s/audiences/%s", course.getId(), audience.getId())).with(csrf()))
                 .andExpect(status().isNoContent());
 
-        assertThat(course.getAudiences().isEmpty(), is(true));
+        assertTrue(course.getAudiences().isEmpty());
     }
-
 }

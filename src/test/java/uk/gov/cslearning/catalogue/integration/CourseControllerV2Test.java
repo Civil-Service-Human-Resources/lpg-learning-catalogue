@@ -1,6 +1,6 @@
 package uk.gov.cslearning.catalogue.integration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import uk.gov.cslearning.catalogue.domain.Course;
 
@@ -88,7 +88,7 @@ public class CourseControllerV2Test extends IntegrationTestBase {
         Course otherCourse = dataService.createCourse("Other");
         otherCourse.setId("otherCourse");
 
-        dataService.getRepository().saveAll(Arrays.asList(bCourse, ACourse, ZCourse, otherCourse));
+        dataService.repository().saveAll(Arrays.asList(bCourse, ACourse, ZCourse, otherCourse));
 
         // Sorted
         mvc.perform(post("/v2/courses/search?size=4&page=0&sort.field=title&sort.direction=ASC")

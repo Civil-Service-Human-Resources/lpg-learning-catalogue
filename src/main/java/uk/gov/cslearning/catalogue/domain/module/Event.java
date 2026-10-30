@@ -2,7 +2,7 @@ package uk.gov.cslearning.catalogue.domain.module;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.elasticsearch.common.UUIDs;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Event {
 
-    private String id = UUIDs.randomBase64UUID();
+    private String id = RandomStringUtils.secure().nextAlphanumeric(22);
 
     private String joiningInstructions;
 

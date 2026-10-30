@@ -5,15 +5,15 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana@sha256:0d2565286641d213fdbc26ffe29c33268d31e4820ea7af636ebc7d879d736895
     ports:
-      - 5601:5601
+      - "5601:5601"
     depends_on:
       - elasticsearch
 
   elasticsearch:
     image: elasticsearch:8.4.2
     ports:
-      - 9200:9200
-      - 9300:9300
+      - "9200:9200"
+      - "9300:9300"
     environment:
       - network.bind_host=0.0.0.0
       - xpack.security.enabled=false
@@ -22,6 +22,6 @@ services:
   elastichq:
     image: elastichq/elasticsearch-hq
     ports:
-      - 5000:5000
+      - "5001:5001"
     environment:
       HQ_DEFAULT_URL: http://elasticsearch:9200 
