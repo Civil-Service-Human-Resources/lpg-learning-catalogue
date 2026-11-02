@@ -1,7 +1,7 @@
 package uk.gov.cslearning.catalogue.service;
 
 import org.springframework.stereotype.Service;
-import uk.gov.cslearning.catalogue.domain.*;
+import uk.gov.cslearning.catalogue.domain.learningTag.*;
 import uk.gov.cslearning.catalogue.service.util.IUtilService;
 
 import java.time.LocalDateTime;
@@ -15,6 +15,10 @@ public class LearningTagFactory {
 
     public LearningTagFactory(IUtilService utilService) {
         this.utilService = utilService;
+    }
+
+    public LearningTagPartialDto createPartialDto(LearningTag tag) {
+        return new LearningTagPartialDto(tag.getId(), tag.getName(), tag.getUrlSlug());
     }
 
     public LearningTagDto createDto(LearningTag tag) {

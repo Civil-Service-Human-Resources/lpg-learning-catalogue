@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import uk.gov.cslearning.catalogue.domain.CourseLearningTagEntity;
 import uk.gov.cslearning.catalogue.domain.CourseLearningTagId;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +15,6 @@ public interface ICourseTagRepository extends JpaRepository<CourseLearningTagEnt
     Page<CourseLearningTagEntity> findByLearningTagIdOrderByCourseTitleAsc(Long learningTagId, Pageable pageable);
 
     Optional<CourseLearningTagEntity> findByLearningTagIdAndCourseId(Long learningTagId, Long courseId);
+
+    Collection<CourseLearningTagEntity> findByCourse_UidIn(Collection<String> courseIds);
 }

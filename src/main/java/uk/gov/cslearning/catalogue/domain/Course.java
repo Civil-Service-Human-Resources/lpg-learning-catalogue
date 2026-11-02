@@ -10,6 +10,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import uk.gov.cslearning.catalogue.domain.Owner.Owner;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagPartialDto;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
@@ -71,6 +72,8 @@ public class Course {
     private BigDecimal cost = new BigDecimal(0);
 
     private Boolean hasBeenPublished;
+
+    private Collection<LearningTagPartialDto> learningTags = new ArrayList<>();
 
     public Course() {
     }

@@ -12,9 +12,9 @@ import uk.gov.cslearning.catalogue.api.v2.model.CourseSearchParameters;
 import uk.gov.cslearning.catalogue.api.v2.model.RequiredLearningIdMap;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.CourseEntity;
 import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.Status;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagPartialDto;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
@@ -53,10 +53,12 @@ public class CourseService {
 
     private final ICourseStatusRepository iCourseStatusRepository;
 
+    private final LearningTagService learningTagService;
+
     public CourseService(CourseRepository courseRepository,
                          EventService eventService, RegistryService registryService, OwnerFactory ownerFactory,
                          AuthoritiesService authoritiesService, CourseValidator courseValidator,
-                         ICourseRepository iCourseRepository, ICourseStatusRepository iCourseStatusRepository) {
+                         ICourseRepository iCourseRepository, ICourseStatusRepository iCourseStatusRepository, LearningTagService learningTagService) {
         this.courseRepository = courseRepository;
         this.eventService = eventService;
         this.registryService = registryService;
@@ -65,6 +67,7 @@ public class CourseService {
         this.courseValidator = courseValidator;
         this.iCourseRepository = iCourseRepository;
         this.iCourseStatusRepository = iCourseStatusRepository;
+        this.learningTagService = learningTagService;
     }
 
     public Course save(Course course) {
@@ -342,6 +345,11 @@ public class CourseService {
     }
 
     public Iterable<Course> findAllById(List<String> courseIds) {
-        return courseRepository.findAllById(courseIds);
+        Iterable<Course> allById = courseRepository.findAllById(courseIds);
+        Map<String, Collection<LearningTagPartialDto>> entityMap = learningTagService.getPartialLearningTagsForCourseUids(courseIds);
+        for (Course course : allById) {
+            Optional.ofNullable(entityMap.get(course.getId())).ifPresent(course::setLearningTags);
+        }
+        return allById;
     }
 }

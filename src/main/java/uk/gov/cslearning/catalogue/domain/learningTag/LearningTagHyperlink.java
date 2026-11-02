@@ -1,4 +1,4 @@
-package uk.gov.cslearning.catalogue.domain;
+package uk.gov.cslearning.catalogue.domain.learningTag;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,5 +46,15 @@ public class LearningTagHyperlink {
         this.description = description;
         this.createdTimestamp = LocalDateTime.now();
         this.updatedTimestamp = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "id=" + id +
+                ", href='" + href + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", createdTimestamp=" + createdTimestamp +
+                ", updatedTimestamp=" + updatedTimestamp;
     }
 }

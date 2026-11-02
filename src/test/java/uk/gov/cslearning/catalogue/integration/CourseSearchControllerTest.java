@@ -16,7 +16,7 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchBlank() throws Exception {
 
         mvc.perform(get("/search")
-                .with(csrf()))
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results.length()").value(10))
                 .andExpect(jsonPath("$.page").value(0))
@@ -41,10 +41,10 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchBasicPage() throws Exception {
 
         mvc.perform(get("/search")
-                .with(csrf())
-                .param("query", "Course")
-                .param("page", "1")
-                .param("size", "10"))
+                        .with(csrf())
+                        .param("query", "Course")
+                        .param("page", "1")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results.length()").value(1))
                 .andExpect(jsonPath("$.page").value(1))
@@ -56,10 +56,10 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchBasicSize() throws Exception {
 
         mvc.perform(get("/search")
-                .with(csrf())
-                .param("query", "Course")
-                .param("page", "0")
-                .param("size", "20"))
+                        .with(csrf())
+                        .param("query", "Course")
+                        .param("page", "0")
+                        .param("size", "20"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results.length()").value(11))
                 .andExpect(jsonPath("$.page").value(0))
@@ -71,9 +71,9 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchDepartments() throws Exception {
 
         mvc.perform(get("/search")
-                .with(csrf())
-                .param("departments", "COD")
-                .param("query", "Course"))
+                        .with(csrf())
+                        .param("departments", "COD")
+                        .param("query", "Course"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.totalResults").value(3))
@@ -84,9 +84,9 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchAreasOfWork() throws Exception {
 
         mvc.perform(get("/search")
-                .with(csrf())
-                .param("areasOfWork", "Analysis")
-                .param("query", "Course"))
+                        .with(csrf())
+                        .param("areasOfWork", "Analysis")
+                        .param("query", "Course"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.totalResults").value(2))
@@ -97,9 +97,9 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchInterests() throws Exception {
 
         mvc.perform(get("/search")
-                .with(csrf())
-                .param("interests", "EU")
-                .param("query", "Course"))
+                        .with(csrf())
+                        .param("interests", "EU")
+                        .param("query", "Course"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.totalResults").value(2))
@@ -110,10 +110,10 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchMultiple() throws Exception {
 
         mvc.perform(get("/search")
-                .with(csrf())
-                .param("departments", "COD")
-                .param("areasOfWork", "Finance")
-                .param("query", "Course"))
+                        .with(csrf())
+                        .param("departments", "COD")
+                        .param("areasOfWork", "Finance")
+                        .param("query", "Course"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.totalResults").value(1))
@@ -124,9 +124,9 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchFree() throws Exception {
 
         mvc.perform(get("/search")
-                .with(csrf())
-                .param("cost", "free")
-                .param("query", "Course"))
+                        .with(csrf())
+                        .param("cost", "free")
+                        .param("query", "Course"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.totalResults").value(9))
@@ -137,10 +137,10 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchModuleTypes() throws Exception {
 
         mvc.perform(get("/search")
-                .with(csrf())
-                .param("types", "elearning")
-                .param("types", "file")
-                .param("query", "Course"))
+                        .with(csrf())
+                        .param("types", "elearning")
+                        .param("types", "file")
+                        .param("query", "Course"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.totalResults").value(5))
@@ -154,11 +154,11 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchAdmin() throws Exception {
 
         mvc.perform(get("/search/management/courses")
-                .with(csrf())
-                .param("query", "Course"))
+                        .with(csrf())
+                        .param("query", "Course"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
-                .andExpect(jsonPath("$.totalResults").value(11))
+                .andExpect(jsonPath("$.totalResults").value(14))
                 .andExpect(jsonPath("$.size").value(10));
     }
 
@@ -167,13 +167,13 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchAdminArchived() throws Exception {
 
         mvc.perform(get("/search/management/courses")
-                .with(csrf())
-                .param("query", "Course")
-                .param("status", "ARCHIVED")
-                .param("status", "PUBLISHED"))
+                        .with(csrf())
+                        .param("query", "Course")
+                        .param("status", "ARCHIVED")
+                        .param("status", "PUBLISHED"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
-                .andExpect(jsonPath("$.totalResults").value(13))
+                .andExpect(jsonPath("$.totalResults").value(14))
                 .andExpect(jsonPath("$.size").value(10));
     }
 
@@ -182,13 +182,13 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchAdminPrivate() throws Exception {
 
         mvc.perform(get("/search/management/courses")
-                .with(csrf())
-                .param("query", "Course")
-                .param("visibility", "PRIVATE")
-                .param("visibility", "PUBLIC"))
+                        .with(csrf())
+                        .param("query", "Course")
+                        .param("visibility", "PRIVATE")
+                        .param("visibility", "PUBLIC"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
-                .andExpect(jsonPath("$.totalResults").value(12))
+                .andExpect(jsonPath("$.totalResults").value(14))
                 .andExpect(jsonPath("$.size").value(10));
     }
 
@@ -197,8 +197,8 @@ public class CourseSearchControllerTest extends IntegrationTestBase {
     public void testSearchAdminKpmgSupplierAuthor() throws Exception {
 
         mvc.perform(get("/search/management/courses")
-                .with(csrf())
-                .param("query", "Course"))
+                        .with(csrf())
+                        .param("query", "Course"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.totalResults").value(1))

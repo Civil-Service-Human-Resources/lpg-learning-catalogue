@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.cslearning.catalogue.api.models.*;
-import uk.gov.cslearning.catalogue.domain.LearningTagBulkStateDto;
-import uk.gov.cslearning.catalogue.domain.LearningTagDto;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagBulkStateDto;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagDto;
 import uk.gov.cslearning.catalogue.dto.BulkUpdateDto;
 import uk.gov.cslearning.catalogue.service.LearningTagService;
 

@@ -163,9 +163,7 @@ public class CourseSearchRepositoryImpl implements CourseSearchRepository {
         BoolQueryBuilder boolQuery = getSearchBuilderQuery(courseSearchParameters);
         BoolQueryBuilder filterQuery = boolQuery();
 
-        if (courseSearchParameters.getVisibility().equals("PUBLIC")) {
-            filterQuery.should(matchQuery("visibility", "PUBLIC"));
-        }
+        courseSearchParameters.getVisibility().forEach(v -> filterQuery.should(matchQuery("visibility", v.toString())));
 
         return new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)

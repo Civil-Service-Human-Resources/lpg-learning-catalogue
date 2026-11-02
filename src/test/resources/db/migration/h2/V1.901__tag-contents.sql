@@ -1,12 +1,14 @@
 INSERT INTO course (id, uid, title, status_id, short_description)
 VALUES (1, 'ABC', 'Course ABC', 2, 'Course ABC short description'),
        (2, 'DEF', 'Course DEF', 2, 'Course DEF short description'),
-       (3, 'GHI', 'Course GHI', 2, 'Course GHI short description');
+       (3, 'GHI', 'Course GHI', 2, 'Course GHI short description'),
+       (4, 'req-course-1', 'Required course 1', 2, 'Required course 1 short description');
 
 INSERT INTO course_tags (learning_tag_id, course_id)
 VALUES (1, 1),
        (1, 2),
-       (1, 3);
+       (1, 3),
+       (1, 4);
 
 INSERT INTO learning_tag_hyperlink
     (id, learning_tag_id, href, title, description)

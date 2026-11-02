@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(MediaController.class)
 @WithMockUser(username = "user")
 @ContextConfiguration(classes = {WebConfig.class, MediaController.class,
-                                ApiExceptionHandler.class, FileUploadMap.class})
+                                ApiExceptionHandler.class, FileUploadMap.class, ErrorDtoFactory.class})
 public class MediaControllerTest {
 
     @Autowired
@@ -43,9 +43,6 @@ public class MediaControllerTest {
 
     @MockBean
     private MediaManagementService mediaManagementService;
-
-    @MockBean
-    private ErrorDtoFactory errorDtoFactory;
 
     @Test
     public void shouldUploadFileOnPostRequest() throws Exception {
