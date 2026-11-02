@@ -23,6 +23,13 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '8'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+    displayName: 'Use Java 8'
+
   - task: Gradle@3
     inputs:
       gradleWrapperFile: 'gradlew'
