@@ -96,7 +96,7 @@ public class CourseControllerTest {
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
-                        get("/courses")
+                        get("/courses/")
                                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results[0].id", equalTo(course.getId())));
@@ -110,7 +110,7 @@ public class CourseControllerTest {
                 .thenReturn(new PageImpl<>(Collections.singletonList(course)));
 
         mockMvc.perform(
-                        get("/courses")
+                        get("/courses/")
                                 .param("status", "Draft", "Published", "Archived")
                                 .with(csrf()))
                 .andExpect(status().isOk())

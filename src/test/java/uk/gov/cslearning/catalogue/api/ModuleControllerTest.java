@@ -78,7 +78,7 @@ public class ModuleControllerTest {
         when(moduleService.save(eq(courseId), any(Module.class))).thenReturn(module);
 
         mockMvc.perform(
-                        post(String.format("/courses/%s/modules", courseId)).with(csrf())
+                        post(String.format("/courses/%s/modules/", courseId)).with(csrf())
                                 .content(json)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))

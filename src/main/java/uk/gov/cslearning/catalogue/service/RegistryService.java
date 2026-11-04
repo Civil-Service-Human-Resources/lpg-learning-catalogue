@@ -33,7 +33,9 @@ public class RegistryService {
     public CivilServant getCurrentCivilServant() {
         LOGGER.debug("Getting profile details for authenticated user");
         RequestEntity<Void> requestEntity = requestEntityFactory.createGetRequest(getCurrentUrl);
+
         ResponseEntity<CivilServant> response = restTemplate.exchange(requestEntity, CivilServant.class);
+
         return response.getBody();
     }
 

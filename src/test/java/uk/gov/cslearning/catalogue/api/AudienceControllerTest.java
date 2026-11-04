@@ -77,7 +77,7 @@ public class AudienceControllerTest {
         when(audienceService.save(any(), any())).thenReturn(new Course());
 
         mockMvc.perform(
-                        post(String.format("/courses/%s/audiences", courseId)).with(csrf())
+                        post(String.format("/courses/%s/audiences/", courseId)).with(csrf())
                                 .content(objectMapper.writeValueAsString(ImmutableMap.of("id", audienceId, "name", "Audience name")))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
