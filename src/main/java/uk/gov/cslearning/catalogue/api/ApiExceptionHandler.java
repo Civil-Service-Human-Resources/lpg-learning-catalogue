@@ -14,9 +14,9 @@ import uk.gov.cslearning.catalogue.exception.ForbiddenException;
 import uk.gov.cslearning.catalogue.exception.GenericServerException;
 import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 

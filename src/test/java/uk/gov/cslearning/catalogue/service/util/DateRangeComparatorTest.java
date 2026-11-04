@@ -1,8 +1,8 @@
 package uk.gov.cslearning.catalogue.service.util;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import uk.gov.cslearning.catalogue.domain.module.DateRange;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -45,6 +45,6 @@ public class DateRangeComparatorTest {
         .collect(Collectors.joining(","));
 
     //Then
-    assertTrue("Sorting failed",expectedList.equals(sortedList));
+    assertEquals(expectedList, sortedList, "Sorting failed");
   }
 }

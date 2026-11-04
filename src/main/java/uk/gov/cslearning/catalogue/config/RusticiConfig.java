@@ -1,10 +1,11 @@
 package uk.gov.cslearning.catalogue.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import uk.gov.cslearning.catalogue.service.rustici.CSLToRusticiDataService;
 
 @Configuration
@@ -32,12 +33,13 @@ public class RusticiConfig {
 
     @Bean("rusticiHttpClient")
     public RestTemplate getRestTemplate() {
-        return new RestTemplateBuilder(rt -> rt.getInterceptors().add((request, body, execution) -> {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(rusticiUrl));
+        restTemplate.getInterceptors().add((request, body, execution) -> {
             request.getHeaders().add("EngineTenantName", rusticiTenant);
             return execution.execute(request, body);
-        }))
-        .rootUri(rusticiUrl)
-        .basicAuthentication(rusticiUsername, rusticiPassword)
-        .build();
+        });
+        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(rusticiUsername, rusticiPassword));
+        return restTemplate;
     }
 }

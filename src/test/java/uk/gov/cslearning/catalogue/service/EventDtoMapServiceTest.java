@@ -1,11 +1,11 @@
 package uk.gov.cslearning.catalogue.service;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.DateRange;
 import uk.gov.cslearning.catalogue.domain.module.Event;
@@ -21,13 +21,11 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class EventDtoMapServiceTest {
-
-    private final long retentionTimeInDays = 90;
 
     @Mock
     private EventDateService eventDateService;
@@ -37,8 +35,9 @@ public class EventDtoMapServiceTest {
 
     private EventDtoMapService eventDtoMapService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        long retentionTimeInDays = 90;
         eventDtoMapService = new EventDtoMapService(eventDateService, eventDtoFactory, retentionTimeInDays);
     }
 
@@ -57,7 +56,7 @@ public class EventDtoMapServiceTest {
         faceToFaceModule.setTitle(moduleTitle);
         faceToFaceModule.setEvents(Collections.singletonList(event));
 
-        LinkModule linkModule = new LinkModule(URI.create("http://example.org").toURL());
+        LinkModule linkModule = new LinkModule(URI.create("https://example.org").toURL());
 
         String courseTitle = "course-title";
         String courseId = "course-id";
@@ -66,7 +65,7 @@ public class EventDtoMapServiceTest {
         course.setId(courseId);
         course.setModules(Arrays.asList(faceToFaceModule, linkModule));
 
-        List<Course> courseList = Arrays.asList(course);
+        List<Course> courseList = List.of(course);
 
         CourseDto courseDto = new CourseDto();
         courseDto.setTitle(courseTitle);
@@ -103,7 +102,7 @@ public class EventDtoMapServiceTest {
         faceToFaceModule.setId(moduleId);
         faceToFaceModule.setTitle(moduleTitle);
 
-        LinkModule linkModule = new LinkModule(URI.create("http://example.org").toURL());
+        LinkModule linkModule = new LinkModule(URI.create("https://example.org").toURL());
 
         String courseTitle = "course-title";
         String courseId = "course-id";
@@ -112,7 +111,7 @@ public class EventDtoMapServiceTest {
         course.setId(courseId);
         course.setModules(Arrays.asList(faceToFaceModule, linkModule));
 
-        List<Course> courseList = Arrays.asList(course);
+        List<Course> courseList = List.of(course);
 
         CourseDto courseDto = new CourseDto();
         courseDto.setTitle(courseTitle);
@@ -145,16 +144,16 @@ public class EventDtoMapServiceTest {
         faceToFaceModule.setId(moduleId);
         faceToFaceModule.setTitle(moduleTitle);
 
-        LinkModule linkModule = new LinkModule(URI.create("http://example.org").toURL());
+        LinkModule linkModule = new LinkModule(URI.create("https://example.org").toURL());
 
         String courseTitle = "course-title";
         String courseId = "course-id";
         Course course = new Course();
         course.setTitle(courseTitle);
         course.setId(courseId);
-        course.setModules(Arrays.asList(linkModule));
+        course.setModules(List.of(linkModule));
 
-        List<Course> courseList = Arrays.asList(course);
+        List<Course> courseList = List.of(course);
 
         CourseDto courseDto = new CourseDto();
         courseDto.setTitle(courseTitle);
@@ -192,7 +191,7 @@ public class EventDtoMapServiceTest {
         faceToFaceModule.setTitle(moduleTitle);
         faceToFaceModule.setEvents(Collections.singletonList(event));
 
-        LinkModule linkModule = new LinkModule(URI.create("http://example.org").toURL());
+        LinkModule linkModule = new LinkModule(URI.create("https://example.org").toURL());
 
         String courseTitle = "course-title";
         String courseId = "course-id";
@@ -201,7 +200,7 @@ public class EventDtoMapServiceTest {
         course.setId(courseId);
         course.setModules(Arrays.asList(faceToFaceModule, linkModule));
 
-        List<Course> courseList = Arrays.asList(course);
+        List<Course> courseList = List.of(course);
 
         CourseDto courseDto = new CourseDto();
         courseDto.setTitle(courseTitle);
@@ -250,7 +249,7 @@ public class EventDtoMapServiceTest {
         faceToFaceModule.setTitle(moduleTitle);
         faceToFaceModule.setEvents(Collections.singletonList(event));
 
-        LinkModule linkModule = new LinkModule(URI.create("http://example.org").toURL());
+        LinkModule linkModule = new LinkModule(URI.create("https://example.org").toURL());
 
         String courseTitle = "course-title";
         String courseId = "course-id";
@@ -259,7 +258,7 @@ public class EventDtoMapServiceTest {
         course.setId(courseId);
         course.setModules(Arrays.asList(faceToFaceModule, linkModule));
 
-        List<Course> courseList = Arrays.asList(course);
+        List<Course> courseList = List.of(course);
 
         CourseDto courseDto = new CourseDto();
         courseDto.setTitle(courseTitle);
@@ -296,7 +295,7 @@ public class EventDtoMapServiceTest {
         faceToFaceModule.setId(moduleId);
         faceToFaceModule.setTitle(moduleTitle);
 
-        LinkModule linkModule = new LinkModule(URI.create("http://example.org").toURL());
+        LinkModule linkModule = new LinkModule(URI.create("https://example.org").toURL());
 
         String courseTitle = "course-title";
         String courseId = "course-id";
@@ -305,7 +304,7 @@ public class EventDtoMapServiceTest {
         course.setId(courseId);
         course.setModules(Arrays.asList(faceToFaceModule, linkModule));
 
-        List<Course> courseList = Arrays.asList(course);
+        List<Course> courseList = List.of(course);
 
         CourseDto courseDto = new CourseDto();
         courseDto.setTitle(courseTitle);
@@ -338,16 +337,16 @@ public class EventDtoMapServiceTest {
         faceToFaceModule.setId(moduleId);
         faceToFaceModule.setTitle(moduleTitle);
 
-        LinkModule linkModule = new LinkModule(URI.create("http://example.org").toURL());
+        LinkModule linkModule = new LinkModule(URI.create("https://example.org").toURL());
 
         String courseTitle = "course-title";
         String courseId = "course-id";
         Course course = new Course();
         course.setTitle(courseTitle);
         course.setId(courseId);
-        course.setModules(Arrays.asList(linkModule));
+        course.setModules(List.of(linkModule));
 
-        List<Course> courseList = Arrays.asList(course);
+        List<Course> courseList = List.of(course);
 
         CourseDto courseDto = new CourseDto();
         courseDto.setTitle(courseTitle);

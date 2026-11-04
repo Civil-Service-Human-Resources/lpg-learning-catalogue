@@ -56,7 +56,7 @@ For a complete list of test dependencies check the `build.gradle` file. The main
 
 ## Build, run, test, deploy
 
-The application requires Java 8 (OpenJDK 8) installed to build and run.
+The application requires Java 25 (OpenJDK 25) installed to build and run.
 
 Build the application using Gradle `./gradlew build`.
 

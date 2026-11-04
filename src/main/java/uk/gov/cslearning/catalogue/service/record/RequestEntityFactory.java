@@ -5,7 +5,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -13,16 +13,21 @@ import java.net.URISyntaxException;
 
 @Component
 public class RequestEntityFactory {
-    public RequestEntity createGetRequest(URI uri){
+
+    public RequestEntity<Void> createGetRequest(URI uri) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String tokenValue = "";
+
+        if (authentication instanceof JwtAuthenticationToken jwtToken) {
+            tokenValue = jwtToken.getToken().getTokenValue();
+        }
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + details.getTokenValue());
-        return new RequestEntity(headers, HttpMethod.GET, uri);
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + tokenValue);
+        return new RequestEntity<>(headers, HttpMethod.GET, uri);
     }
 
-    public RequestEntity createGetRequest(String uri) {
+    public RequestEntity<Void> createGetRequest(String uri) {
         try {
             return createGetRequest(new URI(uri));
         } catch (URISyntaxException e) {

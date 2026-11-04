@@ -1,11 +1,11 @@
 package uk.gov.cslearning.catalogue.service;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import com.google.common.collect.ImmutableList;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -30,18 +30,17 @@ import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseStatusRepository;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CourseServiceTest {
     private static final String COURSE_ID_1 = "courseId-1";
     private static final String COURSE_ID_2 = "courseId-2";
@@ -113,11 +112,11 @@ public class CourseServiceTest {
         assertEquals(courseService.getCourseById(courseId), course);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldThrowExceptionIfCourseDoesntExist() {
         when(courseRepository.findById(COURSE_ID_1)).thenReturn(Optional.empty());
 
-        courseService.getCourseById(COURSE_ID_1);
+        assertThrows(IllegalStateException.class, () -> courseService.getCourseById(COURSE_ID_1));
     }
 
     @Test
@@ -173,8 +172,8 @@ public class CourseServiceTest {
         Owner createdOwner = createdCourse.getOwner();
 
         verify(courseRepository).save(course);
-        assertEquals(createdOwner.getOrganisationalUnit(), ORGANISATIONAL_UNIT_CODE);
-        assertEquals(createdOwner.getProfession(), PROFESSION_ID);
+        assertEquals(ORGANISATIONAL_UNIT_CODE, createdOwner.getOrganisationalUnit());
+        assertEquals(PROFESSION_ID, createdOwner.getProfession());
     }
 
     @Test
@@ -187,7 +186,7 @@ public class CourseServiceTest {
         course.setDescription("sd1");
         course.setLearningOutcomes("lc1");
 
-        List<Module> modules = Arrays.asList(new FaceToFaceModule("pc"));
+        List<Module> modules = List.of(new FaceToFaceModule("pc"));
         course.setModules(modules);
 
         Audience audience = new Audience();
@@ -214,7 +213,7 @@ public class CourseServiceTest {
         String newLearningOutcomes = "lc2";
         newCourse.setLearningOutcomes(newLearningOutcomes);
 
-        List<Module> modules2 = Arrays.asList(new LinkModule(new URL("https://www.example.com")));
+        List<Module> modules2 = List.of(new LinkModule(URI.create("https://www.example.com").toURL()));
         newCourse.setModules(modules2);
 
         Audience audience2 = new Audience();
@@ -325,7 +324,7 @@ public class CourseServiceTest {
 
         List<Course> mandatoryCourses = courseService.fetchMandatoryCoursesByDueDate(ImmutableList.of(1L, 7L, 30L));
 
-        assertEquals(mandatoryCourses.size(), 3);
+        assertEquals(3, mandatoryCourses.size());
         assertTrue(mandatoryCourses.contains(course1));
         assertTrue(mandatoryCourses.contains(course2));
         assertTrue(mandatoryCourses.contains(course3));

@@ -1,32 +1,47 @@
 package uk.gov.cslearning.catalogue.integration;
 
-import org.elasticsearch.common.collect.List;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.domain.module.ELearningModule;
+import uk.gov.cslearning.catalogue.domain.Visibility;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagPartialDto;
+import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.service.RegistryService;
 
-import static org.junit.Assert.assertEquals;
+import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CourseControllerTest extends IntegrationTestBase {
 
-    @MockBean
+    @MockitoBean
     private RegistryService mockRegistryService;
 
-    @Before
+    @BeforeEach
     public void before() {
         // Any endpoint annotated with @PreAuthorize will call CsrsService to get the current civil servant.
         // We should mock this call out with wiremock but until then let's just mock the method out
@@ -94,10 +109,10 @@ public class CourseControllerTest extends IntegrationTestBase {
     public void testCreateModule() throws Exception {
 
         Course tempCourse = dataService.createCourse("CreateModule");
-        dataService.getRepository().save(tempCourse);
+        dataService.repository().save(tempCourse);
 
         String json = new JSONObject()
-                .put("url", "http://url.com")
+                .put("url", "https://url.com")
                 .put("title", "Link module")
                 .put("description", "A link module")
                 .put("duration", 100)
@@ -123,7 +138,7 @@ public class CourseControllerTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$.modules[0].type").value("link"))
                 .andExpect(jsonPath("$.modules[0].optional").value(false));
 
-        dataService.getRepository().delete(tempCourse);
+        dataService.repository().delete(tempCourse);
 
     }
 
@@ -133,16 +148,16 @@ public class CourseControllerTest extends IntegrationTestBase {
     public void testUnarchiveCourse() throws Exception {
         Course tempCourse = dataService.createCourse("archiveCourse");
         tempCourse.setStatus(Status.ARCHIVED);
-        dataService.getRepository().save(tempCourse);
+        dataService.repository().save(tempCourse);
 
-        Course update = dataService.getRepository().findById(tempCourse.getId()).get();
+        Course update = dataService.repository().findById(tempCourse.getId()).get();
         update.setStatus(Status.DRAFT);
         mvc.perform(put(String.format("/courses/%s", tempCourse.getId()))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(update)))
                 .andExpect(status().isOk());
-        assertEquals(Status.DRAFT, dataService.getRepository().findById(tempCourse.getId()).get().getStatus());
+        assertEquals(Status.DRAFT, dataService.repository().findById(tempCourse.getId()).get().getStatus());
     }
 
     @Test
@@ -151,9 +166,9 @@ public class CourseControllerTest extends IntegrationTestBase {
     public void testUnarchiveCourseIncorrectPermission() throws Exception {
         Course tempCourse = dataService.createCourse("archiveCourse");
         tempCourse.setStatus(Status.ARCHIVED);
-        dataService.getRepository().save(tempCourse);
+        dataService.repository().save(tempCourse);
 
-        Course update = dataService.getRepository().findById(tempCourse.getId()).get();
+        Course update = dataService.repository().findById(tempCourse.getId()).get();
         update.setStatus(Status.DRAFT);
         mvc.perform(put(String.format("/courses/%s", tempCourse.getId()))
                         .with(csrf())
@@ -172,14 +187,14 @@ public class CourseControllerTest extends IntegrationTestBase {
         ELearningModule m2 = dataService.createELearningModule();
         m2.setId("SECOND");
         tempCourse.setModules(List.of(m1, m2));
-        dataService.getRepository().save(tempCourse);
+        dataService.repository().save(tempCourse);
 
         mvc.perform(put(String.format("/courses/%s/modules", tempCourse.getId()))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("[{\"startPage\":\"http://startPage\",\"url\":\"http://url.com\",\"id\":\"SECOND\",\"title\":\"ELearning module\",\"description\":\"An ELearning module\",\"duration\":100,\"cost\":0.0,\"optional\":false,\"status\":null,\"associatedLearning\":false,\"createdTimestamp\":null,\"updatedTimestamp\":null,\"mediaId\":null,\"moduleType\":\"elearning\",\"type\":\"elearning\"},{\"startPage\":\"http://startPage\",\"url\":\"http://url.com\",\"id\":\"FIRST\",\"title\":\"ELearning module\",\"description\":\"An ELearning module\",\"duration\":100,\"cost\":0.0,\"optional\":false,\"status\":null,\"associatedLearning\":false,\"createdTimestamp\":null,\"updatedTimestamp\":null,\"mediaId\":null,\"moduleType\":\"elearning\",\"type\":\"elearning\"}]"))
+                        .content("[{\"startPage\":\"http://startPage\",\"url\":\"https://url.com\",\"id\":\"SECOND\",\"title\":\"ELearning module\",\"description\":\"An ELearning module\",\"duration\":100,\"cost\":0.0,\"optional\":false,\"status\":null,\"associatedLearning\":false,\"createdTimestamp\":null,\"updatedTimestamp\":null,\"mediaId\":null,\"moduleType\":\"elearning\",\"type\":\"elearning\"},{\"startPage\":\"http://startPage\",\"url\":\"https://url.com\",\"id\":\"FIRST\",\"title\":\"ELearning module\",\"description\":\"An ELearning module\",\"duration\":100,\"cost\":0.0,\"optional\":false,\"status\":null,\"associatedLearning\":false,\"createdTimestamp\":null,\"updatedTimestamp\":null,\"mediaId\":null,\"moduleType\":\"elearning\",\"type\":\"elearning\"}]"))
                 .andExpect(status().isOk());
-        Course result = dataService.getRepository().findById(tempCourse.getId()).get();
+        Course result = dataService.repository().findById(tempCourse.getId()).get();
         assertEquals("SECOND", result.getModules().get(0).getId());
         assertEquals("FIRST", result.getModules().get(1).getId());
     }
@@ -196,7 +211,7 @@ public class CourseControllerTest extends IntegrationTestBase {
         course.setStatus(Status.DRAFT);
         course.setHasBeenPublished(false);
 
-        dataService.getRepository().save(course);
+        dataService.repository().save(course);
 
         String json = new JSONObject()
                 .put("id", courseId)
@@ -232,7 +247,7 @@ public class CourseControllerTest extends IntegrationTestBase {
         course.setStatus(Status.PUBLISHED);
         course.setHasBeenPublished(true);
 
-        dataService.getRepository().save(course);
+        dataService.repository().save(course);
 
         String json = new JSONObject()
                 .put("id", courseId)
@@ -264,7 +279,7 @@ public class CourseControllerTest extends IntegrationTestBase {
         course.setStatus(Status.DRAFT);
         course.setHasBeenPublished(false);
 
-        dataService.getRepository().save(course);
+        dataService.repository().save(course);
 
         mvc.perform(delete(String.format("/courses/%s", course.getId()))
                         .with(csrf())
@@ -290,7 +305,7 @@ public class CourseControllerTest extends IntegrationTestBase {
         course.setStatus(Status.DRAFT);
         course.setHasBeenPublished(true);
 
-        dataService.getRepository().save(course);
+        dataService.repository().save(course);
 
         mvc.perform(delete(String.format("/courses/%s", course.getId()))
                         .with(csrf())
@@ -304,4 +319,240 @@ public class CourseControllerTest extends IntegrationTestBase {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @Order(11)
+    @WithMockUser(value = "spring", authorities = {"CSL_AUTHOR"})
+    public void testCreateCourseWithAllAttributes() throws Exception {
+        String courseId = "test-course-all-attributes";
+
+        // Course
+        Course course = createCourse(courseId);
+
+        // LearningTag
+        LearningTagPartialDto tag = new LearningTagPartialDto(101L, "Digital Skills", "digital-skills");
+        course.setLearningTags(List.of(tag));
+
+        // Audience
+        Audience audience = createAudience();
+        course.setAudiences(Set.of(audience));
+
+        // Link module
+        LinkModule linkModule = createLinkModule();
+
+        // ELearning module
+        ELearningModule eLearningModule = createELearningModule();
+
+        // Video module
+        VideoModule videoModule = createVideoModule();
+
+        // File module
+        FileModule fileModule = createFileModule();
+
+        // Face to Face module
+        FaceToFaceModule f2fModule = createF2fModule();
+
+        // Event
+        Event event = createEvent();
+
+        // Venue
+        Venue venue = createVenue();
+
+        event.setVenue(venue);
+
+        DateRange dateRange = new DateRange(
+                LocalDate.of(2026, 11, 20),
+                LocalTime.of(9, 30),
+                LocalTime.of(16, 30)
+        );
+        event.setDateRanges(List.of(dateRange));
+        f2fModule.setEvents(List.of(event));
+
+        course.setModules(List.of(linkModule, eLearningModule, videoModule, fileModule, f2fModule));
+
+        String courseJson = mapper.writeValueAsString(course);
+
+        mvc.perform(post("/courses")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(courseJson))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/courses/" + courseId));
+
+        mvc.perform(get(String.format("/courses/%s", courseId))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(courseId))
+                .andExpect(jsonPath("$.title").value("Complete Integration Test Course"))
+                .andExpect(jsonPath("$.shortDescription").value("A comprehensive course short description"))
+                .andExpect(jsonPath("$.description").value("A detailed and comprehensive long description of the course covering all attributes."))
+                .andExpect(jsonPath("$.learningOutcomes").value("Understand all required and optional attributes of a course."))
+                .andExpect(jsonPath("$.preparation").value("Complete prerequisite setup before attending."))
+                .andExpect(jsonPath("$.visibility").value("PUBLIC"))
+                .andExpect(jsonPath("$.status").value("Published"))
+                .andExpect(jsonPath("$.topicId").value("topic-technology-001"))
+                .andExpect(jsonPath("$.cost").value(150.00))
+                .andExpect(jsonPath("$.hasBeenPublished").value(true))
+                .andExpect(jsonPath("$.learningTags[0].id").value(101))
+                .andExpect(jsonPath("$.learningTags[0].name").value("Digital Skills"))
+                .andExpect(jsonPath("$.learningTags[0].urlSlug").value("digital-skills"))
+                .andExpect(jsonPath("$.audiences[0].id").value("audience-001"))
+                .andExpect(jsonPath("$.audiences[0].name").value("Digital Delivery Audience"))
+                .andExpect(jsonPath("$.audiences[0].type").value("REQUIRED_LEARNING"))
+                .andExpect(jsonPath("$.audiences[0].frequency").value("YEARLY"))
+                .andExpect(jsonPath("$.audiences[0].eventId").value("event-001"))
+                .andExpect(jsonPath("$.modules[0].id").value("mod-link-001"))
+                .andExpect(jsonPath("$.modules[0].type").value("link"))
+                .andExpect(jsonPath("$.modules[0].moduleType").value("link"))
+                .andExpect(jsonPath("$.modules[0].url").value("https://example.com/link-resource"))
+                .andExpect(jsonPath("$.modules[1].id").value("mod-elearning-001"))
+                .andExpect(jsonPath("$.modules[1].type").value("elearning"))
+                .andExpect(jsonPath("$.modules[1].moduleType").value("elearning"))
+                .andExpect(jsonPath("$.modules[1].startPage").value("https://example.com/elearning/start.html"))
+                .andExpect(jsonPath("$.modules[1].url").value("https://example.com/elearning/content"))
+                .andExpect(jsonPath("$.modules[1].mediaId").value("media-elearning-123"))
+                .andExpect(jsonPath("$.modules[2].id").value("mod-video-001"))
+                .andExpect(jsonPath("$.modules[2].type").value("video"))
+                .andExpect(jsonPath("$.modules[2].moduleType").value("video"))
+                .andExpect(jsonPath("$.modules[2].url").value("https://example.com/video/lecture.mp4"))
+                .andExpect(jsonPath("$.modules[3].id").value("mod-file-001"))
+                .andExpect(jsonPath("$.modules[3].type").value("file"))
+                .andExpect(jsonPath("$.modules[3].moduleType").value("file"))
+                .andExpect(jsonPath("$.modules[3].url").value("https://example.com/files/guide.pdf"))
+                .andExpect(jsonPath("$.modules[3].fileSize").value(2048000))
+                .andExpect(jsonPath("$.modules[3].mediaId").value("media-file-123"))
+                .andExpect(jsonPath("$.modules[4].id").value("mod-f2f-001"))
+                .andExpect(jsonPath("$.modules[4].type").value("face-to-face"))
+                .andExpect(jsonPath("$.modules[4].moduleType").value("face-to-face"))
+                .andExpect(jsonPath("$.modules[4].productCode").value("PROD-F2F-001"))
+                .andExpect(jsonPath("$.modules[4].events[0].id").value("event-001"))
+                .andExpect(jsonPath("$.modules[4].events[0].joiningInstructions").value("Please arrive 15 minutes prior to the session with your laptop."))
+                .andExpect(jsonPath("$.modules[4].events[0].status").value("Active"))
+                .andExpect(jsonPath("$.modules[4].events[0].cancellationReason").value("short notice unavailability of the venue"))
+                .andExpect(jsonPath("$.modules[4].events[0].venue.location").value("London HQ"))
+                .andExpect(jsonPath("$.modules[4].events[0].venue.address").value("1 Horse Guards Road, London, SW1A 2HQ"))
+                .andExpect(jsonPath("$.modules[4].events[0].venue.capacity").value(30))
+                .andExpect(jsonPath("$.modules[4].events[0].venue.minCapacity").value(5))
+                .andExpect(jsonPath("$.modules[4].events[0].venue.availability").value(25))
+                .andExpect(jsonPath("$.modules[4].events[0].dateRanges[0].date").value("2026-11-20"));
+
+        dataService.repository().delete(course);
+    }
+
+    private static @NonNull Course createCourse(String courseId) {
+        Course course = new Course();
+        course.setId(courseId);
+        course.setTitle("Complete Integration Test Course");
+        course.setShortDescription("A comprehensive course short description");
+        course.setDescription("A detailed and comprehensive long description of the course covering all attributes.");
+        course.setLearningOutcomes("Understand all required and optional attributes of a course.");
+        course.setPreparation("Complete prerequisite setup before attending.");
+        course.setVisibility(Visibility.PUBLIC);
+        course.setStatus(Status.PUBLISHED);
+        course.setTopicId("topic-technology-001");
+        course.setCost(BigDecimal.valueOf(150.00));
+        course.setHasBeenPublished(true);
+        return course;
+    }
+
+    private static @NonNull Venue createVenue() {
+        Venue venue = new Venue();
+        venue.setLocation("London HQ");
+        venue.setAddress("1 Horse Guards Road, London, SW1A 2HQ");
+        venue.setCapacity(30);
+        venue.setMinCapacity(5);
+        venue.setAvailability(25);
+        return venue;
+    }
+
+    private static @NonNull Event createEvent() {
+        Event event = new Event();
+        event.setId("event-001");
+        event.setJoiningInstructions("Please arrive 15 minutes prior to the session with your laptop.");
+        event.setStatus(EventStatus.ACTIVE);
+        event.setCancellationReason(CancellationReason.VENUE);
+        return event;
+    }
+
+    private static @NonNull FaceToFaceModule createF2fModule() {
+        FaceToFaceModule f2fModule = new FaceToFaceModule("PROD-F2F-001");
+        f2fModule.setId("mod-f2f-001");
+        f2fModule.setTitle("Face to Face Module");
+        f2fModule.setDescription("Description for face to face module");
+        f2fModule.setDuration(7200L);
+        f2fModule.setCost(BigDecimal.valueOf(150.00));
+        f2fModule.setOptional(false);
+        f2fModule.setStatus(Status.PUBLISHED);
+        f2fModule.setAssociatedLearning(false);
+        return f2fModule;
+    }
+
+    private static @NonNull VideoModule createVideoModule() throws MalformedURLException {
+        VideoModule videoModule = new VideoModule(URI.create("https://example.com/video/lecture.mp4").toURL());
+        videoModule.setId("mod-video-001");
+        videoModule.setTitle("Video Module");
+        videoModule.setDescription("Description for video module");
+        videoModule.setDuration(1200L);
+        videoModule.setCost(BigDecimal.ZERO);
+        videoModule.setOptional(true);
+        videoModule.setStatus(Status.PUBLISHED);
+        videoModule.setAssociatedLearning(true);
+        return videoModule;
+    }
+
+    private static @NonNull LinkModule createLinkModule() throws MalformedURLException {
+        LinkModule linkModule = new LinkModule(URI.create("https://example.com/link-resource").toURL());
+        linkModule.setId("mod-link-001");
+        linkModule.setTitle("Link Module");
+        linkModule.setDescription("Description for link module");
+        linkModule.setDuration(1800L);
+        linkModule.setCost(BigDecimal.ZERO);
+        linkModule.setOptional(false);
+        linkModule.setStatus(Status.PUBLISHED);
+        linkModule.setAssociatedLearning(false);
+        return linkModule;
+    }
+
+    private static @NonNull FileModule createFileModule() {
+        FileModule fileModule = new FileModule("https://example.com/files/guide.pdf", 2048000L);
+        fileModule.setId("mod-file-001");
+        fileModule.setTitle("File Module");
+        fileModule.setDescription("Description for file module");
+        fileModule.setDuration(900L);
+        fileModule.setCost(BigDecimal.ZERO);
+        fileModule.setOptional(false);
+        fileModule.setStatus(Status.PUBLISHED);
+        fileModule.setAssociatedLearning(false);
+        fileModule.setMediaId("media-file-123");
+        return fileModule;
+    }
+
+    private static @NonNull ELearningModule createELearningModule() {
+        ELearningModule eLearningModule = new ELearningModule("https://example.com/elearning/start.html", "https://example.com/elearning/content");
+        eLearningModule.setId("mod-elearning-001");
+        eLearningModule.setTitle("ELearning Module");
+        eLearningModule.setDescription("Description for elearning module");
+        eLearningModule.setDuration(3600L);
+        eLearningModule.setCost(BigDecimal.ZERO);
+        eLearningModule.setOptional(false);
+        eLearningModule.setStatus(Status.PUBLISHED);
+        eLearningModule.setAssociatedLearning(false);
+        eLearningModule.setMediaId("media-elearning-123");
+        return eLearningModule;
+    }
+
+    private static @NonNull Audience createAudience() {
+        Audience audience = new Audience();
+        audience.setId("audience-001");
+        audience.setName("Digital Delivery Audience");
+        audience.setType(Audience.Type.REQUIRED_LEARNING);
+        audience.setDepartments(Set.of("CO", "HMRC"));
+        audience.setAreasOfWork(Set.of("Digital", "Commercial"));
+        audience.setInterests(Set.of("Leadership", "Software Engineering"));
+        audience.setGrades(Set.of("G6", "G7", "SCS"));
+        audience.setRequiredBy(Instant.parse("2026-12-31T00:00:00Z"));
+        audience.setFrequency("YEARLY");
+        audience.setEventId("event-001");
+        return audience;
+    }
 }

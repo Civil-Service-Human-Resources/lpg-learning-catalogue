@@ -2,37 +2,28 @@ package uk.gov.cslearning.catalogue.config;
 
 import org.apache.http.HttpHost;
 import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestOperations;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
-import org.springframework.security.oauth2.client.token.AccessTokenRequest;
-import org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest;
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.client.RestTemplate;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+
 @Configuration
 @EnableWebSecurity
-@EnableResourceServer
-@EnableOAuth2Client
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     @Value("${oauth.tokenEndpoint}")
     private String tokenEndpoint;
@@ -42,44 +33,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new RestTemplate();
     }
 
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-        http.cors().and().csrf().disable().authorizeRequests()
-                .and().authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, tokenEndpoint).permitAll()
-                .antMatchers(HttpMethod.GET, "/health").permitAll()
-                .anyRequest().authenticated();
-    }
-
-    @Override
-    public void configure(WebSecurity webSecurity) throws  Exception{
-        webSecurity.ignoring().antMatchers(HttpMethod.GET, "/health");
+    @Bean
+    @ConditionalOnMissingBean
+    public JwtDecoder jwtDecoder(OAuthProperties oAuthProperties) {
+        return NimbusJwtDecoder.withSecretKey(
+                new SecretKeySpec(oAuthProperties.getJwtKey().getBytes(StandardCharsets.UTF_8), "HMACSHA256")
+        ).build();
     }
 
     @Bean
-    public TokenStore getTokenStore(OAuthProperties oAuthProperties) {
-        return new JwtTokenStore(accessTokenConverter(oAuthProperties));
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
     }
 
     @Bean
-    public JwtAccessTokenConverter accessTokenConverter(OAuthProperties oAuthProperties) {
-        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        jwtAccessTokenConverter.setSigningKey(oAuthProperties.getJwtKey());
-        return jwtAccessTokenConverter;
-    }
-
-    @Bean
-    public OAuth2ProtectedResourceDetails resourceDetails(OAuthProperties oAuthProperties) {
-
-        ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
-        resource.setId("identity");
-        resource.setAccessTokenUri(oAuthProperties.getTokenUrl());
-        resource.setClientId(oAuthProperties.getClientId());
-        resource.setClientSecret(oAuthProperties.getClientSecret());
-
-        return resource;
+    @ConditionalOnMissingBean(SecurityFilterChain.class)
+    public SecurityFilterChain filterChain(HttpSecurity http) {
+        http.cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, tokenEndpoint).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/health").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+        return http.build();
     }
 
     @Bean
@@ -91,22 +75,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         connectionManager.setMaxPerRoute(new HttpRoute(host), oAuthProperties.getMaxPerServiceUrl());
 
         return connectionManager;
-    }
-
-    @Bean
-    public OAuth2RestOperations oAuthRestTemplate(OAuth2ProtectedResourceDetails resourceDetails, PoolingHttpClientConnectionManager connectionManager) {
-        CloseableHttpClient httpClient = HttpClients.custom()
-            .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-            .setConnectionManager(connectionManager)
-            .build();
-
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setHttpClient(httpClient);
-
-        AccessTokenRequest atr = new DefaultAccessTokenRequest();
-        OAuth2RestTemplate oAuthRestTemplate = new OAuth2RestTemplate(resourceDetails, new DefaultOAuth2ClientContext(atr));
-        oAuthRestTemplate.setRequestFactory(requestFactory);
-
-        return oAuthRestTemplate;
     }
 }
