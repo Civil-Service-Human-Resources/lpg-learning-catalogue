@@ -3,8 +3,6 @@ database:
   name: ${DATABASE_NAME:learning_catalogue}
   use-ssl: ${DATABASE_USESSL:false}
 spring:
-  main:
-    allow-bean-definition-overriding: ${SPRING_MAIN_ALLOW_BEAN_OVERRIDING:false}
   jackson:
     deserialization:
       fail-on-null-for-primitives: false
@@ -16,9 +14,9 @@ spring:
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:my-secret-pw}
     hikari:
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+      connection-timeout: ${DATASOURCE_HIKARI_CONNECTION_TIMEOUT:30000}
+      idle-timeout: ${DATASOURCE_HIKARI_IDLE_TIMEOUT:600000}
+      max-lifetime: ${DATASOURCE_HIKARI_MAX_LIFETIME:1800000}
   jpa:
     open-in-view: ${JPA_OPEN_IN_VIEW:true}
   sql:
@@ -28,8 +26,8 @@ spring:
     locations: classpath:db/migration/{vendor}
   servlet:
     multipart:
-      max-file-size: 5120MB
-      max-request-size: 5120MB
+      max-file-size: ${SERVLET_MULTIPART_MAX_FILE_SIZE:5120MB}
+      max-request-size: ${SERVLET_MULTIPART_MAX_REQUEST_SIZE:5120MB}
   security:
     oauth2:
       resource:
@@ -53,7 +51,7 @@ spring:
 time:
   zoneId: ${TIME_ZONE_ID:UTC}
 server:
-  port: 9001
+  port: ${SERVER_PORT:9001}
 
 logging:
   pattern:
@@ -61,7 +59,7 @@ logging:
   level:
     root: ${ROOT_LOGGING_LEVEL:INFO}
     uk.gov.cslearning: ${UK_GOV_CSLEARNING_LOGGING_LEVEL:INFO}
-    com.zaxxer.hikari: ERROR
+    com.zaxxer.hikari: ${COM_ZAXXER_HIKARI_LOGGING_LEVEL:ERROR}
     org:
       springframework:
         data:

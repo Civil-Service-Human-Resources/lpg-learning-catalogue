@@ -6,6 +6,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import uk.gov.cslearning.catalogue.client.rustici.RusticiEngineClient;
 import uk.gov.cslearning.catalogue.domain.CustomMediaMetadata;
 import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.dto.rustici.course.Course;

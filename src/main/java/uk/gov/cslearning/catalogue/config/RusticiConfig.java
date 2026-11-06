@@ -34,7 +34,7 @@ public class RusticiConfig {
     }
 
     @Bean("rusticiHttpClient")
-    public IHttpClient getRestTemplate() {
+    public IHttpClient getRusticiHttpClient() {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(rusticiUrl));
         restTemplate.getInterceptors().add((request, body, execution) -> {

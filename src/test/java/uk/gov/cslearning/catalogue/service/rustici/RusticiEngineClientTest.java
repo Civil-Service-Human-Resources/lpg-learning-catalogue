@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.RequestEntity;
 import uk.gov.cslearning.catalogue.client.IHttpClient;
+import uk.gov.cslearning.catalogue.client.rustici.RusticiEngineClient;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourse;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourseResponse;
 
