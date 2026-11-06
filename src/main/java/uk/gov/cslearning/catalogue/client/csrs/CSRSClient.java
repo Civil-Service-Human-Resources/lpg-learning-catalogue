@@ -15,7 +15,7 @@ public class CSRSClient implements ICSRSClient {
     private final String csrsGetCivilServantUrl;
 
     public CSRSClient(@Qualifier("csrsHttpClient") IHttpClient httpClient,
-                      @Value("${registry.getCivilServant}") String csrsGetCivilServantUrl) {
+                      @Value("${registry.getLoggedInCivilServant}") String csrsGetCivilServantUrl) {
         this.httpClient = httpClient;
         this.csrsGetCivilServantUrl = csrsGetCivilServantUrl;
     }

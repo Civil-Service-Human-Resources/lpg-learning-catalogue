@@ -112,7 +112,7 @@ record:
 
 registry:
   serviceUrl: ${REGISTRY_SERVICE_URL:http://localhost:9002}
-  getCivilServant: "/civilServants/me"
+  getLoggedInCivilServant: "/civilServants/me"
 
 identity:
   serviceUrl: ${OAUTH_SERVICE_URL:http://localhost:8080}
