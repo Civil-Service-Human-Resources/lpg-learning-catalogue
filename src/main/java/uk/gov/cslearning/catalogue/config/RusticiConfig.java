@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import uk.gov.cslearning.catalogue.client.HttpClient;
+import uk.gov.cslearning.catalogue.client.IHttpClient;
 import uk.gov.cslearning.catalogue.service.rustici.CSLToRusticiDataService;
 
 @Configuration
@@ -32,7 +34,7 @@ public class RusticiConfig {
     }
 
     @Bean("rusticiHttpClient")
-    public RestTemplate getRestTemplate() {
+    public IHttpClient getRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(rusticiUrl));
         restTemplate.getInterceptors().add((request, body, execution) -> {
@@ -40,6 +42,6 @@ public class RusticiConfig {
             return execution.execute(request, body);
         });
         restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(rusticiUsername, rusticiPassword));
-        return restTemplate;
+        return new HttpClient(restTemplate);
     }
 }

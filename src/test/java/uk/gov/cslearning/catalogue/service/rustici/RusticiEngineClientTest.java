@@ -1,43 +1,50 @@
 package uk.gov.cslearning.catalogue.service.rustici;
 
-
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.http.HttpStatus;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import uk.gov.cslearning.catalogue.client.IHttpClient;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourse;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourseResponse;
-import uk.gov.cslearning.catalogue.exception.RusticiEngineException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RusticiEngineClientTest {
 
     @Mock
-    private RestTemplate restTemplate;
+    private IHttpClient httpClient;
 
     @InjectMocks
     private RusticiEngineClient client;
 
     @Test
-    public void testFailedCreateCourse() {
+    public void testCreateCourse() {
         CreateCourse createCourse = mock(CreateCourse.class);
-        @SuppressWarnings("unchecked")
-        ResponseEntity<CreateCourseResponse> response = (ResponseEntity<CreateCourseResponse>) mock(ResponseEntity.class);
-        when(response.getStatusCode()).thenReturn(HttpStatus.CONFLICT);
-        when(restTemplate.postForEntity(ArgumentMatchers.<String>any(),
-                ArgumentMatchers.<RequestEntity<CreateCourse>>any(),
-                ArgumentMatchers.<Class<CreateCourseResponse>>any())).thenReturn(response);
-        assertThrows(RusticiEngineException.class, () -> client.createCourse(createCourse, "test.test"));
+        CreateCourseResponse response = mock(CreateCourseResponse.class);
+        String rusticiCourseId = "test.test";
+        String url = String.format("/courses?courseId=%s", rusticiCourseId);
+        RequestEntity<CreateCourse> requestEntity = RequestEntity.post(url).body(createCourse);
+
+        when(httpClient.executeRequest(requestEntity, CreateCourseResponse.class)).thenReturn(response);
+
+        CreateCourseResponse result = client.createCourse(createCourse, rusticiCourseId);
+
+        assertEquals(response, result);
     }
 
+    @Test
+    public void testDeleteCourse() {
+        String rusticiCourseId = "test.test";
+        String url = String.format("/courses/%s", rusticiCourseId);
+        RequestEntity<Void> requestEntity = RequestEntity.delete(url).build();
+
+        client.deleteCourse(rusticiCourseId);
+
+        verify(httpClient).executeRequest(requestEntity, Void.class);
+    }
 }
