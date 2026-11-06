@@ -10,9 +10,6 @@ public class OAuthHttpClientConfig {
     @Value("${record.serviceUrl}")
     private String learnerRecordBaseUrl;
 
-    @Value("${identity.serviceUrl}")
-    private String identityBaseUrl;
-
     @Value("${registry.serviceUrl}")
     private String csrsBaseUrl;
 
@@ -25,11 +22,6 @@ public class OAuthHttpClientConfig {
     @Bean(name = "learnerRecordHttpClient")
     public IHttpClient learnerRecordClient() {
         return oauthClientFactory.buildClient(learnerRecordBaseUrl);
-    }
-
-    @Bean(name = "identityHttpClient")
-    IHttpClient identityOAuthClient() {
-        return oauthClientFactory.buildClient(identityBaseUrl);
     }
 
     @Bean(name = "csrsHttpClient")

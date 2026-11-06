@@ -3,6 +3,7 @@ package uk.gov.cslearning.catalogue.service.record;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.web.client.RestClientException;
 import uk.gov.cslearning.catalogue.client.learnerRecord.ILearnerRecordClient;
 import uk.gov.cslearning.catalogue.client.learnerRecord.LearnerRecordClient;
 import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
@@ -43,7 +44,7 @@ public class LearnerRecordServiceTest {
     @Test
     public void shouldReturnNullOnGetEventBookingsException(){
         String eventId = "eventId";
-        Mockito.when(client.getBookings(eventId)).thenThrow(new Exception("error"));
+        Mockito.when(client.getBookings(eventId)).thenThrow(new RestClientException("error"));
 
         Assertions.assertNull(learnerRecordService.getEventBookings(eventId));
     }
@@ -62,7 +63,7 @@ public class LearnerRecordServiceTest {
     @Test
     public void shouldReturnNullOnGetEventStatusException(){
         String eventId = "eventId";
-        Mockito.when(client.getEvent(eventId)).thenThrow(new Exception("error"));
+        Mockito.when(client.getEvent(eventId)).thenThrow(new RestClientException("error"));
 
         Assertions.assertNull(learnerRecordService.getEventStatus(eventId));
     }
@@ -82,7 +83,7 @@ public class LearnerRecordServiceTest {
     public void shouldReturnNullOnGetCancellationReasonException(){
         String eventId = "eventId";
 
-        Mockito.when(client.getEvent(eventId)).thenThrow(new Exception("error"));
+        Mockito.when(client.getEvent(eventId)).thenThrow(new RestClientException("error"));
 
         Assertions.assertNull(learnerRecordService.getCancellationReason(eventId));
     }
