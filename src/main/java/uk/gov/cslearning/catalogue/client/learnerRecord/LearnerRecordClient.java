@@ -38,6 +38,8 @@ public class LearnerRecordClient implements ILearnerRecordClient {
         }
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public List<Event> getBulkEvents(List<String> moduleEventUids, boolean getBookingCount) {
         RequestEntity<Void> requestEntity = RequestEntity.get(String.format(bulkEventsUrl, moduleEventUids, getBookingCount)).build();
         try {
@@ -47,6 +49,8 @@ public class LearnerRecordClient implements ILearnerRecordClient {
         }
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public List<Booking> getBookings(String eventId) {
         RequestEntity<Void> requestEntity = RequestEntity.get(String.format(bookingUrlFormat, eventId)).build();
         try {

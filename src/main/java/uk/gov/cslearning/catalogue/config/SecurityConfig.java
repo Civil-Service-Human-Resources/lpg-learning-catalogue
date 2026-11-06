@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -81,8 +81,9 @@ public class SecurityConfig {
             Map<String, Object> claims;
             Jwt jwt = clientJwtDecoder.decode(tokenValue);
             claims = jwt.getClaims();
+            List<String> authorities = jwt.getClaimAsStringList("authorities");
             return new CustomOAuth2User(
-                    ((ArrayList<String>) claims.get("authorities")).stream().map(SimpleGrantedAuthority::new).toList(),
+                    authorities != null ? authorities.stream().map(SimpleGrantedAuthority::new).toList() : List.of(),
                     claims,
                     "user_name", (String) claims.get("user_name"), (String) claims.get("email"), jwt
             );

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode
 @ToString
+@SuppressWarnings("unchecked")
 public class SimplePage<T> implements Page<T> {
 
     @Delegate
