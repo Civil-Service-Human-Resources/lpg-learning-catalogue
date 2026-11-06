@@ -15,7 +15,7 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import jakarta.validation.Valid;
 import java.util.Collections;

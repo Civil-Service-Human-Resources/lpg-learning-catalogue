@@ -14,7 +14,7 @@ import uk.gov.cslearning.catalogue.domain.Owner.Owner;
 import uk.gov.cslearning.catalogue.domain.Roles;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.util.ArrayList;
 import java.util.List;

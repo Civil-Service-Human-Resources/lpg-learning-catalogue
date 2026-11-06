@@ -28,6 +28,7 @@ import uk.gov.cslearning.catalogue.domain.validation.CourseValidator;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseStatusRepository;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.net.MalformedURLException;
 import java.net.URI;

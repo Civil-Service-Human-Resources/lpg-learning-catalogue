@@ -24,6 +24,7 @@ import uk.gov.cslearning.catalogue.exception.CourseCannotByDeletedException;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseStatusRepository;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.time.Clock;
 import java.time.LocalDate;

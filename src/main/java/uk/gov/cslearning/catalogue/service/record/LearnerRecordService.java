@@ -2,20 +2,14 @@ package uk.gov.cslearning.catalogue.service.record;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.cslearning.catalogue.client.learnerRecord.ILearnerRecordClient;
 import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
 import uk.gov.cslearning.catalogue.service.record.model.Event;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,35 +17,16 @@ import java.util.List;
 @Slf4j
 public class LearnerRecordService {
 
-    private final RestTemplate restTemplate;
+    private final ILearnerRecordClient client;
 
-    private final RequestEntityFactory requestEntityFactory;
-
-    private final String eventUrlFormat;
-
-    private final String bookingUrlFormat;
-
-    private final String bulkEventsUrl;
-
-    public LearnerRecordService(RestTemplate restTemplate, RequestEntityFactory requestEntityFactory,
-                                @Value("${record.eventUrlFormat}") String eventUrlFormat,
-                                @Value("${record.bookingUrlFormat}") String bookingUrlFormat,
-                                @Value("${record.bulkEventsUrl}") String bulkEventsUrl){
-        this.restTemplate = restTemplate;
-        this.requestEntityFactory = requestEntityFactory;
-        this.eventUrlFormat = eventUrlFormat;
-        this.bookingUrlFormat = bookingUrlFormat;
-        this.bulkEventsUrl = bulkEventsUrl;
+    public LearnerRecordService(ILearnerRecordClient client) {
+        this.client = client;
     }
 
     public Integer getEventActiveBookingsCount(String eventId) {
-        try{
+        try {
             Integer count = 0;
-            URI uri = UriComponentsBuilder.fromUriString(String.format(eventUrlFormat, eventId))
-                    .queryParam("getBookingCount", true)
-                    .build().toUri();
-            RequestEntity<Void> request = requestEntityFactory.createGetRequest(uri);
-            Event event = restTemplate.exchange(request, Event.class).getBody();
+            Event event = client.getEvent(eventId);
             if (event != null) {
                 count = event.getActiveBookingCount();
             }
@@ -64,11 +39,7 @@ public class LearnerRecordService {
 
     public List<Booking> getEventBookings(String eventId) {
         try{
-            URI uri = UriComponentsBuilder.fromUriString(String.format(bookingUrlFormat, eventId))
-                    .build().toUri();
-            RequestEntity<Void> requestEntity = requestEntityFactory.createGetRequest(uri);
-            ResponseEntity<List<Booking>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<>() {});
-            return responseEntity.getBody();
+            return client.getBookings(eventId);
         } catch (RequestEntityException | RestClientException e) {
             log.error("Could not get bookings from learner record: {}", e.getLocalizedMessage());
             return null;
@@ -76,13 +47,8 @@ public class LearnerRecordService {
     }
 
     public EventStatus getEventStatus(String eventId) {
-        try{
-            URI uri = UriComponentsBuilder.fromUriString(String.format(eventUrlFormat, eventId))
-                    .build().toUri();
-            RequestEntity<Void> requestEntity = requestEntityFactory.createGetRequest(uri);
-            ResponseEntity<Event> responseEntity = restTemplate.exchange(requestEntity, Event.class);
-
-            Event event = responseEntity.getBody();
+        try {
+            Event event = client.getEvent(eventId);
             assert event != null;
             return EventStatus.forValue(event.getStatus());
         } catch (RequestEntityException | RestClientException e) {
@@ -92,13 +58,8 @@ public class LearnerRecordService {
     }
 
     public CancellationReason getCancellationReason(String eventId) {
-        try{
-            URI uri = UriComponentsBuilder.fromUriString(String.format(eventUrlFormat, eventId))
-                    .build().toUri();
-            RequestEntity<Void> requestEntity = requestEntityFactory.createGetRequest(uri);
-            ResponseEntity<Event> responseEntity = restTemplate.exchange(requestEntity, Event.class);
-
-            Event event = responseEntity.getBody();
+        try {
+            Event event = client.getEvent(eventId);
             assert event != null;
             return CancellationReason.forValue(event.getCancellationReason());
         } catch (RequestEntityException | RestClientException e) {
@@ -112,12 +73,7 @@ public class LearnerRecordService {
         List<List<String>> batchedUids = Lists.partition(moduleEventUids, 20);
         try {
             batchedUids.forEach(batch -> {
-                URI uri = UriComponentsBuilder.fromUriString(bulkEventsUrl)
-                        .queryParam("uids", batch.toArray())
-                        .queryParam("getBookingCount", getBookingCount)
-                        .build().toUri();
-                RequestEntity requestEntity = requestEntityFactory.createGetRequest(uri);
-                List<Event> eventsFromUids = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<Event>>(){}).getBody();
+                List<Event> eventsFromUids = client.getBulkEvents(batch, getBookingCount);
                 if (eventsFromUids != null) {
                     events.addAll(eventsFromUids);
                 }

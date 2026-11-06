@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.service.record.RequestEntityFactory;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.net.URI;
 

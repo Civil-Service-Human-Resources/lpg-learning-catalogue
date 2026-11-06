@@ -21,7 +21,7 @@ import uk.gov.cslearning.catalogue.domain.ErrorDtoFactory;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.util.Arrays;
 import java.util.Collections;

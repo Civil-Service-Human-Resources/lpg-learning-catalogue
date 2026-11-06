@@ -15,7 +15,7 @@ import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.service.AudienceService;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.util.HashSet;
 import java.util.Optional;

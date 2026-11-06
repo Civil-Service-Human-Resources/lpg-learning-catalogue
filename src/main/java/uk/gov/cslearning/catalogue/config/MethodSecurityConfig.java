@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import uk.gov.cslearning.catalogue.evaluators.CustomPermissionEvaluator;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
 import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 @Configuration
 @EnableMethodSecurity

@@ -16,7 +16,7 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagPartialDto;
 import uk.gov.cslearning.catalogue.domain.module.*;
-import uk.gov.cslearning.catalogue.service.RegistryService;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
