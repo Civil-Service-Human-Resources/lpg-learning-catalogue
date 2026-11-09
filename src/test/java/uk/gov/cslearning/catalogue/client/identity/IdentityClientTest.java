@@ -8,12 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.RequestEntity;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.client.IHttpClient;
 import uk.gov.cslearning.catalogue.client.OAuthToken;
 import uk.gov.cslearning.catalogue.exception.InternalAuthErrorException;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,11 +35,7 @@ public class IdentityClientTest {
     @Test
     public void testGetServiceTokenSuccess() {
         OAuthToken tokenResponse = mock(OAuthToken.class);
-        URI uri = UriComponentsBuilder.fromUriString(tokenEndpoint)
-                .queryParam("grant_type", "client_credentials")
-                .build()
-                .toUri();
-        RequestEntity<Void> request = RequestEntity.post(uri).build();
+        RequestEntity<Void> request = RequestEntity.post(tokenEndpoint + "?grant_type={grantType}", "client_credentials").build();
 
         when(client.executeRequest(request, OAuthToken.class)).thenReturn(tokenResponse);
 
@@ -53,11 +46,7 @@ public class IdentityClientTest {
 
     @Test
     public void testGetServiceTokenThrowsExceptionWhenResponseNull() {
-        URI uri = UriComponentsBuilder.fromUriString(tokenEndpoint)
-                .queryParam("grant_type", "client_credentials")
-                .build()
-                .toUri();
-        RequestEntity<Void> request = RequestEntity.post(uri).build();
+        RequestEntity<Void> request = RequestEntity.post(tokenEndpoint + "?grant_type={grantType}", "client_credentials").build();
 
         when(client.executeRequest(request, OAuthToken.class)).thenReturn(null);
 

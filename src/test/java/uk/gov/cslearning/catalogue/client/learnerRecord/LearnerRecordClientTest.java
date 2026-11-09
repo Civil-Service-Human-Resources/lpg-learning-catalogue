@@ -6,13 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.RequestEntity;
-import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.client.IHttpClient;
 import uk.gov.cslearning.catalogue.exception.NotFoundException;
 import uk.gov.cslearning.catalogue.service.record.model.Booking;
 import uk.gov.cslearning.catalogue.service.record.model.Event;
 
-import java.net.URI;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,10 +38,7 @@ public class LearnerRecordClientTest {
     public void testGetEvent() {
         String eventId = "event-123";
         Event event = mock(Event.class);
-        URI uri = UriComponentsBuilder.fromUriString("/event/{eventId}")
-                .buildAndExpand(eventId)
-                .toUri();
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get("/event/{eventId}", eventId).build();
 
         when(httpClient.executeRequest(requestEntity, Event.class)).thenReturn(event);
 
@@ -55,10 +50,7 @@ public class LearnerRecordClientTest {
     @Test
     public void testGetEventNotFound() {
         String eventId = "event-123";
-        URI uri = UriComponentsBuilder.fromUriString("/event/{eventId}")
-                .buildAndExpand(eventId)
-                .toUri();
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get("/event/{eventId}", eventId).build();
 
         when(httpClient.executeRequest(requestEntity, Event.class)).thenThrow(new NotFoundException("Event not found"));
 
@@ -71,10 +63,7 @@ public class LearnerRecordClientTest {
     public void testGetBulkEvents() {
         List<String> eventIds = List.of("e1", "e2");
         List<Event> events = List.of(mock(Event.class));
-        URI uri = UriComponentsBuilder.fromUriString(bulkEventsUrl)
-                .build()
-                .toUri();
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get(bulkEventsUrl).build();
 
         when(httpClient.executeRequest(requestEntity, List.class)).thenReturn(events);
 
@@ -86,10 +75,7 @@ public class LearnerRecordClientTest {
     @Test
     public void testGetBulkEventsNotFound() {
         List<String> eventIds = List.of("e1", "e2");
-        URI uri = UriComponentsBuilder.fromUriString(bulkEventsUrl)
-                .build()
-                .toUri();
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get(bulkEventsUrl).build();
 
         when(httpClient.executeRequest(requestEntity, List.class)).thenThrow(new NotFoundException("Not found"));
 
@@ -102,10 +88,7 @@ public class LearnerRecordClientTest {
     public void testGetBookings() {
         String eventId = "event-123";
         List<Booking> bookings = List.of(mock(Booking.class));
-        URI uri = UriComponentsBuilder.fromUriString("/event/{eventId}/booking")
-                .buildAndExpand(eventId)
-                .toUri();
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get("/event/{eventId}/booking", eventId).build();
 
         when(httpClient.executeRequest(requestEntity, List.class)).thenReturn(bookings);
 
@@ -117,10 +100,7 @@ public class LearnerRecordClientTest {
     @Test
     public void testGetBookingsNotFound() {
         String eventId = "event-123";
-        URI uri = UriComponentsBuilder.fromUriString("/event/{eventId}/booking")
-                .buildAndExpand(eventId)
-                .toUri();
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get("/event/{eventId}/booking", eventId).build();
 
         when(httpClient.executeRequest(requestEntity, List.class)).thenThrow(new NotFoundException("Booking not found"));
 

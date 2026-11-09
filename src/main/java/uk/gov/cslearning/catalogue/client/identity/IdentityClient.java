@@ -5,12 +5,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.client.IHttpClient;
 import uk.gov.cslearning.catalogue.client.OAuthToken;
 import uk.gov.cslearning.catalogue.exception.InternalAuthErrorException;
-
-import java.net.URI;
 
 @Component
 @Slf4j
@@ -28,11 +25,7 @@ public class IdentityClient implements IIdentityClient {
     @Override
     public OAuthToken getServiceToken() {
         log.debug("Getting service token from identity service");
-        URI uri = UriComponentsBuilder.fromUriString(token)
-                .queryParam("grant_type", "client_credentials")
-                .build()
-                .toUri();
-        RequestEntity<Void> request = RequestEntity.post(uri).build();
+        RequestEntity<Void> request = RequestEntity.post(token + "?grant_type={grantType}", "client_credentials").build();
         OAuthToken response = client.executeRequest(request, OAuthToken.class);
         if (response == null) {
             throw new InternalAuthErrorException("Service token response was null");

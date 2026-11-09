@@ -2,16 +2,12 @@ package uk.gov.cslearning.catalogue.client.csrs;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.RequestEntity;
-import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.cslearning.catalogue.client.IHttpClient;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.exception.NotFoundException;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -29,8 +25,7 @@ public class CSRSClientTest {
     public void testGetLoggedInCivilServant() {
         CSRSClient client = new CSRSClient(httpClient, csrsGetCivilServantUrl);
         CivilServant civilServant = mock(CivilServant.class);
-        URI uri = UriComponentsBuilder.fromUriString(csrsGetCivilServantUrl).build().toUri();
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get(csrsGetCivilServantUrl).build();
 
         when(httpClient.executeRequest(requestEntity, CivilServant.class)).thenReturn(civilServant);
 
@@ -42,8 +37,7 @@ public class CSRSClientTest {
     @Test
     public void testGetLoggedInCivilServantNotFound() {
         CSRSClient client = new CSRSClient(httpClient, csrsGetCivilServantUrl);
-        URI uri = UriComponentsBuilder.fromUriString(csrsGetCivilServantUrl).build().toUri();
-        RequestEntity<Void> requestEntity = RequestEntity.get(uri).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get(csrsGetCivilServantUrl).build();
 
         when(httpClient.executeRequest(requestEntity, CivilServant.class)).thenThrow(new NotFoundException("Not found"));
 
