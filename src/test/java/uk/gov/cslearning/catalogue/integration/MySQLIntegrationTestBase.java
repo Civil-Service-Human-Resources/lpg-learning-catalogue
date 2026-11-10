@@ -53,7 +53,6 @@ public abstract class MySQLIntegrationTestBase {
     private CloudStorageAccount cloudStorageAccount;
 
     // Use deep stubs so getContainerReference() returns a mock instead of null,
-    // seamlessly bypassing the NPE in UploadConfig
     @MockitoBean(answers = Answers.RETURNS_DEEP_STUBS)
     private CloudBlobClient cloudBlobClient;
 
