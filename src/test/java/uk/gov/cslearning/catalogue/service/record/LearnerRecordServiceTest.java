@@ -69,6 +69,24 @@ public class LearnerRecordServiceTest {
     }
 
     @Test
+    public void shouldReturnNullOnGetEventStatusWhenEventIsNull(){
+        String eventId = "eventId";
+        Mockito.when(client.getEvent(eventId)).thenReturn(null);
+
+        Assertions.assertNull(learnerRecordService.getEventStatus(eventId));
+    }
+
+    @Test
+    public void shouldReturnNullOnGetEventStatusWhenStatusIsNull(){
+        String eventId = "eventId";
+        Event event = new Event();
+        event.setStatus(null);
+        Mockito.when(client.getEvent(eventId)).thenReturn(event);
+
+        Assertions.assertNull(learnerRecordService.getEventStatus(eventId));
+    }
+
+    @Test
     public void shouldReturnCancellationReason(){
         String eventId = "eventId";
         Event event = new Event();
@@ -84,6 +102,24 @@ public class LearnerRecordServiceTest {
         String eventId = "eventId";
 
         Mockito.when(client.getEvent(eventId)).thenThrow(new RestClientException("error"));
+
+        Assertions.assertNull(learnerRecordService.getCancellationReason(eventId));
+    }
+
+    @Test
+    public void shouldReturnNullOnGetCancellationReasonWhenEventIsNull(){
+        String eventId = "eventId";
+        Mockito.when(client.getEvent(eventId)).thenReturn(null);
+
+        Assertions.assertNull(learnerRecordService.getCancellationReason(eventId));
+    }
+
+    @Test
+    public void shouldReturnNullOnGetCancellationReasonWhenReasonIsNull(){
+        String eventId = "eventId";
+        Event event = new Event();
+        event.setCancellationReason(null);
+        Mockito.when(client.getEvent(eventId)).thenReturn(event);
 
         Assertions.assertNull(learnerRecordService.getCancellationReason(eventId));
     }
@@ -109,5 +145,13 @@ public class LearnerRecordServiceTest {
         Mockito.when(client.getBulkEvents(uids, false)).thenReturn(events);
 
         Assertions.assertEquals(events, learnerRecordService.getEvents(uids, false));
+    }
+
+    @Test
+    public void shouldReturnNullOnGetEventsException(){
+        List<String> uids = Arrays.asList("uid1", "uid2");
+        Mockito.when(client.getBulkEvents(uids, false)).thenThrow(new RuntimeException("error"));
+
+        Assertions.assertNull(learnerRecordService.getEvents(uids, false));
     }
 }

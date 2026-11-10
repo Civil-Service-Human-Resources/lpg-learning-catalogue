@@ -42,7 +42,11 @@ public class LearnerRecordClient implements ILearnerRecordClient {
     @Override
     @SuppressWarnings("unchecked")
     public List<Event> getBulkEvents(List<String> moduleEventUids, boolean getBookingCount) {
-        RequestEntity<Void> requestEntity = RequestEntity.get(bulkEventsUrl).build();
+        if (moduleEventUids == null || moduleEventUids.isEmpty()) {
+            return List.of();
+        }
+        String template = bulkEventsUrl + "?uids={uids}&getBookingCount={getBookingCount}";
+        RequestEntity<Void> requestEntity = RequestEntity.get(template, String.join(",", moduleEventUids), getBookingCount).build();
         try {
             return httpClient.executeRequest(requestEntity, List.class);
         } catch (NotFoundException e) {

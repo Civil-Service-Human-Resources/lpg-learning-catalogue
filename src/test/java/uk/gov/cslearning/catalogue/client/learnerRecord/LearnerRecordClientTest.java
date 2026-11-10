@@ -48,6 +48,22 @@ public class LearnerRecordClientTest {
     }
 
     @Test
+    public void testGetEventReturnsEventWithValidStatus() {
+        String eventId = "event-123";
+        Event event = new Event();
+        event.setStatus("Active");
+        event.setCancellationReason(null);
+        RequestEntity<Void> requestEntity = RequestEntity.get("/event/{eventId}", eventId).build();
+
+        when(httpClient.executeRequest(requestEntity, Event.class)).thenReturn(event);
+
+        Event result = client.getEvent(eventId);
+
+        assertEquals(event, result);
+        assertEquals("Active", result.getStatus());
+    }
+
+    @Test
     public void testGetEventNotFound() {
         String eventId = "event-123";
         RequestEntity<Void> requestEntity = RequestEntity.get("/event/{eventId}", eventId).build();
@@ -63,7 +79,7 @@ public class LearnerRecordClientTest {
     public void testGetBulkEvents() {
         List<String> eventIds = List.of("e1", "e2");
         List<Event> events = List.of(mock(Event.class));
-        RequestEntity<Void> requestEntity = RequestEntity.get(bulkEventsUrl).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get(bulkEventsUrl + "?uids={uids}&getBookingCount={getBookingCount}", "e1,e2", true).build();
 
         when(httpClient.executeRequest(requestEntity, List.class)).thenReturn(events);
 
@@ -75,13 +91,29 @@ public class LearnerRecordClientTest {
     @Test
     public void testGetBulkEventsNotFound() {
         List<String> eventIds = List.of("e1", "e2");
-        RequestEntity<Void> requestEntity = RequestEntity.get(bulkEventsUrl).build();
+        RequestEntity<Void> requestEntity = RequestEntity.get(bulkEventsUrl + "?uids={uids}&getBookingCount={getBookingCount}", "e1,e2", true).build();
 
         when(httpClient.executeRequest(requestEntity, List.class)).thenThrow(new NotFoundException("Not found"));
 
         List<Event> result = client.getBulkEvents(eventIds, true);
 
         assertNull(result);
+    }
+
+    @Test
+    public void testGetBulkEventsEmptyList() {
+        List<Event> result = client.getBulkEvents(List.of(), true);
+
+        assertEquals(List.of(), result);
+        verifyNoInteractions(httpClient);
+    }
+
+    @Test
+    public void testGetBulkEventsNullList() {
+        List<Event> result = client.getBulkEvents(null, true);
+
+        assertEquals(List.of(), result);
+        verifyNoInteractions(httpClient);
     }
 
     @Test

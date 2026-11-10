@@ -112,6 +112,78 @@ public class EventServiceTest {
     }
 
     @Test
+    public void shouldFindEventAndSetCancelledStatusAndCancellationReason() {
+        String courseId = "courseId";
+        String moduleId = "moduleId";
+
+        Course course = new Course();
+        course.setId(courseId);
+
+        FaceToFaceModule module = new FaceToFaceModule("product-code");
+        module.setId(moduleId);
+
+        Event savedEvent = new Event();
+        savedEvent.setStatus(EventStatus.ACTIVE);
+        Venue venue = new Venue();
+        venue.setCapacity(10);
+        savedEvent.setVenue(venue);
+
+        Collection<Event> events = new HashSet<>();
+        events.add(savedEvent);
+        module.setEvents(events);
+
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(learnerRecordService.getEventActiveBookingsCount(savedEvent.getId())).thenReturn(0);
+        when(learnerRecordService.getEventStatus(savedEvent.getId())).thenReturn(EventStatus.CANCELLED);
+        when(learnerRecordService.getCancellationReason(savedEvent.getId())).thenReturn(CancellationReason.UNAVAILABLE);
+
+        Optional<Event> result = eventService.find(courseId, moduleId, savedEvent.getId());
+
+        assertEquals(Optional.of(savedEvent), result);
+        assertEquals(EventStatus.CANCELLED, result.get().getStatus());
+        assertEquals(CancellationReason.UNAVAILABLE, result.get().getCancellationReason());
+    }
+
+    @Test
+    public void shouldFindEventWhenLearnerRecordReturnsNullStatus() {
+        String courseId = "courseId";
+        String moduleId = "moduleId";
+
+        Course course = new Course();
+        course.setId(courseId);
+
+        FaceToFaceModule module = new FaceToFaceModule("product-code");
+        module.setId(moduleId);
+
+        Event savedEvent = new Event();
+        savedEvent.setStatus(EventStatus.ACTIVE);
+        Venue venue = new Venue();
+        venue.setCapacity(10);
+        savedEvent.setVenue(venue);
+
+        Collection<Event> events = new HashSet<>();
+        events.add(savedEvent);
+        module.setEvents(events);
+
+        List<Module> modules = new ArrayList<>();
+        modules.add(module);
+        course.setModules(modules);
+
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+        when(learnerRecordService.getEventActiveBookingsCount(savedEvent.getId())).thenReturn(0);
+        when(learnerRecordService.getEventStatus(savedEvent.getId())).thenReturn(null);
+
+        Optional<Event> result = eventService.find(courseId, moduleId, savedEvent.getId());
+
+        assertEquals(Optional.of(savedEvent), result);
+        assertEquals(EventStatus.ACTIVE, result.get().getStatus());
+    }
+
+    @Test
     public void shouldGetEventStatus() {
         String eventId = "eventId";
 
@@ -210,5 +282,45 @@ public class EventServiceTest {
 
 
         assertEquals(eventService.getEventMapBySupplier(supplier, unpaged), stringEventDtoMap);
+    }
+
+    @Test
+    public void shouldUpdateEventsWithLearnerRecordData() {
+        String eventId = "event-id";
+        Event event = new Event();
+        event.setId(eventId);
+        Venue venue = new Venue();
+        venue.setCapacity(20);
+        event.setVenue(venue);
+
+        uk.gov.cslearning.catalogue.service.record.model.Event lrEvent = new uk.gov.cslearning.catalogue.service.record.model.Event();
+        lrEvent.setUid(eventId);
+        lrEvent.setActiveBookingCount(5);
+
+        when(learnerRecordService.getEvents(Collections.singletonList(eventId), true))
+                .thenReturn(Collections.singletonList(lrEvent));
+
+        Collection<Event> updatedEvents = eventService.updateEventsWithLearnerRecordData(Collections.singletonList(event));
+
+        assertEquals(1, updatedEvents.size());
+        assertEquals(15, (int) event.getVenue().getAvailability());
+    }
+
+    @Test
+    public void shouldUpdateEventsWhenLearnerRecordReturnsNull() {
+        String eventId = "event-id";
+        Event event = new Event();
+        event.setId(eventId);
+        Venue venue = new Venue();
+        venue.setCapacity(20);
+        event.setVenue(venue);
+
+        when(learnerRecordService.getEvents(Collections.singletonList(eventId), true))
+                .thenReturn(null);
+
+        Collection<Event> updatedEvents = eventService.updateEventsWithLearnerRecordData(Collections.singletonList(event));
+
+        assertEquals(1, updatedEvents.size());
+        assertEquals(20, (int) event.getVenue().getAvailability());
     }
 }

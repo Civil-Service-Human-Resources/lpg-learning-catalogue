@@ -31,7 +31,7 @@ public class LearnerRecordService {
                 count = event.getActiveBookingCount();
             }
             return count;
-        } catch (RequestEntityException | RestClientException e) {
+        } catch (Exception e) {
             log.error("Could not get booking count from learner record: {}", e.getLocalizedMessage());
             return 0;
         }
@@ -40,7 +40,7 @@ public class LearnerRecordService {
     public List<Booking> getEventBookings(String eventId) {
         try{
             return client.getBookings(eventId);
-        } catch (RequestEntityException | RestClientException e) {
+        } catch (Exception e) {
             log.error("Could not get bookings from learner record: {}", e.getLocalizedMessage());
             return null;
         }
@@ -49,9 +49,11 @@ public class LearnerRecordService {
     public EventStatus getEventStatus(String eventId) {
         try {
             Event event = client.getEvent(eventId);
-            assert event != null;
-            return EventStatus.forValue(event.getStatus());
-        } catch (RequestEntityException | RestClientException e) {
+            if (event != null && event.getStatus() != null) {
+                return EventStatus.forValue(event.getStatus());
+            }
+            return null;
+        } catch (Exception e) {
             log.error("Could not get event from learner record: {}", e.getLocalizedMessage());
             return null;
         }
@@ -60,9 +62,11 @@ public class LearnerRecordService {
     public CancellationReason getCancellationReason(String eventId) {
         try {
             Event event = client.getEvent(eventId);
-            assert event != null;
-            return CancellationReason.forValue(event.getCancellationReason());
-        } catch (RequestEntityException | RestClientException e) {
+            if (event != null && event.getCancellationReason() != null) {
+                return CancellationReason.forValue(event.getCancellationReason());
+            }
+            return null;
+        } catch (Exception e) {
             log.error("Could not get event from learner record: {}", e.getLocalizedMessage());
             return null;
         }
@@ -78,7 +82,7 @@ public class LearnerRecordService {
                     events.addAll(eventsFromUids);
                 }
             });
-        } catch (RequestEntityException | RestClientException e) {
+        } catch (Exception e) {
             log.error("Could not get events from learner record: {}", e.getLocalizedMessage());
             return null;
         }
