@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.client.learnerRecord;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import uk.gov.cslearning.catalogue.client.IHttpClient;
@@ -52,7 +53,6 @@ public class LearnerRecordClient implements ILearnerRecordClient {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Event> getBulkEvents(List<String> moduleEventUids, boolean getBookingCount) {
         if (moduleEventUids == null || moduleEventUids.isEmpty()) {
             return List.of();
@@ -60,19 +60,18 @@ public class LearnerRecordClient implements ILearnerRecordClient {
         String template = bulkEventsUrl + "?uids={uids}&getBookingCount={getBookingCount}";
         RequestEntity<Void> requestEntity = RequestEntity.get(template, String.join(",", moduleEventUids), getBookingCount).build();
         try {
-            return httpClient.executeRequest(requestEntity, List.class);
+            return httpClient.executeRequest(requestEntity, new ParameterizedTypeReference<List<Event>>() {});
         } catch (NotFoundException e) {
             return null;
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Booking> getBookings(String eventId) {
         String template = bookingUrlFormat.contains("%s") ? bookingUrlFormat.replace("%s", "{eventId}") : bookingUrlFormat;
         RequestEntity<Void> requestEntity = RequestEntity.get(template, eventId).build();
         try {
-            return httpClient.executeRequest(requestEntity, List.class);
+            return httpClient.executeRequest(requestEntity, new ParameterizedTypeReference<List<Booking>>() {});
         } catch (NotFoundException e) {
             return null;
         }

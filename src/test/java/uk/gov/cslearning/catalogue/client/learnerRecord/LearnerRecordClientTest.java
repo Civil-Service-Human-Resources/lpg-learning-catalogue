@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import uk.gov.cslearning.catalogue.client.IHttpClient;
 import uk.gov.cslearning.catalogue.exception.NotFoundException;
@@ -94,7 +95,7 @@ public class LearnerRecordClientTest {
         List<Event> events = List.of(mock(Event.class));
         RequestEntity<Void> requestEntity = RequestEntity.get(bulkEventsUrl + "?uids={uids}&getBookingCount={getBookingCount}", "e1,e2", true).build();
 
-        when(httpClient.executeRequest(requestEntity, List.class)).thenReturn(events);
+        when(httpClient.executeRequest(requestEntity, new ParameterizedTypeReference<List<Event>>() {})).thenReturn(events);
 
         List<Event> result = client.getBulkEvents(eventIds, true);
 
@@ -106,7 +107,7 @@ public class LearnerRecordClientTest {
         List<String> eventIds = List.of("e1", "e2");
         RequestEntity<Void> requestEntity = RequestEntity.get(bulkEventsUrl + "?uids={uids}&getBookingCount={getBookingCount}", "e1,e2", true).build();
 
-        when(httpClient.executeRequest(requestEntity, List.class)).thenThrow(new NotFoundException("Not found"));
+        when(httpClient.executeRequest(requestEntity, new ParameterizedTypeReference<List<Event>>() {})).thenThrow(new NotFoundException("Not found"));
 
         List<Event> result = client.getBulkEvents(eventIds, true);
 
@@ -135,7 +136,7 @@ public class LearnerRecordClientTest {
         List<Booking> bookings = List.of(mock(Booking.class));
         RequestEntity<Void> requestEntity = RequestEntity.get("/event/{eventId}/booking", eventId).build();
 
-        when(httpClient.executeRequest(requestEntity, List.class)).thenReturn(bookings);
+        when(httpClient.executeRequest(requestEntity, new ParameterizedTypeReference<List<Booking>>() {})).thenReturn(bookings);
 
         List<Booking> result = client.getBookings(eventId);
 
@@ -147,7 +148,7 @@ public class LearnerRecordClientTest {
         String eventId = "event-123";
         RequestEntity<Void> requestEntity = RequestEntity.get("/event/{eventId}/booking", eventId).build();
 
-        when(httpClient.executeRequest(requestEntity, List.class)).thenThrow(new NotFoundException("Booking not found"));
+        when(httpClient.executeRequest(requestEntity, new ParameterizedTypeReference<List<Booking>>() {})).thenThrow(new NotFoundException("Booking not found"));
 
         List<Booking> result = client.getBookings(eventId);
 

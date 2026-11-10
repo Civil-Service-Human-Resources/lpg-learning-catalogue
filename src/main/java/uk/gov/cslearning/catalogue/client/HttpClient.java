@@ -1,9 +1,9 @@
 package uk.gov.cslearning.catalogue.client;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -37,16 +37,29 @@ public class HttpClient implements IHttpClient {
         }
     }
 
+    private <T, R> ResponseEntity<T> executeRawRequest(RequestEntity<R> request, ParameterizedTypeReference<T> responseType) {
+        try {
+            log.debug("Sending request: {}", request);
+            ResponseEntity<T> response = restTemplate.exchange(request, responseType);
+            log.debug("Request response: {}", response);
+            return response;
+        } catch (RestClientResponseException e) {
+            throw handleRestClientException(e);
+        }
+    }
+
     private RuntimeException handleRestClientException(RestClientResponseException e) {
         String msg = String.format("Error sending request. Status code: %s", e.getStatusCode());
         if (!e.getResponseBodyAsString().isEmpty()) {
             msg = String.format("%s Body was: %s.", msg, e.getResponseBodyAsString());
         }
         msg = String.format("%s Error was: %s", msg, e.getMessage());
-        log.error(msg);
         if (e.getStatusCode().equals(HttpStatusCode.valueOf(404))) {
+            log.debug(msg);
             throw new NotFoundException(msg);
-        } else if (e.getStatusCode().equals(HttpStatusCode.valueOf(400))) {
+        }
+        log.error(msg);
+        if (e.getStatusCode().equals(HttpStatusCode.valueOf(400))) {
             ErrorDto errorDto = parseErrorDto(e.getResponseBodyAsString());
             throw new ValidationException(msg, errorDto);
         }
@@ -73,6 +86,11 @@ public class HttpClient implements IHttpClient {
     @Override
     public <T, R> T executeRequest(RequestEntity<R> request, Class<T> responseClass) {
         return executeRawRequest(request, responseClass).getBody();
+    }
+
+    @Override
+    public <T, R> T executeRequest(RequestEntity<R> request, ParameterizedTypeReference<T> responseType) {
+        return executeRawRequest(request, responseType).getBody();
     }
 
 }
