@@ -9,6 +9,8 @@ public interface ILearnerRecordClient {
 
     Event getEvent(String eventId);
 
+    Event getEvent(String eventId, boolean getBookingCount);
+
     List<Event> getBulkEvents(List<String> moduleEventUids, boolean getBookingCount);
 
     List<Booking> getBookings(String eventId);

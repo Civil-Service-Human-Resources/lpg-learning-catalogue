@@ -130,7 +130,7 @@ public class LearnerRecordServiceTest {
         Event event = new Event();
         event.setActiveBookingCount(5);
 
-        Mockito.when(client.getEvent(eventId)).thenReturn(event);
+        Mockito.when(client.getEvent(eventId, true)).thenReturn(event);
 
         Assertions.assertEquals(Integer.valueOf(5), learnerRecordService.getEventActiveBookingsCount(eventId));
     }

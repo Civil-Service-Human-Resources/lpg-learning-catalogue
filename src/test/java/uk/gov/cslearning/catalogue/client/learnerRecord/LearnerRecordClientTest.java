@@ -48,6 +48,19 @@ public class LearnerRecordClientTest {
     }
 
     @Test
+    public void testGetEventWithBookingCount() {
+        String eventId = "event-123";
+        Event event = mock(Event.class);
+        RequestEntity<Void> requestEntity = RequestEntity.get("/event/{eventId}?getBookingCount={getBookingCount}", eventId, true).build();
+
+        when(httpClient.executeRequest(requestEntity, Event.class)).thenReturn(event);
+
+        Event result = client.getEvent(eventId, true);
+
+        assertEquals(event, result);
+    }
+
+    @Test
     public void testGetEventReturnsEventWithValidStatus() {
         String eventId = "event-123";
         Event event = new Event();

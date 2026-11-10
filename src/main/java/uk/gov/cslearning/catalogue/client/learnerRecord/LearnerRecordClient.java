@@ -29,9 +29,21 @@ public class LearnerRecordClient implements ILearnerRecordClient {
         this.bookingUrlFormat = bookingUrlFormat;
     }
 
+    @Override
     public Event getEvent(String eventId) {
+        return getEvent(eventId, false);
+    }
+
+    @Override
+    public Event getEvent(String eventId, boolean getBookingCount) {
         String template = eventUrlFormat.contains("%s") ? eventUrlFormat.replace("%s", "{eventId}") : eventUrlFormat;
-        RequestEntity<Void> requestEntity = RequestEntity.get(template, eventId).build();
+        RequestEntity<Void> requestEntity;
+        if (getBookingCount) {
+            template += (template.contains("?") ? "&" : "?") + "getBookingCount={getBookingCount}";
+            requestEntity = RequestEntity.get(template, eventId, true).build();
+        } else {
+            requestEntity = RequestEntity.get(template, eventId).build();
+        }
         try {
             return httpClient.executeRequest(requestEntity, Event.class);
         } catch (NotFoundException e) {

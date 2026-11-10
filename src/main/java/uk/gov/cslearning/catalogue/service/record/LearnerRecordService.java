@@ -3,7 +3,6 @@ package uk.gov.cslearning.catalogue.service.record;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import uk.gov.cslearning.catalogue.client.learnerRecord.ILearnerRecordClient;
 import uk.gov.cslearning.catalogue.domain.module.CancellationReason;
 import uk.gov.cslearning.catalogue.domain.module.EventStatus;
@@ -26,7 +25,7 @@ public class LearnerRecordService {
     public Integer getEventActiveBookingsCount(String eventId) {
         try {
             Integer count = 0;
-            Event event = client.getEvent(eventId);
+            Event event = client.getEvent(eventId, true);
             if (event != null) {
                 count = event.getActiveBookingCount();
             }
