@@ -55,7 +55,7 @@ public class HttpClient implements IHttpClient {
         }
         msg = String.format("%s Error was: %s", msg, e.getMessage());
         if (e.getStatusCode().equals(HttpStatusCode.valueOf(404))) {
-            log.debug(msg);
+            log.warn(msg);
             throw new NotFoundException(msg);
         }
         log.error(msg);
@@ -78,7 +78,7 @@ public class HttpClient implements IHttpClient {
                 return errorDto;
             }
         } catch (Exception ex) {
-            log.debug("Could not parse error response body as ErrorDto: {}", ex.getMessage());
+            log.warn("Could not parse error response body as ErrorDto: {}", ex.getMessage());
         }
         return null;
     }
@@ -92,5 +92,4 @@ public class HttpClient implements IHttpClient {
     public <T, R> T executeRequest(RequestEntity<R> request, ParameterizedTypeReference<T> responseType) {
         return executeRawRequest(request, responseType).getBody();
     }
-
 }
