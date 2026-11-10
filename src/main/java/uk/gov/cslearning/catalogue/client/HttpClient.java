@@ -55,14 +55,15 @@ public class HttpClient implements IHttpClient {
         }
         msg = String.format("%s Error was: %s", msg, e.getMessage());
         if (e.getStatusCode().equals(HttpStatusCode.valueOf(404))) {
-            log.warn(msg);
+            log.warn("Throwing NotFoundException: {}", msg);
             throw new NotFoundException(msg);
         }
-        log.error(msg);
         if (e.getStatusCode().equals(HttpStatusCode.valueOf(400))) {
             ErrorDto errorDto = parseErrorDto(e.getResponseBodyAsString());
+            log.error("Throwing ValidationException: {}", msg);
             throw new ValidationException(msg, errorDto);
         }
+        log.error("Throwing RuntimeException: {}", msg);
         throw new RuntimeException(msg);
     }
 
