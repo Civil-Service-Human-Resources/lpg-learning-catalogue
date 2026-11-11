@@ -87,6 +87,8 @@ Significant configuration properties are highlighted here. For the full configur
 - `database` / `spring.datasource` connection and pooling settings for MySQL
 - `spring.flyway` migration locations for database schema setup
 - `identity` / `spring.security.oauth2` settings for token validation and OAuth2 client registration with the identity-service
+- `spring.security.user` HTTP Basic authentication credentials (`LEARNING_CATALOGUE_SECURITY_USERNAME`, `LEARNING_CATALOGUE_SECURITY_PASSWORD`) for securing endpoints including OpenAPI and Swagger UI
+- `info.app` application metadata (`APP_TITLE`, `APP_DESCRIPTION`, `APP_VERSION`) injected into the OpenAPI specification
 - `record` connection settings and paths for the learner-record service
 - `registry` connection settings for the civil-servant-registry-service
 - `elasticsearch` connection settings for the ElasticSearch cluster and repositories
@@ -110,6 +112,15 @@ The service provides API documentation using OpenAPI 3 and Swagger UI via `sprin
   - `/swagger-ui.html` (Redirects to Swagger UI)
   - `/swagger-ui/index.html` or `/swagger-ui/**` (Interactive web UI)
 
+### Security
+
+Access to Swagger UI and OpenAPI endpoints is secured using HTTP Basic authentication (as well as OAuth2 Bearer token authentication). HTTP Basic credentials can be configured using:
+
+| Property | Environment Variable | Default | Description |
+|---|---|---|---|
+| `spring.security.user.name` | `LEARNING_CATALOGUE_SECURITY_USERNAME` | `ChangeMe` | Basic auth username |
+| `spring.security.user.password` | `LEARNING_CATALOGUE_SECURITY_PASSWORD` | `ChangeMe` | Basic auth password |
+
 ### Configuration
 
 OpenAPI documentation generation and Swagger UI are disabled by default. They can be enabled using the following environment variables or configuration properties:
@@ -118,8 +129,9 @@ OpenAPI documentation generation and Swagger UI are disabled by default. They ca
 |---|---|---|---|
 | `springdoc.api-docs.enabled` | `SPRINGDOC_API_DOCS_ENABLED` | `false` | Enables/disables the OpenAPI specification endpoints (`/v3/api-docs`) |
 | `springdoc.swagger-ui.enabled` | `SPRINGDOC_SWAGGER_UI_ENABLED` | `false` | Enables/disables the interactive Swagger UI interface (`/swagger-ui/**`) |
-
-*Note: When enabled, these documentation endpoints are accessible without OAuth2 authentication.*
+| `info.app.title` | `APP_TITLE` | `lpg-learning-catalogue` | Application title displayed in OpenAPI info |
+| `info.app.description` | `APP_DESCRIPTION` | `Learning resource API` | Application description displayed in OpenAPI info |
+| `info.app.version` | `APP_VERSION` | `1.0.0` | API version displayed in OpenAPI info |
 
 
 ## Licenses

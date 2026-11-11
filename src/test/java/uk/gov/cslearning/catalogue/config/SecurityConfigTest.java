@@ -3,6 +3,9 @@ package uk.gov.cslearning.catalogue.config;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
@@ -11,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,5 +50,26 @@ public class SecurityConfigTest {
         assertTrue(authorityStrings.contains("LEARNING_MANAGER"));
         assertTrue(authorityStrings.contains("CSL_AUTHOR"));
         assertTrue(authorityStrings.contains("FACTOR_BEARER"));
+    }
+
+    @Test
+    public void passwordEncoderShouldCreateDelegatingPasswordEncoder() {
+        PasswordEncoder passwordEncoder = securityConfig.passwordEncoder();
+        assertNotNull(passwordEncoder);
+        String encoded = passwordEncoder.encode("ChangeMe");
+        assertTrue(passwordEncoder.matches("ChangeMe", encoded));
+    }
+
+    @Test
+    public void userDetailsServiceShouldProvideConfiguredUser() {
+        PasswordEncoder passwordEncoder = securityConfig.passwordEncoder();
+        UserDetailsService userDetailsService = securityConfig.userDetailsService(passwordEncoder);
+        assertNotNull(userDetailsService);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername("ChangeMe");
+        assertNotNull(userDetails);
+        assertEquals("ChangeMe", userDetails.getUsername());
+        assertTrue(passwordEncoder.matches("ChangeMe", userDetails.getPassword()));
+        assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
     }
 }
