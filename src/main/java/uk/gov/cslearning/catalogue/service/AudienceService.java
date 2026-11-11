@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.util.Arrays;
 import java.util.HashSet;

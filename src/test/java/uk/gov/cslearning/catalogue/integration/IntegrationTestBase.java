@@ -1,22 +1,19 @@
 package uk.gov.cslearning.catalogue.integration;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
@@ -29,9 +26,13 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 @ActiveProfiles("integration-test")
-@RunWith(SpringRunner.class)
 @Import({IntegrationTestConfig.class, DisableBlobStorage.class})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {
+                "spring.main.allow-bean-definition-overriding=true"
+        }
+)
 @AutoConfigureMockMvc
 @Slf4j
 public abstract class IntegrationTestBase {
@@ -51,15 +52,10 @@ public abstract class IntegrationTestBase {
     static boolean runIntegrationTests = Boolean.parseBoolean(System.getenv("RUN_INTEGRATION_TESTS"));
     static boolean useLocalElastic = Boolean.parseBoolean(System.getenv("INTEGRATION_TEST_USE_LOCAL_ELASTIC"));
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
-        Assume.assumeTrue("RUN_INTEGRATION_TESTS is false, skipping integration tests", runIntegrationTests);
+        Assumptions.assumeTrue(runIntegrationTests, "RUN_INTEGRATION_TESTS is false, skipping integration tests");
     }
-
-    /**
-     * TestContainers takes a very long time to spin up which is causing timeouts in the integration tests. Assuming
-     * this will be fixed if we upgraded to Java 17 so lets comment this out until then.
-     */
 
     protected static String elasticImage = "docker.elastic.co/elasticsearch/elasticsearch:8.4.2";
 
@@ -87,15 +83,17 @@ public abstract class IntegrationTestBase {
         }
     }
 
-    @Before
+    @BeforeEach
     public void beforeAll() {
         dataService.deleteBulkCourses();
         dataService.loadBulkCourses();
     }
 
-//    @After
-//    public void afterAll() {
-//        Runtime.getRuntime().addShutdownHook(new Thread(() -> dataService.deleteBulkCourses()));
-//    }
-
+    @org.springframework.test.context.DynamicPropertySource
+    static void setElasticProperties(org.springframework.test.context.DynamicPropertyRegistry registry) {
+        if (runIntegrationTests && !useLocalElastic && ELASTICSEARCH_CONTAINER != null) {
+            registry.add("elasticsearch.host", ELASTICSEARCH_CONTAINER::getHost);
+            registry.add("elasticsearch.port", () -> ELASTICSEARCH_CONTAINER.getMappedPort(9200));
+        }
+    }
 }

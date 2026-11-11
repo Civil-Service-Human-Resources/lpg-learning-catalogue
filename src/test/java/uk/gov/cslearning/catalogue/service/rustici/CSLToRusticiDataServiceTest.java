@@ -1,16 +1,16 @@
 package uk.gov.cslearning.catalogue.service.rustici;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import uk.gov.cslearning.catalogue.dto.rustici.course.CreateCourse;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CSLToRusticiDataServiceTest {
 
     private CSLToRusticiDataService cslToRusticiDataService;
 
-    @Before
+    @BeforeEach
     public void beforeEach() {
         cslToRusticiDataService = new CSLToRusticiDataService("test.com");
     }

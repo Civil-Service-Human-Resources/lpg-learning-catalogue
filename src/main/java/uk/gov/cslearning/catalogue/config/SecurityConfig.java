@@ -1,112 +1,142 @@
 package uk.gov.cslearning.catalogue.config;
 
-import org.apache.http.HttpHost;
-import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestOperations;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
-import org.springframework.security.oauth2.client.token.AccessTokenRequest;
-import org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest;
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
 @Configuration
 @EnableWebSecurity
-@EnableResourceServer
-@EnableOAuth2Client
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-    @Value("${oauth.tokenEndpoint}")
+    @Value("${identity.tokenEndpoint}")
     private String tokenEndpoint;
 
+    @Value("${spring.security.oauth2.resource.jwt.key-value}")
+    private String jwtKey;
+
+    @Value("${spring.security.user.name:ChangeMe}")
+    private String username = "ChangeMe";
+
+    @Value("${spring.security.user.password:ChangeMe}")
+    private String password = "ChangeMe";
+
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-        http.cors().and().csrf().disable().authorizeRequests()
-                .and().authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, tokenEndpoint).permitAll()
-                .antMatchers(HttpMethod.GET, "/health").permitAll()
-                .anyRequest().authenticated();
-    }
-
-    @Override
-    public void configure(WebSecurity webSecurity) throws  Exception{
-        webSecurity.ignoring().antMatchers(HttpMethod.GET, "/health");
+    @ConditionalOnMissingBean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
-    public TokenStore getTokenStore(OAuthProperties oAuthProperties) {
-        return new JwtTokenStore(accessTokenConverter(oAuthProperties));
+    @ConditionalOnMissingBean
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        UserDetails user = User.builder()
+                .passwordEncoder(passwordEncoder::encode)
+                .username(username)
+                .password(password)
+                .roles("USER")
+                .build();
+        return new InMemoryUserDetailsManager(user);
     }
 
     @Bean
-    public JwtAccessTokenConverter accessTokenConverter(OAuthProperties oAuthProperties) {
-        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        jwtAccessTokenConverter.setSigningKey(oAuthProperties.getJwtKey());
-        return jwtAccessTokenConverter;
+    @ConditionalOnMissingBean
+    public JwtDecoder jwtDecoder() {
+        byte[] keyBytes = jwtKey.getBytes(StandardCharsets.UTF_8);
+        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "HmacSHA256");
+        return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
 
     @Bean
-    public OAuth2ProtectedResourceDetails resourceDetails(OAuthProperties oAuthProperties) {
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
 
-        ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
-        resource.setId("identity");
-        resource.setAccessTokenUri(oAuthProperties.getTokenUrl());
-        resource.setClientId(oAuthProperties.getClientId());
-        resource.setClientSecret(oAuthProperties.getClientSecret());
-
-        return resource;
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
     }
 
     @Bean
-    public PoolingHttpClientConnectionManager httpClientConnectionManager(OAuthProperties oAuthProperties) {
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(oAuthProperties.getMaxTotalConnections());
-        connectionManager.setDefaultMaxPerRoute(oAuthProperties.getDefaultMaxConnectionsPerRoute());
-        HttpHost host = new HttpHost(oAuthProperties.getServiceUrl());
-        connectionManager.setMaxPerRoute(new HttpRoute(host), oAuthProperties.getMaxPerServiceUrl());
-
-        return connectionManager;
+    @Order(1)
+    @ConditionalOnMissingBean(name = "filterChain")
+    public SecurityFilterChain openApiSecurityFilterChain(HttpSecurity http) {
+        http.securityMatcher(
+                        "/v3/api-docs",
+                        "/v3/api-docs/**",
+                        "/v3/api-docs.yaml",
+                        "/swagger-ui",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
+                )
+                .cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+        return http.build();
     }
 
     @Bean
-    public OAuth2RestOperations oAuthRestTemplate(OAuth2ProtectedResourceDetails resourceDetails, PoolingHttpClientConnectionManager connectionManager) {
-        CloseableHttpClient httpClient = HttpClients.custom()
-            .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-            .setConnectionManager(connectionManager)
-            .build();
+    @Order(2)
+    @ConditionalOnMissingBean(name = "filterChain")
+    public SecurityFilterChain filterChain(HttpSecurity http) {
+        http.cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, tokenEndpoint).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/health").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+        return http.build();
+    }
 
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setHttpClient(httpClient);
-
-        AccessTokenRequest atr = new DefaultAccessTokenRequest();
-        OAuth2RestTemplate oAuthRestTemplate = new OAuth2RestTemplate(resourceDetails, new DefaultOAuth2ClientContext(atr));
-        oAuthRestTemplate.setRequestFactory(requestFactory);
-
-        return oAuthRestTemplate;
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService(JwtDecoder clientJwtDecoder) {
+        return userRequest -> {
+            String tokenValue = userRequest.getAccessToken().getTokenValue();
+            Map<String, Object> claims;
+            Jwt jwt = clientJwtDecoder.decode(tokenValue);
+            claims = jwt.getClaims();
+            List<String> authorities = jwt.getClaimAsStringList("authorities");
+            return new CustomOAuth2User(
+                    authorities != null ? authorities.stream().map(SimpleGrantedAuthority::new).toList() : List.of(),
+                    claims,
+                    "user_name", (String) claims.get("user_name"), (String) claims.get("email"), jwt
+            );
+        };
     }
 }

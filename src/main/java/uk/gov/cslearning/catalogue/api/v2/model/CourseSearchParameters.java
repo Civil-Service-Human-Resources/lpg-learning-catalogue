@@ -7,7 +7,7 @@ import lombok.Setter;
 import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.domain.Visibility;
 
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -33,11 +33,13 @@ public class CourseSearchParameters {
     String titleStartsWith;
 
     public boolean hasModuleTypes() {
-        return !this.types.isEmpty();
+        return this.types != null && !this.types.isEmpty();
     }
 
     public boolean hasAudienceFields() {
-        return !departments.isEmpty() || !areasOfWork.isEmpty() || !interests.isEmpty();
+        return (departments != null && !departments.isEmpty())
+                || (areasOfWork != null && !areasOfWork.isEmpty())
+                || (interests != null && !interests.isEmpty());
     }
 
     public boolean costIsFree() {

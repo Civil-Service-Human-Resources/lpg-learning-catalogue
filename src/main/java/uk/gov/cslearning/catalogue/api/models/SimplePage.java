@@ -1,8 +1,12 @@
 package uk.gov.cslearning.catalogue.api.models;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Delegate;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,37 +15,38 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@JsonIgnoreProperties({
-        "pageable",
-        "number",
-        "numberOfElements"
-})
-public class SimplePage<T> extends PageImpl<T> {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode
+@ToString
+@SuppressWarnings("unchecked")
+public class SimplePage<T> implements Page<T> {
+
+    @Delegate
+    private final Page<T> delegate;
 
     @JsonCreator
     public SimplePage(@JsonProperty("content") final List<T> content,
                       @JsonProperty("totalElements") final long totalElements,
-                      @JsonProperty("totalPages") final int totalPages,
                       @JsonProperty("page") final int page,
                       @JsonProperty("size") final int size,
                       @JsonProperty("sort") final List<String> sort) {
 
-        super(content, PageRequest.of(page, size, Sort.by(sort.stream()
+        this.delegate = new PageImpl<>(content, PageRequest.of(page, size, Sort.by(sort != null ? sort.stream()
                 .map(el -> el.split(","))
                 .map(ar -> new Sort.Order(Sort.Direction.fromString(ar[1]), ar[0]))
-                .collect(Collectors.toList()))), totalElements);
+                .collect(Collectors.toList()) : List.of())), totalElements);
     }
 
     public SimplePage(final List<T> content, final long totalElements, final Pageable pageable) {
-        super(content, pageable, totalElements);
+        this.delegate = new PageImpl<>(content, pageable, totalElements);
+    }
+
+    public SimplePage(Page<T> delegate) {
+        this.delegate = delegate;
     }
 
     public int getPage() {
         return getNumber();
-    }
-
-    public long getTotalElements() {
-        return super.getTotalElements();
     }
 
     public long getTotalResults() {

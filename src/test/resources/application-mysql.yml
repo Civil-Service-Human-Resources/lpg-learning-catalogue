@@ -6,6 +6,7 @@ spring:
   flyway:
     locations: classpath:db/migration/{vendor}
   jpa:
+    open-in-view: true
     hibernate:
       ddl-auto: none
     properties:
