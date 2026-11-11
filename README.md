@@ -75,10 +75,6 @@ Integration tests relying on ElasticSearch can be run using `./gradlew integrati
 
 The application is packaged as a docker container image and includes an Azure App Insights Java agent for collecting metrics from the app - see `Dockerfile` in the root directory for the container definition. `hammer` is the log collector used for aggregating log output.
 
-The application also includes a `Jenkinsfile` to define the Jenkins build pipeline stages and linking it to the docker image repository and correct terraform module.
-
-Deployment is controlled via the Terraform scripts in the main PaaS repository, with per-environment configuration values referenced there and secrets injected from keybase.
-
 
 ## Configuration
 
@@ -116,22 +112,22 @@ The service provides API documentation using OpenAPI 3 and Swagger UI via `sprin
 
 Access to Swagger UI and OpenAPI endpoints is secured using HTTP Basic authentication (as well as OAuth2 Bearer token authentication). HTTP Basic credentials can be configured using:
 
-| Property | Environment Variable | Default | Description |
-|---|---|---|---|
-| `spring.security.user.name` | `LEARNING_CATALOGUE_SECURITY_USERNAME` | `ChangeMe` | Basic auth username |
-| `spring.security.user.password` | `LEARNING_CATALOGUE_SECURITY_PASSWORD` | `ChangeMe` | Basic auth password |
+| Property | Environment Variable | Description |
+|---|---|---|
+| `spring.security.user.name` | `LEARNING_CATALOGUE_SECURITY_USERNAME` | Basic auth username |
+| `spring.security.user.password` | `LEARNING_CATALOGUE_SECURITY_PASSWORD` | Basic auth password |
 
 ### Configuration
 
 OpenAPI documentation generation and Swagger UI are disabled by default. They can be enabled using the following environment variables or configuration properties:
 
-| Property | Environment Variable | Default | Description |
-|---|---|---|---|
-| `springdoc.api-docs.enabled` | `SPRINGDOC_API_DOCS_ENABLED` | `false` | Enables/disables the OpenAPI specification endpoints (`/v3/api-docs`) |
-| `springdoc.swagger-ui.enabled` | `SPRINGDOC_SWAGGER_UI_ENABLED` | `false` | Enables/disables the interactive Swagger UI interface (`/swagger-ui/**`) |
-| `info.app.title` | `APP_TITLE` | `lpg-learning-catalogue` | Application title displayed in OpenAPI info |
-| `info.app.description` | `APP_DESCRIPTION` | `Learning resource API` | Application description displayed in OpenAPI info |
-| `info.app.version` | `APP_VERSION` | `1.0.0` | API version displayed in OpenAPI info |
+| Property | Environment Variable | Description |
+|---|---|---|
+| `springdoc.api-docs.enabled` | `SPRINGDOC_API_DOCS_ENABLED`  | Enables/disables the OpenAPI specification endpoints (`/v3/api-docs`) |
+| `springdoc.swagger-ui.enabled` | `SPRINGDOC_SWAGGER_UI_ENABLED` | Enables/disables the interactive Swagger UI interface (`/swagger-ui/**`) |
+| `info.app.title` | `APP_TITLE` | Application title displayed in OpenAPI info |
+| `info.app.description` | `APP_DESCRIPTION` | Application description displayed in OpenAPI info |
+| `info.app.version` | `APP_VERSION` | API version displayed in OpenAPI info |
 
 
 ## Licenses
