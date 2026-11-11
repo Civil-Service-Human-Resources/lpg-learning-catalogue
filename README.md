@@ -105,7 +105,7 @@ The service provides API documentation using OpenAPI 3 and Swagger UI via `sprin
   - `/v3/api-docs.yaml` (YAML format)
   - `/v3/api-docs/swagger-config` (Swagger UI configuration)
 - **Swagger UI:**
-  - `/swagger-ui.html` (Redirects to Swagger UI)
+  - `/swagger-ui` or `/swagger-ui.html` (Redirects to Swagger UI)
   - `/swagger-ui/index.html` or `/swagger-ui/**` (Interactive web UI)
 
 ### Security

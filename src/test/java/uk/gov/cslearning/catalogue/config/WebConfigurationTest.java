@@ -4,8 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.UrlHandlerFilter;
+import org.springframework.web.servlet.config.annotation.RedirectViewControllerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,6 +16,18 @@ import static org.mockito.Mockito.*;
 public class WebConfigurationTest {
 
     private final WebConfiguration webConfiguration = new WebConfiguration();
+
+    @Test
+    public void addViewControllersShouldConfigureSwaggerUiRedirect() {
+        ViewControllerRegistry registry = mock(ViewControllerRegistry.class);
+        RedirectViewControllerRegistration redirectRegistration = mock(RedirectViewControllerRegistration.class);
+
+        when(registry.addRedirectViewController("/swagger-ui", "/swagger-ui/index.html")).thenReturn(redirectRegistration);
+
+        webConfiguration.addViewControllers(registry);
+
+        verify(registry).addRedirectViewController("/swagger-ui", "/swagger-ui/index.html");
+    }
 
     @Test
     public void urlHandlerFilterBeanShouldBeConfiguredWithHighestPrecedence() {

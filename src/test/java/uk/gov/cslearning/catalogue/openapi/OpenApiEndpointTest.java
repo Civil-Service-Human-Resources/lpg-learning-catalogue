@@ -87,6 +87,12 @@ public class OpenApiEndpointTest {
     }
 
     @Test
+    public void shouldRejectUnauthenticatedAccessToSwaggerUi() throws Exception {
+        mockMvc.perform(get("/swagger-ui"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     public void shouldRejectUnauthenticatedAccessToSwaggerUiHtml() throws Exception {
         mockMvc.perform(get("/swagger-ui.html"))
                 .andExpect(status().isUnauthorized());
@@ -121,6 +127,13 @@ public class OpenApiEndpointTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.configUrl").value("/v3/api-docs/swagger-config"))
                 .andExpect(jsonPath("$.url").value("/v3/api-docs"));
+    }
+
+    @Test
+    public void shouldAllowAccessToSwaggerUiWithBasicAuthentication() throws Exception {
+        mockMvc.perform(get("/swagger-ui").with(httpBasic("custom-swagger-user", "custom-swagger-pass")))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/swagger-ui/index.html"));
     }
 
     @Test
@@ -159,6 +172,13 @@ public class OpenApiEndpointTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.configUrl").value("/v3/api-docs/swagger-config"))
                 .andExpect(jsonPath("$.url").value("/v3/api-docs"));
+    }
+
+    @Test
+    public void shouldAllowAccessToSwaggerUiWithOAuth2Authentication() throws Exception {
+        mockMvc.perform(get("/swagger-ui").with(jwt()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/swagger-ui/index.html"));
     }
 
     @Test
