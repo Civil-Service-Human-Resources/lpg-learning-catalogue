@@ -1,16 +1,13 @@
 package uk.gov.cslearning.catalogue.api;
 
-import org.glassfish.jersey.servlet.WebConfig;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.cslearning.catalogue.config.FileUploadMap;
 import uk.gov.cslearning.catalogue.domain.ErrorDtoFactory;
@@ -31,17 +28,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(MediaController.class)
+@WebMvcTest(
+        controllers = MediaController.class,
+        properties = {
+                "spring.main.allow-bean-definition-overriding=true",
+                "spring.autoconfigure.exclude=org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration"
+        }
+)
 @WithMockUser(username = "user")
-@ContextConfiguration(classes = {WebConfig.class, MediaController.class,
-                                ApiExceptionHandler.class, FileUploadMap.class, ErrorDtoFactory.class})
+@Import({ErrorDtoFactory.class, FileUploadMap.class}) // Load the real beans into the test context
 public class MediaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private MediaManagementService mediaManagementService;
 
     @Test
@@ -70,7 +71,6 @@ public class MediaControllerTest {
     @Test
     public void shouldRejectInvalidFileExt() throws Exception {
         String fileContainer = "container-id";
-        String mediaId = "media-uid";
         String filename = "custom-filename";
 
         MockMultipartFile file = new MockMultipartFile("file", "file.asp", "application/octet-stream", "abc".getBytes());
@@ -162,7 +162,6 @@ public class MediaControllerTest {
         String filename = "custom-filename";
 
         MockMultipartFile file = new MockMultipartFile("file", "file.PNG", "application/octet-stream", "abc".getBytes());
-        FileUpload fileUpload = FileUpload.createFromMetadata(file, fileContainer, filename);
 
         Media media = mock(Media.class);
         when(media.getId()).thenReturn(mediaId);
