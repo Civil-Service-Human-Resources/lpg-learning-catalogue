@@ -75,6 +75,8 @@ public class Course {
 
     private Collection<LearningTagPartialDto> learningTags = new ArrayList<>();
 
+    private CourseLevelEntity level;
+
     public Course() {
     }
 

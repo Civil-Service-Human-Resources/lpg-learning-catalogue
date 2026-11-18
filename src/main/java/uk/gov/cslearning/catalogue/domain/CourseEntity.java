@@ -1,11 +1,11 @@
 package uk.gov.cslearning.catalogue.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.cslearning.catalogue.domain.learningTag.LearningTag;
 
-import jakarta.persistence.*;
 import java.util.Collection;
 
 @Entity
@@ -34,6 +34,9 @@ public class CourseEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Collection<LearningTag> learningTags;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private CourseLevelEntity level;
 
     public CourseEntity(String uid, String title, String shortDescription, CourseStatusEntity status) {
         this.uid = uid;
