@@ -14,8 +14,8 @@ import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.service.upload.MediaManagementService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.Optional;
 
 @Controller
@@ -47,7 +47,7 @@ public class MediaController {
                                                @RequestParam(required = false) String filename, HttpServletRequest request) {
         Media media = mediaManagementService.create(FileUpload.createFromMetadata(file, container, filename));
         String referrer = request.getHeader("referer");
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(referrer + "/{id}").buildAndExpand(media.getId());
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(referrer + "/{id}").buildAndExpand(media.getId());
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
         return new ResponseEntity<>(headers, HttpStatus.FOUND);

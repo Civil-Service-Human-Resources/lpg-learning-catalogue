@@ -1,7 +1,7 @@
 package uk.gov.cslearning.catalogue.api.validators.url;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
 public class SlugValidator implements ConstraintValidator<Slug, String> {

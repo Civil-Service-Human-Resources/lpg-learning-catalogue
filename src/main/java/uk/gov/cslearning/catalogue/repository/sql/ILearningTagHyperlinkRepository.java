@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import uk.gov.cslearning.catalogue.domain.LearningTagHyperlink;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagHyperlink;
 
 import java.util.Optional;
 
@@ -13,4 +13,12 @@ public interface ILearningTagHyperlinkRepository extends JpaRepository<LearningT
     Page<LearningTagHyperlink> findByLearningTagIdOrderByTitleAsc(Long learningTagId, Pageable pageable);
 
     Optional<LearningTagHyperlink> findByIdAndLearningTagId(Long id, Long learningTagId);
+
+    boolean existsByLearningTagIdAndTitle(Long learningTagId, String title);
+
+    boolean existsByLearningTagIdAndHref(Long learningTagId, String href);
+
+    boolean existsByLearningTagIdAndTitleAndIdNot(Long learningTagId, String title, Long id);
+
+    boolean existsByLearningTagIdAndHrefAndIdNot(Long learningTagId, String href, Long id);
 }

@@ -1,10 +1,9 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -12,13 +11,13 @@ import java.util.List;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertNull;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ELearningManifestServiceTest {
 
     private final List<String> validManifestFiles = Arrays.asList("imsmanifest.xml", "testmanifest.xml");
     private ELearningManifestService eLearningManifestService;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.eLearningManifestService = new ELearningManifestService(validManifestFiles);
     }

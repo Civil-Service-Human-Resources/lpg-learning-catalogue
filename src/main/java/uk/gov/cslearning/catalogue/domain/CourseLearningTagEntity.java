@@ -3,8 +3,9 @@ package uk.gov.cslearning.catalogue.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.cslearning.catalogue.domain.learningTag.LearningTag;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter
