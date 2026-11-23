@@ -1,14 +1,14 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.dto.CourseDto;
 import uk.gov.cslearning.catalogue.dto.EventDto;
@@ -18,12 +18,11 @@ import uk.gov.cslearning.catalogue.service.record.LearnerRecordService;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class EventServiceTest {
 
     @Mock
@@ -51,13 +50,13 @@ public class EventServiceTest {
         Course course = new Course();
         course.setId(courseId);
 
-        FaceToFaceModule module = new FaceToFaceModule("product-code");
+        Module module = new FaceToFaceModule("product-code");
         module.setId(moduleId);
 
         Event savedEvent = new Event();
         Collection<Event> events = new HashSet<>();
         events.add(savedEvent);
-        module.setEvents(events);
+        ((FaceToFaceModule) module).setEvents(events);
 
         List<Module> modules = new ArrayList<>();
         modules.add(module);
@@ -65,7 +64,7 @@ public class EventServiceTest {
 
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
 
-        assertEquals(eventService.save(courseId, moduleId, newEvent), newEvent);
+        Assert.assertEquals(eventService.save(courseId, moduleId, newEvent), newEvent);
 
         verify(courseRepository).findById(courseId);
         verify(courseRepository).save(course);
@@ -79,7 +78,7 @@ public class EventServiceTest {
         Course course = new Course();
         course.setId(courseId);
 
-        FaceToFaceModule module = new FaceToFaceModule("product-code");
+        Module module = new FaceToFaceModule("product-code");
         module.setId(moduleId);
 
         Event savedEvent = new Event();
@@ -89,7 +88,7 @@ public class EventServiceTest {
 
         Collection<Event> events = new HashSet<>();
         events.add(savedEvent);
-        module.setEvents(events);
+        ((FaceToFaceModule) module).setEvents(events);
 
         List<Module> modules = new ArrayList<>();
         modules.add(module);
@@ -104,83 +103,11 @@ public class EventServiceTest {
 
         Optional<Event> result = eventService.find(courseId, moduleId, savedEvent.getId());
 
-        assertEquals(result, Optional.of(savedEvent));
-        assertEquals((int) result.get().getVenue().getAvailability(), availability);
+        Assert.assertEquals(result, Optional.of(savedEvent));
+        Assert.assertTrue(result.get().getVenue().getAvailability() == availability);
 
         verify(courseRepository).findById(courseId);
         verify(learnerRecordService).getEventActiveBookingsCount(savedEvent.getId());
-    }
-
-    @Test
-    public void shouldFindEventAndSetCancelledStatusAndCancellationReason() {
-        String courseId = "courseId";
-        String moduleId = "moduleId";
-
-        Course course = new Course();
-        course.setId(courseId);
-
-        FaceToFaceModule module = new FaceToFaceModule("product-code");
-        module.setId(moduleId);
-
-        Event savedEvent = new Event();
-        savedEvent.setStatus(EventStatus.ACTIVE);
-        Venue venue = new Venue();
-        venue.setCapacity(10);
-        savedEvent.setVenue(venue);
-
-        Collection<Event> events = new HashSet<>();
-        events.add(savedEvent);
-        module.setEvents(events);
-
-        List<Module> modules = new ArrayList<>();
-        modules.add(module);
-        course.setModules(modules);
-
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-        when(learnerRecordService.getEventActiveBookingsCount(savedEvent.getId())).thenReturn(0);
-        when(learnerRecordService.getEventStatus(savedEvent.getId())).thenReturn(EventStatus.CANCELLED);
-        when(learnerRecordService.getCancellationReason(savedEvent.getId())).thenReturn(CancellationReason.UNAVAILABLE);
-
-        Optional<Event> result = eventService.find(courseId, moduleId, savedEvent.getId());
-
-        assertEquals(Optional.of(savedEvent), result);
-        assertEquals(EventStatus.CANCELLED, result.get().getStatus());
-        assertEquals(CancellationReason.UNAVAILABLE, result.get().getCancellationReason());
-    }
-
-    @Test
-    public void shouldFindEventWhenLearnerRecordReturnsNullStatus() {
-        String courseId = "courseId";
-        String moduleId = "moduleId";
-
-        Course course = new Course();
-        course.setId(courseId);
-
-        FaceToFaceModule module = new FaceToFaceModule("product-code");
-        module.setId(moduleId);
-
-        Event savedEvent = new Event();
-        savedEvent.setStatus(EventStatus.ACTIVE);
-        Venue venue = new Venue();
-        venue.setCapacity(10);
-        savedEvent.setVenue(venue);
-
-        Collection<Event> events = new HashSet<>();
-        events.add(savedEvent);
-        module.setEvents(events);
-
-        List<Module> modules = new ArrayList<>();
-        modules.add(module);
-        course.setModules(modules);
-
-        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-        when(learnerRecordService.getEventActiveBookingsCount(savedEvent.getId())).thenReturn(0);
-        when(learnerRecordService.getEventStatus(savedEvent.getId())).thenReturn(null);
-
-        Optional<Event> result = eventService.find(courseId, moduleId, savedEvent.getId());
-
-        assertEquals(Optional.of(savedEvent), result);
-        assertEquals(EventStatus.ACTIVE, result.get().getStatus());
     }
 
     @Test
@@ -191,7 +118,7 @@ public class EventServiceTest {
 
         when(learnerRecordService.getEventStatus(eventId)).thenReturn(eventStatus);
 
-        assertEquals(eventStatus, eventService.getStatus(eventId));
+        Assert.assertEquals(eventService.getStatus(eventId), eventStatus);
 
         verify(learnerRecordService).getEventStatus(eventId);
     }
@@ -204,7 +131,7 @@ public class EventServiceTest {
 
         when(learnerRecordService.getCancellationReason(eventId)).thenReturn(cancellationReason);
 
-        assertEquals(cancellationReason, eventService.getCancellationReason(eventId));
+        Assert.assertEquals(eventService.getCancellationReason(eventId), cancellationReason);
 
         verify(learnerRecordService).getCancellationReason(eventId);
     }
@@ -241,7 +168,7 @@ public class EventServiceTest {
         stringEventDtoMap.put(eventId, eventDto);
 
         when(eventDtoMapService.getStringEventDtoMap(courses)).thenReturn(stringEventDtoMap);
-        assertEquals(eventService.getEventMap(), stringEventDtoMap);
+        Assert.assertEquals(eventService.getEventMap(), stringEventDtoMap);
     }
 
     @Test
@@ -281,46 +208,6 @@ public class EventServiceTest {
         when(eventDtoMapService.getStringEventDtoMapForSupplier(courses)).thenReturn(stringEventDtoMap);
 
 
-        assertEquals(eventService.getEventMapBySupplier(supplier, unpaged), stringEventDtoMap);
-    }
-
-    @Test
-    public void shouldUpdateEventsWithLearnerRecordData() {
-        String eventId = "event-id";
-        Event event = new Event();
-        event.setId(eventId);
-        Venue venue = new Venue();
-        venue.setCapacity(20);
-        event.setVenue(venue);
-
-        uk.gov.cslearning.catalogue.service.record.model.Event lrEvent = new uk.gov.cslearning.catalogue.service.record.model.Event();
-        lrEvent.setUid(eventId);
-        lrEvent.setActiveBookingCount(5);
-
-        when(learnerRecordService.getEvents(Collections.singletonList(eventId), true))
-                .thenReturn(Collections.singletonList(lrEvent));
-
-        Collection<Event> updatedEvents = eventService.updateEventsWithLearnerRecordData(Collections.singletonList(event));
-
-        assertEquals(1, updatedEvents.size());
-        assertEquals(15, (int) event.getVenue().getAvailability());
-    }
-
-    @Test
-    public void shouldUpdateEventsWhenLearnerRecordReturnsNull() {
-        String eventId = "event-id";
-        Event event = new Event();
-        event.setId(eventId);
-        Venue venue = new Venue();
-        venue.setCapacity(20);
-        event.setVenue(venue);
-
-        when(learnerRecordService.getEvents(Collections.singletonList(eventId), true))
-                .thenReturn(null);
-
-        Collection<Event> updatedEvents = eventService.updateEventsWithLearnerRecordData(Collections.singletonList(event));
-
-        assertEquals(1, updatedEvents.size());
-        assertEquals(20, (int) event.getVenue().getAvailability());
+        Assert.assertEquals(eventService.getEventMapBySupplier(supplier, unpaged), stringEventDtoMap);
     }
 }

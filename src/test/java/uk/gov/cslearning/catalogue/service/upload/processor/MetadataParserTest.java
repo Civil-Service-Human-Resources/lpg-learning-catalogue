@@ -1,13 +1,13 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import com.google.common.collect.ImmutableMap;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.exception.FileUploadException;
 import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataFactory;
 import uk.gov.cslearning.catalogue.service.upload.processor.metadata.MetadataParser;
@@ -16,10 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class MetadataParserTest {
     @Mock
     private Tika tika;
@@ -52,7 +53,7 @@ public class MetadataParserTest {
         assertEquals(expected, metadataParser.parse(inputStream));
     }
 
-    @Test
+    @Test(expected = FileUploadException.class)
     public void shouldThrowFileUploadExceptionOnIOException() throws IOException {
 
         Metadata metadata = mock(Metadata.class);
@@ -62,7 +63,7 @@ public class MetadataParserTest {
 
         when(metadataFactory.getMetadata()).thenReturn(metadata);
         doThrow(ioException).when(tika).parse(inputStream, metadata);
-        assertThrows(FileUploadException.class, () -> metadataParser.parse(inputStream));
+        metadataParser.parse(inputStream);
 
     }
 

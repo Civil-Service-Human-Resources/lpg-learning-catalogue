@@ -1,16 +1,18 @@
-package uk.gov.cslearning.catalogue.domain.learningTag;
+package uk.gov.cslearning.catalogue.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class LearningTagHyperlinkDto {
 
     private Long id;
@@ -24,6 +26,6 @@ public class LearningTagHyperlinkDto {
 
     @NotBlank
     @Size(max = 255)
-    @URL(protocol = "https", message = "URL must start with https://")
+    @URL(protocol = "https", message = "url must be an HTTPS URL")
     private String url;
 }

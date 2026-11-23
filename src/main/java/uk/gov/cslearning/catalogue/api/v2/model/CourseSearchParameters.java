@@ -1,26 +1,19 @@
 package uk.gov.cslearning.catalogue.api.v2.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.domain.Visibility;
 
-import jakarta.validation.constraints.Pattern;
+import javax.validation.constraints.Pattern;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class CourseSearchParameters {
     String query = "";
 
-    Collection<Status> status = Collections.emptyList();
-    Collection<Visibility> visibility = Collections.emptyList();
+    Collection<Status> status = Collections.singletonList(Status.PUBLISHED);
+    String visibility = "PUBLIC";
     List<String> types = Collections.emptyList();
     String cost;
 
@@ -33,13 +26,11 @@ public class CourseSearchParameters {
     String titleStartsWith;
 
     public boolean hasModuleTypes() {
-        return this.types != null && !this.types.isEmpty();
+        return !this.types.isEmpty();
     }
 
     public boolean hasAudienceFields() {
-        return (departments != null && !departments.isEmpty())
-                || (areasOfWork != null && !areasOfWork.isEmpty())
-                || (interests != null && !interests.isEmpty());
+        return !departments.isEmpty() || !areasOfWork.isEmpty() || !interests.isEmpty();
     }
 
     public boolean costIsFree() {

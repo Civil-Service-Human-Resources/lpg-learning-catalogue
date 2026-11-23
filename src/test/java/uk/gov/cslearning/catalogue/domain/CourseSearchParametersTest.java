@@ -1,12 +1,12 @@
 package uk.gov.cslearning.catalogue.domain;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import uk.gov.cslearning.catalogue.api.v2.model.CourseSearchParameters;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 
 public class CourseSearchParametersTest {

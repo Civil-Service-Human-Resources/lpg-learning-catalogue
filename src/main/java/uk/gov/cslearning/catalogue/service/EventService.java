@@ -81,16 +81,10 @@ public class EventService {
         if (result.isPresent()) {
             Event event = result.get();
             event = getEventAvailability(event);
-            EventStatus status = getStatus(eventId);
-            if (status != null) {
-                event.setStatus(status);
-            }
+            event.setStatus(getStatus(eventId));
 
             if (event.getStatus() == EventStatus.CANCELLED) {
-                CancellationReason reason = getCancellationReason(eventId);
-                if (reason != null) {
-                    event.setCancellationReason(reason);
-                }
+                event.setCancellationReason(getCancellationReason(eventId));
             }
         }
 
@@ -125,10 +119,8 @@ public class EventService {
 
     public Collection<Event> updateEventsWithLearnerRecordData(Collection<Event> events) {
         List<String> eventUids = events.stream().map(Event::getId).collect(Collectors.toList());
-        List<uk.gov.cslearning.catalogue.service.record.model.Event> lrEvents = learnerRecordService.getEvents(eventUids, true);
-        Map<String, uk.gov.cslearning.catalogue.service.record.model.Event> lrEventMap = (lrEvents != null)
-                ? Maps.uniqueIndex(lrEvents, uk.gov.cslearning.catalogue.service.record.model.Event::getUid)
-                : Collections.emptyMap();
+        Map<String, uk.gov.cslearning.catalogue.service.record.model.Event> lrEventMap = Maps
+                .uniqueIndex(learnerRecordService.getEvents(eventUids, true), uk.gov.cslearning.catalogue.service.record.model.Event::getUid);
 
         events.forEach(e -> {
             e.getVenue().setAvailability(e.getVenue().getCapacity());

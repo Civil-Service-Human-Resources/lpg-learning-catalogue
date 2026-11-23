@@ -1,18 +1,20 @@
 package uk.gov.cslearning.catalogue.domain;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
 import uk.gov.cslearning.catalogue.domain.module.LinkModule;
 import uk.gov.cslearning.catalogue.domain.module.Module;
 
 import java.math.BigDecimal;
-import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @Transactional
 public class CourseTest {
@@ -23,38 +25,38 @@ public class CourseTest {
     @Test
     public void shouldRemoveModuleFromCourse() throws Exception {
         Course course = createCourse();
-        Module module1 = new LinkModule(URI.create(URL).toURL());
+        Module module1 = new LinkModule(new URL(URL));
         module1.setId(MODULE_ID);
 
         List<Module> moduleList = new ArrayList<>();
         moduleList.add(module1);
         course.setModules(moduleList);
 
-        assertEquals(1, course.getModules().size());
+        assertThat(course.getModules().size(), equalTo(1));
 
         course.deleteModule(module1);
 
-        assertEquals(0, course.getModules().size());
+        assertThat(course.getModules().size(), equalTo(0));
     }
 
     @Test
     public void shouldNotRemoveModuleFromCourseIfDoesntExist() throws Exception {
         Course course = createCourse();
-        Module module1 = new LinkModule(URI.create(URL).toURL());
+        Module module1 = new LinkModule(new URL(URL));
         module1.setId(MODULE_ID);
 
-        Module module2 = new LinkModule(URI.create(URL).toURL());
+        Module module2 = new LinkModule(new URL(URL));
         module1.setId("module-id-2");
 
         List<Module> moduleList = new ArrayList<>();
         moduleList.add(module1);
         course.setModules(moduleList);
 
-        assertEquals(1, course.getModules().size());
+        assertThat(course.getModules().size(), equalTo(1));
 
         course.deleteModule(module2);
 
-        assertEquals(1, course.getModules().size());
+        assertThat(course.getModules().size(), equalTo(1));
     }
 
     @Test

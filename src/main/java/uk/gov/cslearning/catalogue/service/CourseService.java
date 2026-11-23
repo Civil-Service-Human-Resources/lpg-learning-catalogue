@@ -12,9 +12,9 @@ import uk.gov.cslearning.catalogue.api.v2.model.CourseSearchParameters;
 import uk.gov.cslearning.catalogue.api.v2.model.RequiredLearningIdMap;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.Course;
+import uk.gov.cslearning.catalogue.domain.CourseEntity;
 import uk.gov.cslearning.catalogue.domain.Owner.OwnerFactory;
 import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.domain.learningTag.LearningTagPartialDto;
 import uk.gov.cslearning.catalogue.domain.module.Audience;
 import uk.gov.cslearning.catalogue.domain.module.Event;
 import uk.gov.cslearning.catalogue.domain.module.FaceToFaceModule;
@@ -24,7 +24,6 @@ import uk.gov.cslearning.catalogue.exception.CourseCannotByDeletedException;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseStatusRepository;
-import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -54,12 +53,10 @@ public class CourseService {
 
     private final ICourseStatusRepository iCourseStatusRepository;
 
-    private final LearningTagService learningTagService;
-
     public CourseService(CourseRepository courseRepository,
                          EventService eventService, RegistryService registryService, OwnerFactory ownerFactory,
                          AuthoritiesService authoritiesService, CourseValidator courseValidator,
-                         ICourseRepository iCourseRepository, ICourseStatusRepository iCourseStatusRepository, LearningTagService learningTagService) {
+                         ICourseRepository iCourseRepository, ICourseStatusRepository iCourseStatusRepository) {
         this.courseRepository = courseRepository;
         this.eventService = eventService;
         this.registryService = registryService;
@@ -68,7 +65,6 @@ public class CourseService {
         this.courseValidator = courseValidator;
         this.iCourseRepository = iCourseRepository;
         this.iCourseStatusRepository = iCourseStatusRepository;
-        this.learningTagService = learningTagService;
     }
 
     public Course save(Course course) {
@@ -197,7 +193,7 @@ public class CourseService {
     public List<Course> fetchMandatoryCoursesByDueDate(Collection<Long> days) {
         LocalDate now = LocalDate.now();
 
-        Map<Course, Set<Audience>> alterAudienceList = new HashMap<>();
+        Map<Course, Set<Audience>> alterAudienceList = new HashMap();
 
         courseRepository.findAllPublishedRequiredLearning(DEFAULT_PAGEABLE)
                 .forEach(course -> course.getAudiences()
@@ -207,7 +203,7 @@ public class CourseService {
             course.setAudiences(alterAudienceList.get(course));
         }
 
-        return new ArrayList<>(alterAudienceList.keySet());
+        return new ArrayList(alterAudienceList.keySet());
     }
 
     public Map<String, List<Course>> groupByOrganisationCode(List<Course> courses) {
@@ -238,7 +234,7 @@ public class CourseService {
 
     public Course deleteCourseById(String courseId) {
         Course course = getCourseById(courseId);
-        boolean courseCanBeDeleted = course.getHasBeenPublished() != null && !course.getHasBeenPublished();
+        Boolean courseCanBeDeleted = course.getHasBeenPublished() != null && !course.getHasBeenPublished();
 
         if (courseCanBeDeleted) {
             courseRepository.delete(course);
@@ -270,7 +266,7 @@ public class CourseService {
             if (alterAudienceList.containsKey(course)) {
                 alterAudienceList.get(course).add(audience);
             } else {
-                Set<Audience> newAudienceList = new HashSet<>();
+                Set<Audience> newAudienceList = new HashSet();
                 newAudienceList.add(audience);
                 alterAudienceList.put(course, newAudienceList);
             }
@@ -346,11 +342,6 @@ public class CourseService {
     }
 
     public Iterable<Course> findAllById(List<String> courseIds) {
-        Iterable<Course> allById = courseRepository.findAllById(courseIds);
-        Map<String, Collection<LearningTagPartialDto>> entityMap = learningTagService.getPartialLearningTagsForCourseUids(courseIds);
-        for (Course course : allById) {
-            Optional.ofNullable(entityMap.get(course.getId())).ifPresent(course::setLearningTags);
-        }
-        return allById;
+        return courseRepository.findAllById(courseIds);
     }
 }

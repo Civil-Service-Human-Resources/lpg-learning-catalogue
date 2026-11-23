@@ -1,15 +1,14 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import com.google.common.collect.ImmutableMap;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import uk.gov.cslearning.catalogue.domain.Course;
-import uk.gov.cslearning.catalogue.domain.module.Module;
 import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
 import uk.gov.cslearning.catalogue.dto.factory.CourseDtoFactory;
@@ -23,13 +22,14 @@ import uk.gov.cslearning.catalogue.service.upload.ScormFileUploadService;
 import uk.gov.cslearning.catalogue.service.upload.UploadServiceType;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ModuleServiceTest {
 
     @Mock
@@ -105,18 +105,18 @@ public class ModuleServiceTest {
         String url = "https://www.example.com";
         String updatedTitle = "title-updated";
         Course course = new Course();
-        Module module = new LinkModule(URI.create(url).toURL());
+        Module module = new LinkModule(new URL(url));
         module.setId(moduleId);
         module.setTitle("title");
         List<Module> modules = new ArrayList<>();
         modules.add(module);
         course.setModules(modules);
-        Module newModule = new LinkModule(URI.create(url).toURL());
+        Module newModule = new LinkModule(new URL(url));
         newModule.setId(moduleId);
         newModule.setTitle(updatedTitle);
         when(courseService.getCourseById(courseId)).thenReturn(course);
         moduleService.updateModule(courseId, newModule);
-        assertEquals(updatedTitle, course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::new).getTitle());
+        assertEquals(course.getModuleById(moduleId).orElseThrow(ResourceNotFoundException::new).getTitle(), updatedTitle);
     }
 
     @Test
@@ -125,7 +125,7 @@ public class ModuleServiceTest {
         String courseId = "courseId";
         String url = "https://www.example.org";
         Course course = new Course();
-        Module module = new LinkModule(URI.create(url).toURL());
+        Module module = new LinkModule(new URL(url));
         module.setId(moduleId);
         List<Module> modules = new ArrayList<>();
         modules.add(module);
@@ -136,7 +136,7 @@ public class ModuleServiceTest {
     }
 
     @Test
-    public void shouldDeleteModuleAndFile() {
+    public void shouldDeleteModuleAndFile() throws Exception {
         String moduleId = "moduleId";
         String courseId = "courseId";
         String url = "test/path/to/file.pdf";
@@ -156,7 +156,7 @@ public class ModuleServiceTest {
     }
 
     @Test
-    public void shouldDeleteElearningModuleAndFile() {
+    public void shouldDeleteElearningModuleAndFile() throws Exception {
         String moduleId = "moduleId";
         String mediaId = "mediaId";
         String courseId = "courseId";

@@ -1,11 +1,11 @@
-package uk.gov.cslearning.catalogue.domain.learningTag;
+package uk.gov.cslearning.catalogue.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -46,15 +46,5 @@ public class LearningTagHyperlink {
         this.description = description;
         this.createdTimestamp = LocalDateTime.now();
         this.updatedTimestamp = LocalDateTime.now();
-    }
-
-    @Override
-    public String toString() {
-        return "id=" + id +
-                ", href='" + href + '\'' +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", createdTimestamp=" + createdTimestamp +
-                ", updatedTimestamp=" + updatedTimestamp;
     }
 }

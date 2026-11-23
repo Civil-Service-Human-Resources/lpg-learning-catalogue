@@ -1,11 +1,11 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,9 +19,8 @@ import uk.gov.cslearning.catalogue.domain.Scope;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-@ExtendWith(MockitoExtension.class)
 public class AuthoritiesServiceTest {
 
     private static final String ORGANISATIONAL_UNIT_CODE = "code";
@@ -33,6 +32,11 @@ public class AuthoritiesServiceTest {
     @InjectMocks
     private AuthoritiesService authoritiesService;
 
+    @Before
+    public void setupMock() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void shouldReturnGlobalIfCSLAuthor() {
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -40,8 +44,8 @@ public class AuthoritiesServiceTest {
 
         Mockito.doReturn(authorities).when(authentication).getAuthorities();
 
-        assertEquals(Scope.GLOBAL, authoritiesService.getScope(authentication));
-        assertNotEquals(Scope.LOCAL, authoritiesService.getScope(authentication));
+        assertEquals(authoritiesService.getScope(authentication), Scope.GLOBAL);
+        assertNotEquals(authoritiesService.getScope(authentication), Scope.LOCAL);
     }
 
     @Test
@@ -51,8 +55,8 @@ public class AuthoritiesServiceTest {
 
         Mockito.doReturn(authorities).when(authentication).getAuthorities();
 
-        assertEquals(Scope.LOCAL, authoritiesService.getScope(authentication));
-        assertNotEquals(Scope.GLOBAL, authoritiesService.getScope(authentication));
+        assertEquals(authoritiesService.getScope(authentication), Scope.LOCAL);
+        assertNotEquals(authoritiesService.getScope(authentication), Scope.GLOBAL);
     }
 
     @Test

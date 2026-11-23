@@ -2,6 +2,7 @@ package uk.gov.cslearning.catalogue.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
@@ -9,18 +10,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import uk.gov.cslearning.catalogue.domain.ErrorDtoFactory;
-import uk.gov.cslearning.catalogue.exception.CustomValidationException;
-import uk.gov.cslearning.catalogue.exception.ForbiddenException;
-import uk.gov.cslearning.catalogue.exception.GenericServerException;
-import uk.gov.cslearning.catalogue.exception.ResourceNotFoundException;
+import uk.gov.cslearning.catalogue.dto.ErrorDto;
+import uk.gov.cslearning.catalogue.exception.*;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 @Slf4j
@@ -36,10 +33,11 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e) {
+    public ResponseEntity<ErrorDto> handleConstraintViolationExcetpion(ConstraintViolationException e) {
         log.error("Bad Request: ", e);
         List<String> errors = e.getConstraintViolations().stream().map(ConstraintViolation::getMessage).sorted().collect(Collectors.toList());
-        return errorDtoFactory.create(BAD_REQUEST, errors, "Validation error").getAsResponseEntity();
+        ErrorDto error = new ErrorDto(errors, 400, "Validation error");
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -50,31 +48,30 @@ public class ApiExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
-        return errorDtoFactory.createWithErrorFields(BAD_REQUEST, result.getFieldErrors(), "Validation error").getAsResponseEntity();
-    }
-
-    @ExceptionHandler(CustomValidationException.class)
-    public ResponseEntity<Object> handleCustomValidationException(CustomValidationException ex) {
-        return errorDtoFactory.create(BAD_REQUEST, ex.getErrors(), "Validation error").getAsResponseEntity();
+        return errorDtoFactory.createWithErrorFields(HttpStatus.BAD_REQUEST, result.getFieldErrors()).getAsResponseEntity();
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Object> handleValidationException(ValidationException ex) {
-        return errorDtoFactory.create(BAD_REQUEST, ex.getMessage(), "Validation error").getAsResponseEntity();
+    public ResponseEntity<ErrorDto> handleValidationException(ValidationException ex) {
+        ErrorDto error = new ErrorDto(ex.getMessage(), 400, "Validation error");
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
-        return errorDtoFactory.create(FORBIDDEN, ex.getMessage(), "Access is denied").getAsResponseEntity();
+    public ResponseEntity<ErrorDto> handleAccessDeniedException(AccessDeniedException ex) {
+        ErrorDto error = new ErrorDto(ex.getMessage(), 403, "Access is denied");
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
-        return errorDtoFactory.create(FORBIDDEN, ex.getMessage(), "Forbidden exception").getAsResponseEntity();
+    public ResponseEntity<ErrorDto> handleForbiddenException(ForbiddenException ex) {
+        ErrorDto error = new ErrorDto(ex.getMessage(), 403, "Forbidden exception");
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(GenericServerException.class)
-    public ResponseEntity<Object> handleServerException(GenericServerException ex) {
-        return errorDtoFactory.create(INTERNAL_SERVER_ERROR, ex.getMessage(), "Server exception").getAsResponseEntity();
+    public ResponseEntity<ErrorDto> handleServerException(GenericServerException ex) {
+        ErrorDto error = new ErrorDto(ex.getMessage(), 500, "Server exception");
+        return ResponseEntity.badRequest().body(error);
     }
 }

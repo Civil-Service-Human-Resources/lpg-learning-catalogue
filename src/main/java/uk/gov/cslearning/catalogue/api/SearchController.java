@@ -11,14 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.cslearning.catalogue.Utils;
 import uk.gov.cslearning.catalogue.api.v2.model.CourseSearchParameters;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
-import uk.gov.cslearning.catalogue.domain.Status;
-import uk.gov.cslearning.catalogue.domain.Visibility;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.service.AuthoritiesService;
-import uk.gov.cslearning.catalogue.service.registry.RegistryService;
+import uk.gov.cslearning.catalogue.service.RegistryService;
 
-import jakarta.validation.Valid;
-import java.util.Collections;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/search")
@@ -39,8 +36,6 @@ public class SearchController {
 
     @GetMapping
     public ResponseEntity<SearchResults> search(@Valid CourseSearchParameters parameters, PageParameters pageParameters) {
-        parameters.setStatus(Collections.singletonList(Status.PUBLISHED));
-        parameters.setVisibility(Collections.singletonList(Visibility.PUBLIC));
         SearchResults results = courseRepository.search(pageParameters.getPageRequest(), parameters);
         return ResponseEntity.ok(results);
     }

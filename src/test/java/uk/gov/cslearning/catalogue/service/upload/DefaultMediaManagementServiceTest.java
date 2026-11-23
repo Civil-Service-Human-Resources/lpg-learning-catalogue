@@ -1,21 +1,21 @@
 package uk.gov.cslearning.catalogue.service.upload;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.domain.MediaFactory;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.Upload;
 import uk.gov.cslearning.catalogue.repository.elastic.MediaRepository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultMediaManagementServiceTest {
     @Mock
     private MediaFactory mediaFactory;
@@ -30,7 +30,7 @@ public class DefaultMediaManagementServiceTest {
 
     private DefaultMediaManagementService mediaManagementService;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         mediaManagementService = new DefaultMediaManagementService(mediaFactory, mediaRepository, fileUploadServiceFactory);
     }
