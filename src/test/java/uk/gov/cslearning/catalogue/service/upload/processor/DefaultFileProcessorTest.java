@@ -1,10 +1,10 @@
 package uk.gov.cslearning.catalogue.service.upload.processor;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.cslearning.catalogue.dto.upload.FileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.ProcessedFileUpload;
 import uk.gov.cslearning.catalogue.dto.upload.UploadableFile;
@@ -13,12 +13,11 @@ import uk.gov.cslearning.catalogue.service.upload.UploadableFileFactory;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultFileProcessorTest {
     @Mock
     private UploadableFileFactory uploadableFileFactory;
@@ -33,10 +32,10 @@ public class DefaultFileProcessorTest {
         assertEquals(fileUpload, processedFile.getFileUpload());
     }
 
-    @Test
+    @Test(expected = FileProcessingException.class)
     public void processShouldThrowFileProcessingException() throws IOException {
         FileUpload fileUpload = mock(FileUpload.class);
         when(uploadableFileFactory.createFromFileUpload(fileUpload)).thenThrow(IOException.class);
-        assertThrows(FileProcessingException.class, () -> defaultFileProcessor.process(fileUpload));
+        defaultFileProcessor.process(fileUpload);
     }
 }

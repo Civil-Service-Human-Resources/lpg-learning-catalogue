@@ -2,7 +2,6 @@ package uk.gov.cslearning.catalogue.service.rustici;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.cslearning.catalogue.client.rustici.RusticiEngineClient;
 import uk.gov.cslearning.catalogue.domain.CustomMediaMetadata;
 import uk.gov.cslearning.catalogue.domain.Media;
 import uk.gov.cslearning.catalogue.dto.rustici.course.Course;
@@ -42,12 +41,13 @@ public class RusticiEngineService {
             log.warn(String.join(",\n", createCourseResponse.getParserWarnings()));
         }
         Course courseObj = createCourseResponse.getCourse();
-        log.info("Successfully uploaded {} course \"{}\" to Rustici", courseObj.getCourseLearningStandard(), courseObj.getTitle());
+        log.info(String.format("Successfully uploaded %s course \"%s\" to Rustici", courseObj.getCourseLearningStandard(), courseObj.getTitle()));
     }
 
     public void deleteElearningModule(String courseId, String moduleId) {
         String rusticiCourseId = rusticiDataService.getRusticiCourseId(courseId, moduleId);
         rusticiEngineClient.deleteCourse(rusticiCourseId);
-        log.info("Successfully deleted course from Rustici with ID {}", rusticiCourseId);
+        log.info(String.format("Successfully deleted course from Rustici with ID %s", rusticiCourseId));
     }
+
 }

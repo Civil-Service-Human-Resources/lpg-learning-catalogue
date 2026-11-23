@@ -3,12 +3,12 @@ package uk.gov.cslearning.catalogue.domain;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.jayway.jsonpath.JsonPath;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import uk.gov.cslearning.catalogue.exception.UnknownStatusException;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class StatusTest {
 

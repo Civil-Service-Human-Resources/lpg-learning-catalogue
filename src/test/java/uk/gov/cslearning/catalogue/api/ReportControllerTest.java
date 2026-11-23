@@ -1,14 +1,18 @@
 package uk.gov.cslearning.catalogue.api;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.jupiter.api.Test;
+import org.glassfish.jersey.servlet.WebConfig;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.cslearning.catalogue.domain.ErrorDtoFactory;
 import uk.gov.cslearning.catalogue.dto.CourseDto;
 import uk.gov.cslearning.catalogue.dto.EventDto;
 import uk.gov.cslearning.catalogue.dto.ModuleDto;
@@ -24,26 +28,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(
-        controllers = ReportController.class,
-        properties = {
-                "spring.main.allow-bean-definition-overriding=true",
-                "spring.autoconfigure.exclude=org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration"
-        }
-)
+@WebMvcTest(ReportController.class)
+@RunWith(SpringRunner.class)
 @WithMockUser(username = "user")
+@EnableSpringDataWebSupport
+@ContextConfiguration(classes = {WebConfig.class, ReportController.class})
 public class ReportControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     private EventService eventService;
 
-    @MockitoBean
+    @MockBean
     private ModuleService moduleService;
-
-    @MockitoBean
-    private ErrorDtoFactory errorDtoFactory;
 
     @Test
     @WithMockUser(username = "user")

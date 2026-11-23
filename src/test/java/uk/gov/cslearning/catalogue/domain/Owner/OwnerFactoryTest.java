@@ -1,12 +1,12 @@
 package uk.gov.cslearning.catalogue.domain.Owner;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
 import uk.gov.cslearning.catalogue.domain.CivilServant.OrganisationalUnit;
 import uk.gov.cslearning.catalogue.domain.CivilServant.Profession;
 import uk.gov.cslearning.catalogue.domain.Scope;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class OwnerFactoryTest {
 

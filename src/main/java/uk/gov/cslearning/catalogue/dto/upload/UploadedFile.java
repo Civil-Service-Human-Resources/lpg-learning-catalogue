@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import java.time.Clock;
 import java.time.LocalDateTime;
 

@@ -1,10 +1,10 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,11 +27,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class LearningTagServiceTest {
 
     @Mock
@@ -57,7 +57,7 @@ public class LearningTagServiceTest {
 
     private LearningTagService learningTagService;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         learningTagService = new LearningTagService(
                 learningTagRepository,
@@ -90,10 +90,10 @@ public class LearningTagServiceTest {
         SimplePage<LearningTagHyperlinkDto> result = learningTagService.getHyperlinksByLearningTagId(tagId, pageable);
 
         assertEquals(1, result.getContent().size());
-        assertEquals(Long.valueOf(100L), result.getContent().getFirst().getId());
-        assertEquals("BBC", result.getContent().getFirst().getTitle());
-        assertEquals("BBC Desc", result.getContent().getFirst().getDescription());
-        assertEquals("https://bbc.co.uk", result.getContent().getFirst().getUrl());
+        assertEquals(Long.valueOf(100L), result.getContent().get(0).getId());
+        assertEquals("BBC", result.getContent().get(0).getTitle());
+        assertEquals("BBC Desc", result.getContent().get(0).getDescription());
+        assertEquals("https://bbc.co.uk", result.getContent().get(0).getUrl());
         assertEquals(1, result.getTotalResults());
 
         verify(learningTagHyperlinkRepository).findByLearningTagIdOrderByTitleAsc(tagId, pageable);
@@ -101,7 +101,7 @@ public class LearningTagServiceTest {
     }
 
     @Test
-    public void testCreateLearningTagHyperlink() {
+    public void testCreateLearningTagHyperlink() throws Exception {
         Long tagId = 1L;
         LearningTag tag = new LearningTag();
         tag.setId(tagId);
@@ -151,7 +151,7 @@ public class LearningTagServiceTest {
         } catch (CustomValidationException e) {
             List<String> errors = e.getErrors();
             assertEquals(1, errors.size());
-            assertEquals("Field title is invalid: A link with this title already exists for the tag", errors.getFirst());
+            assertEquals("Field title is invalid: A link with this title already exists for the tag", errors.get(0));
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -177,7 +177,7 @@ public class LearningTagServiceTest {
         } catch (CustomValidationException e) {
             List<String> errors = e.getErrors();
             assertEquals(1, errors.size());
-            assertEquals("Field url is invalid: A link with this URL already exists for the tag", errors.getFirst());
+            assertEquals("Field url is invalid: A link with this URL already exists for the tag", errors.get(0));
         }
 
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndTitle(tagId, "BBC");
@@ -211,19 +211,18 @@ public class LearningTagServiceTest {
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHref(tagId, "https://bbc.co.uk");
     }
 
-    @Test
-    public void testCreateLearningTagHyperlinkWhenTagNotFound() {
+    @Test(expected = ResourceNotFoundException.class)
+    public void testCreateLearningTagHyperlinkWhenTagNotFound() throws Exception {
         Long tagId = 999L;
         LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(null, "BBC", "BBC Desc", "https://bbc.co.uk");
 
         when(learningTagRepository.findById(tagId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () ->
-            learningTagService.createLearningTagHyperlink(tagId, inputDto));
+        learningTagService.createLearningTagHyperlink(tagId, inputDto);
     }
 
     @Test
-    public void testUpdateLearningTagHyperlink() {
+    public void testUpdateLearningTagHyperlink() throws Exception {
         Long tagId = 1L;
         Long hyperlinkId = 100L;
         LearningTag tag = new LearningTag();
@@ -278,7 +277,7 @@ public class LearningTagServiceTest {
         } catch (CustomValidationException e) {
             List<String> errors = e.getErrors();
             assertEquals(1, errors.size());
-            assertEquals("Field title is invalid: A link with this title already exists for the tag", errors.getFirst());
+            assertEquals("Field title is invalid: A link with this title already exists for the tag", errors.get(0));
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
@@ -307,7 +306,7 @@ public class LearningTagServiceTest {
         } catch (CustomValidationException e) {
             List<String> errors = e.getErrors();
             assertEquals(1, errors.size());
-            assertEquals("Field url is invalid: A link with this URL already exists for the tag", errors.getFirst());
+            assertEquals("Field url is invalid: A link with this URL already exists for the tag", errors.get(0));
         }
 
         verify(learningTagHyperlinkRepository).findByIdAndLearningTagId(hyperlinkId, tagId);
@@ -345,16 +344,15 @@ public class LearningTagServiceTest {
         verify(learningTagHyperlinkRepository).existsByLearningTagIdAndHrefAndIdNot(tagId, "https://new.co.uk", hyperlinkId);
     }
 
-    @Test
-    public void testUpdateLearningTagHyperlinkWhenNotFound() {
+    @Test(expected = ResourceNotFoundException.class)
+    public void testUpdateLearningTagHyperlinkWhenNotFound() throws Exception {
         Long tagId = 1L;
         Long hyperlinkId = 999L;
         LearningTagHyperlinkDto inputDto = new LearningTagHyperlinkDto(hyperlinkId, "New Title", "New Desc", "https://new.co.uk");
 
         when(learningTagHyperlinkRepository.findByIdAndLearningTagId(hyperlinkId, tagId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () ->
-            learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto));
+        learningTagService.updateLearningTagHyperlink(tagId, hyperlinkId, inputDto);
     }
 
     @Test
@@ -385,14 +383,13 @@ public class LearningTagServiceTest {
         verify(learningTagHyperlinkRepository).delete(hyperlink2);
     }
 
-    @Test
+    @Test(expected = ResourceNotFoundException.class)
     public void testRemoveHyperlinksFromLearningTagWhenTagNotFound() {
         Long tagId = 999L;
         when(learningTagRepository.findById(tagId)).thenReturn(Optional.empty());
 
-        IdsDto<Long> dto = new IdsDto<>(List.of(101L));
-        assertThrows(ResourceNotFoundException.class, () ->
-            learningTagService.removeHyperlinksFromLearningTag(tagId, dto));
+        IdsDto<Long> dto = new IdsDto<>(Arrays.asList(101L));
+        learningTagService.removeHyperlinksFromLearningTag(tagId, dto);
     }
 
     @Test
@@ -430,13 +427,12 @@ public class LearningTagServiceTest {
         verify(courseTagRepository).deleteById(new CourseLearningTagId(tagId, 10L));
     }
 
-    @Test
+    @Test(expected = ResourceNotFoundException.class)
     public void testRemoveCoursesFromLearningTagWhenTagNotFound() {
         Long tagId = 999L;
         when(learningTagRepository.findById(tagId)).thenReturn(Optional.empty());
 
-        IdsDto<String> dto = new IdsDto<>(List.of("course-1"));
-        assertThrows(ResourceNotFoundException.class, () ->
-            learningTagService.removeCoursesFromLearningTag(tagId, dto));
+        IdsDto<String> dto = new IdsDto<>(Arrays.asList("course-1"));
+        learningTagService.removeCoursesFromLearningTag(tagId, dto);
     }
 }

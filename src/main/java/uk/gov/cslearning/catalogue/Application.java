@@ -2,15 +2,18 @@ package uk.gov.cslearning.catalogue;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchAutoConfiguration;
-import org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Main Spring application configuration and entry point.
  */
-@SpringBootApplication(exclude = {DataElasticsearchRepositoriesAutoConfiguration.class, DataElasticsearchAutoConfiguration.class})
+@SpringBootApplication(exclude = {ElasticsearchRepositoriesAutoConfiguration.class, ElasticsearchDataAutoConfiguration.class})
+@EnableJpaRepositories(basePackages = "uk.gov.cslearning.catalogue.repository.sql")
 public class Application {
-    static void main(String[] args) {
+
+    public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }

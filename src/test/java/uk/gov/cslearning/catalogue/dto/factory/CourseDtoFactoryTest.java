@@ -1,10 +1,10 @@
 package uk.gov.cslearning.catalogue.dto.factory;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.dto.CourseDto;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class CourseDtoFactoryTest {
     private final CourseDtoFactory dtoFactory = new CourseDtoFactory();

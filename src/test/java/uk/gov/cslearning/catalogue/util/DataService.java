@@ -1,8 +1,10 @@
 package uk.gov.cslearning.catalogue.util;
 
 import com.google.common.collect.Lists;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.common.collect.Set;
 import uk.gov.cslearning.catalogue.domain.Course;
 import uk.gov.cslearning.catalogue.domain.Owner.Owner;
 import uk.gov.cslearning.catalogue.domain.Status;
@@ -11,13 +13,23 @@ import uk.gov.cslearning.catalogue.domain.module.*;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 
 import java.math.BigDecimal;
-import java.net.URI;
+import java.net.URL;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
-public record DataService(CourseRepository repository) {
+public class DataService {
+
+    @Getter
+    private final CourseRepository repository;
+
+    public DataService(CourseRepository repository) {
+        this.repository = repository;
+    }
 
     public void loadBulkCourses() {
         log.info("Loading bulk courses");
@@ -83,16 +95,16 @@ public record DataService(CourseRepository repository) {
 
         // Single module courses
 
-        Course eLearningCourse = createCourse("ELearning course");
-        eLearningCourse.setId("elearning-course");
-        eLearningCourse.setModules(Collections.singletonList(
+        Course elearningCourse = createCourse("ELearning course");
+        elearningCourse.setId("elearning-course");
+        elearningCourse.setModules(Collections.singletonList(
                 createELearningModule()
         ));
         Owner o = new Owner();
         o.setSupplier("KPMG");
-        eLearningCourse.setOwner(o);
-        eLearningCourse.setAudiences(Set.of(createAudience(Collections.emptyList(), Set.of("Analysis"), Collections.emptyList(), Collections.emptyList())));
-        courses.add(eLearningCourse);
+        elearningCourse.setOwner(o);
+        elearningCourse.setAudiences(Set.of(createAudience(Collections.emptyList(), Set.of("Analysis"), Collections.emptyList(), Collections.emptyList())));
+        courses.add(elearningCourse);
 
         Course fileCourse = createCourse("File course");
         fileCourse.setModules(Collections.singletonList(
@@ -186,7 +198,7 @@ public record DataService(CourseRepository repository) {
     // Module
 
     public ELearningModule createELearningModule() {
-        ELearningModule elearningModule = new ELearningModule("https://startPage", "https://url.com");
+        ELearningModule elearningModule = new ELearningModule("http://startPage", "http://url.com");
         elearningModule.setTitle("ELearning module");
         elearningModule.setDescription("An ELearning module");
         elearningModule.setDuration(100L);
@@ -196,7 +208,7 @@ public record DataService(CourseRepository repository) {
 
     @SneakyThrows
     public VideoModule createVideoModule() {
-        VideoModule videoModule = new VideoModule(URI.create("https://startPage").toURL());
+        VideoModule videoModule = new VideoModule(new URL("http://startPage"));
         videoModule.setTitle("Video module");
         videoModule.setDescription("A Video module");
         videoModule.setDuration(100L);
@@ -206,7 +218,7 @@ public record DataService(CourseRepository repository) {
 
     @SneakyThrows
     public LinkModule createLinkModule() {
-        LinkModule linkModule = new LinkModule(URI.create("https://startPage").toURL());
+        LinkModule linkModule = new LinkModule(new URL("http://startPage"));
         linkModule.setTitle("Link module");
         linkModule.setDescription("A Link module");
         linkModule.setDuration(100L);

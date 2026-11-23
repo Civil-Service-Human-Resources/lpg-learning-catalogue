@@ -1,22 +1,32 @@
 package uk.gov.cslearning.catalogue.service;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.cslearning.catalogue.client.csrs.ICSRSClient;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import uk.gov.cslearning.catalogue.domain.CivilServant.CivilServant;
-import uk.gov.cslearning.catalogue.service.registry.RegistryService;
+import uk.gov.cslearning.catalogue.service.record.RequestEntityFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import java.net.URI;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.springframework.http.HttpStatus.OK;
+
+@RunWith(MockitoJUnitRunner.class)
 public class RegistryServiceTest {
 
     @Mock
-    private ICSRSClient client;
+    private OAuth2RestOperations restOperations;
+
+    @Mock
+    private RequestEntityFactory requestEntityFactory;
 
     @InjectMocks
     private RegistryService registryService;
@@ -24,9 +34,12 @@ public class RegistryServiceTest {
     @Test
     public void getCurrentCivilServant() {
         CivilServant civilServant = new CivilServant();
+        RequestEntity requestEntity = mock(RequestEntity.class);
+        ResponseEntity responseEntity = new ResponseEntity<>(civilServant, OK);
 
-        when(client.getLoggedInCivilServant()).thenReturn(civilServant);
+        when(requestEntityFactory.createGetRequest((URI) any())).thenReturn(requestEntity);
+        when(restOperations.exchange(requestEntity, CivilServant.class)).thenReturn(responseEntity);
 
-        assertEquals(civilServant, registryService.getCurrentCivilServant());
+        assertEquals(registryService.getCurrentCivilServant(), civilServant);
     }
 }

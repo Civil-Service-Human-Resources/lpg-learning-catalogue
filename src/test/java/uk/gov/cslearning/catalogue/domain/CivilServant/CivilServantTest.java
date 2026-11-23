@@ -1,11 +1,11 @@
 package uk.gov.cslearning.catalogue.domain.CivilServant;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 @Transactional
 public class CivilServantTest {
@@ -13,6 +13,8 @@ public class CivilServantTest {
     public static final String ORGANISATIONAL_UNIT_CODE = "code";
     public static final long PROFESSION_ID = 1L;
     public static final String PROFESSION_NAME = "Profession Name";
+    public static final String LEARNING_PROVIDER_UUID = "uuid";
+
 
     @Test
     public void shouldReturnEmptyOptionalIfCivilServantWithNoOrgProfLearningProv() {
@@ -48,7 +50,7 @@ public class CivilServantTest {
         civilServant.setOrganisationalUnit(organisationalUnit);
 
         assertTrue(civilServant.getOrganisationalUnitCode().isPresent());
-        assertEquals(ORGANISATIONAL_UNIT_CODE, civilServant.getOrganisationalUnitCode().get());
+        assertEquals(civilServant.getOrganisationalUnitCode().get(), ORGANISATIONAL_UNIT_CODE);
     }
 
     @Test
@@ -79,7 +81,7 @@ public class CivilServantTest {
         assertEquals(civilServant.getProfessionId().get(), Long.valueOf(1));
 
         assertTrue(civilServant.getProfessionName().isPresent());
-        assertEquals(PROFESSION_NAME, civilServant.getProfessionName().get());
+        assertEquals(civilServant.getProfessionName().get(), PROFESSION_NAME);
     }
 
 }

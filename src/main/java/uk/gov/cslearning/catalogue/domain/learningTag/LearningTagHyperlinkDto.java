@@ -3,8 +3,8 @@ package uk.gov.cslearning.catalogue.domain.learningTag;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
