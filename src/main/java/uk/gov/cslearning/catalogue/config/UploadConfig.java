@@ -7,6 +7,7 @@ import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,12 +23,14 @@ import java.util.List;
 public class UploadConfig {
 
     @Bean(name = "learning_material")
+    @ConditionalOnMissingBean(name = "learning_material")
     public UploadClient scormAzureUploadClient(CloudBlobClient client, @Value("${azure.storage.scorm-container}") String containerName) {
         CloudBlobContainer container = createBlobContainer(client, containerName);
         return new AzureUploadClient(container);
     }
 
     @Bean(name = "existing_container")
+    @ConditionalOnMissingBean(name = "existing_container")
     public UploadClient existingAzureUploadClient(CloudBlobClient client, @Value("${azure.storage.container}") String containerName) {
         CloudBlobContainer container = createBlobContainer(client, containerName);
         return new AzureUploadClient(container);
@@ -46,11 +49,20 @@ public class UploadConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    @SneakyThrows
+    public CloudStorageAccount cloudStorageAccount(@Value("${azure.storage.connection-string}") String connectionString) {
+        return CloudStorageAccount.parse(connectionString);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     public CloudBlobClient storageClient(CloudStorageAccount cloudStorageAccount) {
         return cloudStorageAccount.createCloudBlobClient();
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public Tika tika() {
         return new Tika();
     }

@@ -17,7 +17,7 @@ import uk.gov.cslearning.catalogue.domain.Status;
 import uk.gov.cslearning.catalogue.exception.CourseCannotByDeletedException;
 import uk.gov.cslearning.catalogue.mapping.DaysMapper;
 import uk.gov.cslearning.catalogue.service.CourseService;
-import uk.gov.cslearning.catalogue.service.RegistryService;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.util.Arrays;
 import java.util.List;

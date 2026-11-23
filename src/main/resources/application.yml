@@ -4,29 +4,57 @@ database:
   use-ssl: ${DATABASE_USESSL:false}
 spring:
   jackson:
-    serialization:
-      write_dates_as_timestamps: false
-  resources:
-    add-mappings: false
+    deserialization:
+      fail-on-null-for-primitives: false
+  web:
+    resources:
+      add-mappings: false
   datasource:
     url: ${DATASOURCE_URL:${database.host}/${database.name}?useSSL=${database.use-ssl}&requireSSL=false}
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:my-secret-pw}
-    platform: mysql
     hikari:
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+      connection-timeout: ${DATASOURCE_HIKARI_CONNECTION_TIMEOUT:30000}
+      idle-timeout: ${DATASOURCE_HIKARI_IDLE_TIMEOUT:600000}
+      max-lifetime: ${DATASOURCE_HIKARI_MAX_LIFETIME:1800000}
+  jpa:
+    open-in-view: ${JPA_OPEN_IN_VIEW:true}
+  sql:
+    init:
+      platform: mysql
   flyway:
     locations: classpath:db/migration/{vendor}
   servlet:
     multipart:
-      max-file-size: 5120MB
-      max-request-size: 5120MB
+      max-file-size: ${SERVLET_MULTIPART_MAX_FILE_SIZE:5120MB}
+      max-request-size: ${SERVLET_MULTIPART_MAX_REQUEST_SIZE:5120MB}
+  security:
+    user:
+      name: ${LEARNING_CATALOGUE_SECURITY_USERNAME:ChangeMe}
+      password: ${LEARNING_CATALOGUE_SECURITY_PASSWORD:ChangeMe}
+    oauth2:
+      resource:
+        jwt:
+          key-value: ${JWT_KEY:key}
+      client:
+        registration:
+          identity-service:
+            client-id: ${CLIENT_ID:9fbd4ae2-2db3-44c7-9544-88e80255b56e}
+            client-secret: ${CLIENT_SECRET:test}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          identity-service:
+            authorization-uri: ${identity.authorizationUrl}
+            token-uri: ${identity.tokenUrl}
+      refresh:
+        service-token-cache:
+          before-seconds-to-expire: ${REFRESH_SERVICETOKENCACHE_BEFORE_SECONDS_TOEXPIRE:0}
+
 time:
   zoneId: ${TIME_ZONE_ID:UTC}
 server:
-  port: 9001
+  port: ${SERVER_PORT:9001}
 
 logging:
   pattern:
@@ -34,12 +62,39 @@ logging:
   level:
     root: ${ROOT_LOGGING_LEVEL:INFO}
     uk.gov.cslearning: ${UK_GOV_CSLEARNING_LOGGING_LEVEL:INFO}
-    com.zaxxer.hikari: ERROR
+    com.zaxxer.hikari: ${COM_ZAXXER_HIKARI_LOGGING_LEVEL:ERROR}
     org:
       springframework:
         data:
           elasticsearch:
             core: ${ROOT_LOGGING_LEVEL:INFO}
+
+management:
+  info:
+    java:
+      enabled: ${ACTUATOR_MANAGEMENT_INFO_JAVA_ENABLED:true}
+    env:
+      enabled: ${ACTUATOR_MANAGEMENT_INFO_ENV_ENABLED:true}
+  endpoints:
+    web:
+      base-path: ${ACTUATOR_MANAGEMENT_ENDPOINTS_WEB_BASE_PATH:/manage}
+      exposure:
+        include: ${ACTUATOR_MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDED:health,info}
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "GET, PUT, POST, DELETE, OPTIONS"
+
+springdoc:
+  api-docs:
+    enabled: ${SPRINGDOC_API_DOCS_ENABLED:true}
+  swagger-ui:
+    enabled: ${SPRINGDOC_SWAGGER_UI_ENABLED:true}
+
+info:
+  app:
+    title: ${APP_TITLE:lpg-learning-catalogue}
+    description: ${APP_DESCRIPTION:Learning resource API}
+    version: ${APP_VERSION:1.0.0}
 
 elasticsearch:
   protocol: ${ES_PROTOCOL:http}
@@ -70,37 +125,22 @@ azure:
     connection-string: ${AZURE_STORAGE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=${azure.account.name};AccountKey=${azure.account.key}}
   scorm-cdn: "${rustici.url}/cdn"
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-      cors:
-        allowed-origins: "*"
-        allowed-methods: "GET, PUT, POST, DELETE, OPTIONS"
-
 record:
   serviceUrl: ${LEARNER_RECORD_URL:http://localhost:9000}
-  eventUrlFormat: "${record.serviceUrl}/event/%s"
-  bulkEventsUrl: "${record.serviceUrl}/events-list"
+  eventUrlFormat: "/event/%s"
+  bulkEventsUrl: "/events-list"
   bookingUrlFormat: "${record.eventUrlFormat}/booking"
 
 registry:
   serviceUrl: ${REGISTRY_SERVICE_URL:http://localhost:9002}
-  getCurrentUrl: "${registry.serviceUrl}/civilServants/me"
+  getLoggedInCivilServant: "/civilServants/me"
 
-oauth:
+identity:
   serviceUrl: ${OAUTH_SERVICE_URL:http://localhost:8080}
-  clientId: ${CLIENT_ID:9fbd4ae2-2db3-44c7-9544-88e80255b56e}
-  clientSecret: ${CLIENT_SECRET:test}
-  checkTokenEndpoint: ${OAUTH_CHECK_TOKEN_ENDPOINT:/oauth/check_token}
-  checkTokenUrl: "${oauth.serviceUrl}${oauth.checkTokenEndpoint}"
-  tokenEndpoint: ${OAUTH_TOKEN_ENDPOINT:/oauth/token}
-  tokenUrl: "${oauth.serviceUrl}${oauth.tokenEndpoint}"
-  maxTotalConnections: 200
-  defaultMaxConnectionsPerRoute: 100
-  maxPerServiceUrl: 100
-  jwtKey: ${jwt_key}
+  tokenEndpoint: ${OAUTH_TOKEN_ENDPOINT:/oauth2/token}
+  tokenUrl: "${identity.serviceUrl}${identity.tokenEndpoint}"
+  authorizationEndpoint: ${OAUTH_AUTHORIZATION_ENDPOINT:/oauth2/authorize}
+  authorizationUrl: "${identity.serviceUrl}${identity.authorizationEndpoint}"
 
 retention:
   timeInDays: ${RETENTION_TIME_IN_DAYS:90}

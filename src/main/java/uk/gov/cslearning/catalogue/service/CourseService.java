@@ -24,6 +24,7 @@ import uk.gov.cslearning.catalogue.exception.CourseCannotByDeletedException;
 import uk.gov.cslearning.catalogue.repository.elastic.CourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseRepository;
 import uk.gov.cslearning.catalogue.repository.sql.ICourseStatusRepository;
+import uk.gov.cslearning.catalogue.service.registry.RegistryService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -196,7 +197,7 @@ public class CourseService {
     public List<Course> fetchMandatoryCoursesByDueDate(Collection<Long> days) {
         LocalDate now = LocalDate.now();
 
-        Map<Course, Set<Audience>> alterAudienceList = new HashMap();
+        Map<Course, Set<Audience>> alterAudienceList = new HashMap<>();
 
         courseRepository.findAllPublishedRequiredLearning(DEFAULT_PAGEABLE)
                 .forEach(course -> course.getAudiences()
@@ -206,7 +207,7 @@ public class CourseService {
             course.setAudiences(alterAudienceList.get(course));
         }
 
-        return new ArrayList(alterAudienceList.keySet());
+        return new ArrayList<>(alterAudienceList.keySet());
     }
 
     public Map<String, List<Course>> groupByOrganisationCode(List<Course> courses) {
@@ -237,7 +238,7 @@ public class CourseService {
 
     public Course deleteCourseById(String courseId) {
         Course course = getCourseById(courseId);
-        Boolean courseCanBeDeleted = course.getHasBeenPublished() != null && !course.getHasBeenPublished();
+        boolean courseCanBeDeleted = course.getHasBeenPublished() != null && !course.getHasBeenPublished();
 
         if (courseCanBeDeleted) {
             courseRepository.delete(course);
@@ -269,7 +270,7 @@ public class CourseService {
             if (alterAudienceList.containsKey(course)) {
                 alterAudienceList.get(course).add(audience);
             } else {
-                Set<Audience> newAudienceList = new HashSet();
+                Set<Audience> newAudienceList = new HashSet<>();
                 newAudienceList.add(audience);
                 alterAudienceList.put(course, newAudienceList);
             }
